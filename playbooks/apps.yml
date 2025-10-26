@@ -1,0 +1,36 @@
+---
+
+- name: Perform initial server setup and eploy and configure foundation apps
+  hosts: apps
+  tasks:
+    - name: Perform initial server setup
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.server_setup
+      tags: [server_setup]
+
+    - name: Install and configure Vault
+      tags: [vault, never]
+      block:
+        - name: Install vault
+          ansible.builtin.import_role:
+            name: jaredhocutt.homelab.vault
+
+        - name: Flush handlers
+          ansible.builtin.meta: flush_handlers
+
+        - name: Wait for user confirmation to continue
+          ansible.builtin.pause:
+            prompt: "Vault has been installed. Press ENTER to continue with the rest of the deployment..."
+
+    - name: Install authentik
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.authentik
+      tags: [authentik]
+
+- name: Deploy and configure apps
+  hosts: apps
+  tasks:
+    - name: Install audiobookshelf
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.audiobookshelf
+      tags: [audiobookshelf]
