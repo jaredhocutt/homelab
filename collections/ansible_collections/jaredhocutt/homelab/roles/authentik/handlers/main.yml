@@ -1,0 +1,34 @@
+---
+# handlers file for jaredhocutt.homelab.authentik
+
+- name: Restart server for {{ authentik_name }}
+  ansible.builtin.systemd:
+    name: "{{ authentik_name }}-server.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart worker for {{ authentik_name }}
+  ansible.builtin.systemd:
+    name: "{{ authentik_name }}-worker.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart postgres for {{ authentik_name }}
+  ansible.builtin.systemd:
+    name: "{{ authentik_name }}-postgres.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart redis for {{ authentik_name }}
+  ansible.builtin.systemd:
+    name: "{{ authentik_name }}-redis.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

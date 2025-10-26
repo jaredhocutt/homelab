@@ -1,0 +1,29 @@
+---
+# defaults file for jaredhocutt.homelab.authentik
+
+authentik_name: authentik
+authentik_description: Authentik
+
+authentik_image: ghcr.io/goauthentik/server
+authentik_image_tag: "2025.8"
+authentik_postgres_image: docker.io/library/postgres
+authentik_postgres_image_tag: "16"
+authentik_redis_image: docker.io/library/redis
+authentik_redis_image_tag: latest
+
+authentik_volume_media: "{{ authentik_name }}-media"
+authentik_volume_certs: "{{ authentik_name }}-certs"
+authentik_volume_templates: "{{ authentik_name }}-templates"
+authentik_postgres_volume_data: "{{ authentik_name }}-postgres-data"
+authentik_redis_volume_data: "{{ authentik_name }}-redis-data"
+
+authentik_ports:
+  - 9000:9000
+  - 9443:9443
+
+authentik_env_vars: {}
+authentik_postgres_env_vars: {}
+authentik_redis_env_vars: {}
+authentik_quadlet_options: []
+authentik_postgres_quadlet_options: []
+authentik_redis_quadlet_options: []

@@ -1,0 +1,113 @@
+---
+# tasks file for jaredhocutt.homelab.authentik
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ authentik_image }}"
+      image_tag: "{{ authentik_image_tag }}"
+    - image: "{{ authentik_postgres_image }}"
+      image_tag: "{{ authentik_postgres_image_tag }}"
+    - image: "{{ authentik_redis_image }}"
+      image_tag: "{{ authentik_redis_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ authentik_name }}"
+    driver: bridge
+    disable_dns: false
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ authentik_volume_media }}"
+      options: "{{ authentik_volume_media_options | default(omit) }}"
+    - name: "{{ authentik_volume_certs }}"
+      options: "{{ authentik_volume_certs_options | default(omit) }}"
+    - name: "{{ authentik_volume_templates }}"
+      options: "{{ authentik_volume_templates_options | default(omit) }}"
+    - name: "{{ authentik_postgres_volume_data }}"
+      options: "{{ authentik_postgres_volume_data_options | default(omit) }}"
+    - name: "{{ authentik_redis_volume_data }}"
+      options: "{{ authentik_redis_volume_data_options | default(omit) }}"
+
+- name: Create postgres container
+  containers.podman.podman_container:
+    name: "{{ authentik_name }}-postgres"
+    image: "{{ authentik_postgres_image }}:{{ authentik_postgres_image_tag }}"
+    network: "{{ authentik_name }}.network"
+    env: "{{ authentik_postgres_env_vars_base | combine(authentik_postgres_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ authentik_postgres_volume_data }}.volume:/var/lib/postgresql/data"
+    healthcheck_interval: 30s
+    healthcheck_retries: 5
+    healthcheck_start_period: 20s
+    healthcheck_timeout: 5s
+    healthcheck: CMD-SHELL pg_isready -d {{ authentik_postgres_db_name }} -U {{ authentik_postgres_user }}
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ authentik_postgres_quadlet_options_base + authentik_postgres_quadlet_options }}"
+    state: quadlet
+  notify: Restart postgres for {{ authentik_name }}
+  become: true
+
+- name: Create redis container
+  containers.podman.podman_container:
+    name: "{{ authentik_name }}-redis"
+    image: "{{ authentik_redis_image }}:{{ authentik_redis_image_tag }}"
+    network: "{{ authentik_name }}.network"
+    env: "{{ authentik_redis_env_vars_base | combine(authentik_redis_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ authentik_redis_volume_data }}.volume:/data"
+    healthcheck_interval: 30s
+    healthcheck_retries: 5
+    healthcheck_start_period: 20s
+    healthcheck_timeout: 3s
+    healthcheck: CMD-SHELL redis-cli ping | grep PONG
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ authentik_redis_quadlet_options_base + authentik_redis_quadlet_options }}"
+    state: quadlet
+  notify: Restart redis for {{ authentik_name }}
+  become: true
+
+- name: Create server container
+  containers.podman.podman_container:
+    name: "{{ authentik_name }}-server"
+    image: "{{ authentik_image }}:{{ authentik_image_tag }}"
+    network: "{{ authentik_name }}.network"
+    env: "{{ authentik_env_vars_base | combine(authentik_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ authentik_volume_media }}.volume:/media"
+      - "{{ authentik_volume_templates }}.volume:/templates"
+    publish: "{{ authentik_ports }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ authentik_quadlet_options_base + authentik_quadlet_options }}"
+    state: quadlet
+  notify: Restart server for {{ authentik_name }}
+  become: true
+
+- name: Create worker container
+  containers.podman.podman_container:
+    name: "{{ authentik_name }}-worker"
+    image: "{{ authentik_image }}:{{ authentik_image_tag }}"
+    network: "{{ authentik_name }}.network"
+    env: "{{ authentik_env_vars_base | combine(authentik_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ authentik_volume_media }}.volume:/media"
+      - "{{ authentik_volume_certs }}.volume:/certs"
+      - "{{ authentik_volume_templates }}.volume:/templates"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ authentik_quadlet_options_base + authentik_quadlet_options }}"
+    state: quadlet
+  notify: Restart worker for {{ authentik_name }}
+  become: true

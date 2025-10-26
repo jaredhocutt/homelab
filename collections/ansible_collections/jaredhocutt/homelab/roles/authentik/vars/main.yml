@@ -1,0 +1,50 @@
+---
+# vars file for jaredhocutt.homelab.authentik
+
+authentik_postgres_db_name: authentik
+authentik_postgres_user: authentik
+
+authentik_env_vars_base:
+  AUTHENTIK_POSTGRESQL__HOST: "{{ authentik_name }}-postgres"
+  AUTHENTIK_POSTGRESQL__NAME: "{{ authentik_postgres_db_name }}"
+  AUTHENTIK_POSTGRESQL__PASSWORD: "{{ authentik_postgres_password }}"
+  AUTHENTIK_POSTGRESQL__USER: "{{ authentik_postgres_user }}"
+  AUTHENTIK_REDIS__HOST: "{{ authentik_name }}-redis"
+  AUTHENTIK_SECRET_KEY: "{{ authentik_secret_key }}"
+
+authentik_postgres_env_vars_base:
+  POSTGRES_DB: "{{ authentik_postgres_db_name }}"
+  POSTGRES_PASSWORD: "{{ authentik_postgres_password }}"
+  POSTGRES_USER: "{{ authentik_postgres_user }}"
+
+authentik_redis_env_vars_base: {}
+
+authentik_quadlet_options_base:
+  - |
+    [Unit]
+    Requires={{ authentik_name }}-postgres.service
+    Requires={{ authentik_name }}-redis.service
+    After={{ authentik_name }}-postgres.service
+    After={{ authentik_name }}-redis.service
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target
+
+authentik_postgres_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target
+
+authentik_redis_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target
