@@ -1,0 +1,11 @@
+---
+
+- name: Deploy and configure apps
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Create kickstart file
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.kickstart
+      delegate_to: localhost
+      tags: [kickstart]
