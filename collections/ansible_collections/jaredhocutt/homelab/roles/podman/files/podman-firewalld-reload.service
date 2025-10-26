@@ -1,0 +1,13 @@
+[Unit]
+Description=Reload podman networks after firewalld reload/restart
+Wants=dbus.service
+After=dbus.service
+
+[Service]
+Type=simple
+Environment=LC_CTYPE=C.utf8
+ExecStart=/usr/local/bin/podman-firewalld-reload
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.podman
+
+- name: Restart podman-firewalld-reload
+  ansible.builtin.systemd:
+    name: podman-firewalld-reload.service
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

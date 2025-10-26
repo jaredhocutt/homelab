@@ -1,0 +1,30 @@
+---
+# tasks file for jaredhocutt.homelab.podman
+
+- name: Install packages
+  ansible.builtin.dnf:
+    name:
+      - podman
+      - podman-compose
+      - podman-tui
+    state: present
+  become: true
+
+- name: Install podman firewalld reload
+  ansible.builtin.copy:
+    src: podman-firewalld-reload.sh
+    dest: /usr/local/bin/podman-firewalld-reload
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+
+- name: Create systemd service for podman firewalld reload
+  ansible.builtin.copy:
+    src: podman-firewalld-reload.service
+    dest: /etc/systemd/system/podman-firewalld-reload.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart podman-firewalld-reload
+  become: true
