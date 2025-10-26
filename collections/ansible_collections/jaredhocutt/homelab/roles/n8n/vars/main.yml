@@ -1,0 +1,39 @@
+---
+# vars file for jaredhocutt.homelab.n8n
+
+n8n_postgres_db_name: n8n
+n8n_postgres_user: n8n
+
+n8n_env_vars_base:
+  DB_TYPE: postgresdb
+  DB_POSTGRESDB_HOST: "{{ n8n_name }}-postgres"
+  DB_POSTGRESDB_PORT: "5432"
+  DB_POSTGRESDB_DATABASE: "{{ n8n_postgres_db_name }}"
+  DB_POSTGRESDB_USER: "{{ n8n_postgres_user }}"
+  DB_POSTGRESDB_PASSWORD: "{{ n8n_postgres_password }}"
+  N8N_DIAGNOSTICS_ENABLED: "false"
+
+n8n_postgres_env_vars_base:
+  POSTGRES_DB: "{{ n8n_postgres_db_name }}"
+  POSTGRES_USER: "{{ n8n_postgres_user }}"
+  POSTGRES_PASSWORD: "{{ n8n_postgres_password }}"
+
+n8n_quadlet_options_base:
+  - |
+    [Unit]
+    Requires={{ n8n_name }}-postgres.service
+    After={{ n8n_name }}-postgres.service
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target
+
+n8n_postgres_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target

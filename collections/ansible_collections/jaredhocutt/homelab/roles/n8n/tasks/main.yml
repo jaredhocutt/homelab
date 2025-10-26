@@ -1,0 +1,69 @@
+---
+# tasks file for jaredhocutt.homelab.n8n
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ n8n_image }}"
+      image_tag: "{{ n8n_image_tag }}"
+    - image: "{{ n8n_postgres_image }}"
+      image_tag: "{{ n8n_postgres_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ n8n_name }}"
+    driver: bridge
+    disable_dns: false
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ n8n_volume_data }}"
+      options: "{{ n8n_volume_data_options | default(omit) }}"
+    - name: "{{ n8n_postgres_volume_data }}"
+      options: "{{ n8n_postgres_volume_data_options | default(omit) }}"
+
+- name: Create postgres container
+  containers.podman.podman_container:
+    name: "{{ n8n_name }}-postgres"
+    image: "{{ n8n_postgres_image }}:{{ n8n_postgres_image_tag }}"
+    network: "{{ n8n_name }}.network"
+    env: "{{ n8n_postgres_env_vars_base | combine(n8n_postgres_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ n8n_postgres_volume_data }}.volume:/var/lib/postgresql/data"
+    healthcheck_interval: 30s
+    healthcheck_retries: 5
+    healthcheck_start_period: 20s
+    healthcheck_timeout: 5s
+    healthcheck: CMD-SHELL pg_isready -d {{ n8n_postgres_db_name }} -U {{ n8n_postgres_user }}
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ n8n_postgres_quadlet_options_base + n8n_postgres_quadlet_options }}"
+    state: quadlet
+  notify: Restart postgres for {{ n8n_name }}
+  become: true
+
+- name: Create n8n container
+  containers.podman.podman_container:
+    name: "{{ n8n_name }}"
+    image: "{{ n8n_image }}:{{ n8n_image_tag }}"
+    network: "{{ n8n_name }}.network"
+    env: "{{ n8n_env_vars_base | combine(n8n_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ n8n_volume_data }}.volume:/home/node/.n8n"
+    publish: "{{ n8n_ports }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ n8n_quadlet_options_base + n8n_quadlet_options }}"
+    state: quadlet
+  notify: Restart {{ n8n_name }}
+  become: true
