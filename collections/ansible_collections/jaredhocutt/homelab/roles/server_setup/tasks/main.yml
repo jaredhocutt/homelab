@@ -1,0 +1,16 @@
+---
+# tasks file for jaredhocutt.homelab.server_setup
+
+- name: Install packages
+  ansible.builtin.dnf:
+    name: "{{ server_setup_packages }}"
+    state: present
+  become: true
+
+- name: Enable and start services
+  ansible.builtin.systemd:
+    name: "{{ item.name | default(item) if item is mapping else item }}"
+    state: "{{ item.state | default(omit) if item is mapping else 'started' }}"
+    enabled: "{{ item.enabled | default(omit) if item is mapping else true }}"
+  become: true
+  loop: "{{ server_setup_enabled_services }}"

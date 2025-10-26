@@ -1,0 +1,5 @@
+---
+# defaults file for jaredhocutt.homelab.server_setup
+
+server_setup_packages: []
+server_setup_enabled_services: []

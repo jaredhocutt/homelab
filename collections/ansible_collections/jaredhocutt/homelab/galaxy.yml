@@ -1,0 +1,10 @@
+---
+
+namespace: "jaredhocutt"
+name: "homelab"
+readme: README.md
+version: 0.0.1
+authors:
+  - Jared Hocutt <jaredhocutt@gmail.com>
+
+description: Collection for jaredhocutt.homelab playbook project
