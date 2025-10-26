@@ -1,0 +1,16 @@
+---
+# vars file for jaredhocutt.homelab.vault
+
+vault_uid: 100
+vault_gid: 1000
+
+vault_env_vars_base:
+  TZ: "America/New_York"
+
+vault_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target

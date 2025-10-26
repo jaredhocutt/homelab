@@ -1,0 +1,133 @@
+---
+# tasks file for jaredhocutt.homelab.vault
+
+- name: Install packages
+  ansible.builtin.dnf:
+    name:
+      - python3-cryptography
+    state: present
+  become: true
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ vault_image }}"
+      image_tag: "{{ vault_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ vault_name }}"
+    driver: bridge
+    disable_dns: false
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ vault_volume_config }}"
+      options: "{{ vault_volume_config_options | default(omit) }}"
+    - name: "{{ vault_volume_data }}"
+      options: "{{ vault_volume_data_options | default(omit) }}"
+    - name: "{{ vault_volume_logs }}"
+      options: "{{ vault_volume_logs_options | default(omit) }}"
+  register: _vault_created_volumes
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
+  when: _vault_created_volumes.changed  # noqa: no-handler
+
+- name: Start config volume service to create it
+  ansible.builtin.systemd:
+    name: "{{ vault_volume_config }}-volume.service"
+    state: started
+  become: true
+
+- name: Get config volume info
+  containers.podman.podman_volume_info:
+    name: "{{ vault_volume_config }}"
+  become: true
+  register: _vault_config_volume_info
+
+- name: Create certs directory
+  ansible.builtin.file:
+    path: "{{ _vault_config_volume_info.volumes[0].Mountpoint }}/certs"
+    state: directory
+    owner: "{{ vault_uid }}"
+    group: "{{ vault_gid }}"
+    mode: "0700"
+  become: true
+
+- name: Generate private key
+  community.crypto.openssl_privatekey:
+    path: "{{ _vault_config_volume_info.volumes[0].Mountpoint }}/certs/vault.key"
+    owner: "{{ vault_uid }}"
+    group: "{{ vault_gid }}"
+    mode: "0600"
+  become: true
+  notify: Restart {{ vault_name }}
+
+- name: Generate CSR
+  community.crypto.openssl_csr:
+    path: "{{ _vault_config_volume_info.volumes[0].Mountpoint }}/certs/vault.csr"
+    privatekey_path: "{{ _vault_config_volume_info.volumes[0].Mountpoint }}/certs/vault.key"
+    common_name: "{{ vault_tls_common_name | default('vault.local') }}"
+    subject_alt_name: "{{ vault_tls_subject_alt_names | default(['DNS:vault.local']) }}"
+    owner: "{{ vault_uid }}"
+    group: "{{ vault_gid }}"
+    mode: "0600"
+  become: true
+  notify: Restart {{ vault_name }}
+
+- name: Generate self-signed certificate
+  community.crypto.x509_certificate:
+    path: "{{ _vault_config_volume_info.volumes[0].Mountpoint }}/certs/vault.crt"
+    privatekey_path: "{{ _vault_config_volume_info.volumes[0].Mountpoint }}/certs/vault.key"
+    csr_path: "{{ _vault_config_volume_info.volumes[0].Mountpoint }}/certs/vault.csr"
+    provider: selfsigned
+    owner: "{{ vault_uid }}"
+    group: "{{ vault_gid }}"
+    mode: "0600"
+  become: true
+  notify: Restart {{ vault_name }}
+
+- name: Create default config file
+  ansible.builtin.copy:
+    src: config.json
+    dest: "{{ _vault_config_volume_info.volumes[0].Mountpoint }}/config.json"
+    owner: "{{ vault_uid }}"
+    group: "{{ vault_gid }}"
+    mode: "0600"
+  become: true
+  notify: Restart {{ vault_name }}
+
+- name: Create container
+  containers.podman.podman_container:
+    name: "{{ vault_name }}"
+    image: "{{ vault_image }}:{{ vault_image_tag }}"
+    network: "{{ vault_name }}.network"
+    env: "{{ vault_env_vars_base | combine(vault_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ vault_volume_config }}:/vault/config"
+      - "{{ vault_volume_data }}:/vault/file"
+      - "{{ vault_volume_logs }}:/vault/logs"
+    publish: "{{ vault_ports }}"
+    cap_add:
+      - IPC_LOCK
+    command: server
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ vault_quadlet_options_base + vault_quadlet_options }}"
+    state: quadlet
+  become: true
+  notify: Restart {{ vault_name }}

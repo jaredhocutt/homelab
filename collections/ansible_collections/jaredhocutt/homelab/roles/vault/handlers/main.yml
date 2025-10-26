@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.vault
+
+- name: Restart {{ vault_name }}
+  ansible.builtin.systemd:
+    name: "{{ vault_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

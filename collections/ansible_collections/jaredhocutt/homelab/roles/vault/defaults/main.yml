@@ -1,0 +1,18 @@
+---
+# defaults file for jaredhocutt.homelab.vault
+
+vault_name: vault
+vault_description: Vault
+
+vault_image: docker.io/hashicorp/vault
+vault_image_tag: latest
+
+vault_volume_config: "{{ vault_name }}-config"
+vault_volume_data: "{{ vault_name }}-data"
+vault_volume_logs: "{{ vault_name }}-logs"
+
+vault_ports:
+  - 8200:8200
+
+vault_env_vars: {}
+vault_quadlet_options: []
