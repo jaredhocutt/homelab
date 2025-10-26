@@ -1,0 +1,52 @@
+---
+# tasks file for jaredhocutt.homelab.audiobookshelf
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ audiobookshelf_image }}"
+      image_tag: "{{ audiobookshelf_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ audiobookshelf_name }}"
+    driver: bridge
+    disable_dns: false
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ audiobookshelf_volume_config }}"
+      options: "{{ audiobookshelf_volume_config_options | default(omit) }}"
+    - name: "{{ audiobookshelf_volume_metadata }}"
+      options: "{{ audiobookshelf_volume_metadata_options | default(omit) }}"
+    - name: "{{ audiobookshelf_volume_media }}"
+      options: "{{ audiobookshelf_volume_media_options | default(omit) }}"
+
+- name: Create container
+  containers.podman.podman_container:
+    name: "{{ audiobookshelf_name }}"
+    image: "{{ audiobookshelf_image }}:{{ audiobookshelf_image_tag }}"
+    network: "{{ audiobookshelf_name }}.network"
+    env: "{{ audiobookshelf_env_vars_base | combine(audiobookshelf_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ audiobookshelf_volume_config }}:/config"
+      - "{{ audiobookshelf_volume_metadata }}:/metadata"
+      - "{{ audiobookshelf_volume_media }}:/mnt/media"
+    publish: "{{ audiobookshelf_ports }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ audiobookshelf_quadlet_options_base + audiobookshelf_quadlet_options }}"
+    state: quadlet
+  notify: Restart {{ audiobookshelf_name }}
+  become: true

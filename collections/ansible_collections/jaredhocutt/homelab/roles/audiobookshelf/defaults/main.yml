@@ -1,0 +1,18 @@
+---
+# defaults file for jaredhocutt.homelab.audiobookshelf
+
+audiobookshelf_name: audiobookshelf
+audiobookshelf_description: Audiobookshelf
+
+audiobookshelf_image: ghcr.io/advplyr/audiobookshelf
+audiobookshelf_image_tag: latest
+
+audiobookshelf_volume_config: "{{ audiobookshelf_name }}-config"
+audiobookshelf_volume_metadata: "{{ audiobookshelf_name }}-metadata"
+audiobookshelf_volume_media: "{{ audiobookshelf_name }}-media"
+
+audiobookshelf_ports:
+  - 13378:80
+
+audiobookshelf_env_vars: {}
+audiobookshelf_quadlet_options: []
