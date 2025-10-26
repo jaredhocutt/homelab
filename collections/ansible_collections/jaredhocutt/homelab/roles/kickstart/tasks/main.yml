@@ -1,0 +1,10 @@
+---
+
+- name: Gather facts
+  ansible.builtin.setup: {}
+
+- name: Generate kickstart file
+  ansible.builtin.template:
+    src: ks.cfg.j2
+    dest: /tmp/ks.cfg
+    mode: "0644"

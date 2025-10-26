@@ -1,0 +1,10 @@
+---
+
+kickstart_hostname: fedora
+
+kickstart_network: []
+
+kickstart_storage_additional: []
+kickstart_storage_volume_groups: []
+
+kickstart_users: []
