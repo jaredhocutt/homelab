@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.uptime_kuma
+
+- name: Restart {{ uptime_kuma_name }}
+  ansible.builtin.systemd:
+    name: "{{ uptime_kuma_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
