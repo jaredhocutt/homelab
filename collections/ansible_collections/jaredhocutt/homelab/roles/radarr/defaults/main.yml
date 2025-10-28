@@ -1,0 +1,17 @@
+---
+# defaults file for jaredhocutt.homelab.radarr
+
+radarr_name: radarr
+
+radarr_image: lscr.io/linuxserver/radarr
+radarr_image_tag: latest
+
+radarr_volume_config: "{{ radarr_name }}-config"
+radarr_volume_download: "{{ radarr_name }}-download"
+radarr_volume_media: "{{ radarr_name }}-media"
+
+radarr_ports:
+  - 7878:7878
+
+radarr_env_vars: {}
+radarr_quadlet_options: []

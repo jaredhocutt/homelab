@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.radarr
+
+- name: Restart {{ radarr_name }}
+  ansible.builtin.systemd:
+    name: "{{ radarr_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

@@ -1,0 +1,52 @@
+---
+# tasks file for jaredhocutt.homelab.radarr
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ radarr_image }}"
+      image_tag: "{{ radarr_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ radarr_name }}"
+    driver: bridge
+    disable_dns: false
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ radarr_volume_config }}"
+      options: "{{ radarr_volume_config_options | default(omit) }}"
+    - name: "{{ radarr_volume_download }}"
+      options: "{{ radarr_volume_download_options | default(omit) }}"
+    - name: "{{ radarr_volume_media }}"
+      options: "{{ radarr_volume_media_options | default(omit) }}"
+
+- name: Create container
+  containers.podman.podman_container:
+    name: "{{ radarr_name }}"
+    image: "{{ radarr_image }}:{{ radarr_image_tag }}"
+    network: "{{ radarr_name }}.network"
+    env: "{{ radarr_env_vars_base | combine(radarr_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ radarr_volume_config }}:/config"
+      - "{{ radarr_volume_metadata }}:/mnt/download"
+      - "{{ radarr_volume_media }}:/mnt/media"
+    publish: "{{ radarr_ports }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ radarr_quadlet_options_base + radarr_quadlet_options }}"
+    state: quadlet
+  notify: Restart {{ radarr_name }}
+  become: true
