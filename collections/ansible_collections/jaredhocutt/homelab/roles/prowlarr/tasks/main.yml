@@ -1,0 +1,46 @@
+---
+# tasks file for jaredhocutt.homelab.prowlarr
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ prowlarr_image }}"
+      image_tag: "{{ prowlarr_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ prowlarr_name }}"
+    driver: bridge
+    disable_dns: false
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ prowlarr_volume_config }}"
+      options: "{{ prowlarr_volume_config_options | default(omit) }}"
+
+- name: Create container
+  containers.podman.podman_container:
+    name: "{{ prowlarr_name }}"
+    image: "{{ prowlarr_image }}:{{ prowlarr_image_tag }}"
+    network: "{{ prowlarr_name }}.network"
+    env: "{{ prowlarr_env_vars_base | combine(prowlarr_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ prowlarr_volume_config }}:/config"
+    publish: "{{ prowlarr_ports }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ prowlarr_quadlet_options_base + prowlarr_quadlet_options }}"
+    state: quadlet
+  notify: Restart {{ prowlarr_name }}
+  become: true

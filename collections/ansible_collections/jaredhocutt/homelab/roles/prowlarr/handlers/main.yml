@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.prowlarr
+
+- name: Restart {{ prowlarr_name }}
+  ansible.builtin.systemd:
+    name: "{{ prowlarr_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
