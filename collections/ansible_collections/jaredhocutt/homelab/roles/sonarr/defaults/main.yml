@@ -1,0 +1,17 @@
+---
+# defaults file for jaredhocutt.homelab.sonarr
+
+sonarr_name: sonarr
+
+sonarr_image: lscr.io/linuxserver/sonarr
+sonarr_image_tag: latest
+
+sonarr_volume_config: "{{ sonarr_name }}-config"
+sonarr_volume_download: "{{ sonarr_name }}-download"
+sonarr_volume_media: "{{ sonarr_name }}-media"
+
+sonarr_ports:
+  - 8989:8989
+
+sonarr_env_vars: {}
+sonarr_quadlet_options: []
