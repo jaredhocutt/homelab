@@ -1,0 +1,17 @@
+---
+# defaults file for jaredhocutt.homelab.calibre
+
+calibre_name: calibre
+
+calibre_image: lscr.io/linuxserver/calibre
+calibre_image_tag: latest
+
+calibre_volume_config: "{{ calibre_name }}-config"
+calibre_volume_media: "{{ calibre_name }}-media"
+
+calibre_ports:
+  - 8080:8080
+  - 8081:8081
+
+calibre_env_vars: {}
+calibre_quadlet_options: []

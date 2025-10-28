@@ -1,0 +1,49 @@
+---
+# tasks file for jaredhocutt.homelab.calibre
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ calibre_image }}"
+      image_tag: "{{ calibre_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ calibre_name }}"
+    driver: bridge
+    disable_dns: false
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ calibre_volume_config }}"
+      options: "{{ calibre_volume_config_options | default(omit) }}"
+    - name: "{{ calibre_volume_media }}"
+      options: "{{ calibre_volume_media_options | default(omit) }}"
+
+- name: Create container
+  containers.podman.podman_container:
+    name: "{{ calibre_name }}"
+    image: "{{ calibre_image }}:{{ calibre_image_tag }}"
+    network: "{{ calibre_name }}.network"
+    env: "{{ calibre_env_vars_base | combine(calibre_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ calibre_volume_config }}:/config"
+      - "{{ calibre_volume_media }}:/mnt/media"
+    publish: "{{ calibre_ports }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ calibre_quadlet_options_base + calibre_quadlet_options }}"
+    state: quadlet
+  notify: Restart {{ calibre_name }}
+  become: true

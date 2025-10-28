@@ -1,0 +1,13 @@
+---
+# vars file for jaredhocutt.homelab.calibre
+
+calibre_env_vars_base:
+  TZ: "America/New_York"
+
+calibre_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target
