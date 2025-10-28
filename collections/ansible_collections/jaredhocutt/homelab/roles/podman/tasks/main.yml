@@ -10,6 +10,15 @@
     state: present
   become: true
 
+- name: Enable and start podman socket
+  ansible.builtin.systemd:
+    name: podman.socket
+    state: started
+    enabled: true
+    daemon_reload: true
+  become: true
+  when: podman_enable_socket
+
 - name: Install podman firewalld reload
   ansible.builtin.copy:
     src: podman-firewalld-reload.sh
