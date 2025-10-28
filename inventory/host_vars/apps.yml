@@ -61,7 +61,7 @@ healthchecks_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthche
 healthchecks_env_vars:
   - DEFAULT_FROM_EMAIL="{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_from_email) }}"
   - EMAIL_HOST="{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email_host) }}"
-  - EMAIL_PORT="{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthcheck_email_port) }}"
+  - EMAIL_PORT="{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email_port) }}"
   - EMAIL_HOST_USER="{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email_user) }}"
   - EMAIL_HOST_PASSWORD="{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email_password) }}"
   - EMAIL_USE_TLS=True
@@ -291,9 +291,9 @@ kickstart_users:
     gid: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_gid) }}"
     password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_password_crypted) }}"
     authorized_keys:
-      - "{{ lookup('bitwarden.secrets.lookup', bws_uuid['ssh_authorized_keys_1']) }}"
-      - "{{ lookup('bitwarden.secrets.lookup', bws_uuid['ssh_authorized_keys_2']) }}"
-      - "{{ lookup('bitwarden.secrets.lookup', bws_uuid['ssh_authorized_keys_3']) }}"
+      - "{{ lookup('bitwarden.secrets.lookup', bws_uuid['ssh_authorized_key_1']) }}"
+      - "{{ lookup('bitwarden.secrets.lookup', bws_uuid['ssh_authorized_key_2']) }}"
+      - "{{ lookup('bitwarden.secrets.lookup', bws_uuid['ssh_authorized_key_3']) }}"
   - fullname: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_fullname) }}"
     username: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_username) }}"
     groups: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_groups) }}"
@@ -303,4 +303,4 @@ kickstart_users:
       {{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_username) }} ALL=(ALL) NOPASSWD: ALL
       Defaults:{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_username) }} !requiretty
     authorized_keys:
-      - "{{ lookup('bitwarden.secrets.lookup', bws_uuid.ssh_authorized_keys_4) }}"
+      - "{{ lookup('bitwarden.secrets.lookup', bws_uuid.ssh_authorized_key_4) }}"
