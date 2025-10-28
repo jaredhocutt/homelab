@@ -1,0 +1,33 @@
+---
+# vars file for jaredhocutt.homelab.changedetection
+
+changedetection_env_vars_base:
+  TZ: "America/New_York"
+  PLAYWRIGHT_DRIVER_URL: "ws://{{ changedetection_name }}-browser:3000"
+
+changedetection_browser_env_vars_base:
+  TZ: "America/New_York"
+  SCREEN_WIDTH: "1920"
+  SCREEN_HEIGHT: "1024"
+  SCREEN_DEPTH: "16"
+  MAX_CONCURRENT_CHROME_PROCESSES: "10"
+
+changedetection_quadlet_options_base:
+  - |
+    [Unit]
+    Requires={{ changedetection_name }}-browser.service
+    After={{ changedetection_name }}-browser.service
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target
+
+changedetection_browser_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target

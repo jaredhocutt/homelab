@@ -1,0 +1,18 @@
+---
+# handlers file for jaredhocutt.homelab.changedetection
+
+- name: Restart {{ changedetection_name }}
+  ansible.builtin.systemd:
+    name: "{{ changedetection_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart browser for {{ changedetection_name }}
+  ansible.builtin.systemd:
+    name: "{{ changedetection_name }}-browser.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

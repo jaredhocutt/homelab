@@ -1,0 +1,19 @@
+---
+# defaults file for jaredhocutt.homelab.changedetection
+
+changedetection_name: changedetection
+
+changedetection_image: ghcr.io/dgtlmoon/changedetection.io
+changedetection_image_tag: latest
+changedetection_browser_image: docker.io/dgtlmoon/sockpuppetbrowser
+changedetection_browser_image_tag: latest
+
+changedetection_volume_data: "{{ changedetection_name }}-data"
+
+changedetection_ports:
+  - 5000:5000
+
+changedetection_env_vars: {}
+changedetection_browser_env_vars: {}
+changedetection_quadlet_options: []
+changedetection_browser_quadlet_options: []

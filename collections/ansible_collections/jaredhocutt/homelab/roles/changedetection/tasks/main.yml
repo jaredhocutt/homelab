@@ -1,0 +1,67 @@
+---
+# tasks file for jaredhocutt.homelab.changedetection
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ changedetection_image }}"
+      image_tag: "{{ changedetection_image_tag }}"
+    - image: "{{ changedetection_browser_image }}"
+      image_tag: "{{ changedetection_browser_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ changedetection_name }}"
+    driver: bridge
+    disable_dns: false
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ changedetection_volume_data }}"
+      options: "{{ changedetection_volume_data_options | default(omit) }}"
+
+- name: Create browser container
+  containers.podman.podman_container:
+    name: "{{ changedetection_name }}-browser"
+    image: "{{ changedetection_browser_image }}:{{ changedetection_browser_image_tag }}"
+    network: "{{ changedetection_name }}.network"
+    env: "{{ changedetection_browser_env_vars_base | combine(changedetection_browser_env_vars, recursive=True) }}"
+    # healthcheck_interval: 30s
+    # healthcheck_retries: 5
+    # healthcheck_start_period: 20s
+    # healthcheck_timeout: 5s
+    # healthcheck: CMD-SHELL pg_isready -d {{ changedetection_browser_db_name }} -U {{ changedetection_browser_user }}
+    cap_add:
+      - SYS_ADMIN
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ changedetection_browser_quadlet_options_base + changedetection_browser_quadlet_options }}"
+    state: quadlet
+  notify: Restart browser for {{ changedetection_name }}
+  become: true
+
+- name: Create changedetection container
+  containers.podman.podman_container:
+    name: "{{ changedetection_name }}"
+    image: "{{ changedetection_image }}:{{ changedetection_image_tag }}"
+    network: "{{ changedetection_name }}.network"
+    env: "{{ changedetection_env_vars_base | combine(changedetection_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ changedetection_volume_data }}.volume:/datastore"
+    publish: "{{ changedetection_ports }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ changedetection_quadlet_options_base + changedetection_quadlet_options }}"
+    state: quadlet
+  notify: Restart {{ changedetection_name }}
+  become: true
