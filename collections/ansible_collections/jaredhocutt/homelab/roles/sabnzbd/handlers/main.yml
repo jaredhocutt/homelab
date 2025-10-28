@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.sabnzbd
+
+- name: Restart {{ sabnzbd_name }}
+  ansible.builtin.systemd:
+    name: "{{ sabnzbd_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

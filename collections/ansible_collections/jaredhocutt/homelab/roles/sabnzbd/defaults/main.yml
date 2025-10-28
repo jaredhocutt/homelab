@@ -1,0 +1,16 @@
+---
+# defaults file for jaredhocutt.homelab.sabnzbd
+
+sabnzbd_name: sabnzbd
+
+sabnzbd_image: lscr.io/linuxserver/sabnzbd
+sabnzbd_image_tag: latest
+
+sabnzbd_volume_config: "{{ sabnzbd_name }}-config"
+sabnzbd_volume_download: "{{ sabnzbd_name }}-download"
+
+sabnzbd_ports:
+  - 8080:8080
+
+sabnzbd_env_vars: {}
+sabnzbd_quadlet_options: []

@@ -1,0 +1,49 @@
+---
+# tasks file for jaredhocutt.homelab.sabnzbd
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ sabnzbd_image }}"
+      image_tag: "{{ sabnzbd_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ sabnzbd_name }}"
+    driver: bridge
+    disable_dns: false
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ sabnzbd_volume_config }}"
+      options: "{{ sabnzbd_volume_config_options | default(omit) }}"
+    - name: "{{ sabnzbd_volume_download }}"
+      options: "{{ sabnzbd_volume_download_options | default(omit) }}"
+
+- name: Create container
+  containers.podman.podman_container:
+    name: "{{ sabnzbd_name }}"
+    image: "{{ sabnzbd_image }}:{{ sabnzbd_image_tag }}"
+    network: "{{ sabnzbd_name }}.network"
+    env: "{{ sabnzbd_env_vars_base | combine(sabnzbd_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ sabnzbd_volume_config }}:/config"
+      - "{{ sabnzbd_volume_metadata }}:/mnt/download"
+    publish: "{{ sabnzbd_ports }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ sabnzbd_quadlet_options_base + sabnzbd_quadlet_options }}"
+    state: quadlet
+  notify: Restart {{ sabnzbd_name }}
+  become: true
