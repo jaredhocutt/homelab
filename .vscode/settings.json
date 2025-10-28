@@ -1,0 +1,9 @@
+{
+  "files.exclude": {
+    "**/collections/ansible_collections/ansible*": true,
+    "**/collections/ansible_collections/bitwarden*": true,
+    "**/collections/ansible_collections/community*": true,
+    "**/collections/ansible_collections/containers*": true,
+    "**/collections/ansible_collections/pfsensible*": true,
+  }
+}
