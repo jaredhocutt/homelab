@@ -1,0 +1,15 @@
+---
+# defaults file for jaredhocutt.homelab.portainer
+
+portainer_name: portainer
+
+portainer_image: docker.io/portainer/portainer-ee
+portainer_image_tag: lts
+
+portainer_volume_data: "{{ portainer_name }}-data"
+
+portainer_ports:
+  - 9443:9443
+
+portainer_env_vars: {}
+portainer_quadlet_options: []

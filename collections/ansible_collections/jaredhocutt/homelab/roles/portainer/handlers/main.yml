@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.portainer
+
+- name: Restart {{ portainer_name }}
+  ansible.builtin.systemd:
+    name: "{{ portainer_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

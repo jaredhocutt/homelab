@@ -1,0 +1,13 @@
+---
+# vars file for jaredhocutt.homelab.portainer
+
+portainer_env_vars_base:
+  TZ: "America/New_York"
+
+portainer_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target

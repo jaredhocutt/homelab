@@ -1,0 +1,11 @@
+galaxy_info:
+  author: Jared Hocutt
+  description: portainer
+  license: MIT
+
+  min_ansible_version: "2.14"
+
+dependencies:
+  - role: jaredhocutt.homelab.podman
+    vars:
+      podman_enable_socket: true

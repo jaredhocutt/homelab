@@ -1,0 +1,48 @@
+---
+# tasks file for jaredhocutt.homelab.portainer
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ portainer_image }}"
+      image_tag: "{{ portainer_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ portainer_name }}"
+    driver: bridge
+    disable_dns: false
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ portainer_volume_data }}"
+      options: "{{ portainer_volume_data_options | default(omit) }}"
+
+- name: Create container
+  containers.podman.podman_container:
+    name: "{{ portainer_name }}"
+    image: "{{ portainer_image }}:{{ portainer_image_tag }}"
+    network: "{{ portainer_name }}.network"
+    env: "{{ portainer_env_vars_base | combine(portainer_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ portainer_volume_config }}:/data"
+      - /var/run/podman.sock:/var/run/docker.sock
+    publish: "{{ portainer_ports }}"
+    privileged: true
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ portainer_quadlet_options_base + portainer_quadlet_options }}"
+    state: quadlet
+  notify: Restart {{ portainer_name }}
+  become: true
