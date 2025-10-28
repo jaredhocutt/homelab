@@ -1,0 +1,64 @@
+---
+# vars file for jaredhocutt.homelab.immich
+
+immich_postgres_db_name: immich
+immich_postgres_user: immich
+
+immich_env_vars_base:
+  TZ: "America/New_York"
+  DB_HOSTNAME: "{{ immich_name }}-postgres"
+  DB_DATABASE_NAME: "{{ immich_postgres_db_name }}"
+  DB_USERNAME: "{{ immich_postgres_user }}"
+  DB_PASSWORD: "{{ immich_postgres_password }}"
+  REDIS_HOSTNAME: "{{ immich_name }}-redis"
+
+immich_machine_learning_env_vars_base:
+  TZ: "America/New_York"
+
+immich_postgres_env_vars_base:
+  TZ: "America/New_York"
+  POSTGRES_DB: "{{ immich_postgres_db_name }}"
+  POSTGRES_USER: "{{ immich_postgres_user }}"
+  POSTGRES_PASSWORD: "{{ immich_postgres_password }}"
+  POSTGRES_INITDB_ARGS: --data-checksums
+
+immich_redis_env_vars_base:
+  TZ: "America/New_York"
+
+immich_quadlet_options_base:
+  - |
+    [Unit]
+    Requires={{ immich_name }}-postgres.service
+    Requires={{ immich_name }}-redis.service
+    After={{ immich_name }}-postgres.service
+    After={{ immich_name }}-redis.service
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target
+
+immich_machine_learning_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target
+
+immich_postgres_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target
+
+immich_redis_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target

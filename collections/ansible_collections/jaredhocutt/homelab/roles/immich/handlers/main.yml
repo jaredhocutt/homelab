@@ -1,0 +1,34 @@
+---
+# handlers file for jaredhocutt.homelab.immich
+
+- name: Restart server for {{ immich_name }}
+  ansible.builtin.systemd:
+    name: "{{ immich_name }}-server.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart worker for {{ immich_name }}
+  ansible.builtin.systemd:
+    name: "{{ immich_name }}-worker.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart postgres for {{ immich_name }}
+  ansible.builtin.systemd:
+    name: "{{ immich_name }}-postgres.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart redis for {{ immich_name }}
+  ansible.builtin.systemd:
+    name: "{{ immich_name }}-redis.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

@@ -1,0 +1,30 @@
+---
+# defaults file for jaredhocutt.homelab.immich
+
+immich_name: immich
+
+immich_image: ghcr.io/immich-app/immich-server
+immich_image_tag: release
+immich_machine_learning_image: ghcr.io/immich-app/immich-machine-learning
+immich_machine_learning_image_tag: release
+immich_postgres_image: ghcr.io/immich-app/postgres
+immich_postgres_image_tag: 14-vectorchord0.4.3-pgvectors0.2.0
+immich_redis_image: docker.io/valkey/valkey:8-bookworm
+immich_redis_image_tag: 8-bookworm
+
+immich_volume_data: "{{ immich_name }}-data"
+immich_machine_learning_volume_cache: "{{ immich_name }}-machine-learning-cache"
+immich_postgres_volume_data: "{{ immich_name }}-postgres-data"
+immich_redis_volume_data: "{{ immich_name }}-redis-data"
+
+immich_ports:
+  - 2283:2283
+
+immich_env_vars: {}
+immich_machine_learning_env_vars: {}
+immich_postgres_env_vars: {}
+immich_redis_env_vars: {}
+immich_quadlet_options: []
+immich_machine_learning_quadlet_options: []
+immich_postgres_quadlet_options: []
+immich_redis_quadlet_options: []
