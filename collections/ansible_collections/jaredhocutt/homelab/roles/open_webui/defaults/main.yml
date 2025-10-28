@@ -1,0 +1,15 @@
+---
+# defaults file for jaredhocutt.homelab.open_webui
+
+open_webui_name: open-webui
+
+open_webui_image: ghcr.io/open-webui/open-webui
+open_webui_image_tag: main
+
+open_webui_volume_data: "{{ open_webui_name }}-data"
+
+open_webui_ports:
+  - 3000:8080
+
+open_webui_env_vars: {}
+open_webui_quadlet_options: []

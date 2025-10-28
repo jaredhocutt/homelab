@@ -1,0 +1,46 @@
+---
+# tasks file for jaredhocutt.homelab.open_webui
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ open_webui_image }}"
+      image_tag: "{{ open_webui_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ open_webui_name }}"
+    driver: bridge
+    disable_dns: false
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ open_webui_volume_data }}"
+      options: "{{ open_webui_volume_data_options | default(omit) }}"
+
+- name: Create container
+  containers.podman.podman_container:
+    name: "{{ open_webui_name }}"
+    image: "{{ open_webui_image }}:{{ open_webui_image_tag }}"
+    network: "{{ open_webui_name }}.network"
+    env: "{{ open_webui_env_vars_base | combine(open_webui_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ open_webui_volume_data }}:/app/backend/data"
+    publish: "{{ open_webui_ports }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ open_webui_quadlet_options_base + open_webui_quadlet_options }}"
+    state: quadlet
+  notify: Restart {{ open_webui_name }}
+  become: true

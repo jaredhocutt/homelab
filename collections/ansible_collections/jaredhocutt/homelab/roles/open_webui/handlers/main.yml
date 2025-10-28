@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.open_webui
+
+- name: Restart {{ open_webui_name }}
+  ansible.builtin.systemd:
+    name: "{{ open_webui_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

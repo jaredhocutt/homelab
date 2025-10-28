@@ -1,0 +1,13 @@
+---
+# vars file for jaredhocutt.homelab.open_webui
+
+open_webui_env_vars_base:
+  TZ: "America/New_York"
+
+open_webui_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target
