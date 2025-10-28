@@ -1,0 +1,96 @@
+---
+# vars file for jaredhocutt.homelab.paperless
+
+paperless_postgres_db_name: paperless
+paperless_postgres_user: paperless
+
+paperless_env_vars_base:
+  TZ: "America/New_York"
+  PAPERLESS_DBENGINE: postgresql
+  PAPERLESS_DBHOST: "{{ paperless_name }}-postgres"
+  PAPERLESS_DBNAME: "{{ paperless_postgres_db_name }}"
+  PAPERLESS_DBUSER: "{{ paperless_postgres_user }}"
+  PAPERLESS_DBPASS: "{{ paperless_postgres_password }}"
+  PAPERLESS_REDIS: redis://{{ paperless_name }}-redis:6379
+  PAPERLESS_TIKA_ENABLED: 1
+  PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://{{ paperless_name }}-gotenberg:3000
+  PAPERLESS_TIKA_ENDPOINT: http://{{ paperless_name }}-tika:9998
+  PAPERLESS_URL: "{{ paperless_url }}"
+  PAPERLESS_DATE_ORDER: MDY
+  PAPERLESS_CONSUMER_POLLING: 30
+  PAPERLESS_TASK_WORKERS: "{{ paperless_task_workers }}"
+
+paperless_postgres_env_vars_base:
+  POSTGRES_DB: "{{ paperless_postgres_db_name }}"
+  POSTGRES_USER: "{{ paperless_postgres_user }}"
+  POSTGRES_PASSWORD: "{{ paperless_postgres_password }}"
+
+paperless_redis_env_vars_base:
+  TZ: "America/New_York"
+
+paperless_gotenberg_env_vars_base:
+  TZ: "America/New_York"
+
+paperless_tika_env_vars_base:
+  TZ: "America/New_York"
+
+paperless_ai_env_vars_base:
+  TZ: "America/New_York"
+
+paperless_quadlet_options_base:
+  - |
+    [Unit]
+    Requires={{ paperless_name }}-postgres.service
+    Requires={{ paperless_name }}-redis.service
+    Requires={{ paperless_name }}-gotenberg.service
+    Requires={{ paperless_name }}-tika.service
+    After={{ paperless_name }}-postgres.service
+    After={{ paperless_name }}-redis.service
+    After={{ paperless_name }}-gotenberg.service
+    After={{ paperless_name }}-tika.service
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target
+
+paperless_postgres_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target
+
+paperless_redis_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target
+
+paperless_gotenberg_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target
+
+paperless_tika_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target
+
+paperless_ai_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target

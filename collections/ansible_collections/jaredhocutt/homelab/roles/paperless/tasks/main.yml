@@ -1,0 +1,154 @@
+---
+# tasks file for jaredhocutt.homelab.paperless
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ paperless_image }}"
+      image_tag: "{{ paperless_image_tag }}"
+    - image: "{{ paperless_postgres_image }}"
+      image_tag: "{{ paperless_postgres_image_tag }}"
+    - image: "{{ paperless_redis_image }}"
+      image_tag: "{{ paperless_redis_image_tag }}"
+    - image: "{{ paperless_gotenberg_image }}"
+      image_tag: "{{ paperless_gotenberg_image_tag }}"
+    - image: "{{ paperless_tika_image }}"
+      image_tag: "{{ paperless_tika_image_tag }}"
+    - image: "{{ paperless_ai_image }}"
+      image_tag: "{{ paperless_ai_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ paperless_name }}"
+    driver: bridge
+    disable_dns: false
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ paperless_volume_data }}"
+      options: "{{ paperless_volume_data_options | default(omit) }}"
+    - name: "{{ paperless_volume_media }}"
+      options: "{{ paperless_volume_media_options | default(omit) }}"
+    - name: "{{ paperless_volume_export }}"
+      options: "{{ paperless_volume_export_options | default(omit) }}"
+    - name: "{{ paperless_volume_consume }}"
+      options: "{{ paperless_volume_consume_options | default(omit) }}"
+    - name: "{{ paperless_postgres_volume_data }}"
+      options: "{{ paperless_postgres_volume_data_options | default(omit) }}"
+    - name: "{{ paperless_redis_volume_data }}"
+      options: "{{ paperless_redis_volume_data_options | default(omit) }}"
+    - name: "{{ paperless_ai_volume_data }}"
+      options: "{{ paperless_ai_volume_data_options | default(omit) }}"
+
+- name: Create postgres container
+  containers.podman.podman_container:
+    name: "{{ paperless_name }}-postgres"
+    image: "{{ paperless_postgres_image }}:{{ paperless_postgres_image_tag }}"
+    network: "{{ paperless_name }}.network"
+    env: "{{ paperless_postgres_env_vars_base | combine(paperless_postgres_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ paperless_postgres_volume_data }}.volume:/var/lib/postgresql/data"
+    healthcheck_interval: 30s
+    healthcheck_retries: 5
+    healthcheck_start_period: 20s
+    healthcheck_timeout: 5s
+    healthcheck: CMD-SHELL pg_isready -d {{ paperless_postgres_db_name }} -U {{ paperless_postgres_user }}
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ paperless_postgres_quadlet_options_base + paperless_postgres_quadlet_options }}"
+    state: quadlet
+  notify: Restart postgres for {{ paperless_name }}
+  become: true
+
+- name: Create redis container
+  containers.podman.podman_container:
+    name: "{{ paperless_name }}-redis"
+    image: "{{ paperless_redis_image }}:{{ paperless_redis_image_tag }}"
+    network: "{{ paperless_name }}.network"
+    env: "{{ paperless_redis_env_vars_base | combine(paperless_redis_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ paperless_redis_volume_data }}.volume:/data"
+    healthcheck_interval: 30s
+    healthcheck_retries: 5
+    healthcheck_start_period: 20s
+    healthcheck_timeout: 3s
+    healthcheck: CMD-SHELL redis-cli ping | grep PONG
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ paperless_redis_quadlet_options_base + paperless_redis_quadlet_options }}"
+    state: quadlet
+  notify: Restart redis for {{ paperless_name }}
+  become: true
+
+- name: Create gotenberg container
+  containers.podman.podman_container:
+    name: "{{ paperless_name }}-gotenberg"
+    image: "{{ paperless_gotenberg_image }}:{{ paperless_gotenberg_image_tag }}"
+    network: "{{ paperless_name }}.network"
+    env: "{{ paperless_gotenberg_env_vars_base | combine(paperless_gotenberg_env_vars, recursive=True) }}"
+    command: gotenberg --chromium-disable-javascript=true --chromium-allow-list='file:///tmp/.*'
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ paperless_gotenberg_quadlet_options_base + paperless_gotenberg_quadlet_options }}"
+    state: quadlet
+  notify: Restart gotenberg for {{ paperless_name }}
+  become: true
+
+- name: Create tika container
+  containers.podman.podman_container:
+    name: "{{ paperless_name }}-tika"
+    image: "{{ paperless_tika_image }}:{{ paperless_tika_image_tag }}"
+    network: "{{ paperless_name }}.network"
+    env: "{{ paperless_tika_env_vars_base | combine(paperless_tika_env_vars, recursive=True) }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ paperless_tika_quadlet_options_base + paperless_tika_quadlet_options }}"
+    state: quadlet
+  notify: Restart tika for {{ paperless_name }}
+  become: true
+
+- name: Create paperless container
+  containers.podman.podman_container:
+    name: "{{ paperless_name }}"
+    image: "{{ paperless_image }}:{{ paperless_image_tag }}"
+    network: "{{ paperless_name }}.network"
+    env: "{{ paperless_env_vars_base | combine(paperless_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ paperless_volume_data }}.volume:/usr/src/paperless/data"
+      - "{{ paperless_volume_media }}.volume:/usr/src/paperless/media"
+      - "{{ paperless_volume_export }}.volume:/usr/src/paperless/export"
+      - "{{ paperless_volume_consume }}.volume:/usr/src/paperless/consume"
+    publish: "{{ paperless_ports }}"
+    healthcheck_interval: 30s
+    healthcheck_retries: 5
+    healthcheck_start_period: 20s
+    healthcheck_timeout: 10s
+    healthcheck: CMD-SHELL /usr/bin/curl -fs -S --max-time 2 http://localhost:8000
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ paperless_quadlet_options_base + paperless_quadlet_options }}"
+    state: quadlet
+  notify: Restart {{ paperless_name }}
+  become: true
+
+- name: Create ai container
+  containers.podman.podman_container:
+    name: "{{ paperless_name }}-ai"
+    image: "{{ paperless_ai_image }}:{{ paperless_ai_image_tag }}"
+    network: "{{ paperless_name }}.network"
+    env: "{{ paperless_ai_env_vars_base | combine(paperless_ai_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ paperless_ai_volume_data }}.volume:/app/data"
+    publish: "{{ paperless_ai_ports }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ paperless_ai_quadlet_options_base + paperless_ai_quadlet_options }}"
+    state: quadlet
+  notify: Restart ai for {{ paperless_name }}
+  become: true

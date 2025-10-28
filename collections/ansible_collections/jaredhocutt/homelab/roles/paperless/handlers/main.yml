@@ -1,0 +1,50 @@
+---
+# handlers file for jaredhocutt.homelab.paperless
+
+- name: Restart {{ paperless_name }}
+  ansible.builtin.systemd:
+    name: "{{ paperless_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart postgres for {{ paperless_name }}
+  ansible.builtin.systemd:
+    name: "{{ paperless_name }}-postgres.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart redis for {{ paperless_name }}
+  ansible.builtin.systemd:
+    name: "{{ paperless_name }}-redis.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart gotenberg for {{ paperless_name }}
+  ansible.builtin.systemd:
+    name: "{{ paperless_name }}-gotenberg.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart tika for {{ paperless_name }}
+  ansible.builtin.systemd:
+    name: "{{ paperless_name }}-tika.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart ai for {{ paperless_name }}
+  ansible.builtin.systemd:
+    name: "{{ paperless_name }}-ai.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
