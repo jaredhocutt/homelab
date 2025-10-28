@@ -7,10 +7,11 @@ authors = [
 ]
 license = {text = "MIT"}
 readme = "README.md"
-requires-python = ">=3.13,<3.14"
+requires-python = ">=3.12,<3.13"
 dependencies = [
     "ansible-dev-tools (>=25.8,<25.9)",
-    "jmespath (>=1.0.1,<2.0.0)"
+    "jmespath (>=1.0.1,<2.0.0)",
+    "bitwarden-sdk (>=1.0.0,<2.0.0)"
 ]
 
 [tool.poetry]
