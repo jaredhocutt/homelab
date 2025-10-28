@@ -90,6 +90,7 @@
       - "{{ authentik_volume_media }}.volume:/media"
       - "{{ authentik_volume_templates }}.volume:/templates"
     publish: "{{ authentik_ports }}"
+    command: server
     quadlet_file_mode: "0600"
     quadlet_options: "{{ authentik_quadlet_options_base + authentik_quadlet_options }}"
     state: quadlet
@@ -106,6 +107,7 @@
       - "{{ authentik_volume_media }}.volume:/media"
       - "{{ authentik_volume_certs }}.volume:/certs"
       - "{{ authentik_volume_templates }}.volume:/templates"
+    command: worker
     quadlet_file_mode: "0600"
     quadlet_options: "{{ authentik_quadlet_options_base + authentik_quadlet_options }}"
     state: quadlet
