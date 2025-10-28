@@ -1,0 +1,15 @@
+---
+# defaults file for jaredhocutt.homelab.tautulli
+
+tautulli_name: tautulli
+
+tautulli_image: lscr.io/linuxserver/tautulli
+tautulli_image_tag: latest
+
+tautulli_volume_config: "{{ tautulli_name }}-config"
+
+tautulli_ports:
+  - 8181:8181
+
+tautulli_env_vars: {}
+tautulli_quadlet_options: []

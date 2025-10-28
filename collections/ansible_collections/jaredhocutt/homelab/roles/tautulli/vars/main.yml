@@ -1,0 +1,13 @@
+---
+# vars file for jaredhocutt.homelab.tautulli
+
+tautulli_env_vars_base:
+  TZ: "America/New_York"
+
+tautulli_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target

@@ -1,0 +1,46 @@
+---
+# tasks file for jaredhocutt.homelab.tautulli
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ tautulli_image }}"
+      image_tag: "{{ tautulli_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ tautulli_name }}"
+    driver: bridge
+    disable_dns: false
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ tautulli_volume_config }}"
+      options: "{{ tautulli_volume_config_options | default(omit) }}"
+
+- name: Create container
+  containers.podman.podman_container:
+    name: "{{ tautulli_name }}"
+    image: "{{ tautulli_image }}:{{ tautulli_image_tag }}"
+    network: "{{ tautulli_name }}.network"
+    env: "{{ tautulli_env_vars_base | combine(tautulli_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ tautulli_volume_config }}:/config"
+    publish: "{{ tautulli_ports }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ tautulli_quadlet_options_base + tautulli_quadlet_options }}"
+    state: quadlet
+  notify: Restart {{ tautulli_name }}
+  become: true
