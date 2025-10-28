@@ -43,6 +43,11 @@
         name: jaredhocutt.homelab.calibre
       tags: [calibre]
 
+    - name: Install changedetection
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.changedetection
+      tags: [changedetection]
+
     - name: Install healthchecks
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.healthchecks
