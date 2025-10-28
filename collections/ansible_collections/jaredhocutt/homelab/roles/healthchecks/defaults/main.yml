@@ -1,0 +1,17 @@
+---
+# defaults file for jaredhocutt.homelab.healthchecks
+
+healthchecks_name: healthchecks
+
+healthchecks_image: lscr.io/linuxserver/healthchecks
+healthchecks_image_tag: latest
+
+healthchecks_volume_config: "{{ healthchecks_name }}-config"
+
+healthchecks_ports:
+  - 8000:8000
+
+healthchecks_env_vars: {}
+healthchecks_quadlet_options: []
+
+healthchecks_site_name: Healthchecks

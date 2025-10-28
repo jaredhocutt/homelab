@@ -1,0 +1,17 @@
+---
+# vars file for jaredhocutt.homelab.healthchecks
+
+healthchecks_env_vars_base:
+  TZ: "America/New_York"
+  SITE_ROOT: "{{ healthchecks_url }}"
+  SITE_NAME: "{{ healthchecks_site_name }}"
+  SUPERUSER_EMAIL: "{{ healthchecks_email }}"
+  SUPERUSER_PASSWORD: "{{ healthchecks_password }}"
+
+healthchecks_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target

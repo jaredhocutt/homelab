@@ -1,0 +1,46 @@
+---
+# tasks file for jaredhocutt.homelab.healthchecks
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ healthchecks_image }}"
+      image_tag: "{{ healthchecks_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ healthchecks_name }}"
+    driver: bridge
+    disable_dns: false
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ healthchecks_volume_config }}"
+      options: "{{ healthchecks_volume_config_options | default(omit) }}"
+
+- name: Create container
+  containers.podman.podman_container:
+    name: "{{ healthchecks_name }}"
+    image: "{{ healthchecks_image }}:{{ healthchecks_image_tag }}"
+    network: "{{ healthchecks_name }}.network"
+    env: "{{ healthchecks_env_vars_base | combine(healthchecks_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ healthchecks_volume_config }}:/config"
+    publish: "{{ healthchecks_ports }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ healthchecks_quadlet_options_base + healthchecks_quadlet_options }}"
+    state: quadlet
+  notify: Restart {{ healthchecks_name }}
+  become: true

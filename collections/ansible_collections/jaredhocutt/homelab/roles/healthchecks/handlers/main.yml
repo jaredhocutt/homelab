@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.healthchecks
+
+- name: Restart {{ healthchecks_name }}
+  ansible.builtin.systemd:
+    name: "{{ healthchecks_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
