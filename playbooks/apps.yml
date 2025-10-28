@@ -1,6 +1,6 @@
 ---
 
-- name: Perform initial server setup and eploy and configure foundation apps
+- name: Perform initial server setup
   hosts: apps
   tasks:
     - name: Perform initial server setup
@@ -8,6 +8,9 @@
         name: jaredhocutt.homelab.server_setup
       tags: [server_setup]
 
+- name: Deploy and configure foundation apps
+  hosts: apps
+  tasks:
     - name: Install and configure Vault
       tags: [vault, never]
       block:
@@ -34,3 +37,73 @@
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.audiobookshelf
       tags: [audiobookshelf]
+
+    - name: Install calibre
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.calibre
+      tags: [calibre]
+
+    - name: Install healthchecks
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.healthchecks
+      tags: [healthchecks]
+
+    - name: Install immich
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.immich
+      tags: [immich]
+
+    - name: Install kometa
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.kometa
+      tags: [kometa]
+
+    - name: Install n8n
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.n8n
+      tags: [n8n]
+
+    - name: Install open_webui
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.open_webui
+      tags: [open_webui]
+
+    - name: Install overseerr
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.overseerr
+      tags: [overseerr]
+
+    - name: Install paperless
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.paperless
+      tags: [paperless]
+
+    - name: Install prowlarr
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.prowlarr
+      tags: [prowlarr]
+
+    - name: Install radarr
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.radarr
+      tags: [radarr]
+
+    - name: Install sabnzbd
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.sabnzbd
+      tags: [sabnzbd]
+
+    - name: Install sonarr
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.sonarr
+      tags: [sonarr]
+
+    - name: Install stirling_pdf
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.stirling_pdf
+      tags: [stirling_pdf]
+
+    - name: Install tautulli
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.tautulli
+      tags: [tautulli]

@@ -1,0 +1,306 @@
+---
+
+global_volume_download: download
+
+global_volume_media: media
+global_volume_media_options:
+  - Device={{ lookup('bitwarden.secrets.lookup', bws_uuid.global_storage_host) }}:/mnt/data/media
+  - Type=nfs
+  - Options=soft,nfsvers=3
+
+global_media_uid: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.global_media_uid) }}"
+global_media_gid: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.global_media_gid) }}"
+
+###############################################################################
+# audiobookshelf
+###############################################################################
+
+audiobookshelf_image_tag: "2.29.0"
+
+audiobookshelf_volume_media: "{{ global_volume_media }}"
+audiobookshelf_volume_media_options: "{{ global_volume_media_options }}"
+
+###############################################################################
+# authentik
+###############################################################################
+
+authentik_image_tag: "2025.8.4"
+authentik_postgres_image_tag: "16.10"
+authentik_redis_image_tag: "8.2.2"
+
+authentik_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.authentik_postgres_password) }}"
+authentik_secret_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.authentik_secret_key) }}"
+
+###############################################################################
+# calibre
+###############################################################################
+
+calibre_image_tag: "8.13.0"
+
+calibre_ports:
+  - 8380:8080
+  - 8381:8081
+
+calibre_volume_media_options:
+  - Device={{ global_volume_media_device }}
+  - Type={{ global_volume_media_type }}
+  - Options={{ global_volume_media_options }}
+
+###############################################################################
+# healthchecks
+###############################################################################
+
+healthchecks_image_tag: version-v3.9
+
+healthchecks_ports:
+  - 18000:8000
+
+healthchecks_url: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_url) }}"
+healthchecks_email: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email) }}"
+healthchecks_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_password) }}"
+healthchecks_env_vars:
+  - DEFAULT_FROM_EMAIL="{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_from_email) }}"
+  - EMAIL_HOST="{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email_host) }}"
+  - EMAIL_PORT="{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthcheck_email_port) }}"
+  - EMAIL_HOST_USER="{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email_user) }}"
+  - EMAIL_HOST_PASSWORD="{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email_password) }}"
+  - EMAIL_USE_TLS=True
+  - PUSHOVER_API_TOKEN="{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_pushover_api_token) }}"
+  - PUSHOVER_SUBSCRIPTION_URL="{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_pushover_subscription_url) }}"
+
+###############################################################################
+# immich
+###############################################################################
+
+immich_image_tag: v2.1.0
+immich_machine_learning_image_tag: "{{ immich_image_tag }}"
+immich_postgres_image_tag: 17-vectorchord0.4.3-pgvector0.8.1
+immich_redis_image_tag: 8.1.3-bookworm
+
+immich_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.immich_postgres_password) }}"
+
+###############################################################################
+# kometa
+###############################################################################
+
+kometa_image_tag: v2.2.2
+
+###############################################################################
+# n8n
+###############################################################################
+
+n8n_image_tag: "1.116.2"
+n8N_postgres_image_tag: "16.10"
+
+n8n_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.n8n_postgres_password) }}"
+
+###############################################################################
+# open_webui
+###############################################################################
+
+open_webui_image_tag: v0.6.34
+
+open_webui_ports:
+  - 3010:8080
+
+###############################################################################
+# overseerr
+###############################################################################
+
+overseerr_image_tag: "1.34.0"
+
+overseerr_env_vars:
+  - LOG_LEVEL=debug
+
+###############################################################################
+# paperless
+###############################################################################
+
+paperless_image_tag: "2.18.4"
+paperless_redis_image_tag: "7.4.2"
+paperless_gotenberg_image_tag: "8.18.0"
+paperless_tika_image_tag: "2.9.1-full"
+paperless_ai_image_tag: "3.0.4"
+
+paperless_ai_ports:
+  - 13000:3000
+
+paperless_env_vars:
+  PAPERLESS_ALLOWED_HOSTS: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.paperless_allowed_hosts) }}"
+  PAPERLESS_OCR_USER_ARGS: '{"invalidate_digital_signatures": true}'
+
+paperless_volume_data_options:
+  - Device={{ lookup('bitwarden.secrets.lookup', bws_uuid.global_storage_host) }}:/mnt/data/paperless/data
+  - Type=nfs
+  - Options=soft,nfsvers=3,nolock
+paperless_volume_media_options:
+  - Device={{ lookup('bitwarden.secrets.lookup', bws_uuid.global_storage_host) }}:/mnt/data/paperless/media
+  - Type=nfs
+  - Options=soft,nfsvers=3,nolock
+paperless_volume_export_options:
+  - Device={{ lookup('bitwarden.secrets.lookup', bws_uuid.global_storage_host) }}:/mnt/data/paperless/export
+  - Type=nfs
+  - Options=soft,nfsvers=3,nolock
+paperless_volume_consume_options:
+  - Device={{ lookup('bitwarden.secrets.lookup', bws_uuid.global_storage_host) }}:/mnt/data/paperless/consume
+  - Type=nfs
+  - Options=soft,nfsvers=3,nolock
+
+paperless_url: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.paperless_url) }}"
+paperless_task_workers: 4
+
+###############################################################################
+# prowlarr
+###############################################################################
+
+prowlarr_image_tag: version-2.0.5.5160
+
+###############################################################################
+# radarr
+###############################################################################
+
+radarr_image_tag: version-5.27.5.10198
+
+radarr_env_vars:
+  PUID: "{{ global_media_uid }}"
+  GUID: "{{ global_media_gid }}"
+
+radarr_volume_download: "{{ global_volume_download }}"
+radarr_volume_download_options: "{{ global_volume_download_options }}"
+radarr_volume_media: "{{ global_volume_media }}"
+radarr_volume_media_options: "{{ global_volume_media_options }}"
+
+###############################################################################
+# sabnzbd
+###############################################################################
+
+sabnzbd_image_tag: version-4.5.3
+
+sabnzbd_env_vars:
+  PUID: "{{ global_media_uid }}"
+  GUID: "{{ global_media_gid }}"
+  DOCKER_MODS: linuxserver/mods:universal-package-install
+  INSTALL_PACKAGES: file
+
+sabnzbd_volume_download: "{{ global_volume_download }}"
+
+###############################################################################
+# sonarr
+###############################################################################
+
+sonarr_image_tag: version-4.0.15.2941
+
+sonarr_env_vars:
+  PUID: "{{ global_media_uid }}"
+  GUID: "{{ global_media_gid }}"
+
+sonarr_volume_download: "{{ global_volume_download }}"
+sonarr_volume_download_options: "{{ global_volume_download_options }}"
+sonarr_volume_media: "{{ global_volume_media }}"
+sonarr_volume_media_options: "{{ global_volume_media_options }}"
+
+###############################################################################
+# stirling_pdf
+###############################################################################
+
+stirling_pdf_image_tag: 0.45.0-fat
+
+stirling_pdf_ports:
+  - 8085:8080
+
+stirling_pdf_env_vars:
+  DOCKER_ENABLE_SECURITY: "false"
+
+###############################################################################
+# tautulli
+###############################################################################
+
+tautulli_image_tag: version-v2.16.0
+
+tautulli_env_vars:
+  DOCKER_ENABLE_SECURITY: "false"
+
+###############################################################################
+# vault
+###############################################################################
+
+vault_image_tag: "1.20"
+
+###############################################################################
+# kickstart
+###############################################################################
+
+kickstart_hostname: apps
+kickstart_network:
+  - device: enp2s0
+    activate: true
+  - device: wlp3s0
+    activate: false
+
+kickstart_storage_disks:
+  - name: nvme0n1
+    partitions:
+      - mountpoint: /boot/efi
+        filesystem: efi
+        size: 600
+        options: --fsoptions="umask=0077,shortname=winnt"
+      - mountpoint: /boot
+        filesystem: xfs
+        size: 1024
+      - mountpoint: pv.01
+        filesystem: lvmpv
+        size: 1
+        options: --grow
+  - name: sda
+    partitions:
+      - mountpoint: pv.02
+        filesystem: lvmpv
+        size: 1
+        options: --grow
+kickstart_storage_volume_groups:
+  - name: fedora
+    physical_volumes:
+      - pv.01
+    logical_volumes:
+      - name: root
+        mountpoint: /
+        filesystem: xfs
+        size: "{{ 1024 * 50 }}"  # 50 GB
+      - name: home
+        mountpoint: /home
+        filesystem: xfs
+        size: "{{ 1024 * 10 }}"  # 10 GB
+      - name: swap
+        mountpoint: swap
+        filesystem: swap
+        size: "{{ 1024 * 4 }}"  # 4 GB
+  - name: data
+    physical_volumes:
+      - pv.02
+    logical_volumes:
+      - name: docker
+        mountpoint: /var/lib/docker
+        filesystem: xfs
+        percent: 100
+
+kickstart_users:
+  - fullname: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_fullname) }}"
+    username: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_username) }}"
+    groups: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_groups) }}"
+    uid: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_uid) }}"
+    gid: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_gid) }}"
+    password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_password_crypted) }}"
+    authorized_keys:
+      - "{{ lookup('bitwarden.secrets.lookup', bws_uuid['ssh_authorized_keys_1']) }}"
+      - "{{ lookup('bitwarden.secrets.lookup', bws_uuid['ssh_authorized_keys_2']) }}"
+      - "{{ lookup('bitwarden.secrets.lookup', bws_uuid['ssh_authorized_keys_3']) }}"
+  - fullname: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_fullname) }}"
+    username: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_username) }}"
+    groups: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_groups) }}"
+    uid: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_uid) }}"
+    gid: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_gid) }}"
+    sudoers: |
+      {{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_username) }} ALL=(ALL) NOPASSWD: ALL
+      Defaults:{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_username) }} !requiretty
+    authorized_keys:
+      - "{{ lookup('bitwarden.secrets.lookup', bws_uuid.ssh_authorized_keys_4) }}"

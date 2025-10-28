@@ -2,6 +2,9 @@ collections:
   - name: ansible.posix
     version: ">=2.0,<2.1"
 
+  - name: bitwarden.secrets
+    version: ">=1.0,<1.1"
+
   - name: community.crypto
     version: ">=3.0,<3.1"
 
