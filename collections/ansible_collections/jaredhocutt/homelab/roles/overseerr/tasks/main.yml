@@ -1,0 +1,46 @@
+---
+# tasks file for jaredhocutt.homelab.overseerr
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ overseerr_image }}"
+      image_tag: "{{ overseerr_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ overseerr_name }}"
+    driver: bridge
+    disable_dns: false
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ overseerr_volume_config }}"
+      options: "{{ overseerr_volume_config_options | default(omit) }}"
+
+- name: Create container
+  containers.podman.podman_container:
+    name: "{{ overseerr_name }}"
+    image: "{{ overseerr_image }}:{{ overseerr_image_tag }}"
+    network: "{{ overseerr_name }}.network"
+    env: "{{ overseerr_env_vars_base | combine(overseerr_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ overseerr_volume_config }}://app/config"
+    publish: "{{ overseerr_ports }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ overseerr_quadlet_options_base + overseerr_quadlet_options }}"
+    state: quadlet
+  notify: Restart {{ overseerr_name }}
+  become: true

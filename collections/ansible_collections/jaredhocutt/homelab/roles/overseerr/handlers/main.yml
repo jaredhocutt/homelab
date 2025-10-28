@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.overseerr
+
+- name: Restart {{ overseerr_name }}
+  ansible.builtin.systemd:
+    name: "{{ overseerr_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

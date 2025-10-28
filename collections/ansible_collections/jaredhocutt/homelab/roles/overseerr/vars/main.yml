@@ -1,0 +1,13 @@
+---
+# vars file for jaredhocutt.homelab.overseerr
+
+overseerr_env_vars_base:
+  TZ: "America/New_York"
+
+overseerr_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target

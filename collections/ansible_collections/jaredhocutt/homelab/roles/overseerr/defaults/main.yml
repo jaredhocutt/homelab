@@ -1,0 +1,15 @@
+---
+# defaults file for jaredhocutt.homelab.overseerr
+
+overseerr_name: overseerr
+
+overseerr_image: docker.io/sctx/overseerr
+overseerr_image_tag: latest
+
+overseerr_volume_config: "{{ overseerr_name }}-config"
+
+overseerr_ports:
+  - 5055:5055
+
+overseerr_env_vars: {}
+overseerr_quadlet_options: []
