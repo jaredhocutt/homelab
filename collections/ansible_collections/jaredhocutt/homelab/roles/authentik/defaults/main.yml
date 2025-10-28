@@ -2,7 +2,6 @@
 # defaults file for jaredhocutt.homelab.authentik
 
 authentik_name: authentik
-authentik_description: Authentik
 
 authentik_image: ghcr.io/goauthentik/server
 authentik_image_tag: "2025.8"

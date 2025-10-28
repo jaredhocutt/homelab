@@ -2,7 +2,6 @@
 # defaults file for jaredhocutt.homelab.audiobookshelf
 
 audiobookshelf_name: audiobookshelf
-audiobookshelf_description: Audiobookshelf
 
 audiobookshelf_image: ghcr.io/advplyr/audiobookshelf
 audiobookshelf_image_tag: latest

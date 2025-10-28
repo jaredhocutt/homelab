@@ -2,7 +2,6 @@
 # defaults file for jaredhocutt.homelab.n8n
 
 n8n_name: n8n
-n8n_description: n8n
 
 n8n_image: docker.n8n.io/n8nio/n8n
 n8n_image_tag: latest

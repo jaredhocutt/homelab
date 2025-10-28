@@ -2,7 +2,6 @@
 # defaults file for jaredhocutt.homelab.vault
 
 vault_name: vault
-vault_description: Vault
 
 vault_image: docker.io/hashicorp/vault
 vault_image_tag: latest
