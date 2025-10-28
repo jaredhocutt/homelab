@@ -1,0 +1,13 @@
+---
+# vars file for jaredhocutt.homelab.stirling_pdf
+
+stirling_pdf_env_vars_base:
+  TZ: "America/New_York"
+
+stirling_pdf_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target

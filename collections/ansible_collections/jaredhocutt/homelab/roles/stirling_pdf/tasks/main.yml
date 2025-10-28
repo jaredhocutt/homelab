@@ -1,0 +1,65 @@
+---
+# tasks file for jaredhocutt.homelab.stirling_pdf
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ stirling_pdf_image }}"
+      image_tag: "{{ stirling_pdf_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ stirling_pdf_name }}"
+    driver: bridge
+    disable_dns: false
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ stirling_pdf_volume_configs }}"
+      options: "{{ stirling_pdf_volume_configs_options | default(omit) }}"
+    - name: "{{ stirling_pdf_volume_training_data }}"
+      options: "{{ stirling_pdf_volume_training_data_options | default(omit) }}"
+    - name: "{{ stirling_pdf_volume_custom_files }}"
+      options: "{{ stirling_pdf_volume_custom_files_options | default(omit) }}"
+    - name: "{{ stirling_pdf_volume_logs }}"
+      options: "{{ stirling_pdf_volume_logs_options | default(omit) }}"
+    - name: "{{ stirling_pdf_volume_pipeline }}"
+      options: "{{ stirling_pdf_volume_pipeline_options | default(omit) }}"
+
+    - name: "{{ stirling_pdf_volume_config }}"
+      options: "{{ stirling_pdf_volume_config_options | default(omit) }}"
+    - name: "{{ stirling_pdf_volume_metadata }}"
+      options: "{{ stirling_pdf_volume_metadata_options | default(omit) }}"
+    - name: "{{ stirling_pdf_volume_media }}"
+      options: "{{ stirling_pdf_volume_media_options | default(omit) }}"
+
+- name: Create container
+  containers.podman.podman_container:
+    name: "{{ stirling_pdf_name }}"
+    image: "{{ stirling_pdf_image }}:{{ stirling_pdf_image_tag }}"
+    network: "{{ stirling_pdf_name }}.network"
+    env: "{{ stirling_pdf_env_vars_base | combine(stirling_pdf_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ stirling_pdf_volume_configs }}:/configs"
+      - "{{ stirling_pdf_volume_training_data }}:/usr/share/tessdata"
+      - "{{ stirling_pdf_volume_custom_files }}:/customFiles"
+      - "{{ stirling_pdf_volume_logs }}:/logs"
+      - "{{ stirling_pdf_volume_pipeline }}:/pipeline"
+    publish: "{{ stirling_pdf_ports }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ stirling_pdf_quadlet_options_base + stirling_pdf_quadlet_options }}"
+    state: quadlet
+  notify: Restart {{ stirling_pdf_name }}
+  become: true

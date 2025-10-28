@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.stirling_pdf
+
+- name: Restart {{ stirling_pdf_name }}
+  ansible.builtin.systemd:
+    name: "{{ stirling_pdf_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

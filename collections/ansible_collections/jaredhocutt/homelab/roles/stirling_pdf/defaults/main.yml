@@ -1,0 +1,19 @@
+---
+# defaults file for jaredhocutt.homelab.stirling_pdf
+
+stirling_pdf_name: stirling-pdf
+
+stirling_pdf_image: docker.stirlingpdf.com/stirlingtools/stirling-pdf
+stirling_pdf_image_tag: latest-fat
+
+stirling_pdf_volume_configs: "{{ stirling_pdf_name }}-configs"
+stirling_pdf_volume_training_data: "{{ stirling_pdf_name }}-training-data"
+stirling_pdf_volume_custom_files: "{{ stirling_pdf_name }}-custom-files"
+stirling_pdf_volume_logs: "{{ stirling_pdf_name }}-logs"
+stirling_pdf_volume_pipeline: "{{ stirling_pdf_name }}-pipeline"
+
+stirling_pdf_ports:
+  - 8080:8080
+
+stirling_pdf_env_vars: {}
+stirling_pdf_quadlet_options: []
