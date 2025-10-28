@@ -1,0 +1,12 @@
+---
+# defaults file for jaredhocutt.homelab.kometa
+
+kometa_name: kometa
+
+kometa_image: docker.io/kometateam/kometa
+kometa_image_tag: latest
+
+kometa_volume_config: "{{ kometa_name }}-config"
+
+kometa_env_vars: {}
+kometa_quadlet_options: []

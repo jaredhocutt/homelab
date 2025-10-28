@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.kometa
+
+- name: Restart {{ kometa_name }}
+  ansible.builtin.systemd:
+    name: "{{ kometa_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
