@@ -1,0 +1,25 @@
+---
+
+server_setup_packages:
+  - cockpit
+  - cockpit-files
+  - cockpit-networkmanager
+  - cockpit-podman
+  - cockpit-storaged
+  - cockpit-system
+  - curl
+  - git
+  - gnupg2
+  - htop
+  - net-tools
+  - rsync
+  - stow
+  - tmux
+  - unzip
+  - vim
+  - wget
+
+server_setup_enabled_services:
+  - cockpit.socket
+  - name: cockpit.service
+    state: started
