@@ -1,0 +1,14 @@
+---
+# vars file for jaredhocutt.homelab.homarr
+
+homarr_env_vars_base:
+  TZ: "America/New_York"
+  SECRET_ENCRYPTION_KEY: "{{ homarr_secret_encryption_key }}"
+
+homarr_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target

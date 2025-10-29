@@ -1,0 +1,15 @@
+---
+# defaults file for jaredhocutt.homelab.homarr
+
+homarr_name: homarr
+
+homarr_image: ghcr.io/homarr-labs/homarr
+homarr_image_tag: latest
+
+homarr_volume_data: "{{ homarr_name }}-data"
+
+homarr_ports:
+  - 7575:7575
+
+homarr_env_vars: {}
+homarr_quadlet_options: []

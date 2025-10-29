@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.homarr
+
+- name: Restart {{ homarr_name }}
+  ansible.builtin.systemd:
+    name: "{{ homarr_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
