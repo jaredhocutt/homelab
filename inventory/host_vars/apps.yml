@@ -81,6 +81,8 @@ healthchecks_env_vars:
 
 homarr_image_tag: v1.43.0
 
+homarr_secret_encryption_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.homarr_secret_encryption_key) }}"
+
 ###############################################################################
 # immich
 ###############################################################################
