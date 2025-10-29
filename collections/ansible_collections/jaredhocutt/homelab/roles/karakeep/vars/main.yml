@@ -1,0 +1,51 @@
+---
+# vars file for jaredhocutt.homelab.karakeep
+
+karakeep_chrome_db_name: karakeep
+karakeep_chrome_user: karakeep
+
+karakeep_env_vars_base:
+  TZ: "America/New_York"
+  MEILI_ADDR: http://{{ karakeep_name }}-meilisearch:7700
+  BROWSER_WEB_URL: http://{{ karakeep_name }}-chrome:9222
+  DATA_DIR: /data
+  NEXTAUTH_URL: "{{ karakeep_nextauth_url }}"
+  NEXTAUTH_SECRET: "{{ karakeep_nextauth_secret }}"
+
+karakeep_chrome_env_vars_base:
+  TZ: "America/New_York"
+
+karakeep_meilisearch_env_vars_base:
+  TZ: "America/New_York"
+  MEILI_NO_ANALYTICS: "true"
+  MEILI_MASTER_KEY: "{{ karakeep_meilisearch_master_key }}"
+
+karakeep_quadlet_options_base:
+  - |
+    [Unit]
+    Requires={{ karakeep_name }}-chrome.service
+    Requires={{ karakeep_name }}-meilisearch.service
+    After={{ karakeep_name }}-chrome.service
+    After={{ karakeep_name }}-meilisearch.service
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target
+
+karakeep_chrome_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target
+
+karakeep_meilisearch_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target

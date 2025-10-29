@@ -1,0 +1,26 @@
+---
+# defaults file for jaredhocutt.homelab.karakeep
+
+karakeep_name: karakeep
+
+karakeep_image: ghcr.io/karakeep-app/karakeep
+karakeep_image_tag: release
+karakeep_chrome_image: gcr.io/zenika-hub/alpine-chrome
+karakeep_chrome_image_tag: latest
+karakeep_meilisearch_image: docker.io/getmeili/meilisearch
+karakeep_meilisearch_image_tag: latest
+
+karakeep_volume_data: "{{ karakeep_name }}-data"
+karakeep_meilisearch_volume_data: "{{ karakeep_name }}-meilisearch-data"
+
+karakeep_ports:
+  - 3000:3000
+
+karakeep_env_vars: {}
+karakeep_chrome_env_vars: {}
+karakeep_meilisearch_env_vars: {}
+karakeep_quadlet_options: []
+karakeep_chrome_quadlet_options: []
+karakeep_meilisearch_quadlet_options: []
+
+karakeep_nextauth_url: http://localhost:3000

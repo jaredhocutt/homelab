@@ -49,6 +49,11 @@
         name: jaredhocutt.homelab.immich
       tags: [immich]
 
+    - name: Install karakeep
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.karakeep
+      tags: [karakeep]
+
     - name: Install kometa
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.kometa

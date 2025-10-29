@@ -1,0 +1,26 @@
+---
+# handlers file for jaredhocutt.homelab.karakeep
+
+- name: Restart {{ karakeep_name }}
+  ansible.builtin.systemd:
+    name: "{{ karakeep_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart chrome for {{ karakeep_name }}
+  ansible.builtin.systemd:
+    name: "{{ karakeep_name }}-chrome.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart meilisearch for {{ karakeep_name }}
+  ansible.builtin.systemd:
+    name: "{{ karakeep_name }}-meilisearch.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

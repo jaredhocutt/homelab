@@ -1,0 +1,93 @@
+---
+# tasks file for jaredhocutt.homelab.karakeep
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ karakeep_image }}"
+      image_tag: "{{ karakeep_image_tag }}"
+    - image: "{{ karakeep_chrome_image }}"
+      image_tag: "{{ karakeep_chrome_image_tag }}"
+    - image: "{{ karakeep_meilisearch_image }}"
+      image_tag: "{{ karakeep_meilisearch_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ karakeep_name }}"
+    driver: bridge
+    disable_dns: false
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ karakeep_volume_media }}"
+      options: "{{ karakeep_volume_media_options | default(omit) }}"
+    - name: "{{ karakeep_volume_certs }}"
+      options: "{{ karakeep_volume_certs_options | default(omit) }}"
+    - name: "{{ karakeep_volume_templates }}"
+      options: "{{ karakeep_volume_templates_options | default(omit) }}"
+    - name: "{{ karakeep_chrome_volume_data }}"
+      options: "{{ karakeep_chrome_volume_data_options | default(omit) }}"
+    - name: "{{ karakeep_meilisearch_volume_data }}"
+      options: "{{ karakeep_meilisearch_volume_data_options | default(omit) }}"
+
+- name: Create chrome container
+  containers.podman.podman_container:
+    name: "{{ karakeep_name }}-chrome"
+    image: "{{ karakeep_chrome_image }}:{{ karakeep_chrome_image_tag }}"
+    network: "{{ karakeep_name }}.network"
+    env: "{{ karakeep_chrome_env_vars_base | combine(karakeep_chrome_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ karakeep_chrome_volume_data }}.volume:/var/lib/chromeql/data"
+    command:
+      - --no-sandbox
+      - --disable-gpu
+      - --disable-dev-shm-usage
+      - --remote-debugging-address=0.0.0.0
+      - --remote-debugging-port=9222
+      - --hide-scrollbars
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ karakeep_chrome_quadlet_options_base + karakeep_chrome_quadlet_options }}"
+    state: quadlet
+  notify: Restart chrome for {{ karakeep_name }}
+  become: true
+
+- name: Create meilisearch container
+  containers.podman.podman_container:
+    name: "{{ karakeep_name }}-meilisearch"
+    image: "{{ karakeep_meilisearch_image }}:{{ karakeep_meilisearch_image_tag }}"
+    network: "{{ karakeep_name }}.network"
+    env: "{{ karakeep_meilisearch_env_vars_base | combine(karakeep_meilisearch_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ karakeep_meilisearch_volume_data }}.volume:/meili_data"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ karakeep_meilisearch_quadlet_options_base + karakeep_meilisearch_quadlet_options }}"
+    state: quadlet
+  notify: Restart meilisearch for {{ karakeep_name }}
+  become: true
+
+- name: Create container
+  containers.podman.podman_container:
+    name: "{{ karakeep_name }}"
+    image: "{{ karakeep_image }}:{{ karakeep_image_tag }}"
+    network: "{{ karakeep_name }}.network"
+    env: "{{ karakeep_env_vars_base | combine(karakeep_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ karakeep_volume_data }}.volume:/data"
+    publish: "{{ karakeep_ports }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ karakeep_quadlet_options_base + karakeep_quadlet_options }}"
+    state: quadlet
+  notify: Restart {{ karakeep_name }}
+  become: true
