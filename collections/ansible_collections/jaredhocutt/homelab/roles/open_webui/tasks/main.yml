@@ -44,3 +44,6 @@
     state: quadlet
   notify: Restart {{ open_webui_name }}
   become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

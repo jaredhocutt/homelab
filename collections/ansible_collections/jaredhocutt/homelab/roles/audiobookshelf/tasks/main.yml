@@ -50,3 +50,6 @@
     state: quadlet
   notify: Restart {{ audiobookshelf_name }}
   become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

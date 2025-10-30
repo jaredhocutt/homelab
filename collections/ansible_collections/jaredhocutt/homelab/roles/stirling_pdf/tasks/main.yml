@@ -63,3 +63,6 @@
     state: quadlet
   notify: Restart {{ stirling_pdf_name }}
   become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

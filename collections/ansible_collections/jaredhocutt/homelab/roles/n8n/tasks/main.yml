@@ -67,3 +67,6 @@
     state: quadlet
   notify: Restart {{ n8n_name }}
   become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

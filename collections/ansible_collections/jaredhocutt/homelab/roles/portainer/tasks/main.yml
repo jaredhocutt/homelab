@@ -46,3 +46,6 @@
     state: quadlet
   notify: Restart {{ portainer_name }}
   become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

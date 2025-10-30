@@ -109,3 +109,6 @@
     state: quadlet
   notify: Restart {{ immich_name }}
   become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

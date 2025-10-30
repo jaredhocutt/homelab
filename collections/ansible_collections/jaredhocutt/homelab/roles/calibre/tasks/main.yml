@@ -47,3 +47,6 @@
     state: quadlet
   notify: Restart {{ calibre_name }}
   become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

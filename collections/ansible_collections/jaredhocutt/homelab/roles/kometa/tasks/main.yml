@@ -43,3 +43,6 @@
     state: quadlet
   notify: Restart {{ kometa_name }}
   become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

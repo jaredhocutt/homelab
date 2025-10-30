@@ -113,3 +113,6 @@
     state: quadlet
   notify: Restart worker for {{ authentik_name }}
   become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

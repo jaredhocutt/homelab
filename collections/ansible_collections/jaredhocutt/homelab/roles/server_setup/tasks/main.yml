@@ -14,3 +14,6 @@
     enabled: "{{ item.enabled | default(omit) if item is mapping else true }}"
   become: true
   loop: "{{ server_setup_enabled_services }}"
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
