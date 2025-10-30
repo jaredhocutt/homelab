@@ -41,10 +41,7 @@ calibre_ports:
   - 8380:8080
   - 8381:8081
 
-calibre_volume_media_options:
-  - Device={{ global_volume_media_device }}
-  - Type={{ global_volume_media_type }}
-  - Options={{ global_volume_media_options }}
+calibre_volume_media_options: "{{ global_volume_media_options }}"
 
 ###############################################################################
 # changedetection
