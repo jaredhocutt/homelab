@@ -9,9 +9,9 @@ paperless_postgres_image: docker.io/library/postgres
 paperless_postgres_image_tag: "18"
 paperless_redis_image: docker.io/library/redis
 paperless_redis_image_tag: "8"
-paperless_gotenberg_image: docker.io/library/gotenberg
+paperless_gotenberg_image: docker.io/gotenberg/gotenberg
 paperless_gotenberg_image_tag: latest
-paperless_tika_image: ghcr.io/paperless-ngx/tika
+paperless_tika_image: docker.io/apache/tika
 paperless_tika_image_tag: latest-full
 paperless_ai_image: docker.io/clusterzx/paperless-ai
 paperless_ai_image_tag: latest
