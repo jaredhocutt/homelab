@@ -38,13 +38,6 @@
     - name: "{{ stirling_pdf_volume_pipeline }}"
       options: "{{ stirling_pdf_volume_pipeline_options | default(omit) }}"
 
-    - name: "{{ stirling_pdf_volume_config }}"
-      options: "{{ stirling_pdf_volume_config_options | default(omit) }}"
-    - name: "{{ stirling_pdf_volume_metadata }}"
-      options: "{{ stirling_pdf_volume_metadata_options | default(omit) }}"
-    - name: "{{ stirling_pdf_volume_media }}"
-      options: "{{ stirling_pdf_volume_media_options | default(omit) }}"
-
 - name: Create container
   containers.podman.podman_container:
     name: "{{ stirling_pdf_name }}"
