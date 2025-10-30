@@ -31,14 +31,8 @@
     state: quadlet
   become: true
   loop:
-    - name: "{{ karakeep_volume_media }}"
-      options: "{{ karakeep_volume_media_options | default(omit) }}"
-    - name: "{{ karakeep_volume_certs }}"
-      options: "{{ karakeep_volume_certs_options | default(omit) }}"
-    - name: "{{ karakeep_volume_templates }}"
-      options: "{{ karakeep_volume_templates_options | default(omit) }}"
-    - name: "{{ karakeep_chrome_volume_data }}"
-      options: "{{ karakeep_chrome_volume_data_options | default(omit) }}"
+    - name: "{{ karakeep_volume_data }}"
+      options: "{{ karakeep_volume_data_options | default(omit) }}"
     - name: "{{ karakeep_meilisearch_volume_data }}"
       options: "{{ karakeep_meilisearch_volume_data_options | default(omit) }}"
 
@@ -48,8 +42,6 @@
     image: "{{ karakeep_chrome_image }}:{{ karakeep_chrome_image_tag }}"
     network: "{{ karakeep_name }}.network"
     env: "{{ karakeep_chrome_env_vars_base | combine(karakeep_chrome_env_vars, recursive=True) }}"
-    volumes:
-      - "{{ karakeep_chrome_volume_data }}.volume:/var/lib/chromeql/data"
     command:
       - --no-sandbox
       - --disable-gpu
@@ -91,3 +83,6 @@
     state: quadlet
   notify: Restart {{ karakeep_name }}
   become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
