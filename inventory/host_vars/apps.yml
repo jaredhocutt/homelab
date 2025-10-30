@@ -63,14 +63,14 @@ healthchecks_url: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_u
 healthchecks_email: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email) }}"
 healthchecks_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_password) }}"
 healthchecks_env_vars:
-  - DEFAULT_FROM_EMAIL="{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_from_email) }}"
-  - EMAIL_HOST="{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email_host) }}"
-  - EMAIL_PORT="{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email_port) }}"
-  - EMAIL_HOST_USER="{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email_user) }}"
-  - EMAIL_HOST_PASSWORD="{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email_password) }}"
-  - EMAIL_USE_TLS=True
-  - PUSHOVER_API_TOKEN="{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_pushover_api_token) }}"
-  - PUSHOVER_SUBSCRIPTION_URL="{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_pushover_subscription_url) }}"
+  DEFAULT_FROM_EMAIL: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_from_email) }}"
+  EMAIL_HOST: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email_host) }}"
+  EMAIL_PORT: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email_port) }}"
+  EMAIL_HOST_USER: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email_user) }}"
+  EMAIL_HOST_PASSWORD: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email_password) }}"
+  EMAIL_USE_TLS: "True"
+  PUSHOVER_API_TOKEN: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_pushover_api_token) }}"
+  PUSHOVER_SUBSCRIPTION_URL: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_pushover_subscription_url) }}"
 
 ###############################################################################
 # homarr
@@ -133,7 +133,7 @@ open_webui_ports:
 overseerr_image_tag: "1.34.0"
 
 overseerr_env_vars:
-  - LOG_LEVEL=debug
+  LOG_LEVEL: debug
 
 ###############################################################################
 # paperless
