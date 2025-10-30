@@ -1,17 +1,17 @@
 ---
 # handlers file for jaredhocutt.homelab.immich
 
-- name: Restart server for {{ immich_name }}
+- name: Restart {{ immich_name }}
   ansible.builtin.systemd:
-    name: "{{ immich_name }}-server.service"
+    name: "{{ immich_name }}.service"
     state: restarted
     enabled: true
     daemon_reload: true
   become: true
 
-- name: Restart worker for {{ immich_name }}
+- name: Restart machine_learning for {{ immich_name }}
   ansible.builtin.systemd:
-    name: "{{ immich_name }}-worker.service"
+    name: "{{ immich_name }}-machine-learning.service"
     state: restarted
     enabled: true
     daemon_reload: true
