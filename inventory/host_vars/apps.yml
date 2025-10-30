@@ -170,6 +170,7 @@ paperless_volume_consume_options:
   - Options=soft,nfsvers=3,nolock
 
 paperless_url: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.paperless_url) }}"
+paperless_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.paperless_postgres_password) }}"
 paperless_task_workers: 4
 
 ###############################################################################
