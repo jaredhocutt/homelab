@@ -40,7 +40,7 @@
     env: "{{ sabnzbd_env_vars_base | combine(sabnzbd_env_vars, recursive=True) }}"
     volumes:
       - "{{ sabnzbd_volume_config }}:/config"
-      - "{{ sabnzbd_volume_metadata }}:/mnt/download"
+      - "{{ sabnzbd_volume_download }}:/mnt/download"
     publish: "{{ sabnzbd_ports }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ sabnzbd_quadlet_options_base + sabnzbd_quadlet_options }}"

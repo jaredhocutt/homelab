@@ -42,7 +42,7 @@
     env: "{{ radarr_env_vars_base | combine(radarr_env_vars, recursive=True) }}"
     volumes:
       - "{{ radarr_volume_config }}:/config"
-      - "{{ radarr_volume_metadata }}:/mnt/download"
+      - "{{ radarr_volume_download }}:/mnt/download"
       - "{{ radarr_volume_media }}:/mnt/media"
     publish: "{{ radarr_ports }}"
     quadlet_file_mode: "0600"

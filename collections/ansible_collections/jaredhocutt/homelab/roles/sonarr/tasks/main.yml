@@ -42,7 +42,7 @@
     env: "{{ sonarr_env_vars_base | combine(sonarr_env_vars, recursive=True) }}"
     volumes:
       - "{{ sonarr_volume_config }}:/config"
-      - "{{ sonarr_volume_metadata }}:/mnt/download"
+      - "{{ sonarr_volume_download }}:/mnt/download"
       - "{{ sonarr_volume_media }}:/mnt/media"
     publish: "{{ sonarr_ports }}"
     quadlet_file_mode: "0600"
