@@ -21,5 +21,3 @@ server_setup_packages:
 
 server_setup_enabled_services:
   - cockpit.socket
-  - name: cockpit.service
-    state: started
