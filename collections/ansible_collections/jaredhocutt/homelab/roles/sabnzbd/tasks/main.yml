@@ -32,7 +32,7 @@
     - name: "{{ sabnzbd_volume_download }}"
       options: "{{ sabnzbd_volume_download_options | default(omit) }}"
 
-- name: Create container
+- name: Create sabnzbd container
   containers.podman.podman_container:
     name: "{{ sabnzbd_name }}"
     image: "{{ sabnzbd_image }}:{{ sabnzbd_image_tag }}"
@@ -42,6 +42,7 @@
       - "{{ sabnzbd_volume_config }}:/config"
       - "{{ sabnzbd_volume_download }}:/mnt/download"
     publish: "{{ sabnzbd_ports }}"
+    labels: "{{ sabnzbd_container_labels | default(omit) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ sabnzbd_quadlet_options_base + sabnzbd_quadlet_options }}"
     state: quadlet

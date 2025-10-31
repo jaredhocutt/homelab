@@ -34,7 +34,7 @@
     - name: "{{ audiobookshelf_volume_media }}"
       options: "{{ audiobookshelf_volume_media_options | default(omit) }}"
 
-- name: Create container
+- name: Create audiobookshelf container
   containers.podman.podman_container:
     name: "{{ audiobookshelf_name }}"
     image: "{{ audiobookshelf_image }}:{{ audiobookshelf_image_tag }}"
@@ -45,6 +45,7 @@
       - "{{ audiobookshelf_volume_metadata }}:/metadata"
       - "{{ audiobookshelf_volume_media }}:/mnt/media"
     publish: "{{ audiobookshelf_ports }}"
+    labels: "{{ audiobookshelf_container_labels | default(omit) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ audiobookshelf_quadlet_options_base + audiobookshelf_quadlet_options }}"
     state: quadlet

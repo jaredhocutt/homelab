@@ -30,7 +30,7 @@
     - name: "{{ uptime_kuma_volume_data }}"
       options: "{{ uptime_kuma_volume_data_options | default(omit) }}"
 
-- name: Create container
+- name: Create uptime_kuma container
   containers.podman.podman_container:
     name: "{{ uptime_kuma_name }}"
     image: "{{ uptime_kuma_image }}:{{ uptime_kuma_image_tag }}"
@@ -39,6 +39,7 @@
     volumes:
       - "{{ uptime_kuma_volume_data }}:/app/data"
     publish: "{{ uptime_kuma_ports }}"
+    labels: "{{ uptime_kuma_container_labels | default(omit) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ uptime_kuma_quadlet_options_base + uptime_kuma_quadlet_options }}"
     state: quadlet

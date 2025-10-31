@@ -32,7 +32,7 @@
     - name: "{{ calibre_volume_media }}"
       options: "{{ calibre_volume_media_options | default(omit) }}"
 
-- name: Create container
+- name: Create calibre container
   containers.podman.podman_container:
     name: "{{ calibre_name }}"
     image: "{{ calibre_image }}:{{ calibre_image_tag }}"
@@ -42,6 +42,7 @@
       - "{{ calibre_volume_config }}:/config"
       - "{{ calibre_volume_media }}:/mnt/media"
     publish: "{{ calibre_ports }}"
+    labels: "{{ calibre_container_labels | default(omit) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ calibre_quadlet_options_base + calibre_quadlet_options }}"
     state: quadlet

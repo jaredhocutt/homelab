@@ -47,6 +47,7 @@
     healthcheck_start_period: 20s
     healthcheck_timeout: 5s
     healthcheck: CMD-SHELL pg_isready -d {{ n8n_postgres_db_name }} -U {{ n8n_postgres_user }}
+    labels: "{{ n8n_postgres_container_labels | default(omit) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ n8n_postgres_quadlet_options_base + n8n_postgres_quadlet_options }}"
     state: quadlet
@@ -62,6 +63,7 @@
     volumes:
       - "{{ n8n_volume_data }}.volume:/home/node/.n8n"
     publish: "{{ n8n_ports }}"
+    labels: "{{ n8n_container_labels | default(omit) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ n8n_quadlet_options_base + n8n_quadlet_options }}"
     state: quadlet

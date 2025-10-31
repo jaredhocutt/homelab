@@ -30,7 +30,7 @@
     - name: "{{ homarr_volume_data }}"
       options: "{{ homarr_volume_data_options | default(omit) }}"
 
-- name: Create container
+- name: Create homarr container
   containers.podman.podman_container:
     name: "{{ homarr_name }}"
     image: "{{ homarr_image }}:{{ homarr_image_tag }}"
@@ -39,6 +39,7 @@
     volumes:
       - "{{ homarr_volume_data }}:/appdata"
     publish: "{{ homarr_ports }}"
+    labels: "{{ homarr_container_labels | default(omit) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ homarr_quadlet_options_base + homarr_quadlet_options }}"
     state: quadlet

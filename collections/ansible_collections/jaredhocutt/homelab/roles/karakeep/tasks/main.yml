@@ -49,6 +49,7 @@
       - --remote-debugging-address=0.0.0.0
       - --remote-debugging-port=9222
       - --hide-scrollbars
+    labels: "{{ karakeep_chrome_container_labels | default(omit) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ karakeep_chrome_quadlet_options_base + karakeep_chrome_quadlet_options }}"
     state: quadlet
@@ -63,13 +64,14 @@
     env: "{{ karakeep_meilisearch_env_vars_base | combine(karakeep_meilisearch_env_vars, recursive=True) }}"
     volumes:
       - "{{ karakeep_meilisearch_volume_data }}.volume:/meili_data"
+    labels: "{{ karakeep_meilisearch_container_labels | default(omit) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ karakeep_meilisearch_quadlet_options_base + karakeep_meilisearch_quadlet_options }}"
     state: quadlet
   notify: Restart meilisearch for {{ karakeep_name }}
   become: true
 
-- name: Create container
+- name: Create karakeep container
   containers.podman.podman_container:
     name: "{{ karakeep_name }}"
     image: "{{ karakeep_image }}:{{ karakeep_image_tag }}"
@@ -78,6 +80,7 @@
     volumes:
       - "{{ karakeep_volume_data }}.volume:/data"
     publish: "{{ karakeep_ports }}"
+    labels: "{{ karakeep_container_labels | default(omit) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ karakeep_quadlet_options_base + karakeep_quadlet_options }}"
     state: quadlet

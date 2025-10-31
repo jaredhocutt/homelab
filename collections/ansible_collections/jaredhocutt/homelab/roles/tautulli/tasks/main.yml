@@ -30,7 +30,7 @@
     - name: "{{ tautulli_volume_config }}"
       options: "{{ tautulli_volume_config_options | default(omit) }}"
 
-- name: Create container
+- name: Create tautulli container
   containers.podman.podman_container:
     name: "{{ tautulli_name }}"
     image: "{{ tautulli_image }}:{{ tautulli_image_tag }}"
@@ -39,6 +39,7 @@
     volumes:
       - "{{ tautulli_volume_config }}:/config"
     publish: "{{ tautulli_ports }}"
+    labels: "{{ tautulli_container_labels | default(omit) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ tautulli_quadlet_options_base + tautulli_quadlet_options }}"
     state: quadlet

@@ -30,7 +30,7 @@
     - name: "{{ prowlarr_volume_config }}"
       options: "{{ prowlarr_volume_config_options | default(omit) }}"
 
-- name: Create container
+- name: Create prowlarr container
   containers.podman.podman_container:
     name: "{{ prowlarr_name }}"
     image: "{{ prowlarr_image }}:{{ prowlarr_image_tag }}"
@@ -39,6 +39,7 @@
     volumes:
       - "{{ prowlarr_volume_config }}:/config"
     publish: "{{ prowlarr_ports }}"
+    labels: "{{ prowlarr_container_labels | default(omit) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ prowlarr_quadlet_options_base + prowlarr_quadlet_options }}"
     state: quadlet

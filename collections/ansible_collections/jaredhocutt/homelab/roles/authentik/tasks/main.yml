@@ -55,6 +55,7 @@
     healthcheck_start_period: 20s
     healthcheck_timeout: 5s
     healthcheck: CMD-SHELL pg_isready -d {{ authentik_postgres_db_name }} -U {{ authentik_postgres_user }}
+    labels: "{{ authentik_postgres_container_labels | default(omit) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ authentik_postgres_quadlet_options_base + authentik_postgres_quadlet_options }}"
     state: quadlet
@@ -74,6 +75,7 @@
     healthcheck_start_period: 20s
     healthcheck_timeout: 3s
     healthcheck: CMD-SHELL redis-cli ping | grep PONG
+    labels: "{{ authentik_redis_container_labels | default(omit) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ authentik_redis_quadlet_options_base + authentik_redis_quadlet_options }}"
     state: quadlet
@@ -91,6 +93,7 @@
       - "{{ authentik_volume_templates }}.volume:/templates"
     publish: "{{ authentik_ports }}"
     command: server
+    labels: "{{ authentik_server_container_labels | default(omit) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ authentik_quadlet_options_base + authentik_quadlet_options }}"
     state: quadlet
@@ -108,6 +111,7 @@
       - "{{ authentik_volume_certs }}.volume:/certs"
       - "{{ authentik_volume_templates }}.volume:/templates"
     command: worker
+    labels: "{{ authentik_worker_container_labels | default(omit) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ authentik_quadlet_options_base + authentik_quadlet_options }}"
     state: quadlet

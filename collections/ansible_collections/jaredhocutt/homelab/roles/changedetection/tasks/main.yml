@@ -38,13 +38,9 @@
     image: "{{ changedetection_browser_image }}:{{ changedetection_browser_image_tag }}"
     network: "{{ changedetection_name }}.network"
     env: "{{ changedetection_browser_env_vars_base | combine(changedetection_browser_env_vars, recursive=True) }}"
-    # healthcheck_interval: 30s
-    # healthcheck_retries: 5
-    # healthcheck_start_period: 20s
-    # healthcheck_timeout: 5s
-    # healthcheck: CMD-SHELL pg_isready -d {{ changedetection_browser_db_name }} -U {{ changedetection_browser_user }}
     cap_add:
       - SYS_ADMIN
+    labels: "{{ changedetection_browser_container_labels | default(omit) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ changedetection_browser_quadlet_options_base + changedetection_browser_quadlet_options }}"
     state: quadlet
@@ -60,6 +56,7 @@
     volumes:
       - "{{ changedetection_volume_data }}.volume:/datastore"
     publish: "{{ changedetection_ports }}"
+    labels: "{{ changedetection_container_labels | default(omit) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ changedetection_quadlet_options_base + changedetection_quadlet_options }}"
     state: quadlet

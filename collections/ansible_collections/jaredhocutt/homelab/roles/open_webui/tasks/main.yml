@@ -30,7 +30,7 @@
     - name: "{{ open_webui_volume_data }}"
       options: "{{ open_webui_volume_data_options | default(omit) }}"
 
-- name: Create container
+- name: Create open_webui container
   containers.podman.podman_container:
     name: "{{ open_webui_name }}"
     image: "{{ open_webui_image }}:{{ open_webui_image_tag }}"
@@ -39,6 +39,7 @@
     volumes:
       - "{{ open_webui_volume_data }}:/app/backend/data"
     publish: "{{ open_webui_ports }}"
+    labels: "{{ open_webui_container_labels | default(omit) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ open_webui_quadlet_options_base + open_webui_quadlet_options }}"
     state: quadlet

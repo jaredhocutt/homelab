@@ -30,7 +30,7 @@
     - name: "{{ healthchecks_volume_config }}"
       options: "{{ healthchecks_volume_config_options | default(omit) }}"
 
-- name: Create container
+- name: Create healthchecks container
   containers.podman.podman_container:
     name: "{{ healthchecks_name }}"
     image: "{{ healthchecks_image }}:{{ healthchecks_image_tag }}"
@@ -39,6 +39,7 @@
     volumes:
       - "{{ healthchecks_volume_config }}:/config"
     publish: "{{ healthchecks_ports }}"
+    labels: "{{ healthchecks_container_labels | default(omit) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ healthchecks_quadlet_options_base + healthchecks_quadlet_options }}"
     state: quadlet

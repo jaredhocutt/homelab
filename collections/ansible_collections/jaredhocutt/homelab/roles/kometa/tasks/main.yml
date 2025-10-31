@@ -30,7 +30,7 @@
     - name: "{{ kometa_volume_config }}"
       options: "{{ kometa_volume_config_options | default(omit) }}"
 
-- name: Create container
+- name: Create kometa container
   containers.podman.podman_container:
     name: "{{ kometa_name }}"
     image: "{{ kometa_image }}:{{ kometa_image_tag }}"
@@ -38,6 +38,7 @@
     env: "{{ kometa_env_vars_base | combine(kometa_env_vars, recursive=True) }}"
     volumes:
       - "{{ kometa_volume_config }}:/config"
+    labels: "{{ kometa_container_labels | default(omit) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ kometa_quadlet_options_base + kometa_quadlet_options }}"
     state: quadlet

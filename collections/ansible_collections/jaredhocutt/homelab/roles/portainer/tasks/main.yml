@@ -30,7 +30,7 @@
     - name: "{{ portainer_volume_data }}"
       options: "{{ portainer_volume_data_options | default(omit) }}"
 
-- name: Create container
+- name: Create portainer container
   containers.podman.podman_container:
     name: "{{ portainer_name }}"
     image: "{{ portainer_image }}:{{ portainer_image_tag }}"
@@ -40,6 +40,7 @@
       - "{{ portainer_volume_config }}:/data"
       - /var/run/podman.sock:/var/run/docker.sock
     publish: "{{ portainer_ports }}"
+    labels: "{{ portainer_container_labels | default(omit) }}"
     privileged: true
     quadlet_file_mode: "0600"
     quadlet_options: "{{ portainer_quadlet_options_base + portainer_quadlet_options }}"

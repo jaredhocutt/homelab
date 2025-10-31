@@ -34,7 +34,7 @@
     - name: "{{ radarr_volume_media }}"
       options: "{{ radarr_volume_media_options | default(omit) }}"
 
-- name: Create container
+- name: Create radarr container
   containers.podman.podman_container:
     name: "{{ radarr_name }}"
     image: "{{ radarr_image }}:{{ radarr_image_tag }}"
@@ -45,6 +45,7 @@
       - "{{ radarr_volume_download }}:/mnt/download"
       - "{{ radarr_volume_media }}:/mnt/media"
     publish: "{{ radarr_ports }}"
+    labels: "{{ radarr_container_labels | default(omit) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ radarr_quadlet_options_base + radarr_quadlet_options }}"
     state: quadlet

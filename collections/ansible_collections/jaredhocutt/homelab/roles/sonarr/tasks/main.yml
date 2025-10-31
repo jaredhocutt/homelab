@@ -34,7 +34,7 @@
     - name: "{{ sonarr_volume_media }}"
       options: "{{ sonarr_volume_media_options | default(omit) }}"
 
-- name: Create container
+- name: Create sonarr container
   containers.podman.podman_container:
     name: "{{ sonarr_name }}"
     image: "{{ sonarr_image }}:{{ sonarr_image_tag }}"
@@ -45,6 +45,7 @@
       - "{{ sonarr_volume_download }}:/mnt/download"
       - "{{ sonarr_volume_media }}:/mnt/media"
     publish: "{{ sonarr_ports }}"
+    labels: "{{ sonarr_container_labels | default(omit) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ sonarr_quadlet_options_base + sonarr_quadlet_options }}"
     state: quadlet

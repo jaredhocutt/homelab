@@ -56,6 +56,7 @@
     healthcheck_start_period: 20s
     healthcheck_timeout: 5s
     healthcheck: CMD-SHELL pg_isready -d {{ immich_postgres_db_name }} -U {{ immich_postgres_user }}
+    labels: "{{ immich_postgres_container_labels | default(omit) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ immich_postgres_quadlet_options_base + immich_postgres_quadlet_options }}"
     state: quadlet
@@ -75,6 +76,7 @@
     healthcheck_start_period: 20s
     healthcheck_timeout: 3s
     healthcheck: CMD-SHELL redis-cli ping | grep PONG
+    labels: "{{ immich_redis_container_labels | default(omit) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ immich_redis_quadlet_options_base + immich_redis_quadlet_options }}"
     state: quadlet
@@ -89,13 +91,14 @@
     env: "{{ immich_env_vars_base | combine(immich_env_vars, recursive=True) }}"
     volumes:
       - "{{ immich_machine_learning_volume_cache }}.volume:/cache"
+    labels: "{{ immich_machine_learning_container_labels | default(omit) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ immich_quadlet_options_base + immich_quadlet_options }}"
     state: quadlet
   notify: Restart machine_learning for {{ immich_name }}
   become: true
 
-- name: Create container
+- name: Create immich container
   containers.podman.podman_container:
     name: "{{ immich_name }}"
     image: "{{ immich_image }}:{{ immich_image_tag }}"
@@ -104,6 +107,8 @@
     volumes:
       - "{{ immich_volume_data }}.volume:/data"
       - /etc/localtime:/etc/localtime:ro
+    ports: "{{ immich_ports }}"
+    labels: "{{ immich_container_labels | default(omit) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ immich_quadlet_options_base + immich_quadlet_options }}"
     state: quadlet

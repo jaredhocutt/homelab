@@ -38,7 +38,7 @@
     - name: "{{ stirling_pdf_volume_pipeline }}"
       options: "{{ stirling_pdf_volume_pipeline_options | default(omit) }}"
 
-- name: Create container
+- name: Create stirling_pdf container
   containers.podman.podman_container:
     name: "{{ stirling_pdf_name }}"
     image: "{{ stirling_pdf_image }}:{{ stirling_pdf_image_tag }}"
@@ -51,6 +51,7 @@
       - "{{ stirling_pdf_volume_logs }}:/logs"
       - "{{ stirling_pdf_volume_pipeline }}:/pipeline"
     publish: "{{ stirling_pdf_ports }}"
+    labels: "{{ stirling_pdf_container_labels | default(omit) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ stirling_pdf_quadlet_options_base + stirling_pdf_quadlet_options }}"
     state: quadlet

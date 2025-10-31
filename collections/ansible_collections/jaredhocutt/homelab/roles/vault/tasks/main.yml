@@ -112,7 +112,7 @@
   become: true
   notify: Restart {{ vault_name }}
 
-- name: Create container
+- name: Create vault container
   containers.podman.podman_container:
     name: "{{ vault_name }}"
     image: "{{ vault_image }}:{{ vault_image_tag }}"
@@ -123,6 +123,7 @@
       - "{{ vault_volume_data }}:/vault/file"
       - "{{ vault_volume_logs }}:/vault/logs"
     publish: "{{ vault_ports }}"
+    labels: "{{ vault_container_labels | default(omit) }}"
     cap_add:
       - IPC_LOCK
     command: server
