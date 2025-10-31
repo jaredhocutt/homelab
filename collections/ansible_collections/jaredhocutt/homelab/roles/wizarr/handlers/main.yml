@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.wizarr
+
+- name: Restart {{ wizarr_name }}
+  ansible.builtin.systemd:
+    name: "{{ wizarr_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

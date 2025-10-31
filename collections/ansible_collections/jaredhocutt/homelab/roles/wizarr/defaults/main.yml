@@ -1,0 +1,15 @@
+---
+# defaults file for jaredhocutt.homelab.wizarr
+
+wizarr_name: wizarr
+
+wizarr_image: ghcr.io/wizarrrr/wizarr
+wizarr_image_tag: latest
+
+wizarr_volume_data: "{{ wizarr_name }}-data"
+
+wizarr_ports:
+  - 5690:5690
+
+wizarr_env_vars: {}
+wizarr_quadlet_options: []
