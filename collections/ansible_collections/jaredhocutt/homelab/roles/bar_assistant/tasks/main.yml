@@ -1,0 +1,105 @@
+---
+# tasks file for jaredhocutt.homelab.bar_assistant
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ bar_assistant_image }}"
+      image_tag: "{{ bar_assistant_image_tag }}"
+    - image: "{{ bar_assistant_salt_rim_image }}"
+      image_tag: "{{ bar_assistant_salt_rim_image_tag }}"
+    - image: "{{ bar_assistant_redis_image }}"
+      image_tag: "{{ bar_assistant_redis_image_tag }}"
+    - image: "{{ bar_assistant_meilisearch_image }}"
+      image_tag: "{{ bar_assistant_meilisearch_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ bar_assistant_name }}"
+    driver: bridge
+    disable_dns: false
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ bar_assistant_volume_data }}"
+      options: "{{ bar_assistant_volume_data_options | default(omit) }}"
+    - name: "{{ bar_assistant_redis_volume_data }}"
+      options: "{{ bar_assistant_redis_volume_data_options | default(omit) }}"
+    - name: "{{ bar_assistant_meilisearch_volume_data }}"
+      options: "{{ bar_assistant_meilisearch_volume_data_options | default(omit) }}"
+
+- name: Create redis container
+  containers.podman.podman_container:
+    name: "{{ bar_assistant_name }}-redis"
+    image: "{{ bar_assistant_redis_image }}:{{ bar_assistant_redis_image_tag }}"
+    network: "{{ bar_assistant_name }}.network"
+    env: "{{ bar_assistant_redis_env_vars_base | combine(bar_assistant_redis_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ bar_assistant_redis_volume_data }}.volume:/data"
+    labels: "{{ bar_assistant_redis_container_labels | default(omit) }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ bar_assistant_redis_quadlet_options_base + bar_assistant_redis_quadlet_options }}"
+    state: quadlet
+  notify: Restart redis for {{ bar_assistant_name }}
+  become: true
+
+- name: Create meilisearch container
+  containers.podman.podman_container:
+    name: "{{ bar_assistant_name }}-meilisearch"
+    image: "{{ bar_assistant_meilisearch_image }}:{{ bar_assistant_meilisearch_image_tag }}"
+    network: "{{ bar_assistant_name }}.network"
+    env: "{{ bar_assistant_meilisearch_env_vars_base | combine(bar_assistant_meilisearch_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ bar_assistant_meilisearch_volume_data }}.volume:/meili_data"
+    publish: "{{ bar_assistant_meilisearch_ports }}"
+    labels: "{{ bar_assistant_meilisearch_container_labels | default(omit) }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ bar_assistant_meilisearch_quadlet_options_base + bar_assistant_meilisearch_quadlet_options }}"
+    state: quadlet
+  notify: Restart meilisearch for {{ bar_assistant_name }}
+  become: true
+
+- name: Create bar_assistant container
+  containers.podman.podman_container:
+    name: "{{ bar_assistant_name }}"
+    image: "{{ bar_assistant_image }}:{{ bar_assistant_image_tag }}"
+    network: "{{ bar_assistant_name }}.network"
+    env: "{{ bar_assistant_env_vars_base | combine(bar_assistant_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ bar_assistant_volume_data }}.volume:/var/www/cocktails/storage/bar-assistant"
+    publish: "{{ bar_assistant_ports }}"
+    labels: "{{ bar_assistant_container_labels | default(omit) }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ bar_assistant_quadlet_options_base + bar_assistant_quadlet_options }}"
+    state: quadlet
+  notify: Restart {{ bar_assistant_name }}
+  become: true
+
+- name: Create salt_rim container
+  containers.podman.podman_container:
+    name: "{{ bar_assistant_name }}-salt-rim"
+    image: "{{ bar_assistant_salt_rim_image }}:{{ bar_assistant_salt_rim_image_tag }}"
+    network: "{{ bar_assistant_name }}.network"
+    env: "{{ bar_assistant_salt_rim_env_vars_base | combine(bar_assistant_salt_rim_env_vars, recursive=True) }}"
+    publish: "{{ bar_assistant_salt_rim_ports }}"
+    labels: "{{ bar_assistant_salt_rim_container_labels | default(omit) }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ bar_assistant_salt_rim_quadlet_options_base + bar_assistant_salt_rim_quadlet_options }}"
+    state: quadlet
+  notify: Restart salt_rim for {{ bar_assistant_name }}
+  become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
