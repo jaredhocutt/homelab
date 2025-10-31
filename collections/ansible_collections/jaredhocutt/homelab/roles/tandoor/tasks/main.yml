@@ -1,0 +1,76 @@
+---
+# tasks file for jaredhocutt.homelab.tandoor
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ tandoor_image }}"
+      image_tag: "{{ tandoor_image_tag }}"
+    - image: "{{ tandoor_postgres_image }}"
+      image_tag: "{{ tandoor_postgres_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ tandoor_name }}"
+    driver: bridge
+    disable_dns: false
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ tandoor_volume_staticfiles }}"
+      options: "{{ tandoor_volume_staticfiles_options | default(omit) }}"
+    - name: "{{ tandoor_volume_mediafiles }}"
+      options: "{{ tandoor_volume_mediafiles_options | default(omit) }}"
+    - name: "{{ tandoor_postgres_volume_data }}"
+      options: "{{ tandoor_postgres_volume_data_options | default(omit) }}"
+
+- name: Create postgres container
+  containers.podman.podman_container:
+    name: "{{ tandoor_name }}-postgres"
+    image: "{{ tandoor_postgres_image }}:{{ tandoor_postgres_image_tag }}"
+    network: "{{ tandoor_name }}.network"
+    env: "{{ tandoor_postgres_env_vars_base | combine(tandoor_postgres_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ tandoor_postgres_volume_data }}.volume:/var/lib/postgresql/data"
+    healthcheck_interval: 30s
+    healthcheck_retries: 5
+    healthcheck_start_period: 20s
+    healthcheck_timeout: 5s
+    healthcheck: CMD-SHELL pg_isready -d {{ tandoor_postgres_db_name }} -U {{ tandoor_postgres_user }}
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ tandoor_postgres_quadlet_options_base + tandoor_postgres_quadlet_options }}"
+    state: quadlet
+  notify: Restart postgres for {{ tandoor_name }}
+  become: true
+
+- name: Create tandoor container
+  containers.podman.podman_container:
+    name: "{{ tandoor_name }}"
+    image: "{{ tandoor_image }}:{{ tandoor_image_tag }}"
+    network: "{{ tandoor_name }}.network"
+    env: "{{ tandoor_env_vars_base | combine(tandoor_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ tandoor_volume_staticfiles }}.volume:/opt/recipes/staticfiles"
+      - "{{ tandoor_volume_mediafiles }}.volume:/opt/recipes/mediafiles"
+    publish: "{{ tandoor_ports }}"
+    labels: "{{ tandoor_container_labels | default(omit) }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ tandoor_quadlet_options_base + tandoor_quadlet_options }}"
+    state: quadlet
+  notify: Restart {{ tandoor_name }}
+  become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

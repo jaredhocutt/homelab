@@ -1,0 +1,18 @@
+---
+# handlers file for jaredhocutt.homelab.tandoor
+
+- name: Restart {{ tandoor_name }}
+  ansible.builtin.systemd:
+    name: "{{ tandoor_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart postgres for {{ tandoor_name }}
+  ansible.builtin.systemd:
+    name: "{{ tandoor_name }}-postgres.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

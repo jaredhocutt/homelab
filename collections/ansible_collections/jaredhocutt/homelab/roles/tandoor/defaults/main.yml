@@ -1,0 +1,21 @@
+---
+# defaults file for jaredhocutt.homelab.tandoor
+
+tandoor_name: tandoor
+
+tandoor_image: docker.io/vabene1111/recipes
+tandoor_image_tag: latest
+tandoor_postgres_image: docker.io/library/postgres
+tandoor_postgres_image_tag: "16"
+
+tandoor_volume_staticfiles: "{{ tandoor_name }}-staticfiles"
+tandoor_volume_mediafiles: "{{ tandoor_name }}-mediafiles"
+tandoor_postgres_volume_data: "{{ tandoor_name }}-postgres-data"
+
+tandoor_ports:
+  - 80:80
+
+tandoor_env_vars: {}
+tandoor_postgres_env_vars: {}
+tandoor_quadlet_options: []
+tandoor_postgres_quadlet_options: []

@@ -1,0 +1,39 @@
+---
+# vars file for jaredhocutt.homelab.tandoor
+
+tandoor_postgres_db_name: tandoor
+tandoor_postgres_user: tandoor
+
+tandoor_env_vars_base:
+  DB_ENGINE: django.db.backends.postgresql
+  POSTGRES_HOST: "{{ tandoor_name }}-postgres"
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "{{ tandoor_postgres_db_name }}"
+  POSTGRES_USER: "{{ tandoor_postgres_user }}"
+  POSTGRES_PASSWORD: "{{ tandoor_postgres_password }}"
+  SECRET_KEY: "{{ tandoor_secret_key }}"
+
+tandoor_postgres_env_vars_base:
+  POSTGRES_DB: "{{ tandoor_postgres_db_name }}"
+  POSTGRES_USER: "{{ tandoor_postgres_user }}"
+  POSTGRES_PASSWORD: "{{ tandoor_postgres_password }}"
+
+tandoor_quadlet_options_base:
+  - |
+    [Unit]
+    Requires={{ tandoor_name }}-postgres.service
+    After={{ tandoor_name }}-postgres.service
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target
+
+tandoor_postgres_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target
