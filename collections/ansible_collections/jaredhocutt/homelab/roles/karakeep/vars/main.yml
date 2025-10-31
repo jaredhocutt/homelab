@@ -1,9 +1,6 @@
 ---
 # vars file for jaredhocutt.homelab.karakeep
 
-karakeep_chrome_db_name: karakeep
-karakeep_chrome_user: karakeep
-
 karakeep_env_vars_base:
   TZ: "America/New_York"
   MEILI_ADDR: http://{{ karakeep_name }}-meilisearch:7700
