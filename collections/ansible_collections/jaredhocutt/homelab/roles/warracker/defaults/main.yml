@@ -1,0 +1,20 @@
+---
+# defaults file for jaredhocutt.homelab.warracker
+
+warracker_name: warracker
+
+warracker_image: docker pull ghcr.io/sassanix/warracker/main
+warracker_image_tag: latest
+warracker_postgres_image: docker.io/library/postgres
+warracker_postgres_image_tag: "15"
+
+warracker_volume_uploads: "{{ warracker_name }}-uploads"
+warracker_postgres_volume_data: "{{ warracker_name }}-postgres-data"
+
+warracker_ports:
+  - 8005:80
+
+warracker_env_vars: {}
+warracker_postgres_env_vars: {}
+warracker_quadlet_options: []
+warracker_postgres_quadlet_options: []

@@ -1,0 +1,18 @@
+---
+# handlers file for jaredhocutt.homelab.warracker
+
+- name: Restart {{ warracker_name }}
+  ansible.builtin.systemd:
+    name: "{{ warracker_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart postgres for {{ warracker_name }}
+  ansible.builtin.systemd:
+    name: "{{ warracker_name }}-postgres.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
