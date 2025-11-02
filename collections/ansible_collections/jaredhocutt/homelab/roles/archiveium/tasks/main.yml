@@ -1,0 +1,199 @@
+---
+# tasks file for jaredhocutt.homelab.archiveium
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ archiveium_image }}"
+      image_tag: "{{ archiveium_image_tag }}"
+    - image: "{{ archiveium_postgres_image }}"
+      image_tag: "{{ archiveium_postgres_image_tag }}"
+    - image: "{{ archiveium_minio_image }}"
+      image_tag: "{{ archiveium_minio_image_tag }}"
+    - image: "{{ archiveium_redis_image }}"
+      image_tag: "{{ archiveium_redis_image_tag }}"
+    - image: "{{ archiveium_meilisearch_image }}"
+      image_tag: "{{ archiveium_meilisearch_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ archiveium_name }}"
+    driver: bridge
+    disable_dns: false
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ archiveium_volume_config }}"
+      options: "{{ archiveium_volume_config_options | default(omit) }}"
+    - name: "{{ archiveium_postgres_volume_data }}"
+      options: "{{ archiveium_postgres_volume_data_options | default(omit) }}"
+    - name: "{{ archiveium_minio_volume_data }}"
+      options: "{{ archiveium_minio_volume_data_options | default(omit) }}"
+    - name: "{{ archiveium_redis_volume_data }}"
+      options: "{{ archiveium_redis_volume_data_options | default(omit) }}"
+    - name: "{{ archiveium_meilisearch_volume_data }}"
+      options: "{{ archiveium_meilisearch_volume_data_options | default(omit) }}"
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
+  when: _archiveium_created_volumes.changed  # noqa: no-handler
+
+- name: Start config volume service to create it
+  ansible.builtin.systemd:
+    name: "{{ archiveium_volume_config }}-volume.service"
+    state: started
+  become: true
+
+- name: Get config volume info
+  containers.podman.podman_volume_info:
+    name: "{{ archiveium_volume_config }}"
+  become: true
+  register: _archiveium_certs_volume_info
+
+- name: Create config.json configuration file
+  ansible.builtin.template:
+    src: config.json.j2
+    dest: "{{ _archiveium_certs_volume_info.volumes[0].Mountpoint }}/config.json"
+    owner: root
+    group: root
+    mode: "0600"
+  become: true
+  notify: Restart {{ traefik_name }}
+
+- name: Create postgres container
+  containers.podman.podman_container:
+    name: "{{ archiveium_name }}-postgres"
+    image: "{{ archiveium_postgres_image }}:{{ archiveium_postgres_image_tag }}"
+    network: "{{ archiveium_name }}.network"
+    env: "{{ archiveium_postgres_env_vars_base | combine(archiveium_postgres_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ archiveium_postgres_volume_data }}.volume:/var/lib/postgresql/data"
+    healthcheck_interval: 30s
+    healthcheck_retries: 5
+    healthcheck_start_period: 20s
+    healthcheck_timeout: 5s
+    healthcheck: CMD-SHELL pg_isready -d {{ archiveium_postgres_db_name }} -U {{ archiveium_postgres_user }}
+    labels: "{{ archiveium_postgres_container_labels | default(omit) }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ archiveium_postgres_quadlet_options_base + archiveium_postgres_quadlet_options }}"
+    state: quadlet
+  notify: Restart postgres for {{ archiveium_name }}
+  become: true
+
+- name: Create minio container
+  containers.podman.podman_container:
+    name: "{{ archiveium_name }}-minio"
+    image: "{{ archiveium_minio_image }}:{{ archiveium_minio_image_tag }}"
+    network: "{{ archiveium_name }}.network"
+    env: "{{ archiveium_minio_env_vars_base | combine(archiveium_minio_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ archiveium_minio_volume_data }}.volume:/data/minio"
+    healthcheck_interval: 30s
+    healthcheck_retries: 5
+    healthcheck_start_period: 20s
+    healthcheck_timeout: 5s
+    healthcheck: CMD mc ready local
+    entrypoint: sh
+    command: -c 'mkdir -p /data/minio/emails && minio server /data/minio'
+    labels: "{{ archiveium_minio_container_labels | default(omit) }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ archiveium_minio_quadlet_options_base + archiveium_minio_quadlet_options }}"
+    state: quadlet
+  notify: Restart minio for {{ archiveium_name }}
+  become: true
+
+- name: Create redis container
+  containers.podman.podman_container:
+    name: "{{ archiveium_name }}-redis"
+    image: "{{ archiveium_redis_image }}:{{ archiveium_redis_image_tag }}"
+    network: "{{ archiveium_name }}.network"
+    env: "{{ archiveium_redis_env_vars_base | combine(archiveium_redis_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ archiveium_redis_volume_data }}.volume:/data"
+    healthcheck_interval: 30s
+    healthcheck_retries: 5
+    healthcheck_start_period: 20s
+    healthcheck_timeout: 3s
+    healthcheck: CMD-SHELL redis-cli ping | grep PONG
+    command: redis-server --maxmemory-policy noeviction --appendonly yes --maxmemory 200M
+    labels: "{{ archiveium_redis_container_labels | default(omit) }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ archiveium_redis_quadlet_options_base + archiveium_redis_quadlet_options }}"
+    state: quadlet
+  notify: Restart redis for {{ archiveium_name }}
+  become: true
+
+- name: Create meilisearch container
+  containers.podman.podman_container:
+    name: "{{ archiveium_name }}-meilisearch"
+    image: "{{ archiveium_meilisearch_image }}:{{ archiveium_meilisearch_image_tag }}"
+    network: "{{ archiveium_name }}.network"
+    env: "{{ archiveium_meilisearch_env_vars_base | combine(archiveium_meilisearch_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ archiveium_meilisearch_volume_data }}.volume:/meili_data"
+    publish: "{{ archiveium_meilisearch_ports }}"
+    labels: "{{ archiveium_meilisearch_container_labels | default(omit) }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ archiveium_meilisearch_quadlet_options_base + archiveium_meilisearch_quadlet_options }}"
+    state: quadlet
+  notify: Restart meilisearch for {{ archiveium_name }}
+  become: true
+
+- name: Create cron container
+  containers.podman.podman_container:
+    name: "{{ archiveium_name }}-cron"
+    image: "{{ archiveium_image }}:{{ archiveium_image_tag }}"
+    network: "{{ archiveium_name }}.network"
+    env: "{{ archiveium_env_vars_base | combine(archiveium_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ archiveium_volume_config }}.volume:/app/config"
+    healthcheck_interval: 30s
+    healthcheck_retries: 3
+    healthcheck_start_period: 20s
+    healthcheck_timeout: 5s
+    healthcheck: CMD curl -f http://localhost:3000/login
+    publish: "{{ archiveium_ports }}"
+    labels: "{{ archiveium_container_labels | default(omit) }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ archiveium_quadlet_options_base + archiveium_quadlet_options }}"
+    state: quadlet
+  notify: Restart cron for {{ archiveium_name }}
+  become: true
+
+- name: Create archiveium container
+  containers.podman.podman_container:
+    name: "{{ archiveium_name }}"
+    image: "{{ archiveium_image }}:{{ archiveium_image_tag }}"
+    network: "{{ archiveium_name }}.network"
+    env: "{{ archiveium_env_vars_base | combine(archiveium_env_vars, recursive=True) }}"
+    volumes:
+      - "{{ archiveium_volume_config }}.volume:/app/config"
+    healthcheck_interval: 30s
+    healthcheck_retries: 3
+    healthcheck_start_period: 20s
+    healthcheck_timeout: 5s
+    healthcheck: CMD curl -f http://localhost:3000/login
+    publish: "{{ archiveium_ports }}"
+    labels: "{{ archiveium_container_labels | default(omit) }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ archiveium_quadlet_options_base + archiveium_quadlet_options }}"
+    state: quadlet
+  notify: Restart {{ archiveium_name }}
+  become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

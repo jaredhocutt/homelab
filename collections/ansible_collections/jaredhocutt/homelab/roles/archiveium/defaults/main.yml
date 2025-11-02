@@ -1,0 +1,39 @@
+---
+# defaults file for jaredhocutt.homelab.archiveium
+
+archiveium_name: archiveium
+
+archiveium_image: docker.io/archiveium/archiveium
+archiveium_image_tag: latest
+archiveium_postgres_image: docker.io/library/postgres
+archiveium_postgres_image_tag: "13"
+archiveium_minio_image: docker.io/minio/minio
+archiveium_minio_image_tag: latest
+archiveium_redis_image: docker.io/library/redis
+archiveium_redis_image_tag: "7"
+archiveium_meilisearch_image: docker.io/getmeili/meilisearch
+archiveium_meilisearch_image_tag: latest
+
+archiveium_volume_config: "{{ archiveium_name }}-config"
+archiveium_postgres_volume_data: "{{ archiveium_name }}-postgres-data"
+archiveium_minio_volume_data: "{{ archiveium_name }}-minio-data"
+archiveium_redis_volume_data: "{{ archiveium_name }}-redis-data"
+archiveium_meilisearch_volume_data: "{{ archiveium_name }}-meilisearch-data"
+
+archiveium_ports:
+  - 5292:3000
+archiveium_meilisearch_ports:
+  - 7700:7700
+
+archiveium_env_vars: {}
+archiveium_cron_env_vars: {}
+archiveium_postgres_env_vars: {}
+archiveium_minio_env_vars: {}
+archiveium_redis_env_vars: {}
+archiveium_meilisearch_env_vars: {}
+archiveium_quadlet_options: []
+archiveium_cron_quadlet_options: []
+archiveium_postgres_quadlet_options: []
+archiveium_minio_quadlet_options: []
+archiveium_redis_quadlet_options: []
+archiveium_meilisearch_quadlet_options: []

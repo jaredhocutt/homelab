@@ -1,0 +1,112 @@
+---
+# vars file for jaredhocutt.homelab.archiveium
+
+archiveium_postgres_db_name: archiveium
+archiveium_postgres_user: archiveium
+archiveium_minio_user: archiveium
+
+archiveium_env_vars_base:
+  TZ: "America/New_York"
+  NODE_APP_INSTANCE: "0"
+  APP_ADMIN_EMAIL: "{{ archiveium_admin_email }}"
+  APP_ADMIN_PASSWORD: "{{ archiveium_admin_password }}"
+  APP_ENCRYPTION_KEY: "{{ archiveium_encryption_key }}"
+  SEARCH_API_KEY: "{{ archiveium_meilisearch_master_key }}"
+
+archiveium_cron_env_vars_base:
+  TZ: "America/New_York"
+  NODE_APP_INSTANCE: "0"
+  USE_AS_CRON_PROCESSOR: "true"
+  APP_ENCRYPTION_KEY: "{{ archiveium_encryption_key }}"
+  SEARCH_API_KEY: "{{ archiveium_meilisearch_master_key }}"
+
+archiveium_postgres_env_vars_base:
+  TZ: "America/New_York"
+  POSTGRES_DB: "{{ archiveium_postgres_db_name }}"
+  POSTGRES_USER: "{{ archiveium_postgres_user }}"
+  POSTGRES_PASSWORD: "{{ archiveium_postgres_password }}"
+
+archiveium_minio_env_vars_base:
+  TZ: "America/New_York"
+  MINIO_ROOT_USER: "{{ archiveium_minio_user }}"
+  MINIO_ROOT_PASSWORD: "{{ archiveium_minio_password }}"
+  MINIO_COMPRESSION_ENABLE: "on"
+  MINIO_COMPRESSION_EXTENSIONS: ""
+  MINIO_COMPRESSION_MIME_TYPES: ""
+
+archiveium_redis_env_vars_base:
+  TZ: "America/New_York"
+
+archiveium_meilisearch_env_vars_base:
+  TZ: "America/New_York"
+  MEILI_MASTER_KEY: "{{ archiveium_meilisearch_master_key }}"
+  MEILI_ENV: production
+  MEILI_NO_ANALYTICS: "true"
+
+archiveium_quadlet_options_base:
+  - |
+    [Unit]
+    Requires={{ archiveium_name }}-postgres.service
+    Requires={{ archiveium_name }}-minio.service
+    Requires={{ archiveium_name }}-redis.service
+    Requires={{ archiveium_name }}-meilisearch.service
+    After={{ archiveium_name }}-postgres.service
+    After={{ archiveium_name }}-minio.service
+    After={{ archiveium_name }}-redis.service
+    After={{ archiveium_name }}-meilisearch.service
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target
+
+archiveium_cron_quadlet_options_base:
+  - |
+    [Unit]
+    Requires={{ archiveium_name }}-postgres.service
+    Requires={{ archiveium_name }}-minio.service
+    Requires={{ archiveium_name }}-redis.service
+    Requires={{ archiveium_name }}-meilisearch.service
+    After={{ archiveium_name }}-postgres.service
+    After={{ archiveium_name }}-minio.service
+    After={{ archiveium_name }}-redis.service
+    After={{ archiveium_name }}-meilisearch.service
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target
+
+archiveium_postgres_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target
+
+archiveium_minio_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target
+
+archiveium_redis_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target
+
+archiveium_meilisearch_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target

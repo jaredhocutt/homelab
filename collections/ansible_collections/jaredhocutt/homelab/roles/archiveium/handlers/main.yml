@@ -1,0 +1,50 @@
+---
+# handlers file for jaredhocutt.homelab.archiveium
+
+- name: Restart {{ archiveium_name }}
+  ansible.builtin.systemd:
+    name: "{{ archiveium_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart cron for {{ archiveium_name }}
+  ansible.builtin.systemd:
+    name: "{{ archiveium_name }}-cron.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart postgres for {{ archiveium_name }}
+  ansible.builtin.systemd:
+    name: "{{ archiveium_name }}-postgres.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart minio for {{ archiveium_name }}
+  ansible.builtin.systemd:
+    name: "{{ archiveium_name }}-minio.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart redis for {{ archiveium_name }}
+  ansible.builtin.systemd:
+    name: "{{ archiveium_name }}-redis.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart meilisearch for {{ archiveium_name }}
+  ansible.builtin.systemd:
+    name: "{{ archiveium_name }}-meilisearch.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

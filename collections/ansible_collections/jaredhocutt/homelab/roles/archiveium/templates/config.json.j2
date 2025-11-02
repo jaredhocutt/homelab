@@ -1,0 +1,52 @@
+{
+  "app": {
+    "name": "Archiveium",
+    "url": "{{ archiveium_url }}",
+    "logLevel": "info",
+    "useAsCronProcessor": false,
+    "adminEmail": "{{ archiveium_admin_email }}",
+    "adminPassword": "{{ archiveium_admin_password }}",
+    "encryptionKey": "{{ archiveium_encryption_key }}"
+  },
+  "database": {
+    "user": "{{ archiveium_postgres_user }}",
+    "password": "{{ archiveium_postgres_password }}",
+    "host": "{{ archiveium_name }}-postgres",
+    "port": 5432,
+    "database": "{{ archiveium_postgres_db_name }}",
+    "max": 10
+  },
+  "redis": {
+    "host": "{{ archiveium_name }}-redis",
+    "port": 6379
+  },
+  "search": {
+    "host": "{{ archiveium_name }}-meilisearch",
+    "port": 7700,
+    "apiKey": "{{ archiveium_meilisearch_master_key }}"
+  },
+  "s3": {
+    "endpoint": "http://{{ archiveium_name }}-minio:9000",
+    "region": "us-east-1",
+    "credentials": {
+      "accessKeyId": "{{ archiveium_minio_user }}",
+      "secretAccessKey": "{{ archiveium_minio_password }}"
+    },
+    "forcePathStyle": true
+  },
+  "session": {
+    "secrets": [
+      ""
+    ]
+  },
+  "mail": {
+    "host": "",
+    "port": 587,
+    "secure": false,
+    "auth": {
+      "user": "",
+      "pass": ""
+    },
+    "fromAddress": ""
+  }
+}
