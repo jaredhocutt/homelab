@@ -5,6 +5,7 @@ n8n_postgres_db_name: n8n
 n8n_postgres_user: n8n
 
 n8n_env_vars_base:
+  TZ: "America/New_York"
   DB_TYPE: postgresdb
   DB_POSTGRESDB_HOST: "{{ n8n_name }}-postgres"
   DB_POSTGRESDB_PORT: "5432"
@@ -14,6 +15,7 @@ n8n_env_vars_base:
   N8N_DIAGNOSTICS_ENABLED: "false"
 
 n8n_postgres_env_vars_base:
+  TZ: "America/New_York"
   POSTGRES_DB: "{{ n8n_postgres_db_name }}"
   POSTGRES_USER: "{{ n8n_postgres_user }}"
   POSTGRES_PASSWORD: "{{ n8n_postgres_password }}"
