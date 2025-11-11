@@ -1,13 +1,24 @@
 ---
 # vars file for jaredhocutt.homelab.overseerr
 
-overseerr_env_vars_base:
-  TZ: "America/New_York"
+###############################################################################
+# Envrionment Variables
+###############################################################################
 
-overseerr_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+overseerr_env_vars_base: "{{ common_env_vars_base }}"
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+overseerr_container_labels_traefik:
+  traefik.enable: true
+  traefik.http.routers.{{ overseerr_name }}.rule: Host(`{{ overseerr_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ overseerr_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
+overseerr_container_labels_base: "{{ overseerr_traefik_enable | ternary(overseerr_container_labels_traefik, {}) }}"
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+overseerr_quadlet_options_base: "{{ common_quadlet_options_base }}"

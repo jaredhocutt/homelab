@@ -48,7 +48,7 @@
     env: "{{ bar_assistant_redis_env_vars_base | combine(bar_assistant_redis_env_vars, recursive=True) }}"
     volumes:
       - "{{ bar_assistant_redis_volume_data }}.volume:/data"
-    labels: "{{ bar_assistant_redis_container_labels | default(omit) }}"
+    labels: "{{ bar_assistant_redis_container_labels_base | combine(bar_assistant_redis_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ bar_assistant_redis_quadlet_options_base + bar_assistant_redis_quadlet_options }}"
     state: quadlet
@@ -63,8 +63,8 @@
     env: "{{ bar_assistant_meilisearch_env_vars_base | combine(bar_assistant_meilisearch_env_vars, recursive=True) }}"
     volumes:
       - "{{ bar_assistant_meilisearch_volume_data }}.volume:/meili_data"
-    publish: "{{ bar_assistant_meilisearch_ports }}"
-    labels: "{{ bar_assistant_meilisearch_container_labels | default(omit) }}"
+    publish: "{{ bar_assistant_traefik_enable | ternary(omit, bar_assistant_meilisearch_ports) }}"
+    labels: "{{ bar_assistant_meilisearch_container_labels_base | combine(bar_assistant_meilisearch_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ bar_assistant_meilisearch_quadlet_options_base + bar_assistant_meilisearch_quadlet_options }}"
     state: quadlet
@@ -79,8 +79,8 @@
     env: "{{ bar_assistant_env_vars_base | combine(bar_assistant_env_vars, recursive=True) }}"
     volumes:
       - "{{ bar_assistant_volume_data }}.volume:/var/www/cocktails/storage/bar-assistant"
-    publish: "{{ bar_assistant_ports }}"
-    labels: "{{ bar_assistant_container_labels | default(omit) }}"
+    publish: "{{ bar_assistant_traefik_enable | ternary(omit, bar_assistant_ports) }}"
+    labels: "{{ bar_assistant_container_labels_base | combine(bar_assistant_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ bar_assistant_quadlet_options_base + bar_assistant_quadlet_options }}"
     state: quadlet
@@ -93,8 +93,8 @@
     image: "{{ bar_assistant_salt_rim_image }}:{{ bar_assistant_salt_rim_image_tag }}"
     network: "{{ bar_assistant_name }}.network"
     env: "{{ bar_assistant_salt_rim_env_vars_base | combine(bar_assistant_salt_rim_env_vars, recursive=True) }}"
-    publish: "{{ bar_assistant_salt_rim_ports }}"
-    labels: "{{ bar_assistant_salt_rim_container_labels | default(omit) }}"
+    publish: "{{ bar_assistant_traefik_enable | ternary(omit, bar_assistant_salt_rim_ports) }}"
+    labels: "{{ bar_assistant_salt_rim_container_labels_base | combine(bar_assistant_salt_rim_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ bar_assistant_salt_rim_quadlet_options_base + bar_assistant_salt_rim_quadlet_options }}"
     state: quadlet

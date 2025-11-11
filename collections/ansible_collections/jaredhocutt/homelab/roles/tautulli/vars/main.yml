@@ -1,13 +1,24 @@
 ---
 # vars file for jaredhocutt.homelab.tautulli
 
-tautulli_env_vars_base:
-  TZ: "America/New_York"
+###############################################################################
+# Envrionment Variables
+###############################################################################
 
-tautulli_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+tautulli_env_vars_base: "{{ common_env_vars_base }}"
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+tautulli_container_labels_traefik:
+  traefik.enable: true
+  traefik.http.routers.{{ tautulli_name }}.rule: Host(`{{ tautulli_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ tautulli_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
+tautulli_container_labels_base: "{{ tautulli_traefik_enable | ternary(tautulli_container_labels_traefik, {}) }}"
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+tautulli_quadlet_options_base: "{{ common_quadlet_options_base }}"

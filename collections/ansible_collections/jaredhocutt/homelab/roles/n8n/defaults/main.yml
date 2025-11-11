@@ -11,10 +11,15 @@ n8n_postgres_image_tag: "16"
 n8n_volume_data: "{{ n8n_name }}-data"
 n8n_postgres_volume_data: "{{ n8n_name }}-postgres-data"
 
+n8n_traefik_enable: true
 n8n_ports:
   - 5678:5678
 
 n8n_env_vars: {}
 n8n_postgres_env_vars: {}
+
+n8n_container_labels: {}
+n8n_postgres_container_labels: {}
+
 n8n_quadlet_options: []
 n8n_postgres_quadlet_options: []

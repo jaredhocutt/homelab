@@ -4,8 +4,11 @@
 n8n_postgres_db_name: n8n
 n8n_postgres_user: n8n
 
-n8n_env_vars_base:
-  TZ: "America/New_York"
+###############################################################################
+# Envrionment Variables
+###############################################################################
+
+n8n_env_vars_base_custom:
   DB_TYPE: postgresdb
   DB_POSTGRESDB_HOST: "{{ n8n_name }}-postgres"
   DB_POSTGRESDB_PORT: "5432"
@@ -13,29 +16,35 @@ n8n_env_vars_base:
   DB_POSTGRESDB_USER: "{{ n8n_postgres_user }}"
   DB_POSTGRESDB_PASSWORD: "{{ n8n_postgres_password }}"
   N8N_DIAGNOSTICS_ENABLED: "false"
+n8n_env_vars_base: "{{ common_env_vars_base | combine(n8n_env_vars_base_custom, recursive=True) }}"
 
-n8n_postgres_env_vars_base:
-  TZ: "America/New_York"
+n8n_postgres_env_vars_base_custom:
   POSTGRES_DB: "{{ n8n_postgres_db_name }}"
   POSTGRES_USER: "{{ n8n_postgres_user }}"
   POSTGRES_PASSWORD: "{{ n8n_postgres_password }}"
+n8n_postgres_env_vars_base: "{{ common_env_vars_base | combine(n8n_postgres_env_vars_base_custom, recursive=True) }}"
 
-n8n_quadlet_options_base:
+###############################################################################
+# Container Labels
+###############################################################################
+
+n8n_container_labels_traefik:
+  traefik.enable: true
+  traefik.http.routers.{{ n8n_name }}.rule: Host(`{{ n8n_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ n8n_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
+n8n_container_labels_base: "{{ n8n_traefik_enable | ternary(n8n_container_labels_traefik, {}) }}"
+
+n8n_postgres_container_labels_base: {}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+n8n_quadlet_options_base_custom:
   - |
     [Unit]
     Requires={{ n8n_name }}-postgres.service
     After={{ n8n_name }}-postgres.service
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+n8n_quadlet_options_base: "{{ common_quadlet_options_base + n8n_quadlet_options_base_custom }}"
 
-n8n_postgres_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+n8n_postgres_quadlet_options_base: "{{ common_quadlet_options_base }}"

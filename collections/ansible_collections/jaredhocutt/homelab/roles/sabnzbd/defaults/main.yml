@@ -9,8 +9,12 @@ sabnzbd_image_tag: latest
 sabnzbd_volume_config: "{{ sabnzbd_name }}-config"
 sabnzbd_volume_download: "{{ sabnzbd_name }}-download"
 
+sabnzbd_traefik_enable: true
 sabnzbd_ports:
   - 8080:8080
 
 sabnzbd_env_vars: {}
+
+sabnzbd_container_labels: {}
+
 sabnzbd_quadlet_options: []

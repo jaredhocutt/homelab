@@ -38,8 +38,8 @@
     env: "{{ healthchecks_env_vars_base | combine(healthchecks_env_vars, recursive=True) }}"
     volumes:
       - "{{ healthchecks_volume_config }}:/config"
-    publish: "{{ healthchecks_ports }}"
-    labels: "{{ healthchecks_container_labels | default(omit) }}"
+    publish: "{{ healthchecks_traefik_enable | ternary(omit, healthchecks_ports) }}"
+    labels: "{{ healthchecks_container_labels_base | combine(healthchecks_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ healthchecks_quadlet_options_base + healthchecks_quadlet_options }}"
     state: quadlet

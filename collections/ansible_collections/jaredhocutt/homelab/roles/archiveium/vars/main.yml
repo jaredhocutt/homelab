@@ -5,45 +5,73 @@ archiveium_postgres_db_name: archiveium
 archiveium_postgres_user: archiveium
 archiveium_minio_user: archiveium
 
-archiveium_env_vars_base:
-  TZ: "America/New_York"
+###############################################################################
+# Envrionment Variables
+###############################################################################
+
+archiveium_env_vars_base_custom:
   NODE_APP_INSTANCE: "0"
   APP_ADMIN_EMAIL: "{{ archiveium_admin_email }}"
   APP_ADMIN_PASSWORD: "{{ archiveium_admin_password }}"
   APP_ENCRYPTION_KEY: "{{ archiveium_encryption_key }}"
   SEARCH_API_KEY: "{{ archiveium_meilisearch_master_key }}"
+archiveium_env_vars_base: "{{ common_env_vars_base | combine(archiveium_env_vars_base_custom, recursive=True) }}"
 
-archiveium_cron_env_vars_base:
-  TZ: "America/New_York"
+archiveium_cron_env_vars_base_custom:
   NODE_APP_INSTANCE: "0"
   USE_AS_CRON_PROCESSOR: "true"
   APP_ENCRYPTION_KEY: "{{ archiveium_encryption_key }}"
   SEARCH_API_KEY: "{{ archiveium_meilisearch_master_key }}"
+archiveium_cron_env_vars_base: "{{ common_env_vars_base | combine(archiveium_cron_env_vars_base_custom, recursive=True) }}"
 
-archiveium_postgres_env_vars_base:
-  TZ: "America/New_York"
+archiveium_postgres_env_vars_base_custom:
   POSTGRES_DB: "{{ archiveium_postgres_db_name }}"
   POSTGRES_USER: "{{ archiveium_postgres_user }}"
   POSTGRES_PASSWORD: "{{ archiveium_postgres_password }}"
+archiveium_postgres_env_vars_base: "{{ common_env_vars_base | combine(archiveium_postgres_env_vars_base_custom, recursive=True) }}"
 
-archiveium_minio_env_vars_base:
-  TZ: "America/New_York"
+archiveium_minio_env_vars_base_custom:
   MINIO_ROOT_USER: "{{ archiveium_minio_user }}"
   MINIO_ROOT_PASSWORD: "{{ archiveium_minio_password }}"
   MINIO_COMPRESSION_ENABLE: "on"
   MINIO_COMPRESSION_EXTENSIONS: ""
   MINIO_COMPRESSION_MIME_TYPES: ""
+archiveium_minio_env_vars_base: "{{ common_env_vars_base | combine(archiveium_minio_env_vars_base_custom, recursive=True) }}"
 
-archiveium_redis_env_vars_base:
-  TZ: "America/New_York"
+archiveium_redis_env_vars_base: "{{ common_env_vars_base }}"
 
-archiveium_meilisearch_env_vars_base:
-  TZ: "America/New_York"
+archiveium_meilisearch_env_vars_base_custom:
   MEILI_MASTER_KEY: "{{ archiveium_meilisearch_master_key }}"
   MEILI_ENV: production
   MEILI_NO_ANALYTICS: "true"
+archiveium_meilisearch_env_vars_base: "{{ common_env_vars_base | combine(archiveium_meilisearch_env_vars_base_custom, recursive=True) }}"
 
-archiveium_quadlet_options_base:
+###############################################################################
+# Container Labels
+###############################################################################
+
+archiveium_container_labels_traefik:
+  traefik.enable: true
+  traefik.http.routers.{{ archiveium_name }}.rule: Host(`{{ archiveium_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ archiveium_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
+archiveium_container_labels_base: "{{ archiveium_traefik_enable | ternary(archiveium_container_labels_traefik, {}) }}"
+
+archiveium_cron_container_labels_base: {}
+archiveium_postgres_container_labels_base: {}
+archiveium_minio_container_labels_base: {}
+archiveium_redis_container_labels_base: {}
+
+archiveium_meilisearch_container_labels_traefik:
+  traefik.enable: true
+  traefik.http.routers.{{ archiveium_name }}.rule: Host(`{{ archiveium_name }}-meilisearch.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ archiveium_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
+archiveium_meilisearch_container_labels_base: "{{ archiveium_traefik_enable | ternary(archiveium_meilisearch_container_labels_traefik, {}) }}"
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+archiveium_quadlet_options_base_custom:
   - |
     [Unit]
     Requires={{ archiveium_name }}-postgres.service
@@ -54,14 +82,9 @@ archiveium_quadlet_options_base:
     After={{ archiveium_name }}-minio.service
     After={{ archiveium_name }}-redis.service
     After={{ archiveium_name }}-meilisearch.service
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+archiveium_quadlet_options_base: "{{ common_quadlet_options_base + archiveium_quadlet_options_base_custom }}"
 
-archiveium_cron_quadlet_options_base:
+archiveium_cron_quadlet_options_base_custom:
   - |
     [Unit]
     Requires={{ archiveium_name }}-postgres.service
@@ -72,41 +95,9 @@ archiveium_cron_quadlet_options_base:
     After={{ archiveium_name }}-minio.service
     After={{ archiveium_name }}-redis.service
     After={{ archiveium_name }}-meilisearch.service
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+archiveium_cron_quadlet_options_base: "{{ common_quadlet_options_base + archiveium_cron_quadlet_options_base_custom }}"
 
-archiveium_postgres_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
-
-archiveium_minio_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
-
-archiveium_redis_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
-
-archiveium_meilisearch_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+archiveium_postgres_quadlet_options_base: "{{ common_quadlet_options_base }}"
+archiveium_minio_quadlet_options_base: "{{ common_quadlet_options_base }}"
+archiveium_redis_quadlet_options_base: "{{ common_quadlet_options_base }}"
+archiveium_meilisearch_quadlet_options_base: "{{ common_quadlet_options_base }}"

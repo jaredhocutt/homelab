@@ -12,10 +12,15 @@ tandoor_volume_staticfiles: "{{ tandoor_name }}-staticfiles"
 tandoor_volume_mediafiles: "{{ tandoor_name }}-mediafiles"
 tandoor_postgres_volume_data: "{{ tandoor_name }}-postgres-data"
 
+tandoor_traefik_enable: true
 tandoor_ports:
   - 80:80
 
 tandoor_env_vars: {}
 tandoor_postgres_env_vars: {}
+
+tandoor_container_labels: {}
+tandoor_postgres_container_labels: {}
+
 tandoor_quadlet_options: []
 tandoor_postgres_quadlet_options: []

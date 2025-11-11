@@ -4,8 +4,11 @@
 paperless_postgres_db_name: paperless
 paperless_postgres_user: paperless
 
-paperless_env_vars_base:
-  TZ: "America/New_York"
+###############################################################################
+# Envrionment Variables
+###############################################################################
+
+paperless_env_vars_base_custom:
   PAPERLESS_DBENGINE: postgresql
   PAPERLESS_DBHOST: "{{ paperless_name }}-postgres"
   PAPERLESS_DBNAME: "{{ paperless_postgres_db_name }}"
@@ -19,25 +22,51 @@ paperless_env_vars_base:
   PAPERLESS_DATE_ORDER: MDY
   PAPERLESS_CONSUMER_POLLING: 30
   PAPERLESS_TASK_WORKERS: "{{ paperless_task_workers }}"
+paperless_env_vars_base: "{{ common_env_vars_base | combine(paperless_env_vars_base_custom, recursive=True) }}"
 
-paperless_postgres_env_vars_base:
+paperless_postgres_env_vars_base_custom:
   POSTGRES_DB: "{{ paperless_postgres_db_name }}"
   POSTGRES_USER: "{{ paperless_postgres_user }}"
   POSTGRES_PASSWORD: "{{ paperless_postgres_password }}"
+paperless_postgres_env_vars_base: "{{ common_env_vars_base | combine(paperless_postgres_env_vars_base_custom, recursive=True) }}"
 
-paperless_redis_env_vars_base:
-  TZ: "America/New_York"
+paperless_redis_env_vars_base: "{{ common_env_vars_base }}"
 
-paperless_gotenberg_env_vars_base:
-  TZ: "America/New_York"
+paperless_gotenberg_env_vars_base: "{{ common_env_vars_base }}"
 
-paperless_tika_env_vars_base:
-  TZ: "America/New_York"
+paperless_tika_env_vars_base: "{{ common_env_vars_base }}"
 
-paperless_ai_env_vars_base:
-  TZ: "America/New_York"
+paperless_ai_env_vars_base: "{{ common_env_vars_base }}"
 
-paperless_quadlet_options_base:
+###############################################################################
+# Container Labels
+###############################################################################
+
+paperless_container_labels_traefik:
+  traefik.enable: true
+  traefik.http.routers.{{ paperless_name }}.rule: Host(`{{ paperless_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ paperless_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
+paperless_container_labels_base: "{{ paperless_traefik_enable | ternary(paperless_container_labels_traefik, {}) }}"
+
+paperless_postgres_container_labels_base: {}
+
+paperless_redis_container_labels_base: {}
+
+paperless_gotenberg_container_labels_base: {}
+
+paperless_tika_container_labels_base: {}
+
+paperless_ai_container_labels_traefik:
+  traefik.enable: true
+  traefik.http.routers.{{ paperless_name }}.rule: Host(`{{ paperless_name }}-ai.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ paperless_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
+paperless_ai_container_labels_base: "{{ paperless_traefik_enable | ternary(paperless_ai_container_labels_traefik, {}) }}"
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+paperless_quadlet_options_base_custom:
   - |
     [Unit]
     Requires={{ paperless_name }}-postgres.service
@@ -48,49 +77,14 @@ paperless_quadlet_options_base:
     After={{ paperless_name }}-redis.service
     After={{ paperless_name }}-gotenberg.service
     After={{ paperless_name }}-tika.service
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+paperless_quadlet_options_base: "{{ common_quadlet_options_base + paperless_quadlet_options_base_custom }}"
 
-paperless_postgres_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+paperless_postgres_quadlet_options_base: "{{ common_quadlet_options_base }}"
 
-paperless_redis_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+paperless_redis_quadlet_options_base: "{{ common_quadlet_options_base }}"
 
-paperless_gotenberg_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+paperless_gotenberg_quadlet_options_base: "{{ common_quadlet_options_base }}"
 
-paperless_tika_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+paperless_tika_quadlet_options_base: "{{ common_quadlet_options_base }}"
 
-paperless_ai_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+paperless_ai_quadlet_options_base: "{{ common_quadlet_options_base }}"

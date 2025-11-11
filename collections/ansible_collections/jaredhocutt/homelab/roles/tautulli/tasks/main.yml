@@ -38,8 +38,8 @@
     env: "{{ tautulli_env_vars_base | combine(tautulli_env_vars, recursive=True) }}"
     volumes:
       - "{{ tautulli_volume_config }}:/config"
-    publish: "{{ tautulli_ports }}"
-    labels: "{{ tautulli_container_labels | default(omit) }}"
+    publish: "{{ tautulli_traefik_enable | ternary(omit, tautulli_ports) }}"
+    labels: "{{ tautulli_container_labels_base | combine(tautulli_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ tautulli_quadlet_options_base + tautulli_quadlet_options }}"
     state: quadlet

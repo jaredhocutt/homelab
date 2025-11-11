@@ -1,0 +1,67 @@
+---
+
+- name: Start certs volume service to create it
+  ansible.builtin.systemd:
+    name: "{{ traefik_volume_certs }}-volume.service"
+    state: started
+  become: true
+
+- name: Get certs volume info
+  containers.podman.podman_volume_info:
+    name: "{{ traefik_volume_certs }}"
+  become: true
+  register: _traefik_certs_volume_info
+
+- name: Generate private key
+  community.crypto.openssl_privatekey:
+    path: "{{ _traefik_certs_volume_info.volumes[0].Mountpoint }}/local.key"
+    owner: root
+    group: root
+    mode: "0600"
+  become: true
+  notify: Restart {{ traefik_name }}
+
+- name: Generate CSR
+  community.crypto.openssl_csr:
+    path: "{{ _traefik_certs_volume_info.volumes[0].Mountpoint }}/local.csr"
+    privatekey_path: "{{ _traefik_certs_volume_info.volumes[0].Mountpoint }}/local.key"
+    common_name: "{{ traefik_tls_common_name | default('*.podman.localhost') }}"
+    owner: root
+    group: root
+    mode: "0600"
+  become: true
+  notify: Restart {{ traefik_name }}
+
+- name: Generate self-signed certificate
+  community.crypto.x509_certificate:
+    path: "{{ _traefik_certs_volume_info.volumes[0].Mountpoint }}/local.crt"
+    privatekey_path: "{{ _traefik_certs_volume_info.volumes[0].Mountpoint }}/local.key"
+    csr_path: "{{ _traefik_certs_volume_info.volumes[0].Mountpoint }}/local.csr"
+    provider: selfsigned
+    owner: root
+    group: root
+    mode: "0600"
+  become: true
+  notify: Restart {{ traefik_name }}
+
+- name: Start dynamic volume service to create it
+  ansible.builtin.systemd:
+    name: "{{ traefik_volume_dynamic }}-volume.service"
+    state: started
+  become: true
+
+- name: Get dynamic volume info
+  containers.podman.podman_volume_info:
+    name: "{{ traefik_volume_dynamic }}"
+  become: true
+  register: _traefik_dynamic_volume_info
+
+- name: Create tls.yaml configuration file
+  ansible.builtin.copy:
+    src: tls.yaml
+    dest: "{{ _traefik_dynamic_volume_info.volumes[0].Mountpoint }}/tls.yaml"
+    owner: root
+    group: root
+    mode: "0600"
+  become: true
+  notify: Restart {{ traefik_name }}

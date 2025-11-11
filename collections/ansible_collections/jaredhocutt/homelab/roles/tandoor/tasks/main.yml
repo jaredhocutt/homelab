@@ -64,8 +64,8 @@
     volumes:
       - "{{ tandoor_volume_staticfiles }}.volume:/opt/recipes/staticfiles"
       - "{{ tandoor_volume_mediafiles }}.volume:/opt/recipes/mediafiles"
-    publish: "{{ tandoor_ports }}"
-    labels: "{{ tandoor_container_labels | default(omit) }}"
+    publish: "{{ tandoor_traefik_enable | ternary(omit, tandoor_ports) }}"
+    labels: "{{ tandoor_container_labels_base | combine(tandoor_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ tandoor_quadlet_options_base + tandoor_quadlet_options }}"
     state: quadlet

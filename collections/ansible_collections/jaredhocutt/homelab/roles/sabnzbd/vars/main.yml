@@ -1,13 +1,24 @@
 ---
 # vars file for jaredhocutt.homelab.sabnzbd
 
-sabnzbd_env_vars_base:
-  TZ: "America/New_York"
+###############################################################################
+# Envrionment Variables
+###############################################################################
 
-sabnzbd_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+sabnzbd_env_vars_base: "{{ common_env_vars_base }}"
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+sabnzbd_container_labels_traefik:
+  traefik.enable: true
+  traefik.http.routers.{{ sabnzbd_name }}.rule: Host(`{{ sabnzbd_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ sabnzbd_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
+sabnzbd_container_labels_base: "{{ sabnzbd_traefik_enable | ternary(sabnzbd_container_labels_traefik, {}) }}"
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+sabnzbd_quadlet_options_base: "{{ common_quadlet_options_base }}"

@@ -38,8 +38,8 @@
     env: "{{ prowlarr_env_vars_base | combine(prowlarr_env_vars, recursive=True) }}"
     volumes:
       - "{{ prowlarr_volume_config }}:/config"
-    publish: "{{ prowlarr_ports }}"
-    labels: "{{ prowlarr_container_labels | default(omit) }}"
+    publish: "{{ prowlarr_traefik_enable | ternary(omit, prowlarr_ports) }}"
+    labels: "{{ prowlarr_container_labels_base | combine(prowlarr_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ prowlarr_quadlet_options_base + prowlarr_quadlet_options }}"
     state: quadlet

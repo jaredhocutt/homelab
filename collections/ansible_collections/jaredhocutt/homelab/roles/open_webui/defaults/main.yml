@@ -8,8 +8,12 @@ open_webui_image_tag: main
 
 open_webui_volume_data: "{{ open_webui_name }}-data"
 
+open_webui_traefik_enable: true
 open_webui_ports:
   - 3000:8080
 
 open_webui_env_vars: {}
+
+open_webui_container_labels: {}
+
 open_webui_quadlet_options: []

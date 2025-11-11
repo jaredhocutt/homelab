@@ -49,7 +49,7 @@
       - --remote-debugging-address=0.0.0.0
       - --remote-debugging-port=9222
       - --hide-scrollbars
-    labels: "{{ karakeep_chrome_container_labels | default(omit) }}"
+    labels: "{{ karakeep_chrome_container_labels_base | combine(karakeep_chrome_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ karakeep_chrome_quadlet_options_base + karakeep_chrome_quadlet_options }}"
     state: quadlet
@@ -64,7 +64,7 @@
     env: "{{ karakeep_meilisearch_env_vars_base | combine(karakeep_meilisearch_env_vars, recursive=True) }}"
     volumes:
       - "{{ karakeep_meilisearch_volume_data }}.volume:/meili_data"
-    labels: "{{ karakeep_meilisearch_container_labels | default(omit) }}"
+    labels: "{{ karakeep_meilisearch_container_labels_base | combine(karakeep_meilisearch_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ karakeep_meilisearch_quadlet_options_base + karakeep_meilisearch_quadlet_options }}"
     state: quadlet
@@ -79,8 +79,8 @@
     env: "{{ karakeep_env_vars_base | combine(karakeep_env_vars, recursive=True) }}"
     volumes:
       - "{{ karakeep_volume_data }}.volume:/data"
-    publish: "{{ karakeep_ports }}"
-    labels: "{{ karakeep_container_labels | default(omit) }}"
+    publish: "{{ karakeep_traefik_enable | ternary(omit, karakeep_ports) }}"
+    labels: "{{ karakeep_container_labels_base | combine(karakeep_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ karakeep_quadlet_options_base + karakeep_quadlet_options }}"
     state: quadlet

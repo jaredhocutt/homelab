@@ -1,48 +1,52 @@
 ---
 # vars file for jaredhocutt.homelab.karakeep
 
-karakeep_env_vars_base:
-  TZ: "America/New_York"
+###############################################################################
+# Envrionment Variables
+###############################################################################
+
+karakeep_env_vars_base_custom:
   MEILI_ADDR: http://{{ karakeep_name }}-meilisearch:7700
   BROWSER_WEB_URL: http://{{ karakeep_name }}-chrome:9222
   DATA_DIR: /data
   NEXTAUTH_URL: "{{ karakeep_nextauth_url }}"
   NEXTAUTH_SECRET: "{{ karakeep_nextauth_secret }}"
+karakeep_env_vars_base: "{{ common_env_vars_base | combine(karakeep_env_vars_base_custom, recursive=True) }}"
 
-karakeep_chrome_env_vars_base:
-  TZ: "America/New_York"
+karakeep_chrome_env_vars_base: "{{ common_env_vars_base }}"
 
-karakeep_meilisearch_env_vars_base:
-  TZ: "America/New_York"
+karakeep_meilisearch_env_vars_base_custom:
   MEILI_NO_ANALYTICS: "true"
   MEILI_MASTER_KEY: "{{ karakeep_meilisearch_master_key }}"
+karakeep_meilisearch_env_vars_base: "{{ common_env_vars_base | combine(karakeep_meilisearch_env_vars_base_custom, recursive=True) }}"
 
-karakeep_quadlet_options_base:
+###############################################################################
+# Container Labels
+###############################################################################
+
+karakeep_container_labels_traefik:
+  traefik.enable: true
+  traefik.http.routers.{{ karakeep_name }}.rule: Host(`{{ karakeep_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ karakeep_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
+karakeep_container_labels_base: "{{ karakeep_traefik_enable | ternary(karakeep_container_labels_traefik, {}) }}"
+
+karakeep_chrome_container_labels_base: {}
+
+karakeep_meilisearch_container_labels_base: {}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+karakeep_quadlet_options_base_custom:
   - |
     [Unit]
     Requires={{ karakeep_name }}-chrome.service
     Requires={{ karakeep_name }}-meilisearch.service
     After={{ karakeep_name }}-chrome.service
     After={{ karakeep_name }}-meilisearch.service
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+karakeep_quadlet_options_base: "{{ common_quadlet_options_base + karakeep_quadlet_options_base_custom }}"
 
-karakeep_chrome_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+karakeep_chrome_quadlet_options_base: "{{ common_quadlet_options_base }}"
 
-karakeep_meilisearch_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+karakeep_meilisearch_quadlet_options_base: "{{ common_quadlet_options_base }}"

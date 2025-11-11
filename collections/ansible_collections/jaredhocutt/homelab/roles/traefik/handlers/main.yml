@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.traefik
+
+- name: Restart {{ traefik_name }}
+  ansible.builtin.systemd:
+    name: "{{ traefik_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

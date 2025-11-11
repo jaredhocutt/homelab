@@ -47,7 +47,7 @@
     healthcheck_start_period: 20s
     healthcheck_timeout: 5s
     healthcheck: CMD-SHELL pg_isready -d {{ warracker_postgres_db_name }} -U {{ warracker_postgres_user }}
-    labels: "{{ warracker_postgres_container_labels | default(omit) }}"
+    labels: "{{ warracker_postgres_container_labels_base | combine(warracker_postgres_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ warracker_postgres_quadlet_options_base + warracker_postgres_quadlet_options }}"
     state: quadlet
@@ -62,8 +62,8 @@
     env: "{{ warracker_env_vars_base | combine(warracker_env_vars, recursive=True) }}"
     volumes:
       - "{{ warracker_volume_uploads }}.volume:/data/uploads"
-    publish: "{{ warracker_ports }}"
-    labels: "{{ warracker_container_labels | default(omit) }}"
+    publish: "{{ warracker_traefik_enable | ternary(omit, warracker_ports) }}"
+    labels: "{{ warracker_container_labels_base | combine(warracker_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ warracker_quadlet_options_base + warracker_quadlet_options }}"
     state: quadlet

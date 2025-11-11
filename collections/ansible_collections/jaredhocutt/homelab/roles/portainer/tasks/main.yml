@@ -39,8 +39,8 @@
     volumes:
       - "{{ portainer_volume_config }}:/data"
       - /var/run/podman.sock:/var/run/docker.sock
-    publish: "{{ portainer_ports }}"
-    labels: "{{ portainer_container_labels | default(omit) }}"
+    publish: "{{ portainer_traefik_enable | ternary(omit, portainer_ports) }}"
+    labels: "{{ portainer_container_labels_base | combine(portainer_container_labels, recursive=True) }}"
     privileged: true
     quadlet_file_mode: "0600"
     quadlet_options: "{{ portainer_quadlet_options_base + portainer_quadlet_options }}"

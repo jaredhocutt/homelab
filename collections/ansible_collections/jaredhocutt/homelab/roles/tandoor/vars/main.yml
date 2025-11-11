@@ -4,7 +4,11 @@
 tandoor_postgres_db_name: tandoor
 tandoor_postgres_user: tandoor
 
-tandoor_env_vars_base:
+###############################################################################
+# Envrionment Variables
+###############################################################################
+
+tandoor_env_vars_base_custom:
   DB_ENGINE: django.db.backends.postgresql
   POSTGRES_HOST: "{{ tandoor_name }}-postgres"
   POSTGRES_PORT: "5432"
@@ -12,28 +16,35 @@ tandoor_env_vars_base:
   POSTGRES_USER: "{{ tandoor_postgres_user }}"
   POSTGRES_PASSWORD: "{{ tandoor_postgres_password }}"
   SECRET_KEY: "{{ tandoor_secret_key }}"
+tandoor_env_vars_base: "{{ common_env_vars_base | combine(tandoor_env_vars_base_custom, recursive=True) }}"
 
-tandoor_postgres_env_vars_base:
+tandoor_postgres_env_vars_base_custom:
   POSTGRES_DB: "{{ tandoor_postgres_db_name }}"
   POSTGRES_USER: "{{ tandoor_postgres_user }}"
   POSTGRES_PASSWORD: "{{ tandoor_postgres_password }}"
+tandoor_postgres_env_vars_base: "{{ common_env_vars_base | combine(tandoor_postgres_env_vars_base_custom, recursive=True) }}"
 
-tandoor_quadlet_options_base:
+###############################################################################
+# Container Labels
+###############################################################################
+
+tandoor_container_labels_traefik:
+  traefik.enable: true
+  traefik.http.routers.{{ tandoor_name }}.rule: Host(`{{ tandoor_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ tandoor_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
+tandoor_container_labels_base: "{{ tandoor_traefik_enable | ternary(tandoor_container_labels_traefik, {}) }}"
+
+tandoor_postgres_container_labels_base: {}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+tandoor_quadlet_options_base_custom:
   - |
     [Unit]
     Requires={{ tandoor_name }}-postgres.service
     After={{ tandoor_name }}-postgres.service
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+tandoor_quadlet_options_base: "{{ common_quadlet_options_base + tandoor_quadlet_options_base_custom }}"
 
-tandoor_postgres_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+tandoor_postgres_quadlet_options_base: "{{ common_quadlet_options_base }}"

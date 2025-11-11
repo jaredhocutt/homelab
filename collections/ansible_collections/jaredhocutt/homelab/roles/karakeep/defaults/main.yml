@@ -13,12 +13,18 @@ karakeep_meilisearch_image_tag: latest
 karakeep_volume_data: "{{ karakeep_name }}-data"
 karakeep_meilisearch_volume_data: "{{ karakeep_name }}-meilisearch-data"
 
+karakeep_traefik_enable: true
 karakeep_ports:
   - 3000:3000
 
 karakeep_env_vars: {}
 karakeep_chrome_env_vars: {}
 karakeep_meilisearch_env_vars: {}
+
+karakeep_container_labels: {}
+karakeep_chrome_container_labels: {}
+karakeep_meilisearch_container_labels: {}
+
 karakeep_quadlet_options: []
 karakeep_chrome_quadlet_options: []
 karakeep_meilisearch_quadlet_options: []

@@ -8,8 +8,12 @@ prowlarr_image_tag: latest
 
 prowlarr_volume_config: "{{ prowlarr_name }}-config"
 
+prowlarr_traefik_enable: true
 prowlarr_ports:
   - 9696:9696
 
 prowlarr_env_vars: {}
+
+prowlarr_container_labels: {}
+
 prowlarr_quadlet_options: []

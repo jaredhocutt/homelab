@@ -40,7 +40,7 @@
     env: "{{ changedetection_browser_env_vars_base | combine(changedetection_browser_env_vars, recursive=True) }}"
     cap_add:
       - SYS_ADMIN
-    labels: "{{ changedetection_browser_container_labels | default(omit) }}"
+    labels: "{{ changedetection_browser_container_labels_base | combine(changedetection_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ changedetection_browser_quadlet_options_base + changedetection_browser_quadlet_options }}"
     state: quadlet
@@ -55,8 +55,8 @@
     env: "{{ changedetection_env_vars_base | combine(changedetection_env_vars, recursive=True) }}"
     volumes:
       - "{{ changedetection_volume_data }}.volume:/datastore"
-    publish: "{{ changedetection_ports }}"
-    labels: "{{ changedetection_container_labels | default(omit) }}"
+    publish: "{{ changedetection_traefik_enable | ternary(omit, changedetection_ports) }}"
+    labels: "{{ changedetection_container_labels_base | combine(changedetection_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ changedetection_quadlet_options_base + changedetection_quadlet_options }}"
     state: quadlet

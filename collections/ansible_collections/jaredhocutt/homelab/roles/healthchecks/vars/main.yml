@@ -1,17 +1,29 @@
 ---
 # vars file for jaredhocutt.homelab.healthchecks
 
-healthchecks_env_vars_base:
-  TZ: "America/New_York"
+###############################################################################
+# Envrionment Variables
+###############################################################################
+
+healthchecks_env_vars_base_custom:
   SITE_ROOT: "{{ healthchecks_url }}"
   SITE_NAME: "{{ healthchecks_site_name }}"
   SUPERUSER_EMAIL: "{{ healthchecks_email }}"
   SUPERUSER_PASSWORD: "{{ healthchecks_password }}"
+healthchecks_env_vars_base: "{{ common_env_vars_base | combine(healthchecks_env_vars_base_custom, recursive=True) }}"
 
-healthchecks_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+###############################################################################
+# Container Labels
+###############################################################################
+
+healthchecks_container_labels_traefik:
+  traefik.enable: true
+  traefik.http.routers.{{ healthchecks_name }}.rule: Host(`{{ healthchecks_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ healthchecks_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
+healthchecks_container_labels_base: "{{ healthchecks_traefik_enable | ternary(healthchecks_container_labels_traefik, {}) }}"
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+healthchecks_quadlet_options_base: "{{ common_quadlet_options_base }}"

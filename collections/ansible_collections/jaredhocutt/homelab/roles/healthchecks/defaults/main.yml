@@ -8,10 +8,14 @@ healthchecks_image_tag: latest
 
 healthchecks_volume_config: "{{ healthchecks_name }}-config"
 
+healthchecks_traefik_enable: true
 healthchecks_ports:
   - 8000:8000
 
 healthchecks_env_vars: {}
+
+healthchecks_container_labels: {}
+
 healthchecks_quadlet_options: []
 
 healthchecks_site_name: Healthchecks

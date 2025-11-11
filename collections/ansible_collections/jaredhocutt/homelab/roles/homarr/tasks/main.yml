@@ -38,8 +38,8 @@
     env: "{{ homarr_env_vars_base | combine(homarr_env_vars, recursive=True) }}"
     volumes:
       - "{{ homarr_volume_data }}:/appdata"
-    publish: "{{ homarr_ports }}"
-    labels: "{{ homarr_container_labels | default(omit) }}"
+    publish: "{{ homarr_traefik_enable | ternary(omit, homarr_ports) }}"
+    labels: "{{ homarr_container_labels_base | combine(homarr_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ homarr_quadlet_options_base + homarr_quadlet_options }}"
     state: quadlet

@@ -1,0 +1,21 @@
+---
+# vars file for jaredhocutt.homelab.common
+
+###############################################################################
+# Envrionment Variables
+###############################################################################
+
+common_env_vars_base:
+  TZ: "America/New_York"
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+common_quadlet_options_base:
+  - |
+    [Service]
+    Restart=always
+  - |
+    [Install]
+    WantedBy=multi-user.target

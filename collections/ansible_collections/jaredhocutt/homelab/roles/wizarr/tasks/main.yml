@@ -38,8 +38,8 @@
     env: "{{ wizarr_env_vars_base | combine(wizarr_env_vars, recursive=True) }}"
     volumes:
       - "{{ wizarr_volume_data }}://data"
-    publish: "{{ wizarr_ports }}"
-    labels: "{{ wizarr_container_labels | default(omit) }}"
+    publish: "{{ wizarr_traefik_enable | ternary(omit, wizarr_ports) }}"
+    labels: "{{ wizarr_container_labels_base | combine(wizarr_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ wizarr_quadlet_options_base + wizarr_quadlet_options }}"
     state: quadlet

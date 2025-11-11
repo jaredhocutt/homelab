@@ -8,8 +8,12 @@ overseerr_image_tag: latest
 
 overseerr_volume_config: "{{ overseerr_name }}-config"
 
+overseerr_traefik_enable: true
 overseerr_ports:
   - 5055:5055
 
 overseerr_env_vars: {}
+
+overseerr_container_labels: {}
+
 overseerr_quadlet_options: []

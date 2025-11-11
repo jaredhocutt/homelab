@@ -16,6 +16,7 @@ authentik_volume_templates: "{{ authentik_name }}-templates"
 authentik_postgres_volume_data: "{{ authentik_name }}-postgres-data"
 authentik_redis_volume_data: "{{ authentik_name }}-redis-data"
 
+authentik_traefik_enable: true
 authentik_ports:
   - 9000:9000
   - 9443:9443
@@ -23,6 +24,12 @@ authentik_ports:
 authentik_env_vars: {}
 authentik_postgres_env_vars: {}
 authentik_redis_env_vars: {}
+
+authentik_container_labels: {}
+authentik_worker_container_labels: {}
+authentik_postgres_container_labels: {}
+authentik_redis_container_labels: {}
+
 authentik_quadlet_options: []
 authentik_postgres_quadlet_options: []
 authentik_redis_quadlet_options: []

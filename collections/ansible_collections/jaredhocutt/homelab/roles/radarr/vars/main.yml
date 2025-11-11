@@ -1,13 +1,24 @@
 ---
 # vars file for jaredhocutt.homelab.radarr
 
-radarr_env_vars_base:
-  TZ: "America/New_York"
+###############################################################################
+# Envrionment Variables
+###############################################################################
 
-radarr_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+radarr_env_vars_base: "{{ common_env_vars_base }}"
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+radarr_container_labels_traefik:
+  traefik.enable: true
+  traefik.http.routers.{{ radarr_name }}.rule: Host(`{{ radarr_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ radarr_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
+radarr_container_labels_base: "{{ radarr_traefik_enable | ternary(radarr_container_labels_traefik, {}) }}"
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+radarr_quadlet_options_base: "{{ common_quadlet_options_base }}"

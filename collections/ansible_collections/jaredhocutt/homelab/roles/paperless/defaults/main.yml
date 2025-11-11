@@ -24,6 +24,7 @@ paperless_postgres_volume_data: "{{ paperless_name }}-postgres-data"
 paperless_redis_volume_data: "{{ paperless_name }}-redis-data"
 paperless_ai_volume_data: "{{ paperless_name }}-ai-data"
 
+paperless_traefik_enable: true
 paperless_ports:
   - 8000:8000
 paperless_ai_ports:
@@ -35,6 +36,14 @@ paperless_redis_env_vars: {}
 paperless_gotenberg_env_vars: {}
 paperless_tika_env_vars: {}
 paperless_ai_env_vars: {}
+
+paperless_container_labels: {}
+paperless_postgres_container_labels: {}
+paperless_redis_container_labels: {}
+paperless_gotenberg_container_labels: {}
+paperless_tika_container_labels: {}
+paperless_ai_container_labels: {}
+
 paperless_quadlet_options: []
 paperless_postgres_quadlet_options: []
 paperless_redis_quadlet_options: []

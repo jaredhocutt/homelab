@@ -1,13 +1,24 @@
 ---
 # vars file for jaredhocutt.homelab.portainer
 
-portainer_env_vars_base:
-  TZ: "America/New_York"
+###############################################################################
+# Envrionment Variables
+###############################################################################
 
-portainer_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+portainer_env_vars_base: "{{ common_env_vars_base }}"
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+portainer_container_labels_traefik:
+  traefik.enable: true
+  traefik.http.routers.{{ portainer_name }}.rule: Host(`{{ portainer_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ portainer_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
+portainer_container_labels_base: "{{ portainer_traefik_enable | ternary(portainer_container_labels_traefik, {}) }}"
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+portainer_quadlet_options_base: "{{ common_quadlet_options_base }}"

@@ -38,7 +38,7 @@
     env: "{{ kometa_env_vars_base | combine(kometa_env_vars, recursive=True) }}"
     volumes:
       - "{{ kometa_volume_config }}:/config"
-    labels: "{{ kometa_container_labels | default(omit) }}"
+    labels: "{{ kometa_container_labels_base | combine(kometa_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ kometa_quadlet_options_base + kometa_quadlet_options }}"
     state: quadlet

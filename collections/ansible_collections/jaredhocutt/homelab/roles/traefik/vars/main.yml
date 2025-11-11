@@ -1,0 +1,42 @@
+---
+# vars file for jaredhocutt.homelab.traefik
+
+###############################################################################
+# Envrionment Variables
+###############################################################################
+
+traefik_env_vars_base_custom:
+  # Entrypoints
+  TRAEFIK_ENTRYPOINTS_WEB_ADDRESS: ":80"
+  TRAEFIK_ENTRYPOINTS_WEB_HTTP_REDIRECTIONS_ENTRYPOINT_TO: "websecure"
+  TRAEFIK_ENTRYPOINTS_WEB_HTTP_REDIRECTIONS_ENTRYPOINT_SCHEME: "https"
+  TRAEFIK_ENTRYPOINTS_WEB_HTTP_REDIRECTIONS_ENTRYPOINT_PERMANENT: "true"
+  TRAEFIK_ENTRYPOINTS_WEBSECURE_ADDRESS: ":443"
+  TRAEFIK_ENTRYPOINTS_WEBSECURE_HTTP_TLS: "true"
+  # Attach the static configuration tls.yaml file that contains the tls configuration settings
+  TRAEFIK_PROVIDERS_FILE_FILENAME: "/dynamic/tls.yaml"
+  # Providers
+  TRAEFIK_PROVIDERS_DOCKER: "true"
+  TRAEFIK_PROVIDERS_DOCKER_EXPOSEDBYDEFAULT: "false"
+  TRAEFIK_PROVIDERS_DOCKER_NETWORK: "{{ traefik_name }}"
+  # API & Dashboard
+  TRAEFIK_API_DASHBOARD: "true"
+  # TRAEFIK_API_INSECURE: "false"
+  # Observability
+  TRAEFIK_LOG_LEVEL: "INFO"
+  TRAEFIK_ACCESSLOG: "true"
+  TRAEFIK_METRICS_PROMETHEUS: "true"
+traefik_env_vars_base: "{{ common_env_vars_base | combine(traefik_env_vars_base_custom, recursive=True) }}"
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+traefik_container_labels_base:
+  traefik.enable: true
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+traefik_quadlet_options_base: "{{ common_quadlet_options_base }}"

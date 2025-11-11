@@ -65,7 +65,7 @@
     healthcheck_start_period: 20s
     healthcheck_timeout: 5s
     healthcheck: CMD-SHELL pg_isready -d {{ paperless_postgres_db_name }} -U {{ paperless_postgres_user }}
-    labels: "{{ paperless_postgres_container_labels | default(omit) }}"
+    labels: "{{ paperless_postgres_container_labels_base | combine(paperless_postgres_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ paperless_postgres_quadlet_options_base + paperless_postgres_quadlet_options }}"
     state: quadlet
@@ -85,7 +85,7 @@
     healthcheck_start_period: 20s
     healthcheck_timeout: 3s
     healthcheck: CMD-SHELL redis-cli ping | grep PONG
-    labels: "{{ paperless_redis_container_labels | default(omit) }}"
+    labels: "{{ paperless_redis_container_labels_base | combine(paperless_redis_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ paperless_redis_quadlet_options_base + paperless_redis_quadlet_options }}"
     state: quadlet
@@ -99,7 +99,7 @@
     network: "{{ paperless_name }}.network"
     env: "{{ paperless_gotenberg_env_vars_base | combine(paperless_gotenberg_env_vars, recursive=True) }}"
     command: gotenberg --chromium-disable-javascript=true --chromium-allow-list='file:///tmp/.*'
-    labels: "{{ paperless_gotenberg_container_labels | default(omit) }}"
+    labels: "{{ paperless_gotenberg_container_labels_base | combine(paperless_gotenberg_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ paperless_gotenberg_quadlet_options_base + paperless_gotenberg_quadlet_options }}"
     state: quadlet
@@ -112,7 +112,7 @@
     image: "{{ paperless_tika_image }}:{{ paperless_tika_image_tag }}"
     network: "{{ paperless_name }}.network"
     env: "{{ paperless_tika_env_vars_base | combine(paperless_tika_env_vars, recursive=True) }}"
-    labels: "{{ paperless_tika_container_labels | default(omit) }}"
+    labels: "{{ paperless_tika_container_labels_base | combine(paperless_tika_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ paperless_tika_quadlet_options_base + paperless_tika_quadlet_options }}"
     state: quadlet
@@ -130,8 +130,8 @@
       - "{{ paperless_volume_media }}.volume:/usr/src/paperless/media"
       - "{{ paperless_volume_export }}.volume:/usr/src/paperless/export"
       - "{{ paperless_volume_consume }}.volume:/usr/src/paperless/consume"
-    publish: "{{ paperless_ports }}"
-    labels: "{{ paperless_container_labels | default(omit) }}"
+    publish: "{{ paperless_traefik_enable | ternary(omit, paperless_ports) }}"
+    labels: "{{ paperless_container_labels_base | combine(paperless_container_labels, recursive=True) }}"
     healthcheck_interval: 30s
     healthcheck_retries: 5
     healthcheck_start_period: 20s
@@ -151,8 +151,8 @@
     env: "{{ paperless_ai_env_vars_base | combine(paperless_ai_env_vars, recursive=True) }}"
     volumes:
       - "{{ paperless_ai_volume_data }}.volume:/app/data"
-    publish: "{{ paperless_ai_ports }}"
-    labels: "{{ paperless_ai_container_labels | default(omit) }}"
+    publish: "{{ paperless_traefik_enable | ternary(omit, paperless_ai_ports) }}"
+    labels: "{{ paperless_ai_container_labels_base | combine(paperless_ai_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ paperless_ai_quadlet_options_base + paperless_ai_quadlet_options }}"
     state: quadlet

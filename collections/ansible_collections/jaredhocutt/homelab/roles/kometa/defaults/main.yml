@@ -9,4 +9,7 @@ kometa_image_tag: latest
 kometa_volume_config: "{{ kometa_name }}-config"
 
 kometa_env_vars: {}
+
+kometa_container_labels: {}
+
 kometa_quadlet_options: []

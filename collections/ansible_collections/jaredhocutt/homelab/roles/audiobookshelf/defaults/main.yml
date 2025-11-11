@@ -10,8 +10,12 @@ audiobookshelf_volume_config: "{{ audiobookshelf_name }}-config"
 audiobookshelf_volume_metadata: "{{ audiobookshelf_name }}-metadata"
 audiobookshelf_volume_media: "{{ audiobookshelf_name }}-media"
 
+audiobookshelf_traefik_enable: true
 audiobookshelf_ports:
   - 13378:80
 
 audiobookshelf_env_vars: {}
+
+audiobookshelf_container_labels: {}
+
 audiobookshelf_quadlet_options: []

@@ -1,13 +1,24 @@
 ---
 # vars file for jaredhocutt.homelab.sonarr
 
-sonarr_env_vars_base:
-  TZ: "America/New_York"
+###############################################################################
+# Envrionment Variables
+###############################################################################
 
-sonarr_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+sonarr_env_vars_base: "{{ common_env_vars_base }}"
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+sonarr_container_labels_traefik:
+  traefik.enable: true
+  traefik.http.routers.{{ sonarr_name }}.rule: Host(`{{ sonarr_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ sonarr_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
+sonarr_container_labels_base: "{{ sonarr_traefik_enable | ternary(sonarr_container_labels_traefik, {}) }}"
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+sonarr_quadlet_options_base: "{{ common_quadlet_options_base }}"

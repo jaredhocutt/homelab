@@ -1,0 +1,73 @@
+---
+# tasks file for jaredhocutt.homelab.traefik
+
+- name: Install packages
+  ansible.builtin.dnf:
+    name:
+      - python3-cryptography
+    state: present
+  become: true
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ traefik_image }}"
+      image_tag: "{{ traefik_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ traefik_name }}"
+    driver: bridge
+    disable_dns: false
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ traefik_volume_certs }}"
+      options: "{{ traefik_volume_certs_options | default(omit) }}"
+    - name: "{{ traefik_volume_dynamic }}"
+      options: "{{ traefik_volume_dynamic_options | default(omit) }}"
+  register: _traefik_created_volumes
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
+  when: _traefik_created_volumes.changed  # noqa: no-handler
+
+- name: Generate certificates
+  ansible.builtin.import_tasks: certs.yml
+
+- name: Create traefik container
+  containers.podman.podman_container:
+    name: "{{ traefik_name }}"
+    image: "{{ traefik_image }}:{{ traefik_image_tag }}"
+    network: "{{ traefik_name }}.network"
+    env: "{{ traefik_env_vars_base | combine(traefik_env_vars, recursive=True) }}"
+    security_opt:
+      - label=disable
+    volumes:
+      - /run/podman/podman.sock:/var/run/docker.sock:Z
+      - "{{ traefik_volume_certs }}:/certs:ro"
+      - "{{ traefik_volume_dynamic }}:/dynamic:ro"
+    publish: "{{ traefik_ports }}"
+    labels: "{{ traefik_container_labels_base | combine(traefik_container_labels, recursive=True) }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ traefik_quadlet_options_base + traefik_quadlet_options }}"
+    state: quadlet
+  notify: Restart {{ traefik_name }}
+  become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

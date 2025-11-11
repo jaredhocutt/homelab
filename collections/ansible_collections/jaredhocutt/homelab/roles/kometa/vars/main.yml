@@ -1,13 +1,20 @@
 ---
 # vars file for jaredhocutt.homelab.kometa
 
-kometa_env_vars_base:
-  TZ: "America/New_York"
+###############################################################################
+# Envrionment Variables
+###############################################################################
 
-kometa_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+kometa_env_vars_base: "{{ common_env_vars_base }}"
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+kometa_container_labels_base: {}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+kometa_quadlet_options_base: "{{ common_quadlet_options_base }}"

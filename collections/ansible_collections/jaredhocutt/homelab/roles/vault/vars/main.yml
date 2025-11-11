@@ -4,13 +4,24 @@
 vault_uid: 100
 vault_gid: 1000
 
-vault_env_vars_base:
-  TZ: "America/New_York"
+###############################################################################
+# Envrionment Variables
+###############################################################################
 
-vault_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+vault_env_vars_base: "{{ common_env_vars_base }}"
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+vault_container_labels_traefik:
+  traefik.enable: true
+  traefik.http.routers.{{ vault_name }}.rule: Host(`{{ vault_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ vault_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
+vault_container_labels_base: "{{ vault_traefik_enable | ternary(vault_container_labels_traefik, {}) }}"
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+vault_quadlet_options_base: "{{ common_quadlet_options_base }}"

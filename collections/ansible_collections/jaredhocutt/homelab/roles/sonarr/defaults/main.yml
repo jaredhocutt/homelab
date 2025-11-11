@@ -10,8 +10,12 @@ sonarr_volume_config: "{{ sonarr_name }}-config"
 sonarr_volume_download: "{{ sonarr_name }}-download"
 sonarr_volume_media: "{{ sonarr_name }}-media"
 
+sonarr_traefik_enable: true
 sonarr_ports:
   - 8989:8989
 
 sonarr_env_vars: {}
+
+sonarr_container_labels: {}
+
 sonarr_quadlet_options: []

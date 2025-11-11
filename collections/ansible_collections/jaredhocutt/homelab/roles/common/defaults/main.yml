@@ -1,0 +1,5 @@
+---
+# defaults file for jaredhocutt.homelab.common
+
+common_traefik_domain: podman.localhost
+common_traefik_entrypoint: websecure

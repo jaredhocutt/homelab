@@ -10,8 +10,12 @@ radarr_volume_config: "{{ radarr_name }}-config"
 radarr_volume_download: "{{ radarr_name }}-download"
 radarr_volume_media: "{{ radarr_name }}-media"
 
+radarr_traefik_enable: true
 radarr_ports:
   - 7878:7878
 
 radarr_env_vars: {}
+
+radarr_container_labels: {}
+
 radarr_quadlet_options: []

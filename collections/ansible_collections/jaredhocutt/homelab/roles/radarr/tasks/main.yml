@@ -44,8 +44,8 @@
       - "{{ radarr_volume_config }}:/config"
       - "{{ radarr_volume_download }}:/mnt/download"
       - "{{ radarr_volume_media }}:/mnt/media"
-    publish: "{{ radarr_ports }}"
-    labels: "{{ radarr_container_labels | default(omit) }}"
+    publish: "{{ radarr_traefik_enable | ternary(omit, radarr_ports) }}"
+    labels: "{{ radarr_container_labels_base | combine(radarr_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ radarr_quadlet_options_base + radarr_quadlet_options }}"
     state: quadlet

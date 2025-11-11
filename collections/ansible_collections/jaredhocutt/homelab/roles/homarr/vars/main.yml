@@ -1,14 +1,26 @@
 ---
 # vars file for jaredhocutt.homelab.homarr
 
-homarr_env_vars_base:
-  TZ: "America/New_York"
-  SECRET_ENCRYPTION_KEY: "{{ homarr_secret_encryption_key }}"
+###############################################################################
+# Envrionment Variables
+###############################################################################
 
-homarr_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+homarr_env_vars_base_custom:
+  SECRET_ENCRYPTION_KEY: "{{ homarr_secret_encryption_key }}"
+homarr_env_vars_base: "{{ common_env_vars_base | combine(homarr_env_vars_base_custom, recursive=True) }}"
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+homarr_container_labels_traefik:
+  traefik.enable: true
+  traefik.http.routers.{{ homarr_name }}.rule: Host(`{{ homarr_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ homarr_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
+homarr_container_labels_base: "{{ homarr_traefik_enable | ternary(homarr_container_labels_traefik, {}) }}"
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+homarr_quadlet_options_base: "{{ common_quadlet_options_base }}"

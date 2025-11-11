@@ -20,6 +20,7 @@ archiveium_minio_volume_data: "{{ archiveium_name }}-minio-data"
 archiveium_redis_volume_data: "{{ archiveium_name }}-redis-data"
 archiveium_meilisearch_volume_data: "{{ archiveium_name }}-meilisearch-data"
 
+archiveium_traefik_enable: true
 archiveium_ports:
   - 5292:3000
 archiveium_meilisearch_ports:
@@ -31,6 +32,14 @@ archiveium_postgres_env_vars: {}
 archiveium_minio_env_vars: {}
 archiveium_redis_env_vars: {}
 archiveium_meilisearch_env_vars: {}
+
+archiveium_container_labels: {}
+archiveium_cron_container_labels: {}
+archiveium_postgres_container_labels: {}
+archiveium_minio_container_labels: {}
+archiveium_redis_container_labels: {}
+archiveium_meilisearch_container_labels: {}
+
 archiveium_quadlet_options: []
 archiveium_cron_quadlet_options: []
 archiveium_postgres_quadlet_options: []

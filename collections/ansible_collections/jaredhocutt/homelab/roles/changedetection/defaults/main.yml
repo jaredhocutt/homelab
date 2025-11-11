@@ -10,10 +10,15 @@ changedetection_browser_image_tag: latest
 
 changedetection_volume_data: "{{ changedetection_name }}-data"
 
+changedetection_traefik_enable: true
 changedetection_ports:
   - 5000:5000
 
 changedetection_env_vars: {}
 changedetection_browser_env_vars: {}
+
+changedetection_container_labels: {}
+changedetection_browser_container_labels: {}
+
 changedetection_quadlet_options: []
 changedetection_browser_quadlet_options: []

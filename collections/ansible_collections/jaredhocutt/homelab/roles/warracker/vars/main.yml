@@ -4,8 +4,11 @@
 warracker_postgres_db_name: warracker
 warracker_postgres_user: warracker
 
-warracker_env_vars_base:
-  TZ: "America/New_York"
+###############################################################################
+# Envrionment Variables
+###############################################################################
+
+warracker_env_vars_base_custom:
   DB_HOST: "{{ warracker_name }}-postgres"
   DB_PORT: "5432"
   DB_NAME: "{{ warracker_postgres_db_name }}"
@@ -15,29 +18,35 @@ warracker_env_vars_base:
   FRONTEND_URL: "{{ warracker_url }}"
   APP_BASE_URL: "{{ warracker_url }}"
   PYTHONUNBUFFERED: "1"
+warracker_env_vars_base: "{{ common_env_vars_base | combine(warracker_env_vars_base_custom, recursive=True) }}"
 
-warracker_postgres_env_vars_base:
-  TZ: "America/New_York"
+warracker_postgres_env_vars_base_custom:
   POSTGRES_DB: "{{ warracker_postgres_db_name }}"
   POSTGRES_USER: "{{ warracker_postgres_user }}"
   POSTGRES_PASSWORD: "{{ warracker_postgres_password }}"
+warracker_postgres_env_vars_base: "{{ common_env_vars_base | combine(warracker_postgres_env_vars_base_custom, recursive=True) }}"
 
-warracker_quadlet_options_base:
+###############################################################################
+# Container Labels
+###############################################################################
+
+warracker_container_labels_traefik:
+  traefik.enable: true
+  traefik.http.routers.{{ warracker_name }}.rule: Host(`{{ warracker_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ warracker_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
+warracker_container_labels_base: "{{ warracker_traefik_enable | ternary(warracker_container_labels_traefik, {}) }}"
+
+warracker_postgres_container_labels_base: {}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+warracker_quadlet_options_base_custom:
   - |
     [Unit]
     Requires={{ warracker_name }}-postgres.service
     After={{ warracker_name }}-postgres.service
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+warracker_quadlet_options_base: "{{ common_quadlet_options_base + warracker_quadlet_options_base_custom }}"
 
-warracker_postgres_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+warracker_postgres_quadlet_options_base: "{{ common_quadlet_options_base }}"

@@ -8,8 +8,12 @@ portainer_image_tag: lts
 
 portainer_volume_data: "{{ portainer_name }}-data"
 
+portainer_traefik_enable: true
 portainer_ports:
   - 9443:9443
 
 portainer_env_vars: {}
+
+portainer_container_labels: {}
+
 portainer_quadlet_options: []

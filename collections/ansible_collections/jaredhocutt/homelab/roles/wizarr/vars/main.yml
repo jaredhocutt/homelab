@@ -1,13 +1,24 @@
 ---
 # vars file for jaredhocutt.homelab.wizarr
 
-wizarr_env_vars_base:
-  TZ: "America/New_York"
+###############################################################################
+# Envrionment Variables
+###############################################################################
 
-wizarr_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+wizarr_env_vars_base: "{{ common_env_vars_base }}"
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+wizarr_container_labels_traefik:
+  traefik.enable: true
+  traefik.http.routers.{{ wizarr_name }}.rule: Host(`{{ wizarr_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ wizarr_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
+wizarr_container_labels_base: "{{ wizarr_traefik_enable | ternary(wizarr_container_labels_traefik, {}) }}"
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+wizarr_quadlet_options_base: "{{ common_quadlet_options_base }}"

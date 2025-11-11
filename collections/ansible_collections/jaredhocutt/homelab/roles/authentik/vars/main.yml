@@ -4,6 +4,10 @@
 authentik_postgres_db_name: authentik
 authentik_postgres_user: authentik
 
+###############################################################################
+# Envrionment Variables
+###############################################################################
+
 authentik_env_vars_base:
   AUTHENTIK_POSTGRESQL__HOST: "{{ authentik_name }}-postgres"
   AUTHENTIK_POSTGRESQL__NAME: "{{ authentik_postgres_db_name }}"
@@ -19,32 +23,35 @@ authentik_postgres_env_vars_base:
 
 authentik_redis_env_vars_base: {}
 
-authentik_quadlet_options_base:
+###############################################################################
+# Container Labels
+###############################################################################
+
+authentik_container_labels_traefik:
+  traefik.enable: true
+  traefik.http.routers.{{ authentik_name }}.rule: Host(`{{ authentik_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ authentik_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
+authentik_container_labels_base: "{{ authentik_traefik_enable | ternary(authentik_container_labels_traefik, {}) }}"
+
+authentik_worker_container_labels_base: {}
+
+authentik_postgres_container_labels_base: {}
+
+authentik_redis_container_labels_base: {}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+authentik_quadlet_options_base_custom:
   - |
     [Unit]
     Requires={{ authentik_name }}-postgres.service
     Requires={{ authentik_name }}-redis.service
     After={{ authentik_name }}-postgres.service
     After={{ authentik_name }}-redis.service
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+authentik_quadlet_options_base: "{{ common_quadlet_options_base + authentik_quadlet_options_base_custom }}"
 
-authentik_postgres_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+authentik_postgres_quadlet_options_base: "{{ common_quadlet_options_base }}"
 
-authentik_redis_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+authentik_redis_quadlet_options_base: "{{ common_quadlet_options_base }}"

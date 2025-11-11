@@ -1,13 +1,24 @@
 ---
 # vars file for jaredhocutt.homelab.audiobookshelf
 
-audiobookshelf_env_vars_base:
-  TZ: "America/New_York"
+###############################################################################
+# Envrionment Variables
+###############################################################################
 
-audiobookshelf_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+audiobookshelf_env_vars_base: "{{ common_env_vars_base }}"
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+audiobookshelf_container_labels_traefik:
+  traefik.enable: true
+  traefik.http.routers.{{ audiobookshelf_name }}.rule: Host(`{{ audiobookshelf_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ audiobookshelf_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
+audiobookshelf_container_labels_base: "{{ audiobookshelf_traefik_enable | ternary(audiobookshelf_container_labels_traefik, {}) }}"
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+audiobookshelf_quadlet_options_base: "{{ common_quadlet_options_base }}"

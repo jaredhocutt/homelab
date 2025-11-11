@@ -87,7 +87,7 @@
     healthcheck_start_period: 20s
     healthcheck_timeout: 5s
     healthcheck: CMD-SHELL pg_isready -d {{ archiveium_postgres_db_name }} -U {{ archiveium_postgres_user }}
-    labels: "{{ archiveium_postgres_container_labels | default(omit) }}"
+    labels: "{{ archiveium_postgres_container_labels_base | combine(archiveium_postgres_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ archiveium_postgres_quadlet_options_base + archiveium_postgres_quadlet_options }}"
     state: quadlet
@@ -109,7 +109,7 @@
     healthcheck: CMD mc ready local
     entrypoint: sh
     command: -c 'mkdir -p /data/minio/emails && minio server /data/minio'
-    labels: "{{ archiveium_minio_container_labels | default(omit) }}"
+    labels: "{{ archiveium_minio_container_labels_base | combine(archiveium_minio_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ archiveium_minio_quadlet_options_base + archiveium_minio_quadlet_options }}"
     state: quadlet
@@ -130,7 +130,7 @@
     healthcheck_timeout: 3s
     healthcheck: CMD-SHELL redis-cli ping | grep PONG
     command: redis-server --maxmemory-policy noeviction --appendonly yes --maxmemory 200M
-    labels: "{{ archiveium_redis_container_labels | default(omit) }}"
+    labels: "{{ archiveium_redis_container_labels_base | combine(archiveium_redis_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ archiveium_redis_quadlet_options_base + archiveium_redis_quadlet_options }}"
     state: quadlet
@@ -145,8 +145,8 @@
     env: "{{ archiveium_meilisearch_env_vars_base | combine(archiveium_meilisearch_env_vars, recursive=True) }}"
     volumes:
       - "{{ archiveium_meilisearch_volume_data }}.volume:/meili_data"
-    publish: "{{ archiveium_meilisearch_ports }}"
-    labels: "{{ archiveium_meilisearch_container_labels | default(omit) }}"
+    publish: "{{ archiveium_traefik_enable | ternary(omit, archiveium_meilisearch_ports) }}"
+    labels: "{{ archiveium_meilisearch_container_labels_base | combine(archiveium_meilisearch_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ archiveium_meilisearch_quadlet_options_base + archiveium_meilisearch_quadlet_options }}"
     state: quadlet
@@ -158,7 +158,7 @@
     name: "{{ archiveium_name }}-cron"
     image: "{{ archiveium_image }}:{{ archiveium_image_tag }}"
     network: "{{ archiveium_name }}.network"
-    env: "{{ archiveium_env_vars_base | combine(archiveium_env_vars, recursive=True) }}"
+    env: "{{ archiveium_cron_env_vars_base | combine(archiveium_cron_env_vars, recursive=True) }}"
     volumes:
       - "{{ archiveium_volume_config }}.volume:/app/config"
     healthcheck_interval: 30s
@@ -166,10 +166,9 @@
     healthcheck_start_period: 20s
     healthcheck_timeout: 5s
     healthcheck: CMD curl -f http://localhost:3000/login
-    publish: "{{ archiveium_ports }}"
-    labels: "{{ archiveium_container_labels | default(omit) }}"
+    labels: "{{ archiveium_cron_container_labels_base | combine(archiveium_cron_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ archiveium_quadlet_options_base + archiveium_quadlet_options }}"
+    quadlet_options: "{{ archiveium_cron_quadlet_options_base + archiveium_cron_quadlet_options }}"
     state: quadlet
   notify: Restart cron for {{ archiveium_name }}
   become: true
@@ -187,8 +186,8 @@
     healthcheck_start_period: 20s
     healthcheck_timeout: 5s
     healthcheck: CMD curl -f http://localhost:3000/login
-    publish: "{{ archiveium_ports }}"
-    labels: "{{ archiveium_container_labels | default(omit) }}"
+    publish: "{{ archiveium_traefik_enable | ternary(omit, archiveium_ports) }}"
+    labels: "{{ archiveium_container_labels_base | combine(archiveium_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ archiveium_quadlet_options_base + archiveium_quadlet_options }}"
     state: quadlet

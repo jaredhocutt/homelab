@@ -38,8 +38,8 @@
     env: "{{ overseerr_env_vars_base | combine(overseerr_env_vars, recursive=True) }}"
     volumes:
       - "{{ overseerr_volume_config }}://app/config"
-    publish: "{{ overseerr_ports }}"
-    labels: "{{ overseerr_container_labels | default(omit) }}"
+    publish: "{{ overseerr_traefik_enable | ternary(omit, overseerr_ports) }}"
+    labels: "{{ overseerr_container_labels_base | combine(overseerr_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ overseerr_quadlet_options_base + overseerr_quadlet_options }}"
     state: quadlet

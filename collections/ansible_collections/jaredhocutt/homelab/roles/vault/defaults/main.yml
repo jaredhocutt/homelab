@@ -10,8 +10,12 @@ vault_volume_config: "{{ vault_name }}-config"
 vault_volume_data: "{{ vault_name }}-data"
 vault_volume_logs: "{{ vault_name }}-logs"
 
+vault_traefik_enable: true
 vault_ports:
   - 8200:8200
 
 vault_env_vars: {}
+
+vault_container_labels: {}
+
 vault_quadlet_options: []

@@ -1,8 +1,11 @@
 ---
 # vars file for jaredhocutt.homelab.bar_assistant
 
-bar_assistant_env_vars_base:
-  TZ: "America/New_York"
+###############################################################################
+# Envrionment Variables
+###############################################################################
+
+bar_assistant_env_vars_base_custom:
   APP_URL: "{{ bar_assistant_api_url }}"
   MEILISEARCH_KEY: $MEILI_MASTER_KEY
   MEILISEARCH_HOST: http://{{ bar_assistant_name }}-meilisearch:7700
@@ -10,58 +13,64 @@ bar_assistant_env_vars_base:
   CACHE_DRIVER: redis
   SESSION_DRIVER: redis
   ALLOW_REGISTRATION: "true"
+bar_assistant_env_vars_base: "{{ common_env_vars_base | combine(bar_assistant_env_vars_base_custom, recursive=True) }}"
 
-bar_assistant_salt_rim_env_vars_base:
-  TZ: "America/New_York"
+bar_assistant_salt_rim_env_vars_base_custom:
   API_URL: "{{ bar_assistant_api_url }}"
   MEILISEARCH_URL: "{{ bar_assistant_meilisearch_url }}"
+bar_assistant_salt_rim_env_vars_base: "{{ common_env_vars_base | combine(bar_assistant_salt_rim_env_vars_base_custom, recursive=True) }}"
 
-bar_assistant_redis_env_vars_base:
-  TZ: "America/New_York"
+bar_assistant_redis_env_vars_base: "{{ common_env_vars_base }}"
 
-bar_assistant_meilisearch_env_vars_base:
-  TZ: "America/New_York"
+bar_assistant_meilisearch_env_vars_base_custom:
   MEILI_NO_ANALYTICS: "true"
   MEILI_MASTER_KEY: "{{ bar_assistant_meilisearch_master_key }}"
+bar_assistant_meilisearch_env_vars_base: "{{ common_env_vars_base | combine(bar_assistant_meilisearch_env_vars_base_custom, recursive=True) }}"
 
-bar_assistant_quadlet_options_base:
+###############################################################################
+# Container Labels
+###############################################################################
+
+bar_assistant_container_labels_traefik:
+  traefik.enable: true
+  traefik.http.routers.{{ bar_assistant_name }}.rule: Host(`{{ bar_assistant_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ bar_assistant_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
+bar_assistant_container_labels_base: "{{ bar_assistant_traefik_enable | ternary(bar_assistant_container_labels_traefik, {}) }}"
+
+bar_assistant_salt_rim_container_labels_traefik:
+  traefik.enable: true
+  traefik.http.routers.{{ bar_assistant_name }}.rule: Host(`{{ bar_assistant_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ bar_assistant_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
+bar_assistant_salt_rim_container_labels_base: "{{ bar_assistant_traefik_enable | ternary(bar_assistant_salt_rim_container_labels_traefik, {}) }}"
+
+bar_assistant_redis_container_labels_base: {}
+
+bar_assistant_meilisearch_container_labels_traefik:
+  traefik.enable: true
+  traefik.http.routers.{{ bar_assistant_name }}.rule: Host(`{{ bar_assistant_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ bar_assistant_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
+bar_assistant_meilisearch_container_labels_base: "{{ bar_assistant_traefik_enable | ternary(bar_assistant_meilisearch_container_labels_traefik, {}) }}"
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+bar_assistant_quadlet_options_base_custom:
   - |
     [Unit]
     Requires={{ bar_assistant_name }}-redis.service
     Requires={{ bar_assistant_name }}-meilisearch.service
     After={{ bar_assistant_name }}-redis.service
     After={{ bar_assistant_name }}-meilisearch.service
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+bar_assistant_quadlet_options_base: "{{ common_quadlet_options_base + bar_assistant_quadlet_options_base_custom }}"
 
-bar_assistant_salt_rim_quadlet_options_base:
+bar_assistant_salt_rim_quadlet_options_base_custom:
   - |
     [Unit]
     Requires={{ bar_assistant_name }}.service
     After={{ bar_assistant_name }}.service
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+bar_assistant_salt_rim_quadlet_options_base: "{{ common_quadlet_options_base + bar_assistant_salt_rim_quadlet_options_base_custom }}"
 
-bar_assistant_redis_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+bar_assistant_redis_quadlet_options_base: "{{ common_quadlet_options_base }}"
 
-bar_assistant_meilisearch_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+bar_assistant_meilisearch_quadlet_options_base: "{{ common_quadlet_options_base }}"

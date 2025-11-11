@@ -122,8 +122,8 @@
       - "{{ vault_volume_config }}:/vault/config"
       - "{{ vault_volume_data }}:/vault/file"
       - "{{ vault_volume_logs }}:/vault/logs"
-    publish: "{{ vault_ports }}"
-    labels: "{{ vault_container_labels | default(omit) }}"
+    publish: "{{ vault_traefik_enable | ternary(omit, vault_ports) }}"
+    labels: "{{ vault_container_labels_base | combine(vault_container_labels, recursive=True) }}"
     cap_add:
       - IPC_LOCK
     command: server

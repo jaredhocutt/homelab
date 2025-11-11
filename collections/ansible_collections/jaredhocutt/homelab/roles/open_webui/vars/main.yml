@@ -1,13 +1,24 @@
 ---
 # vars file for jaredhocutt.homelab.open_webui
 
-open_webui_env_vars_base:
-  TZ: "America/New_York"
+###############################################################################
+# Envrionment Variables
+###############################################################################
 
-open_webui_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+open_webui_env_vars_base: "{{ common_env_vars_base }}"
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+open_webui_container_labels_traefik:
+  traefik.enable: true
+  traefik.http.routers.{{ open_webui_name }}.rule: Host(`{{ open_webui_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ open_webui_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
+open_webui_container_labels_base: "{{ open_webui_traefik_enable | ternary(open_webui_container_labels_traefik, {}) }}"
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+open_webui_quadlet_options_base: "{{ common_quadlet_options_base }}"

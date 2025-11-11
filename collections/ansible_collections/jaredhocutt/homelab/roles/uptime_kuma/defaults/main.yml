@@ -8,8 +8,12 @@ uptime_kuma_image_tag: latest
 
 uptime_kuma_volume_data: "{{ uptime_kuma_name }}-data"
 
+uptime_kuma_traefik_enable: true
 uptime_kuma_ports:
   - 3001:3001
 
 uptime_kuma_env_vars: {}
+
+uptime_kuma_container_labels: {}
+
 uptime_kuma_quadlet_options: []

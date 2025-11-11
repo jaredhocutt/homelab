@@ -1,33 +1,42 @@
 ---
 # vars file for jaredhocutt.homelab.changedetection
 
-changedetection_env_vars_base:
-  TZ: "America/New_York"
-  PLAYWRIGHT_DRIVER_URL: "ws://{{ changedetection_name }}-browser:3000"
+###############################################################################
+# Envrionment Variables
+###############################################################################
 
-changedetection_browser_env_vars_base:
-  TZ: "America/New_York"
+changedetection_env_vars_base_custom:
+  PLAYWRIGHT_DRIVER_URL: "ws://{{ changedetection_name }}-browser:3000"
+changedetection_env_vars_base: "{{ common_env_vars_base | combine(changedetection_env_vars_base_custom, recursive=True) }}"
+
+changedetection_browser_env_vars_base_custom:
   SCREEN_WIDTH: "1920"
   SCREEN_HEIGHT: "1024"
   SCREEN_DEPTH: "16"
   MAX_CONCURRENT_CHROME_PROCESSES: "10"
+changedetection_browser_env_vars_base: "{{ common_env_vars_base | combine(changedetection_browser_env_vars_base_custom, recursive=True) }}"
 
-changedetection_quadlet_options_base:
+###############################################################################
+# Container Labels
+###############################################################################
+
+changedetection_container_labels_traefik:
+  traefik.enable: true
+  traefik.http.routers.{{ changedetection_name }}.rule: Host(`{{ changedetection_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ changedetection_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
+changedetection_container_labels_base: "{{ changedetection_traefik_enable | ternary(changedetection_container_labels_traefik, {}) }}"
+
+changedetection_browser_container_labels_base: {}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+changedetection_quadlet_options_base_custom:
   - |
     [Unit]
     Requires={{ changedetection_name }}-browser.service
     After={{ changedetection_name }}-browser.service
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+changedetection_quadlet_options_base: "{{ common_quadlet_options_base + changedetection_quadlet_options_base_custom }}"
 
-changedetection_browser_quadlet_options_base:
-  - |
-    [Service]
-    Restart=always
-  - |
-    [Install]
-    WantedBy=multi-user.target
+changedetection_browser_quadlet_options_base: "{{ common_quadlet_options_base }}"

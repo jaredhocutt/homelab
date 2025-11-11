@@ -38,8 +38,8 @@
     env: "{{ uptime_kuma_env_vars_base | combine(uptime_kuma_env_vars, recursive=True) }}"
     volumes:
       - "{{ uptime_kuma_volume_data }}:/app/data"
-    publish: "{{ uptime_kuma_ports }}"
-    labels: "{{ uptime_kuma_container_labels | default(omit) }}"
+    publish: "{{ uptime_kuma_traefik_enable | ternary(omit, uptime_kuma_ports) }}"
+    labels: "{{ uptime_kuma_container_labels_base | combine(uptime_kuma_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ uptime_kuma_quadlet_options_base + uptime_kuma_quadlet_options }}"
     state: quadlet

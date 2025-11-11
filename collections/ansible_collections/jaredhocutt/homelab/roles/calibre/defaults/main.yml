@@ -9,9 +9,13 @@ calibre_image_tag: latest
 calibre_volume_config: "{{ calibre_name }}-config"
 calibre_volume_media: "{{ calibre_name }}-media"
 
+calibre_traefik_enable: true
 calibre_ports:
   - 8080:8080
   - 8081:8081
 
 calibre_env_vars: {}
+
+calibre_container_labels: {}
+
 calibre_quadlet_options: []

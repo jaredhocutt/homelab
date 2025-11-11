@@ -17,6 +17,7 @@ immich_machine_learning_volume_cache: "{{ immich_name }}-machine-learning-cache"
 immich_postgres_volume_data: "{{ immich_name }}-postgres-data"
 immich_redis_volume_data: "{{ immich_name }}-redis-data"
 
+immich_traefik_enable: true
 immich_ports:
   - 2283:2283
 
@@ -24,6 +25,12 @@ immich_env_vars: {}
 immich_machine_learning_env_vars: {}
 immich_postgres_env_vars: {}
 immich_redis_env_vars: {}
+
+immich_container_labels: {}
+immich_machine_learning_container_labels: {}
+immich_postgres_container_labels: {}
+immich_redis_container_labels: {}
+
 immich_quadlet_options: []
 immich_machine_learning_quadlet_options: []
 immich_postgres_quadlet_options: []
