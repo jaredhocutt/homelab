@@ -16,6 +16,11 @@
         name: jaredhocutt.homelab.authentik
       tags: [authentik]
 
+    - name: Install traefik
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.traefik
+      tags: [traefik]
+
 - name: Deploy and configure apps
   hosts: apps
   tasks:
@@ -104,7 +109,22 @@
         name: jaredhocutt.homelab.stirling_pdf
       tags: [stirling_pdf]
 
+    - name: Install tandoor
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.tandoor
+      tags: [tandoor]
+
     - name: Install tautulli
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.tautulli
       tags: [tautulli]
+
+    - name: Install warracker
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.warracker
+      tags: [warracker]
+
+    - name: Install wizarr
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.wizarr
+      tags: [wizarr]
