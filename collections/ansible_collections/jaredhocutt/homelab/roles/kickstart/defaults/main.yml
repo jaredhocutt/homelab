@@ -1,4 +1,5 @@
 ---
+# defaults file for jaredhocutt.homelab.kickstart
 
 kickstart_hostname: fedora
 
