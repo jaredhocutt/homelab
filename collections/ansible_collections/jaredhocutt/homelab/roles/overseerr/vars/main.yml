@@ -13,7 +13,7 @@ overseerr_env_vars_base: "{{ common_env_vars_base }}"
 
 overseerr_container_labels_traefik:
   traefik.enable: true
-  traefik.http.routers.{{ overseerr_name }}.rule: Host(`{{ overseerr_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ overseerr_name }}.rule: Host(`{{ overseerr_traefik_host }}`)
   traefik.http.routers.{{ overseerr_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
 overseerr_container_labels_base: "{{ overseerr_traefik_enable | ternary(overseerr_container_labels_traefik, {}) }}"
 

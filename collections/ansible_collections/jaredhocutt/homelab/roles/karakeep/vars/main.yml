@@ -26,7 +26,7 @@ karakeep_meilisearch_env_vars_base: "{{ common_env_vars_base | combine(karakeep_
 
 karakeep_container_labels_traefik:
   traefik.enable: true
-  traefik.http.routers.{{ karakeep_name }}.rule: Host(`{{ karakeep_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ karakeep_name }}.rule: Host(`{{ karakeep_traefik_host }}`)
   traefik.http.routers.{{ karakeep_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
 karakeep_container_labels_base: "{{ karakeep_traefik_enable | ternary(karakeep_container_labels_traefik, {}) }}"
 

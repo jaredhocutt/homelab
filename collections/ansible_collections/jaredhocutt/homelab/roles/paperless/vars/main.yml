@@ -44,7 +44,7 @@ paperless_ai_env_vars_base: "{{ common_env_vars_base }}"
 
 paperless_container_labels_traefik:
   traefik.enable: true
-  traefik.http.routers.{{ paperless_name }}.rule: Host(`{{ paperless_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ paperless_name }}.rule: Host(`{{ paperless_traefik_host }}`)
   traefik.http.routers.{{ paperless_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
 paperless_container_labels_base: "{{ paperless_traefik_enable | ternary(paperless_container_labels_traefik, {}) }}"
 
@@ -58,7 +58,7 @@ paperless_tika_container_labels_base: {}
 
 paperless_ai_container_labels_traefik:
   traefik.enable: true
-  traefik.http.routers.{{ paperless_name }}.rule: Host(`{{ paperless_name }}-ai.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ paperless_name }}.rule: Host(`{{ paperless_ai_traefik_host }}`)
   traefik.http.routers.{{ paperless_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
 paperless_ai_container_labels_base: "{{ paperless_traefik_enable | ternary(paperless_ai_container_labels_traefik, {}) }}"
 

@@ -13,7 +13,7 @@ radarr_env_vars_base: "{{ common_env_vars_base }}"
 
 radarr_container_labels_traefik:
   traefik.enable: true
-  traefik.http.routers.{{ radarr_name }}.rule: Host(`{{ radarr_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ radarr_name }}.rule: Host(`{{ radarr_traefik_host }}`)
   traefik.http.routers.{{ radarr_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
 radarr_container_labels_base: "{{ radarr_traefik_enable | ternary(radarr_container_labels_traefik, {}) }}"
 

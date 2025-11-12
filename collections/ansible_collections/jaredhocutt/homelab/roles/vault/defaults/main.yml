@@ -11,6 +11,7 @@ vault_volume_data: "{{ vault_name }}-data"
 vault_volume_logs: "{{ vault_name }}-logs"
 
 vault_traefik_enable: true
+vault_traefik_host: "{{ vault_name }}.{{ common_traefik_domain }}"
 vault_ports:
   - 8200:8200
 

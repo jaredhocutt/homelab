@@ -9,6 +9,7 @@ homarr_image_tag: latest
 homarr_volume_data: "{{ homarr_name }}-data"
 
 homarr_traefik_enable: true
+homarr_traefik_host: "{{ homarr_name }}.{{ common_traefik_domain }}"
 homarr_ports:
   - 7575:7575
 

@@ -13,7 +13,7 @@ stirling_pdf_env_vars_base: "{{ common_env_vars_base }}"
 
 stirling_pdf_container_labels_traefik:
   traefik.enable: true
-  traefik.http.routers.{{ stirling_pdf_name }}.rule: Host(`{{ stirling_pdf_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ stirling_pdf_name }}.rule: Host(`{{ stirling_pdf_traefik_host }}`)
   traefik.http.routers.{{ stirling_pdf_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
 stirling_pdf_container_labels_base: "{{ stirling_pdf_traefik_enable | ternary(stirling_pdf_container_labels_traefik, {}) }}"
 

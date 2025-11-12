@@ -9,6 +9,7 @@ prowlarr_image_tag: latest
 prowlarr_volume_config: "{{ prowlarr_name }}-config"
 
 prowlarr_traefik_enable: true
+prowlarr_traefik_host: "{{ prowlarr_name }}.{{ common_traefik_domain }}"
 prowlarr_ports:
   - 9696:9696
 

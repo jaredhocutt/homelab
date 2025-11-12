@@ -52,7 +52,7 @@ archiveium_meilisearch_env_vars_base: "{{ common_env_vars_base | combine(archive
 
 archiveium_container_labels_traefik:
   traefik.enable: true
-  traefik.http.routers.{{ archiveium_name }}.rule: Host(`{{ archiveium_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ archiveium_name }}.rule: Host(`{{ archiveium_traefik_host }}`)
   traefik.http.routers.{{ archiveium_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
 archiveium_container_labels_base: "{{ archiveium_traefik_enable | ternary(archiveium_container_labels_traefik, {}) }}"
 
@@ -63,7 +63,7 @@ archiveium_redis_container_labels_base: {}
 
 archiveium_meilisearch_container_labels_traefik:
   traefik.enable: true
-  traefik.http.routers.{{ archiveium_name }}.rule: Host(`{{ archiveium_name }}-meilisearch.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ archiveium_name }}.rule: Host(`{{ archiveium_meilisearch_traefik_host }}`)
   traefik.http.routers.{{ archiveium_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
 archiveium_meilisearch_container_labels_base: "{{ archiveium_traefik_enable | ternary(archiveium_meilisearch_container_labels_traefik, {}) }}"
 

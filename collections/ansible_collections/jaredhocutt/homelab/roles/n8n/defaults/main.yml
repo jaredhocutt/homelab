@@ -12,6 +12,7 @@ n8n_volume_data: "{{ n8n_name }}-data"
 n8n_postgres_volume_data: "{{ n8n_name }}-postgres-data"
 
 n8n_traefik_enable: true
+n8n_traefik_host: "{{ n8n_name }}.{{ common_traefik_domain }}"
 n8n_ports:
   - 5678:5678
 

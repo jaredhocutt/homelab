@@ -11,6 +11,7 @@ radarr_volume_download: "{{ radarr_name }}-download"
 radarr_volume_media: "{{ radarr_name }}-media"
 
 radarr_traefik_enable: true
+radarr_traefik_host: "{{ radarr_name }}.{{ common_traefik_domain }}"
 radarr_ports:
   - 7878:7878
 

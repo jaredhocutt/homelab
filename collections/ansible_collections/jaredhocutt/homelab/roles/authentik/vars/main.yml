@@ -29,7 +29,7 @@ authentik_redis_env_vars_base: {}
 
 authentik_container_labels_traefik:
   traefik.enable: true
-  traefik.http.routers.{{ authentik_name }}.rule: Host(`{{ authentik_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ authentik_name }}.rule: Host(`{{ authentik_traefik_host }}`)
   traefik.http.routers.{{ authentik_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
 authentik_container_labels_base: "{{ authentik_traefik_enable | ternary(authentik_container_labels_traefik, {}) }}"
 

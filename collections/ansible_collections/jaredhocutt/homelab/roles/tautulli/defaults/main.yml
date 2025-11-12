@@ -9,6 +9,7 @@ tautulli_image_tag: latest
 tautulli_volume_config: "{{ tautulli_name }}-config"
 
 tautulli_traefik_enable: true
+tautulli_traefik_host: "{{ tautulli_name }}.{{ common_traefik_domain }}"
 tautulli_ports:
   - 8181:8181
 

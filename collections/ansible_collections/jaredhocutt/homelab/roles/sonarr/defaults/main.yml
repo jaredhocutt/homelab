@@ -11,6 +11,7 @@ sonarr_volume_download: "{{ sonarr_name }}-download"
 sonarr_volume_media: "{{ sonarr_name }}-media"
 
 sonarr_traefik_enable: true
+sonarr_traefik_host: "{{ sonarr_name }}.{{ common_traefik_domain }}"
 sonarr_ports:
   - 8989:8989
 

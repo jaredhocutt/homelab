@@ -10,6 +10,7 @@ sabnzbd_volume_config: "{{ sabnzbd_name }}-config"
 sabnzbd_volume_download: "{{ sabnzbd_name }}-download"
 
 sabnzbd_traefik_enable: true
+sabnzbd_traefik_host: "{{ sabnzbd_name }}.{{ common_traefik_domain }}"
 sabnzbd_ports:
   - 8080:8080
 

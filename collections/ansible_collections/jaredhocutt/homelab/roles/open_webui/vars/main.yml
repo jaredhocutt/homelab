@@ -13,7 +13,7 @@ open_webui_env_vars_base: "{{ common_env_vars_base }}"
 
 open_webui_container_labels_traefik:
   traefik.enable: true
-  traefik.http.routers.{{ open_webui_name }}.rule: Host(`{{ open_webui_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ open_webui_name }}.rule: Host(`{{ open_webui_traefik_host }}`)
   traefik.http.routers.{{ open_webui_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
 open_webui_container_labels_base: "{{ open_webui_traefik_enable | ternary(open_webui_container_labels_traefik, {}) }}"
 

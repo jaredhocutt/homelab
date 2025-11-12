@@ -22,7 +22,7 @@ changedetection_browser_env_vars_base: "{{ common_env_vars_base | combine(change
 
 changedetection_container_labels_traefik:
   traefik.enable: true
-  traefik.http.routers.{{ changedetection_name }}.rule: Host(`{{ changedetection_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ changedetection_name }}.rule: Host(`{{ changedetection_traefik_host }}`)
   traefik.http.routers.{{ changedetection_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
 changedetection_container_labels_base: "{{ changedetection_traefik_enable | ternary(changedetection_container_labels_traefik, {}) }}"
 

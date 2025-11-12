@@ -15,7 +15,7 @@ homarr_env_vars_base: "{{ common_env_vars_base | combine(homarr_env_vars_base_cu
 
 homarr_container_labels_traefik:
   traefik.enable: true
-  traefik.http.routers.{{ homarr_name }}.rule: Host(`{{ homarr_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ homarr_name }}.rule: Host(`{{ homarr_traefik_host }}`)
   traefik.http.routers.{{ homarr_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
 homarr_container_labels_base: "{{ homarr_traefik_enable | ternary(homarr_container_labels_traefik, {}) }}"
 

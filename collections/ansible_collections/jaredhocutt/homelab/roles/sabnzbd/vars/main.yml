@@ -13,7 +13,7 @@ sabnzbd_env_vars_base: "{{ common_env_vars_base }}"
 
 sabnzbd_container_labels_traefik:
   traefik.enable: true
-  traefik.http.routers.{{ sabnzbd_name }}.rule: Host(`{{ sabnzbd_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ sabnzbd_name }}.rule: Host(`{{ sabnzbd_traefik_host }}`)
   traefik.http.routers.{{ sabnzbd_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
 sabnzbd_container_labels_base: "{{ sabnzbd_traefik_enable | ternary(sabnzbd_container_labels_traefik, {}) }}"
 

@@ -17,6 +17,7 @@ authentik_postgres_volume_data: "{{ authentik_name }}-postgres-data"
 authentik_redis_volume_data: "{{ authentik_name }}-redis-data"
 
 authentik_traefik_enable: true
+authentik_traefik_host: "{{ authentik_name }}.{{ common_traefik_domain }}"
 authentik_ports:
   - 9000:9000
   - 9443:9443

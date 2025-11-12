@@ -9,6 +9,7 @@ wizarr_image_tag: latest
 wizarr_volume_data: "{{ wizarr_name }}-data"
 
 wizarr_traefik_enable: true
+wizarr_traefik_host: "{{ wizarr_name }}.{{ common_traefik_domain }}"
 wizarr_ports:
   - 5690:5690
 

@@ -25,6 +25,8 @@ paperless_redis_volume_data: "{{ paperless_name }}-redis-data"
 paperless_ai_volume_data: "{{ paperless_name }}-ai-data"
 
 paperless_traefik_enable: true
+paperless_traefik_host: "{{ paperless_name }}.{{ common_traefik_domain }}"
+paperless_ai_traefik_host: "{{ paperless_name }}-ai.{{ common_traefik_domain }}"
 paperless_ports:
   - 8000:8000
 paperless_ai_ports:

@@ -13,7 +13,7 @@ wizarr_env_vars_base: "{{ common_env_vars_base }}"
 
 wizarr_container_labels_traefik:
   traefik.enable: true
-  traefik.http.routers.{{ wizarr_name }}.rule: Host(`{{ wizarr_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ wizarr_name }}.rule: Host(`{{ wizarr_traefik_host }}`)
   traefik.http.routers.{{ wizarr_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
 wizarr_container_labels_base: "{{ wizarr_traefik_enable | ternary(wizarr_container_labels_traefik, {}) }}"
 

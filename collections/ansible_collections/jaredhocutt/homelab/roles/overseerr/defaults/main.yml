@@ -9,6 +9,7 @@ overseerr_image_tag: latest
 overseerr_volume_config: "{{ overseerr_name }}-config"
 
 overseerr_traefik_enable: true
+overseerr_traefik_host: "{{ overseerr_name }}.{{ common_traefik_domain }}"
 overseerr_ports:
   - 5055:5055
 

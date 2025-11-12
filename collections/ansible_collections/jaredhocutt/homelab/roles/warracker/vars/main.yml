@@ -32,7 +32,7 @@ warracker_postgres_env_vars_base: "{{ common_env_vars_base | combine(warracker_p
 
 warracker_container_labels_traefik:
   traefik.enable: true
-  traefik.http.routers.{{ warracker_name }}.rule: Host(`{{ warracker_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ warracker_name }}.rule: Host(`{{ warracker_traefik_host }}`)
   traefik.http.routers.{{ warracker_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
 warracker_container_labels_base: "{{ warracker_traefik_enable | ternary(warracker_container_labels_traefik, {}) }}"
 

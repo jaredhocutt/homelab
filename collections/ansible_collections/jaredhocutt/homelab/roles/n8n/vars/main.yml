@@ -30,7 +30,7 @@ n8n_postgres_env_vars_base: "{{ common_env_vars_base | combine(n8n_postgres_env_
 
 n8n_container_labels_traefik:
   traefik.enable: true
-  traefik.http.routers.{{ n8n_name }}.rule: Host(`{{ n8n_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ n8n_name }}.rule: Host(`{{ n8n_traefik_host }}`)
   traefik.http.routers.{{ n8n_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
 n8n_container_labels_base: "{{ n8n_traefik_enable | ternary(n8n_container_labels_traefik, {}) }}"
 

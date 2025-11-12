@@ -13,7 +13,7 @@ prowlarr_env_vars_base: "{{ common_env_vars_base }}"
 
 prowlarr_container_labels_traefik:
   traefik.enable: true
-  traefik.http.routers.{{ prowlarr_name }}.rule: Host(`{{ prowlarr_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ prowlarr_name }}.rule: Host(`{{ prowlarr_traefik_host }}`)
   traefik.http.routers.{{ prowlarr_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
 prowlarr_container_labels_base: "{{ prowlarr_traefik_enable | ternary(prowlarr_container_labels_traefik, {}) }}"
 

@@ -21,6 +21,8 @@ archiveium_redis_volume_data: "{{ archiveium_name }}-redis-data"
 archiveium_meilisearch_volume_data: "{{ archiveium_name }}-meilisearch-data"
 
 archiveium_traefik_enable: true
+archiveium_traefik_host: "{{ archiveium_name }}.{{ common_traefik_domain }}"
+archiveium_meilisearch_traefik_host: "{{ archiveium_name }}-meilisearch.{{ common_traefik_domain }}"
 archiveium_ports:
   - 5292:3000
 archiveium_meilisearch_ports:

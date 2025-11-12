@@ -33,7 +33,7 @@ immich_redis_env_vars_base: "{{ common_env_vars_base }}"
 
 immich_container_labels_traefik:
   traefik.enable: true
-  traefik.http.routers.{{ immich_name }}.rule: Host(`{{ immich_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ immich_name }}.rule: Host(`{{ immich_traefik_host }}`)
   traefik.http.routers.{{ immich_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
 immich_container_labels_base: "{{ immich_traefik_enable | ternary(immich_container_labels_traefik, {}) }}"
 

@@ -12,6 +12,7 @@ warracker_volume_uploads: "{{ warracker_name }}-uploads"
 warracker_postgres_volume_data: "{{ warracker_name }}-postgres-data"
 
 warracker_traefik_enable: true
+warracker_traefik_host: "{{ warracker_name }}.{{ common_traefik_domain }}"
 warracker_ports:
   - 8005:80
 

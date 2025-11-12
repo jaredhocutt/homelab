@@ -30,7 +30,7 @@ tandoor_postgres_env_vars_base: "{{ common_env_vars_base | combine(tandoor_postg
 
 tandoor_container_labels_traefik:
   traefik.enable: true
-  traefik.http.routers.{{ tandoor_name }}.rule: Host(`{{ tandoor_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ tandoor_name }}.rule: Host(`{{ tandoor_traefik_host }}`)
   traefik.http.routers.{{ tandoor_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
 tandoor_container_labels_base: "{{ tandoor_traefik_enable | ternary(tandoor_container_labels_traefik, {}) }}"
 

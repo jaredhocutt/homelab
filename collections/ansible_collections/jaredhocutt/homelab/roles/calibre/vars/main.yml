@@ -13,7 +13,7 @@ calibre_env_vars_base: "{{ common_env_vars_base }}"
 
 calibre_container_labels_traefik:
   traefik.enable: true
-  traefik.http.routers.{{ calibre_name }}.rule: Host(`{{ calibre_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ calibre_name }}.rule: Host(`{{ calibre_traefik_host }}`)
   traefik.http.routers.{{ calibre_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
 calibre_container_labels_base: "{{ calibre_traefik_enable | ternary(calibre_container_labels_traefik, {}) }}"
 

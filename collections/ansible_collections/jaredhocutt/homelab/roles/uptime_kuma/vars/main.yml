@@ -13,7 +13,7 @@ uptime_kuma_env_vars_base: "{{ common_env_vars_base }}"
 
 uptime_kuma_container_labels_traefik:
   traefik.enable: true
-  traefik.http.routers.{{ uptime_kuma_name }}.rule: Host(`{{ uptime_kuma_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ uptime_kuma_name }}.rule: Host(`{{ uptime_kuma_traefik_host }}`)
   traefik.http.routers.{{ uptime_kuma_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
 uptime_kuma_container_labels_base: "{{ uptime_kuma_traefik_enable | ternary(uptime_kuma_container_labels_traefik, {}) }}"
 

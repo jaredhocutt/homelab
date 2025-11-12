@@ -9,6 +9,7 @@ portainer_image_tag: lts
 portainer_volume_data: "{{ portainer_name }}-data"
 
 portainer_traefik_enable: true
+portainer_traefik_host: "{{ portainer_name }}.{{ common_traefik_domain }}"
 portainer_ports:
   - 9443:9443
 

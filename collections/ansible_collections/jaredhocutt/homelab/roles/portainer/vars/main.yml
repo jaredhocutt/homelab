@@ -13,7 +13,7 @@ portainer_env_vars_base: "{{ common_env_vars_base }}"
 
 portainer_container_labels_traefik:
   traefik.enable: true
-  traefik.http.routers.{{ portainer_name }}.rule: Host(`{{ portainer_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ portainer_name }}.rule: Host(`{{ portainer_traefik_host }}`)
   traefik.http.routers.{{ portainer_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
 portainer_container_labels_base: "{{ portainer_traefik_enable | ternary(portainer_container_labels_traefik, {}) }}"
 

@@ -14,6 +14,7 @@ karakeep_volume_data: "{{ karakeep_name }}-data"
 karakeep_meilisearch_volume_data: "{{ karakeep_name }}-meilisearch-data"
 
 karakeep_traefik_enable: true
+karakeep_traefik_host: "{{ karakeep_name }}.{{ common_traefik_domain }}"
 karakeep_ports:
   - 3000:3000
 

@@ -18,7 +18,7 @@ healthchecks_env_vars_base: "{{ common_env_vars_base | combine(healthchecks_env_
 
 healthchecks_container_labels_traefik:
   traefik.enable: true
-  traefik.http.routers.{{ healthchecks_name }}.rule: Host(`{{ healthchecks_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ healthchecks_name }}.rule: Host(`{{ healthchecks_traefik_host }}`)
   traefik.http.routers.{{ healthchecks_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
 healthchecks_container_labels_base: "{{ healthchecks_traefik_enable | ternary(healthchecks_container_labels_traefik, {}) }}"
 

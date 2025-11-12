@@ -33,13 +33,13 @@ bar_assistant_meilisearch_env_vars_base: "{{ common_env_vars_base | combine(bar_
 
 bar_assistant_container_labels_traefik:
   traefik.enable: true
-  traefik.http.routers.{{ bar_assistant_name }}.rule: Host(`{{ bar_assistant_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ bar_assistant_name }}.rule: Host(`{{ bar_assistant_traefik_host }}`)
   traefik.http.routers.{{ bar_assistant_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
 bar_assistant_container_labels_base: "{{ bar_assistant_traefik_enable | ternary(bar_assistant_container_labels_traefik, {}) }}"
 
 bar_assistant_salt_rim_container_labels_traefik:
   traefik.enable: true
-  traefik.http.routers.{{ bar_assistant_name }}.rule: Host(`{{ bar_assistant_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ bar_assistant_name }}.rule: Host(`{{ bar_assistant_salt_rim_traefik_host }}`)
   traefik.http.routers.{{ bar_assistant_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
 bar_assistant_salt_rim_container_labels_base: "{{ bar_assistant_traefik_enable | ternary(bar_assistant_salt_rim_container_labels_traefik, {}) }}"
 
@@ -47,7 +47,7 @@ bar_assistant_redis_container_labels_base: {}
 
 bar_assistant_meilisearch_container_labels_traefik:
   traefik.enable: true
-  traefik.http.routers.{{ bar_assistant_name }}.rule: Host(`{{ bar_assistant_name }}.{{ common_traefik_domain }}`)
+  traefik.http.routers.{{ bar_assistant_name }}.rule: Host(`{{ bar_assistant_meilisearch_traefik_host }}`)
   traefik.http.routers.{{ bar_assistant_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
 bar_assistant_meilisearch_container_labels_base: "{{ bar_assistant_traefik_enable | ternary(bar_assistant_meilisearch_container_labels_traefik, {}) }}"
 

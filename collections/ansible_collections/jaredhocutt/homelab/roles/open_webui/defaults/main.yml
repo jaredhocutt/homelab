@@ -9,6 +9,7 @@ open_webui_image_tag: main
 open_webui_volume_data: "{{ open_webui_name }}-data"
 
 open_webui_traefik_enable: true
+open_webui_traefik_host: "{{ open_webui_name }}.{{ common_traefik_domain }}"
 open_webui_ports:
   - 3000:8080
 

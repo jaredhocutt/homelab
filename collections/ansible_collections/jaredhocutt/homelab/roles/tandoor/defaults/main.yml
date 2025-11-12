@@ -13,6 +13,7 @@ tandoor_volume_mediafiles: "{{ tandoor_name }}-mediafiles"
 tandoor_postgres_volume_data: "{{ tandoor_name }}-postgres-data"
 
 tandoor_traefik_enable: true
+tandoor_traefik_host: "{{ tandoor_name }}.{{ common_traefik_domain }}"
 tandoor_ports:
   - 80:80
 
