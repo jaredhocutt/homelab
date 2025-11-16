@@ -3,7 +3,7 @@
 
 warracker_name: warracker
 
-warracker_image: docker pull ghcr.io/sassanix/warracker/main
+warracker_image: ghcr.io/sassanix/warracker/main
 warracker_image_tag: latest
 warracker_postgres_image: docker.io/library/postgres
 warracker_postgres_image_tag: "15"
