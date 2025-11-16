@@ -41,3 +41,6 @@ bar_assistant_quadlet_options: []
 bar_assistant_salt_rim_quadlet_options: []
 bar_assistant_redis_quadlet_options: []
 bar_assistant_meilisearch_quadlet_options: []
+
+bar_assistant_api_url: https://{{ bar_assistant_traefik_host }}
+bar_assistant_meilisearch_url: https://{{ bar_assistant_meilisearch_traefik_host }}

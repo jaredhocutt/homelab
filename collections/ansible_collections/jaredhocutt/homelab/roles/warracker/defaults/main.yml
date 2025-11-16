@@ -24,3 +24,5 @@ warracker_postgres_container_labels: {}
 
 warracker_quadlet_options: []
 warracker_postgres_quadlet_options: []
+
+warracker_url: https://{{ warracker_traefik_host }}

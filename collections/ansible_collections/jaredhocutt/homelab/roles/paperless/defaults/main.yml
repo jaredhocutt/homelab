@@ -53,4 +53,5 @@ paperless_gotenberg_quadlet_options: []
 paperless_tika_quadlet_options: []
 paperless_ai_quadlet_options: []
 
+paperless_url: https://{{ paperless_traefik_host }}
 paperless_task_workers: 1
