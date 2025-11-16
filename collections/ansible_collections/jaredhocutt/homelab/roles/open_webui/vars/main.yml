@@ -11,11 +11,15 @@ open_webui_env_vars_base: "{{ common_env_vars_base }}"
 # Container Labels
 ###############################################################################
 
+# This is done as a list and converted to a dict in order to use variables in the key name
 open_webui_container_labels_traefik:
-  traefik.enable: true
-  traefik.http.routers.{{ open_webui_name }}.rule: Host(`{{ open_webui_traefik_host }}`)
-  traefik.http.routers.{{ open_webui_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
-open_webui_container_labels_base: "{{ open_webui_traefik_enable | ternary(open_webui_container_labels_traefik, {}) }}"
+  - key: traefik.enable
+    value: "true"
+  - key: traefik.http.routers.{{ open_webui_name }}.rule
+    value: Host(`{{ open_webui_traefik_host }}`)
+  - key: traefik.http.routers.{{ open_webui_name }}.entrypoints
+    value: "{{ common_traefik_entrypoint }}"
+open_webui_container_labels_base: "{{ open_webui_traefik_enable | ternary((open_webui_container_labels_traefik | items2dict), {}) }}"
 
 ###############################################################################
 # Quadlet Options

@@ -24,11 +24,15 @@ karakeep_meilisearch_env_vars_base: "{{ common_env_vars_base | combine(karakeep_
 # Container Labels
 ###############################################################################
 
+# This is done as a list and converted to a dict in order to use variables in the key name
 karakeep_container_labels_traefik:
-  traefik.enable: true
-  traefik.http.routers.{{ karakeep_name }}.rule: Host(`{{ karakeep_traefik_host }}`)
-  traefik.http.routers.{{ karakeep_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
-karakeep_container_labels_base: "{{ karakeep_traefik_enable | ternary(karakeep_container_labels_traefik, {}) }}"
+  - key: traefik.enable
+    value: "true"
+  - key: traefik.http.routers.{{ karakeep_name }}.rule
+    value: Host(`{{ karakeep_traefik_host }}`)
+  - key: traefik.http.routers.{{ karakeep_name }}.entrypoints
+    value: "{{ common_traefik_entrypoint }}"
+karakeep_container_labels_base: "{{ karakeep_traefik_enable | ternary((karakeep_container_labels_traefik | items2dict), {}) }}"
 
 karakeep_chrome_container_labels_base: {}
 

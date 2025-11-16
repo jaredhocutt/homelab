@@ -11,11 +11,15 @@ wizarr_env_vars_base: "{{ common_env_vars_base }}"
 # Container Labels
 ###############################################################################
 
+# This is done as a list and converted to a dict in order to use variables in the key name
 wizarr_container_labels_traefik:
-  traefik.enable: true
-  traefik.http.routers.{{ wizarr_name }}.rule: Host(`{{ wizarr_traefik_host }}`)
-  traefik.http.routers.{{ wizarr_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
-wizarr_container_labels_base: "{{ wizarr_traefik_enable | ternary(wizarr_container_labels_traefik, {}) }}"
+  - key: traefik.enable
+    value: "true"
+  - key: traefik.http.routers.{{ wizarr_name }}.rule
+    value: Host(`{{ wizarr_traefik_host }}`)
+  - key: traefik.http.routers.{{ wizarr_name }}.entrypoints
+    value: "{{ common_traefik_entrypoint }}"
+wizarr_container_labels_base: "{{ wizarr_traefik_enable | ternary((wizarr_container_labels_traefik | items2dict), {}) }}"
 
 ###############################################################################
 # Quadlet Options

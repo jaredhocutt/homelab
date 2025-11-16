@@ -30,11 +30,15 @@ warracker_postgres_env_vars_base: "{{ common_env_vars_base | combine(warracker_p
 # Container Labels
 ###############################################################################
 
+# This is done as a list and converted to a dict in order to use variables in the key name
 warracker_container_labels_traefik:
-  traefik.enable: true
-  traefik.http.routers.{{ warracker_name }}.rule: Host(`{{ warracker_traefik_host }}`)
-  traefik.http.routers.{{ warracker_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
-warracker_container_labels_base: "{{ warracker_traefik_enable | ternary(warracker_container_labels_traefik, {}) }}"
+  - key: traefik.enable
+    value: "true"
+  - key: traefik.http.routers.{{ warracker_name }}.rule
+    value: Host(`{{ warracker_traefik_host }}`)
+  - key: traefik.http.routers.{{ warracker_name }}.entrypoints
+    value: "{{ common_traefik_entrypoint }}"
+warracker_container_labels_base: "{{ warracker_traefik_enable | ternary((warracker_container_labels_traefik | items2dict), {}) }}"
 
 warracker_postgres_container_labels_base: {}
 

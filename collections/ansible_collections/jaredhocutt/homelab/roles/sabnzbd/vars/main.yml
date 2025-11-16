@@ -11,11 +11,15 @@ sabnzbd_env_vars_base: "{{ common_env_vars_base }}"
 # Container Labels
 ###############################################################################
 
+# This is done as a list and converted to a dict in order to use variables in the key name
 sabnzbd_container_labels_traefik:
-  traefik.enable: true
-  traefik.http.routers.{{ sabnzbd_name }}.rule: Host(`{{ sabnzbd_traefik_host }}`)
-  traefik.http.routers.{{ sabnzbd_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
-sabnzbd_container_labels_base: "{{ sabnzbd_traefik_enable | ternary(sabnzbd_container_labels_traefik, {}) }}"
+  - key: traefik.enable
+    value: "true"
+  - key: traefik.http.routers.{{ sabnzbd_name }}.rule
+    value: Host(`{{ sabnzbd_traefik_host }}`)
+  - key: traefik.http.routers.{{ sabnzbd_name }}.entrypoints
+    value: "{{ common_traefik_entrypoint }}"
+sabnzbd_container_labels_base: "{{ sabnzbd_traefik_enable | ternary((sabnzbd_container_labels_traefik | items2dict), {}) }}"
 
 ###############################################################################
 # Quadlet Options

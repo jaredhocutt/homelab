@@ -42,11 +42,15 @@ paperless_ai_env_vars_base: "{{ common_env_vars_base }}"
 # Container Labels
 ###############################################################################
 
+# This is done as a list and converted to a dict in order to use variables in the key name
 paperless_container_labels_traefik:
-  traefik.enable: true
-  traefik.http.routers.{{ paperless_name }}.rule: Host(`{{ paperless_traefik_host }}`)
-  traefik.http.routers.{{ paperless_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
-paperless_container_labels_base: "{{ paperless_traefik_enable | ternary(paperless_container_labels_traefik, {}) }}"
+  - key: traefik.enable
+    value: "true"
+  - key: traefik.http.routers.{{ paperless_name }}.rule
+    value: Host(`{{ paperless_traefik_host }}`)
+  - key: traefik.http.routers.{{ paperless_name }}.entrypoints
+    value: "{{ common_traefik_entrypoint }}"
+paperless_container_labels_base: "{{ paperless_traefik_enable | ternary((paperless_container_labels_traefik | items2dict), {}) }}"
 
 paperless_postgres_container_labels_base: {}
 
@@ -56,11 +60,15 @@ paperless_gotenberg_container_labels_base: {}
 
 paperless_tika_container_labels_base: {}
 
+# This is done as a list and converted to a dict in order to use variables in the key name
 paperless_ai_container_labels_traefik:
-  traefik.enable: true
-  traefik.http.routers.{{ paperless_name }}.rule: Host(`{{ paperless_ai_traefik_host }}`)
-  traefik.http.routers.{{ paperless_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
-paperless_ai_container_labels_base: "{{ paperless_traefik_enable | ternary(paperless_ai_container_labels_traefik, {}) }}"
+  - key: traefik.enable
+    value: "true"
+  - key: traefik.http.routers.{{ paperless_name }}-ai.rule
+    value: Host(`{{ paperless_ai_traefik_host }}`)
+  - key: traefik.http.routers.{{ paperless_name }}-ai.entrypoints
+    value: "{{ common_traefik_entrypoint }}"
+paperless_ai_container_labels_base: "{{ paperless_traefik_enable | ternary((paperless_ai_container_labels_traefik | items2dict), {}) }}"
 
 ###############################################################################
 # Quadlet Options

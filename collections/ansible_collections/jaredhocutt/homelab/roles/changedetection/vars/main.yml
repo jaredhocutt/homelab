@@ -20,11 +20,15 @@ changedetection_browser_env_vars_base: "{{ common_env_vars_base | combine(change
 # Container Labels
 ###############################################################################
 
+# This is done as a list and converted to a dict in order to use variables in the key name
 changedetection_container_labels_traefik:
-  traefik.enable: true
-  traefik.http.routers.{{ changedetection_name }}.rule: Host(`{{ changedetection_traefik_host }}`)
-  traefik.http.routers.{{ changedetection_name }}.entrypoints: "{{ common_traefik_entrypoint }}"
-changedetection_container_labels_base: "{{ changedetection_traefik_enable | ternary(changedetection_container_labels_traefik, {}) }}"
+  - key: traefik.enable
+    value: "true"
+  - key: traefik.http.routers.{{ changedetection_name }}.rule
+    value: Host(`{{ changedetection_traefik_host }}`)
+  - key: traefik.http.routers.{{ changedetection_name }}.entrypoints
+    value: "{{ common_traefik_entrypoint }}"
+changedetection_container_labels_base: "{{ changedetection_traefik_enable | ternary((changedetection_container_labels_traefik | items2dict), {}) }}"
 
 changedetection_browser_container_labels_base: {}
 

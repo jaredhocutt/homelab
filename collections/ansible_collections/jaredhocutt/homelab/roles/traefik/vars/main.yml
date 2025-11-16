@@ -32,8 +32,19 @@ traefik_env_vars_base: "{{ common_env_vars_base | combine(traefik_env_vars_base_
 # Container Labels
 ###############################################################################
 
-traefik_container_labels_base:
-  traefik.enable: true
+# This is done as a list and converted to a dict in order to use variables in the key name
+traefik_container_labels_traefik:
+  - key: traefik.enable
+    value: "true"
+  - key: traefik.http.routers.{{ traefik_name }}.rule
+    value: "Host(`{{ traefik_traefik_host }}`)"
+  - key: traefik.http.routers.{{ traefik_name }}.entrypoints
+    value: "{{ common_traefik_entrypoint }}"
+  - key: traefik.http.routers.{{ traefik_name }}.service
+    value: api@internal
+  - key: traefik.http.routers.{{ traefik_name }}.tls
+    value: "true"
+traefik_container_labels_base: "{{ traefik_traefik_enable | ternary((traefik_container_labels_traefik | items2dict), {}) }}"
 
 ###############################################################################
 # Quadlet Options
