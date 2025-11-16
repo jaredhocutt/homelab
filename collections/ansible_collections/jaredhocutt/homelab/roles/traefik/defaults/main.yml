@@ -9,6 +9,8 @@ traefik_image_tag: latest
 traefik_volume_certs: "{{ traefik_name }}-config"
 traefik_volume_dynamic: "{{ traefik_name }}-dynamic"
 
+traefik_traefik_enable: true
+traefik_traefik_host: "{{ traefik_name }}.{{ common_traefik_domain }}"
 traefik_ports:
   - 80:80
   - 443:443
