@@ -95,4 +95,9 @@ paperless_gotenberg_quadlet_options_base: "{{ common_quadlet_options_base }}"
 
 paperless_tika_quadlet_options_base: "{{ common_quadlet_options_base }}"
 
-paperless_ai_quadlet_options_base: "{{ common_quadlet_options_base }}"
+paperless_ai_quadlet_options_base_custom:
+  - |
+    [Unit]
+    Requires={{ paperless_name }}.service
+    After={{ paperless_name }}.service
+paperless_ai_quadlet_options_base: "{{ common_quadlet_options_base + paperless_ai_quadlet_options_base_custom }}"
