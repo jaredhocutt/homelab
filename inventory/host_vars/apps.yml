@@ -32,15 +32,41 @@ authentik_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.aut
 authentik_secret_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.authentik_secret_key) }}"
 
 ###############################################################################
+# archiveium
+###############################################################################
+
+archiveium_image_tag: "0.0.29"
+archiveium_postgres_image_tag: "13.22"
+archiveium_minio_image_tag: RELEASE.2023-12-23T07-19-11Z
+archiveium_redis_image_tag: "7.4.6"
+archiveium_meilisearch_image_tag: v1.13.3
+
+archiveium_admin_email: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.archiveium_admin_email) }}"
+archiveium_admin_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.archiveium_admin_password) }}"
+archiveium_encryption_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.archiveium_encryption_key) }}"
+archiveium_meilisearch_master_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.archiveium_meilisearch_master_key) }}"
+archiveium_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.archiveium_postgres_password) }}"
+archiveium_minio_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.archiveium_minio_password) }}"
+archiveium_url: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.archiveium_url) }}"
+
+###############################################################################
+# bar_assistant
+###############################################################################
+
+bar_assistant_image_tag: v5.9.0
+bar_assistant_salt_rim_image_tag: v4.9.0
+bar_assistant_redis_image_tag: "8.2.2"
+bar_assistant_meilisearch_image_tag: v1.15.2
+
+bar_assistant_meilisearch_master_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.bar_assistant_meilisearch_master_key) }}"
+
+###############################################################################
 # calibre
 ###############################################################################
 
 calibre_image_tag: "8.13.0"
 
-calibre_ports:
-  - 8380:8080
-  - 8381:8081
-
+calibre_volume_media: "{{ global_volume_media }}"
 calibre_volume_media_options: "{{ global_volume_media_options }}"
 
 ###############################################################################
@@ -55,9 +81,6 @@ changedetection_browser_image_tag: "0.0.3"
 ###############################################################################
 
 healthchecks_image_tag: version-v3.9
-
-healthchecks_ports:
-  - 18000:8000
 
 healthchecks_url: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_url) }}"
 healthchecks_email: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email) }}"
@@ -113,7 +136,7 @@ kometa_image_tag: v2.2.2
 ###############################################################################
 
 n8n_image_tag: "1.116.2"
-n8N_postgres_image_tag: "16.10"
+n8n_postgres_image_tag: "16.10"
 
 n8n_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.n8n_postgres_password) }}"
 
@@ -122,9 +145,6 @@ n8n_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.n8n_postg
 ###############################################################################
 
 open_webui_image_tag: v0.6.34
-
-open_webui_ports:
-  - 3010:8080
 
 ###############################################################################
 # overseerr
@@ -145,21 +165,10 @@ paperless_gotenberg_image_tag: "8.18.0"
 paperless_tika_image_tag: "2.9.1.0-full"
 paperless_ai_image_tag: "3.0.4"
 
-paperless_ai_ports:
-  - 13000:3000
-
 paperless_env_vars:
   PAPERLESS_ALLOWED_HOSTS: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.paperless_allowed_hosts) }}"
   PAPERLESS_OCR_USER_ARGS: '{"invalidate_digital_signatures": true}'
 
-paperless_volume_data_options:
-  - Device={{ lookup('bitwarden.secrets.lookup', bws_uuid.global_storage_host) }}:/mnt/data/paperless/data
-  - Type=nfs
-  - Options=soft,nfsvers=3,nolock
-paperless_volume_media_options:
-  - Device={{ lookup('bitwarden.secrets.lookup', bws_uuid.global_storage_host) }}:/mnt/data/paperless/media
-  - Type=nfs
-  - Options=soft,nfsvers=3,nolock
 paperless_volume_export_options:
   - Device={{ lookup('bitwarden.secrets.lookup', bws_uuid.global_storage_host) }}:/mnt/data/paperless/export
   - Type=nfs
@@ -229,11 +238,18 @@ sonarr_volume_media_options: "{{ global_volume_media_options }}"
 
 stirling_pdf_image_tag: 1.5.0-fat
 
-stirling_pdf_ports:
-  - 8085:8080
-
 stirling_pdf_env_vars:
   DOCKER_ENABLE_SECURITY: "false"
+
+###############################################################################
+# tandoor
+###############################################################################
+
+tandoor_image_tag: "2.3.3"
+tandoor_postgres_image_tag: "16.10"
+
+tandoor_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.tandoor_postgres_password) }}"
+tandoor_secret_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.tandoor_secret_key) }}"
 
 ###############################################################################
 # tautulli
@@ -245,10 +261,26 @@ tautulli_env_vars:
   DOCKER_ENABLE_SECURITY: "false"
 
 ###############################################################################
-# vault
+# traefik
 ###############################################################################
 
-vault_image_tag: "1.20"
+traefik_image_tag: v3.5.4
+
+###############################################################################
+# warracker
+###############################################################################
+
+warracker_image_tag: "1.0.2"
+warracker_postgres_image_tag: "15.14"
+
+warracker_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.warracker_postgres_password) }}"
+warracker_secret_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.warracker_secret_key) }}"
+
+###############################################################################
+# wizarr
+###############################################################################
+
+wizarr_image_tag: v2025.10.7
 
 ###############################################################################
 # kickstart
