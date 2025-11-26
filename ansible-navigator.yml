@@ -1,6 +1,18 @@
 ---
 
 ansible-navigator:
+  execution-environment:
+    enabled: true
+    container-engine: podman
+    image: localhost/homelab-ee:latest
+    pull:
+      policy: missing
+    environment-variables:
+      pass:
+        - ANSIBLE_VAULT_PASSWORD
+        - BWS_ACCESS_TOKEN
+        - BWS_PROJECT_ID
+
   logging:
     level: debug
     file: .ansible/logs/ansible-navigator.log

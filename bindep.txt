@@ -1,0 +1,4 @@
+gnupg2 [platform:rpm]
+openssh-clients [platform:rpm]
+pinentry [platform:rpm]
+sshpass [platform:rpm]

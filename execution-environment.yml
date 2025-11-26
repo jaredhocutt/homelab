@@ -1,0 +1,35 @@
+---
+
+version: 3
+
+images:
+  base_image:
+    name: quay.io/fedora/fedora:43
+
+dependencies:
+  ansible_core:
+    package_pip: ansible-core>=2.19,<2.20
+  ansible_runner:
+    package_pip: ansible-runner
+  python: requirements.txt
+  galaxy: collections/requirements.yml
+  system: bindep.txt
+
+additional_build_files:
+  - src: ansible.cfg
+    dest: configs
+
+additional_build_steps:
+  prepend_base:
+    - RUN dnf install -y python3 python3-devel
+    - RUN python3 -m ensurepip --upgrade
+    - RUN python3 -m pip install --upgrade pip setuptools wheel
+    # Now setup Python 3.12 as the default python3
+    - RUN dnf install -y python3.12 python3.12-devel
+    - RUN alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 1
+    - RUN alternatives --set python3 /usr/bin/python3.12
+    - RUN python3.12 -m ensurepip --upgrade
+    - RUN python3.12 -m pip install --upgrade pip setuptools wheel
+
+  prepend_galaxy:
+    - ADD _build/configs/ansible.cfg ~/.ansible.cfg
