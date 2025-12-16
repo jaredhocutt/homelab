@@ -17,6 +17,9 @@ calibre_ports:
 
 calibre_env_vars: {}
 
+calibre_secrets: {}
+calibre_container_secrets: []
+
 calibre_container_labels: {}
 
 calibre_quadlet_options: []

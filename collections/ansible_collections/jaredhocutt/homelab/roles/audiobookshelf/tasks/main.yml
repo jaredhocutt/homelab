@@ -34,12 +34,26 @@
     - name: "{{ audiobookshelf_volume_media }}"
       options: "{{ audiobookshelf_volume_media_options | default(omit) }}"
 
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ audiobookshelf_secrets_base | combine(audiobookshelf_secrets, recursive=True) | dict2items }}"
+
 - name: Create audiobookshelf container
   containers.podman.podman_container:
     name: "{{ audiobookshelf_name }}"
     image: "{{ audiobookshelf_image }}:{{ audiobookshelf_image_tag }}"
     network: "{{ audiobookshelf_name }}.network"
-    env: "{{ audiobookshelf_env_vars_base | combine(audiobookshelf_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(audiobookshelf_env_vars_base, recursive=True)
+      | combine(audiobookshelf_env_vars, recursive=True) }}
+    secrets: >-
+      {{ audiobookshelf_container_secrets_base
+      + audiobookshelf_container_secrets }}
     volumes:
       - "{{ audiobookshelf_volume_config }}:/config"
       - "{{ audiobookshelf_volume_metadata }}:/metadata"

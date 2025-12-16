@@ -36,12 +36,26 @@
     - name: "{{ tandoor_postgres_volume_data }}"
       options: "{{ tandoor_postgres_volume_data_options | default(omit) }}"
 
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ tandoor_secrets_base | combine(tandoor_secrets, recursive=True) | dict2items }}"
+
 - name: Create postgres container
   containers.podman.podman_container:
     name: "{{ tandoor_name }}-postgres"
     image: "{{ tandoor_postgres_image }}:{{ tandoor_postgres_image_tag }}"
     network: "{{ tandoor_name }}.network"
-    env: "{{ tandoor_postgres_env_vars_base | combine(tandoor_postgres_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(tandoor_postgres_env_vars_base, recursive=True)
+      | combine(tandoor_postgres_env_vars, recursive=True) }}
+    secrets: >-
+      {{ tandoor_postgres_container_secrets_base
+      + tandoor_postgres_container_secrets }}
     volumes:
       - "{{ tandoor_postgres_volume_data }}.volume:/var/lib/postgresql/data"
     healthcheck_interval: 30s
@@ -60,7 +74,13 @@
     name: "{{ tandoor_name }}"
     image: "{{ tandoor_image }}:{{ tandoor_image_tag }}"
     network: "{{ tandoor_name }}.network"
-    env: "{{ tandoor_env_vars_base | combine(tandoor_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(tandoor_env_vars_base, recursive=True)
+      | combine(tandoor_env_vars, recursive=True) }}
+    secrets: >-
+      {{ tandoor_container_secrets_base
+      + tandoor_container_secrets }}
     volumes:
       - "{{ tandoor_volume_staticfiles }}.volume:/opt/recipes/staticfiles"
       - "{{ tandoor_volume_mediafiles }}.volume:/opt/recipes/mediafiles"

@@ -19,6 +19,10 @@ warracker_ports:
 warracker_env_vars: {}
 warracker_postgres_env_vars: {}
 
+warracker_secrets: {}
+warracker_container_secrets: []
+warracker_postgres_container_secrets: []
+
 warracker_container_labels: {}
 warracker_postgres_container_labels: {}
 

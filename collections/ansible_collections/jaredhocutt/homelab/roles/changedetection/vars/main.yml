@@ -5,16 +5,24 @@
 # Envrionment Variables
 ###############################################################################
 
-changedetection_env_vars_base_custom:
+changedetection_env_vars_base:
   PLAYWRIGHT_DRIVER_URL: "ws://{{ changedetection_name }}-browser:3000"
-changedetection_env_vars_base: "{{ common_env_vars_base | combine(changedetection_env_vars_base_custom, recursive=True) }}"
 
-changedetection_browser_env_vars_base_custom:
+changedetection_browser_env_vars_base:
   SCREEN_WIDTH: "1920"
   SCREEN_HEIGHT: "1024"
   SCREEN_DEPTH: "16"
   MAX_CONCURRENT_CHROME_PROCESSES: "10"
-changedetection_browser_env_vars_base: "{{ common_env_vars_base | combine(changedetection_browser_env_vars_base_custom, recursive=True) }}"
+
+###############################################################################
+# Secrets
+###############################################################################
+
+changedetection_secrets_base: {}
+
+changedetection_container_secrets_base: []
+
+changedetection_browser_container_secrets_base: []
 
 ###############################################################################
 # Container Labels

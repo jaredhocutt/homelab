@@ -5,12 +5,19 @@
 # Envrionment Variables
 ###############################################################################
 
-healthchecks_env_vars_base_custom:
+healthchecks_env_vars_base:
   SITE_ROOT: "{{ healthchecks_url }}"
   SITE_NAME: "{{ healthchecks_site_name }}"
   SUPERUSER_EMAIL: "{{ healthchecks_email }}"
   SUPERUSER_PASSWORD: "{{ healthchecks_password }}"
-healthchecks_env_vars_base: "{{ common_env_vars_base | combine(healthchecks_env_vars_base_custom, recursive=True) }}"
+
+###############################################################################
+# Secrets
+###############################################################################
+
+healthchecks_secrets_base: {}
+
+healthchecks_container_secrets_base: []
 
 ###############################################################################
 # Container Labels

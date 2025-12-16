@@ -5,7 +5,7 @@
 # Envrionment Variables
 ###############################################################################
 
-traefik_env_vars_base_custom:
+traefik_env_vars_base:
   # Entrypoints
   TRAEFIK_ENTRYPOINTS_WEB_ADDRESS: ":80"
   TRAEFIK_ENTRYPOINTS_WEB_HTTP_REDIRECTIONS_ENTRYPOINT_TO: "websecure"
@@ -26,7 +26,14 @@ traefik_env_vars_base_custom:
   TRAEFIK_LOG_LEVEL: "INFO"
   TRAEFIK_ACCESSLOG: "true"
   TRAEFIK_METRICS_PROMETHEUS: "true"
-traefik_env_vars_base: "{{ common_env_vars_base | combine(traefik_env_vars_base_custom, recursive=True) }}"
+
+###############################################################################
+# Secrets
+###############################################################################
+
+traefik_secrets_base: {}
+
+traefik_container_secrets_base: []
 
 ###############################################################################
 # Container Labels

@@ -34,12 +34,26 @@
     - name: "{{ n8n_postgres_volume_data }}"
       options: "{{ n8n_postgres_volume_data_options | default(omit) }}"
 
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ n8n_secrets_base | combine(n8n_secrets, recursive=True) | dict2items }}"
+
 - name: Create postgres container
   containers.podman.podman_container:
     name: "{{ n8n_name }}-postgres"
     image: "{{ n8n_postgres_image }}:{{ n8n_postgres_image_tag }}"
     network: "{{ n8n_name }}.network"
-    env: "{{ n8n_postgres_env_vars_base | combine(n8n_postgres_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(n8n_postgres_env_vars_base, recursive=True)
+      | combine(n8n_postgres_env_vars, recursive=True) }}
+    secrets: >-
+      {{ n8n_postgres_container_secrets_base
+      + n8n_postgres_container_secrets }}
     volumes:
       - "{{ n8n_postgres_volume_data }}.volume:/var/lib/postgresql/data"
     healthcheck_interval: 30s
@@ -59,7 +73,13 @@
     name: "{{ n8n_name }}"
     image: "{{ n8n_image }}:{{ n8n_image_tag }}"
     network: "{{ n8n_name }}.network"
-    env: "{{ n8n_env_vars_base | combine(n8n_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(n8n_env_vars_base, recursive=True)
+      | combine(n8n_env_vars, recursive=True) }}
+    secrets: >-
+      {{ n8n_container_secrets_base
+      + n8n_container_secrets }}
     volumes:
       - "{{ n8n_volume_data }}.volume:/home/node/.n8n"
     publish: "{{ n8n_traefik_enable | ternary(omit, n8n_ports) }}"

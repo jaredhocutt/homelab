@@ -5,9 +5,17 @@
 # Envrionment Variables
 ###############################################################################
 
-homarr_env_vars_base_custom:
-  SECRET_ENCRYPTION_KEY: "{{ homarr_secret_encryption_key }}"
-homarr_env_vars_base: "{{ common_env_vars_base | combine(homarr_env_vars_base_custom, recursive=True) }}"
+homarr_env_vars_base: {}
+
+###############################################################################
+# Secrets
+###############################################################################
+
+homarr_secrets_base:
+  homarr_secret_encryption_key: "{{ homarr_secret_encryption_key }}"
+
+homarr_container_secrets_base:
+  - homarr_secret_encryption_key,type=env,target=SECRET_ENCRYPTION_KEY
 
 ###############################################################################
 # Container Labels

@@ -15,6 +15,9 @@ healthchecks_ports:
 
 healthchecks_env_vars: {}
 
+healthchecks_secrets: {}
+healthchecks_container_secrets: []
+
 healthchecks_container_labels: {}
 
 healthchecks_quadlet_options: []

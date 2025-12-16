@@ -30,12 +30,26 @@
     - name: "{{ overseerr_volume_config }}"
       options: "{{ overseerr_volume_config_options | default(omit) }}"
 
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ overseerr_secrets_base | combine(overseerr_secrets, recursive=True) | dict2items }}"
+
 - name: Create overseerr container
   containers.podman.podman_container:
     name: "{{ overseerr_name }}"
     image: "{{ overseerr_image }}:{{ overseerr_image_tag }}"
     network: "{{ overseerr_name }}.network"
-    env: "{{ overseerr_env_vars_base | combine(overseerr_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(overseerr_env_vars_base, recursive=True)
+      | combine(overseerr_env_vars, recursive=True) }}
+    secrets: >-
+      {{ overseerr_container_secrets_base
+      + overseerr_container_secrets }}
     volumes:
       - "{{ overseerr_volume_config }}://app/config"
     publish: "{{ overseerr_traefik_enable | ternary(omit, overseerr_ports) }}"

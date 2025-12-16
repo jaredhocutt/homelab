@@ -42,12 +42,26 @@
     - name: "{{ immich_redis_volume_data }}"
       options: "{{ immich_redis_volume_data_options | default(omit) }}"
 
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ immich_secrets_base | combine(immich_secrets, recursive=True) | dict2items }}"
+
 - name: Create postgres container
   containers.podman.podman_container:
     name: "{{ immich_name }}-postgres"
     image: "{{ immich_postgres_image }}:{{ immich_postgres_image_tag }}"
     network: "{{ immich_name }}.network"
-    env: "{{ immich_postgres_env_vars_base | combine(immich_postgres_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(immich_postgres_env_vars_base, recursive=True)
+      | combine(immich_postgres_env_vars, recursive=True) }}
+    secrets: >-
+      {{ immich_postgres_container_secrets_base
+      + immich_postgres_container_secrets }}
     volumes:
       - "{{ immich_postgres_volume_data }}.volume:/var/lib/postgresql/data"
     shm_size: 128mb
@@ -68,7 +82,13 @@
     name: "{{ immich_name }}-redis"
     image: "{{ immich_redis_image }}:{{ immich_redis_image_tag }}"
     network: "{{ immich_name }}.network"
-    env: "{{ immich_redis_env_vars_base | combine(immich_redis_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(immich_redis_env_vars_base, recursive=True)
+      | combine(immich_redis_env_vars, recursive=True) }}
+    secrets: >-
+      {{ immich_redis_container_secrets_base
+      + immich_redis_container_secrets }}
     volumes:
       - "{{ immich_redis_volume_data }}.volume:/data"
     healthcheck_interval: 30s
@@ -88,7 +108,13 @@
     name: "{{ immich_name }}-machine-learning"
     image: "{{ immich_image }}:{{ immich_image_tag }}"
     network: "{{ immich_name }}.network"
-    env: "{{ immich_env_vars_base | combine(immich_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(immich_machine_learning_env_vars_base, recursive=True)
+      | combine(immich_machine_learning_env_vars, recursive=True) }}
+    secrets: >-
+      {{ immich_machine_learning_container_secrets_base
+      + immich_machine_learning_container_secrets }}
     volumes:
       - "{{ immich_machine_learning_volume_cache }}.volume:/cache"
     labels: "{{ immich_machine_learning_container_labels_base | combine(immich_machine_learning_container_labels, recursive=True) }}"
@@ -103,7 +129,13 @@
     name: "{{ immich_name }}"
     image: "{{ immich_image }}:{{ immich_image_tag }}"
     network: "{{ immich_name }}.network"
-    env: "{{ immich_env_vars_base | combine(immich_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(immich_env_vars_base, recursive=True)
+      | combine(immich_env_vars, recursive=True) }}
+    secrets: >-
+      {{ immich_container_secrets_base
+      + immich_container_secrets }}
     volumes:
       - "{{ immich_volume_data }}.volume:/data"
       - /etc/localtime:/etc/localtime:ro

@@ -32,12 +32,26 @@
     - name: "{{ calibre_volume_media }}"
       options: "{{ calibre_volume_media_options | default(omit) }}"
 
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ calibre_secrets_base | combine(calibre_secrets, recursive=True) | dict2items }}"
+
 - name: Create calibre container
   containers.podman.podman_container:
     name: "{{ calibre_name }}"
     image: "{{ calibre_image }}:{{ calibre_image_tag }}"
     network: "{{ calibre_name }}.network"
-    env: "{{ calibre_env_vars_base | combine(calibre_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(calibre_env_vars_base, recursive=True)
+      | combine(calibre_env_vars, recursive=True) }}
+    secrets: >-
+      {{ calibre_container_secrets_base
+      + calibre_container_secrets }}
     volumes:
       - "{{ calibre_volume_config }}:/config"
       - "{{ calibre_volume_media }}:/mnt/media"

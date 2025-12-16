@@ -15,6 +15,9 @@ prowlarr_ports:
 
 prowlarr_env_vars: {}
 
+prowlarr_secrets: {}
+prowlarr_container_secrets: []
+
 prowlarr_container_labels: {}
 
 prowlarr_quadlet_options: []

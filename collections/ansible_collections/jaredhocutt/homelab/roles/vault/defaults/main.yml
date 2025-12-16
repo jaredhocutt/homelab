@@ -17,6 +17,9 @@ vault_ports:
 
 vault_env_vars: {}
 
+vault_secrets: {}
+vault_container_secrets: []
+
 vault_container_labels: {}
 
 vault_quadlet_options: []

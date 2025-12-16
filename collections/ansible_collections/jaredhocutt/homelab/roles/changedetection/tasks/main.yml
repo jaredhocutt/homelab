@@ -32,12 +32,26 @@
     - name: "{{ changedetection_volume_data }}"
       options: "{{ changedetection_volume_data_options | default(omit) }}"
 
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ changedetection_secrets_base | combine(changedetection_secrets, recursive=True) | dict2items }}"
+
 - name: Create browser container
   containers.podman.podman_container:
     name: "{{ changedetection_name }}-browser"
     image: "{{ changedetection_browser_image }}:{{ changedetection_browser_image_tag }}"
     network: "{{ changedetection_name }}.network"
-    env: "{{ changedetection_browser_env_vars_base | combine(changedetection_browser_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(changedetection_browser_env_vars_base, recursive=True)
+      | combine(changedetection_browser_env_vars, recursive=True) }}
+    secrets: >-
+      {{ changedetection_browser_container_secrets_base
+      + changedetection_browser_container_secrets }}
     cap_add:
       - SYS_ADMIN
     labels: "{{ changedetection_browser_container_labels_base | combine(changedetection_container_labels, recursive=True) }}"
@@ -52,7 +66,13 @@
     name: "{{ changedetection_name }}"
     image: "{{ changedetection_image }}:{{ changedetection_image_tag }}"
     network: "{{ changedetection_name }}.network"
-    env: "{{ changedetection_env_vars_base | combine(changedetection_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(changedetection_env_vars_base, recursive=True)
+      | combine(changedetection_env_vars, recursive=True) }}
+    secrets: >-
+      {{ changedetection_container_secrets_base
+      + changedetection_container_secrets }}
     volumes:
       - "{{ changedetection_volume_data }}.volume:/datastore"
     publish: "{{ changedetection_traefik_enable | ternary(omit, changedetection_ports) }}"

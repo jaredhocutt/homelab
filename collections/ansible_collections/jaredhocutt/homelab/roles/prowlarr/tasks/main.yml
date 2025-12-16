@@ -30,12 +30,26 @@
     - name: "{{ prowlarr_volume_config }}"
       options: "{{ prowlarr_volume_config_options | default(omit) }}"
 
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ prowlarr_secrets_base | combine(prowlarr_secrets, recursive=True) | dict2items }}"
+
 - name: Create prowlarr container
   containers.podman.podman_container:
     name: "{{ prowlarr_name }}"
     image: "{{ prowlarr_image }}:{{ prowlarr_image_tag }}"
     network: "{{ prowlarr_name }}.network"
-    env: "{{ prowlarr_env_vars_base | combine(prowlarr_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(prowlarr_env_vars_base, recursive=True)
+      | combine(prowlarr_env_vars, recursive=True) }}
+    secrets: >-
+      {{ prowlarr_container_secrets_base
+      + prowlarr_container_secrets }}
     volumes:
       - "{{ prowlarr_volume_config }}:/config"
     publish: "{{ prowlarr_traefik_enable | ternary(omit, prowlarr_ports) }}"

@@ -30,12 +30,26 @@
     - name: "{{ tautulli_volume_config }}"
       options: "{{ tautulli_volume_config_options | default(omit) }}"
 
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ tautulli_secrets_base | combine(tautulli_secrets, recursive=True) | dict2items }}"
+
 - name: Create tautulli container
   containers.podman.podman_container:
     name: "{{ tautulli_name }}"
     image: "{{ tautulli_image }}:{{ tautulli_image_tag }}"
     network: "{{ tautulli_name }}.network"
-    env: "{{ tautulli_env_vars_base | combine(tautulli_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(tautulli_env_vars_base, recursive=True)
+      | combine(tautulli_env_vars, recursive=True) }}
+    secrets: >-
+      {{ tautulli_container_secrets_base
+      + tautulli_container_secrets }}
     volumes:
       - "{{ tautulli_volume_config }}:/config"
     publish: "{{ tautulli_traefik_enable | ternary(omit, tautulli_ports) }}"

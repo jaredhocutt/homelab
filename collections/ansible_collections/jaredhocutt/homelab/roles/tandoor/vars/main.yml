@@ -8,21 +8,33 @@ tandoor_postgres_user: tandoor
 # Envrionment Variables
 ###############################################################################
 
-tandoor_env_vars_base_custom:
+tandoor_env_vars_base:
   DB_ENGINE: django.db.backends.postgresql
   POSTGRES_HOST: "{{ tandoor_name }}-postgres"
   POSTGRES_PORT: "5432"
-  POSTGRES_DB: "{{ tandoor_postgres_db_name }}"
-  POSTGRES_USER: "{{ tandoor_postgres_user }}"
-  POSTGRES_PASSWORD: "{{ tandoor_postgres_password }}"
-  SECRET_KEY: "{{ tandoor_secret_key }}"
-tandoor_env_vars_base: "{{ common_env_vars_base | combine(tandoor_env_vars_base_custom, recursive=True) }}"
 
-tandoor_postgres_env_vars_base_custom:
-  POSTGRES_DB: "{{ tandoor_postgres_db_name }}"
-  POSTGRES_USER: "{{ tandoor_postgres_user }}"
-  POSTGRES_PASSWORD: "{{ tandoor_postgres_password }}"
-tandoor_postgres_env_vars_base: "{{ common_env_vars_base | combine(tandoor_postgres_env_vars_base_custom, recursive=True) }}"
+tandoor_postgres_env_vars_base_custom: {}
+
+###############################################################################
+# Secrets
+###############################################################################
+
+tandoor_secrets_base:
+  tandoor_secret_key: "{{ tandoor_secret_key }}"
+  tandoor_postgres_db_name: "{{ tandoor_postgres_db_name }}"
+  tandoor_postgres_user: "{{ tandoor_postgres_user }}"
+  tandoor_postgres_password: "{{ tandoor_postgres_password }}"
+
+tandoor_container_secrets_base:
+  - tandoor_secret_key,type=env,target=SECRET_KEY
+  - tandoor_postgres_db_name,type=env,target=POSTGRES_DB
+  - tandoor_postgres_user,type=env,target=POSTGRES_USER
+  - tandoor_postgres_password,type=env,target=POSTGRES_PASSWORD
+
+tandoor_postgres_container_secrets_base:
+  - tandoor_postgres_db_name,type=env,target=POSTGRES_DB
+  - tandoor_postgres_user,type=env,target=POSTGRES_USER
+  - tandoor_postgres_password,type=env,target=POSTGRES_PASSWORD
 
 ###############################################################################
 # Container Labels

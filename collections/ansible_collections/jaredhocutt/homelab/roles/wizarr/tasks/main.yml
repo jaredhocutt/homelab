@@ -30,12 +30,26 @@
     - name: "{{ wizarr_volume_data }}"
       options: "{{ wizarr_volume_data_options | default(omit) }}"
 
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ wizarr_secrets_base | combine(wizarr_secrets, recursive=True) | dict2items }}"
+
 - name: Create wizarr container
   containers.podman.podman_container:
     name: "{{ wizarr_name }}"
     image: "{{ wizarr_image }}:{{ wizarr_image_tag }}"
     network: "{{ wizarr_name }}.network"
-    env: "{{ wizarr_env_vars_base | combine(wizarr_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(wizarr_env_vars_base, recursive=True)
+      | combine(wizarr_env_vars, recursive=True) }}
+    secrets: >-
+      {{ wizarr_container_secrets_base
+      + wizarr_container_secrets }}
     volumes:
       - "{{ wizarr_volume_data }}://data"
     publish: "{{ wizarr_traefik_enable | ternary(omit, wizarr_ports) }}"

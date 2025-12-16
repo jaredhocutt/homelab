@@ -35,6 +35,14 @@ archiveium_minio_env_vars: {}
 archiveium_redis_env_vars: {}
 archiveium_meilisearch_env_vars: {}
 
+archiveium_secrets: {}
+archiveium_container_secrets: []
+archiveium_cron_container_secrets: []
+archiveium_postgres_container_secrets: []
+archiveium_minio_container_secrets: []
+archiveium_redis_container_secrets: []
+archiveium_meilisearch_container_secrets: []
+
 archiveium_container_labels: {}
 archiveium_cron_container_labels: {}
 archiveium_postgres_container_labels: {}

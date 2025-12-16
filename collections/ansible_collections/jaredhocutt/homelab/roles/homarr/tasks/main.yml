@@ -30,12 +30,26 @@
     - name: "{{ homarr_volume_data }}"
       options: "{{ homarr_volume_data_options | default(omit) }}"
 
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ homarr_secrets_base | combine(homarr_secrets, recursive=True) | dict2items }}"
+
 - name: Create homarr container
   containers.podman.podman_container:
     name: "{{ homarr_name }}"
     image: "{{ homarr_image }}:{{ homarr_image_tag }}"
     network: "{{ homarr_name }}.network"
-    env: "{{ homarr_env_vars_base | combine(homarr_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(homarr_env_vars_base, recursive=True)
+      | combine(homarr_env_vars, recursive=True) }}
+    secrets: >-
+      {{ homarr_container_secrets_base
+      + homarr_container_secrets }}
     volumes:
       - "{{ homarr_volume_data }}:/appdata"
     publish: "{{ homarr_traefik_enable | ternary(omit, homarr_ports) }}"

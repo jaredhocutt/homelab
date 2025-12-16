@@ -112,12 +112,26 @@
   become: true
   notify: Restart {{ vault_name }}
 
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ vault_secrets_base | combine(vault_secrets, recursive=True) | dict2items }}"
+
 - name: Create vault container
   containers.podman.podman_container:
     name: "{{ vault_name }}"
     image: "{{ vault_image }}:{{ vault_image_tag }}"
     network: "{{ vault_name }}.network"
-    env: "{{ vault_env_vars_base | combine(vault_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(vault_env_vars_base, recursive=True)
+      | combine(vault_env_vars, recursive=True) }}
+    secrets: >-
+      {{ vault_container_secrets_base
+      + vault_container_secrets }}
     volumes:
       - "{{ vault_volume_config }}:/vault/config"
       - "{{ vault_volume_data }}:/vault/file"

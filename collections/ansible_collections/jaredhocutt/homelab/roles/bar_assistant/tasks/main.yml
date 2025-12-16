@@ -40,12 +40,26 @@
     - name: "{{ bar_assistant_meilisearch_volume_data }}"
       options: "{{ bar_assistant_meilisearch_volume_data_options | default(omit) }}"
 
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ bar_assistant_secrets_base | combine(bar_assistant_secrets, recursive=True) | dict2items }}"
+
 - name: Create redis container
   containers.podman.podman_container:
     name: "{{ bar_assistant_name }}-redis"
     image: "{{ bar_assistant_redis_image }}:{{ bar_assistant_redis_image_tag }}"
     network: "{{ bar_assistant_name }}.network"
-    env: "{{ bar_assistant_redis_env_vars_base | combine(bar_assistant_redis_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(bar_assistant_redis_env_vars_base, recursive=True)
+      | combine(bar_assistant_redis_env_vars, recursive=True) }}
+    secrets: >-
+      {{ bar_assistant_redis_container_secrets_base
+      + bar_assistant_redis_container_secrets }}
     volumes:
       - "{{ bar_assistant_redis_volume_data }}.volume:/data"
     labels: "{{ bar_assistant_redis_container_labels_base | combine(bar_assistant_redis_container_labels, recursive=True) }}"
@@ -60,7 +74,13 @@
     name: "{{ bar_assistant_name }}-meilisearch"
     image: "{{ bar_assistant_meilisearch_image }}:{{ bar_assistant_meilisearch_image_tag }}"
     network: "{{ bar_assistant_name }}.network"
-    env: "{{ bar_assistant_meilisearch_env_vars_base | combine(bar_assistant_meilisearch_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(bar_assistant_meilisearch_env_vars_base, recursive=True)
+      | combine(bar_assistant_meilisearch_env_vars, recursive=True) }}
+    secrets: >-
+      {{ bar_assistant_meilisearch_container_secrets_base
+      + bar_assistant_meilisearch_container_secrets }}
     volumes:
       - "{{ bar_assistant_meilisearch_volume_data }}.volume:/meili_data"
     publish: "{{ bar_assistant_traefik_enable | ternary(omit, bar_assistant_meilisearch_ports) }}"
@@ -76,7 +96,13 @@
     name: "{{ bar_assistant_name }}"
     image: "{{ bar_assistant_image }}:{{ bar_assistant_image_tag }}"
     network: "{{ bar_assistant_name }}.network"
-    env: "{{ bar_assistant_env_vars_base | combine(bar_assistant_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(bar_assistant_env_vars_base, recursive=True)
+      | combine(bar_assistant_env_vars, recursive=True) }}
+    secrets: >-
+      {{ bar_assistant_container_secrets_base
+      + bar_assistant_container_secrets }}
     volumes:
       - "{{ bar_assistant_volume_data }}.volume:/var/www/cocktails/storage/bar-assistant"
     publish: "{{ bar_assistant_traefik_enable | ternary(omit, bar_assistant_ports) }}"
@@ -92,7 +118,13 @@
     name: "{{ bar_assistant_name }}-salt-rim"
     image: "{{ bar_assistant_salt_rim_image }}:{{ bar_assistant_salt_rim_image_tag }}"
     network: "{{ bar_assistant_name }}.network"
-    env: "{{ bar_assistant_salt_rim_env_vars_base | combine(bar_assistant_salt_rim_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(bar_assistant_salt_rim_env_vars_base, recursive=True)
+      | combine(bar_assistant_salt_rim_env_vars, recursive=True) }}
+    secrets: >-
+      {{ bar_assistant_salt_rim_container_secrets_base
+      + bar_assistant_salt_rim_container_secrets }}
     publish: "{{ bar_assistant_traefik_enable | ternary(omit, bar_assistant_salt_rim_ports) }}"
     labels: "{{ bar_assistant_salt_rim_container_labels_base | combine(bar_assistant_salt_rim_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"

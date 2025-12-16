@@ -34,12 +34,26 @@
     - name: "{{ sonarr_volume_media }}"
       options: "{{ sonarr_volume_media_options | default(omit) }}"
 
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ sonarr_secrets_base | combine(sonarr_secrets, recursive=True) | dict2items }}"
+
 - name: Create sonarr container
   containers.podman.podman_container:
     name: "{{ sonarr_name }}"
     image: "{{ sonarr_image }}:{{ sonarr_image_tag }}"
     network: "{{ sonarr_name }}.network"
-    env: "{{ sonarr_env_vars_base | combine(sonarr_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(sonarr_env_vars_base, recursive=True)
+      | combine(sonarr_env_vars, recursive=True) }}
+    secrets: >-
+      {{ sonarr_container_secrets_base
+      + sonarr_container_secrets }}
     volumes:
       - "{{ sonarr_volume_config }}:/config"
       - "{{ sonarr_volume_download }}:/mnt/download"

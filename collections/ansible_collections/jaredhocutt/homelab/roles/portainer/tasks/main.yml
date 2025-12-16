@@ -30,12 +30,26 @@
     - name: "{{ portainer_volume_data }}"
       options: "{{ portainer_volume_data_options | default(omit) }}"
 
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ portainer_secrets_base | combine(portainer_secrets, recursive=True) | dict2items }}"
+
 - name: Create portainer container
   containers.podman.podman_container:
     name: "{{ portainer_name }}"
     image: "{{ portainer_image }}:{{ portainer_image_tag }}"
     network: "{{ portainer_name }}.network"
-    env: "{{ portainer_env_vars_base | combine(portainer_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(portainer_env_vars_base, recursive=True)
+      | combine(portainer_env_vars, recursive=True) }}
+    secrets: >-
+      {{ portainer_container_secrets_base
+      + portainer_container_secrets }}
     volumes:
       - "{{ portainer_volume_config }}:/data"
       - /var/run/podman.sock:/var/run/docker.sock

@@ -15,6 +15,9 @@ wizarr_ports:
 
 wizarr_env_vars: {}
 
+wizarr_secrets: {}
+wizarr_container_secrets: []
+
 wizarr_container_labels: {}
 
 wizarr_quadlet_options: []

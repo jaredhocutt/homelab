@@ -30,12 +30,26 @@
     - name: "{{ healthchecks_volume_config }}"
       options: "{{ healthchecks_volume_config_options | default(omit) }}"
 
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ healthchecks_secrets_base | combine(healthchecks_secrets, recursive=True) | dict2items }}"
+
 - name: Create healthchecks container
   containers.podman.podman_container:
     name: "{{ healthchecks_name }}"
     image: "{{ healthchecks_image }}:{{ healthchecks_image_tag }}"
     network: "{{ healthchecks_name }}.network"
-    env: "{{ healthchecks_env_vars_base | combine(healthchecks_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(healthchecks_env_vars_base, recursive=True)
+      | combine(healthchecks_env_vars, recursive=True) }}
+    secrets: >-
+      {{ healthchecks_container_secrets_base
+      + healthchecks_container_secrets }}
     volumes:
       - "{{ healthchecks_volume_config }}:/config"
     publish: "{{ healthchecks_traefik_enable | ternary(omit, healthchecks_ports) }}"

@@ -38,12 +38,26 @@
     - name: "{{ stirling_pdf_volume_pipeline }}"
       options: "{{ stirling_pdf_volume_pipeline_options | default(omit) }}"
 
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ stirling_pdf_secrets_base | combine(stirling_pdf_secrets, recursive=True) | dict2items }}"
+
 - name: Create stirling_pdf container
   containers.podman.podman_container:
     name: "{{ stirling_pdf_name }}"
     image: "{{ stirling_pdf_image }}:{{ stirling_pdf_image_tag }}"
     network: "{{ stirling_pdf_name }}.network"
-    env: "{{ stirling_pdf_env_vars_base | combine(stirling_pdf_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(stirling_pdf_env_vars_base, recursive=True)
+      | combine(stirling_pdf_env_vars, recursive=True) }}
+    secrets: >-
+      {{ stirling_pdf_container_secrets_base
+      + stirling_pdf_container_secrets }}
     volumes:
       - "{{ stirling_pdf_volume_configs }}:/configs"
       - "{{ stirling_pdf_volume_training_data }}:/usr/share/tessdata"

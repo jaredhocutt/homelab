@@ -8,12 +8,9 @@ paperless_postgres_user: paperless
 # Envrionment Variables
 ###############################################################################
 
-paperless_env_vars_base_custom:
+paperless_env_vars_base:
   PAPERLESS_DBENGINE: postgresql
   PAPERLESS_DBHOST: "{{ paperless_name }}-postgres"
-  PAPERLESS_DBNAME: "{{ paperless_postgres_db_name }}"
-  PAPERLESS_DBUSER: "{{ paperless_postgres_user }}"
-  PAPERLESS_DBPASS: "{{ paperless_postgres_password }}"
   PAPERLESS_REDIS: redis://{{ paperless_name }}-redis:6379
   PAPERLESS_TIKA_ENABLED: 1
   PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://{{ paperless_name }}-gotenberg:3000
@@ -22,21 +19,43 @@ paperless_env_vars_base_custom:
   PAPERLESS_DATE_ORDER: MDY
   PAPERLESS_CONSUMER_POLLING: 30
   PAPERLESS_TASK_WORKERS: "{{ paperless_task_workers }}"
-paperless_env_vars_base: "{{ common_env_vars_base | combine(paperless_env_vars_base_custom, recursive=True) }}"
 
-paperless_postgres_env_vars_base_custom:
-  POSTGRES_DB: "{{ paperless_postgres_db_name }}"
-  POSTGRES_USER: "{{ paperless_postgres_user }}"
-  POSTGRES_PASSWORD: "{{ paperless_postgres_password }}"
-paperless_postgres_env_vars_base: "{{ common_env_vars_base | combine(paperless_postgres_env_vars_base_custom, recursive=True) }}"
+paperless_postgres_env_vars_base: {}
 
-paperless_redis_env_vars_base: "{{ common_env_vars_base }}"
+paperless_redis_env_vars_base: {}
 
-paperless_gotenberg_env_vars_base: "{{ common_env_vars_base }}"
+paperless_gotenberg_env_vars_base: {}
 
-paperless_tika_env_vars_base: "{{ common_env_vars_base }}"
+paperless_tika_env_vars_base: {}
 
-paperless_ai_env_vars_base: "{{ common_env_vars_base }}"
+paperless_ai_env_vars_base: {}
+
+###############################################################################
+# Secrets
+###############################################################################
+
+paperless_secrets_base:
+  paperless_postgres_db_name: "{{ paperless_postgres_db_name }}"
+  paperless_postgres_user: "{{ paperless_postgres_user }}"
+  paperless_postgres_password: "{{ paperless_postgres_password }}"
+
+paperless_container_secrets_base:
+  - paperless_postgres_db_name,type=env,target=PAPERLESS_DBNAME
+  - paperless_postgres_user,type=env,target=PAPERLESS_DBUSER
+  - paperless_postgres_password,type=env,target=PAPERLESS_DBPASS
+
+paperless_postgres_container_secrets_base:
+  - paperless_postgres_db_name,type=env,target=POSTGRES_DB
+  - paperless_postgres_user,type=env,target=POSTGRES_USER
+  - paperless_postgres_password,type=env,target=POSTGRES_PASSWORD
+
+paperless_redis_container_secrets_base: []
+
+paperless_gotenberg_container_secrets_base: []
+
+paperless_tika_container_secrets_base: []
+
+paperless_ai_container_secrets_base: []
 
 ###############################################################################
 # Container Labels

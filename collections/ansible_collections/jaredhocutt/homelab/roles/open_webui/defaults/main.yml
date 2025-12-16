@@ -15,6 +15,9 @@ open_webui_ports:
 
 open_webui_env_vars: {}
 
+open_webui_secrets: {}
+open_webui_container_secrets: []
+
 open_webui_container_labels: {}
 
 open_webui_quadlet_options: []

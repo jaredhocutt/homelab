@@ -49,12 +49,26 @@
 - name: Generate certificates
   ansible.builtin.import_tasks: certs.yml
 
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ traefik_secrets_base | combine(traefik_secrets, recursive=True) | dict2items }}"
+
 - name: Create traefik container
   containers.podman.podman_container:
     name: "{{ traefik_name }}"
     image: "{{ traefik_image }}:{{ traefik_image_tag }}"
     network: "{{ traefik_name }}.network"
-    env: "{{ traefik_env_vars_base | combine(traefik_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(traefik_env_vars_base, recursive=True)
+      | combine(traefik_env_vars, recursive=True) }}
+    secrets: >-
+      {{ traefik_container_secrets_base
+      + traefik_container_secrets }}
     security_opt:
       - label=disable
     volumes:

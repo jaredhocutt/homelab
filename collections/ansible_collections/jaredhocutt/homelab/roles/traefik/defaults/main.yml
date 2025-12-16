@@ -17,5 +17,9 @@ traefik_ports:
   - 8080:8080
 
 traefik_env_vars: {}
+
+traefik_secrets: {}
+traefik_container_secrets: []
+
 traefik_container_labels: {}
 traefik_quadlet_options: []

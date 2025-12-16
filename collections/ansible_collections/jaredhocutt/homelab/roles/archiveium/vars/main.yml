@@ -9,42 +9,64 @@ archiveium_minio_user: archiveium
 # Envrionment Variables
 ###############################################################################
 
-archiveium_env_vars_base_custom:
+archiveium_env_vars_base:
   NODE_APP_INSTANCE: "0"
-  APP_ADMIN_EMAIL: "{{ archiveium_admin_email }}"
-  APP_ADMIN_PASSWORD: "{{ archiveium_admin_password }}"
-  APP_ENCRYPTION_KEY: "{{ archiveium_encryption_key }}"
-  SEARCH_API_KEY: "{{ archiveium_meilisearch_master_key }}"
-archiveium_env_vars_base: "{{ common_env_vars_base | combine(archiveium_env_vars_base_custom, recursive=True) }}"
 
-archiveium_cron_env_vars_base_custom:
+archiveium_cron_env_vars_base:
   NODE_APP_INSTANCE: "0"
   USE_AS_CRON_PROCESSOR: "true"
-  APP_ENCRYPTION_KEY: "{{ archiveium_encryption_key }}"
-  SEARCH_API_KEY: "{{ archiveium_meilisearch_master_key }}"
-archiveium_cron_env_vars_base: "{{ common_env_vars_base | combine(archiveium_cron_env_vars_base_custom, recursive=True) }}"
 
-archiveium_postgres_env_vars_base_custom:
-  POSTGRES_DB: "{{ archiveium_postgres_db_name }}"
-  POSTGRES_USER: "{{ archiveium_postgres_user }}"
-  POSTGRES_PASSWORD: "{{ archiveium_postgres_password }}"
-archiveium_postgres_env_vars_base: "{{ common_env_vars_base | combine(archiveium_postgres_env_vars_base_custom, recursive=True) }}"
+archiveium_postgres_env_vars_base: {}
 
-archiveium_minio_env_vars_base_custom:
-  MINIO_ROOT_USER: "{{ archiveium_minio_user }}"
-  MINIO_ROOT_PASSWORD: "{{ archiveium_minio_password }}"
+archiveium_minio_env_vars_base:
   MINIO_COMPRESSION_ENABLE: "on"
   MINIO_COMPRESSION_EXTENSIONS: ""
   MINIO_COMPRESSION_MIME_TYPES: ""
-archiveium_minio_env_vars_base: "{{ common_env_vars_base | combine(archiveium_minio_env_vars_base_custom, recursive=True) }}"
 
-archiveium_redis_env_vars_base: "{{ common_env_vars_base }}"
+archiveium_redis_env_vars_base: {}
 
-archiveium_meilisearch_env_vars_base_custom:
-  MEILI_MASTER_KEY: "{{ archiveium_meilisearch_master_key }}"
+archiveium_meilisearch_env_vars_base:
   MEILI_ENV: production
   MEILI_NO_ANALYTICS: "true"
-archiveium_meilisearch_env_vars_base: "{{ common_env_vars_base | combine(archiveium_meilisearch_env_vars_base_custom, recursive=True) }}"
+
+###############################################################################
+# Secrets
+###############################################################################
+
+archiveium_secrets_base:
+  archiveium_admin_email: "{{ archiveium_admin_email }}"
+  archiveium_admin_password: "{{ archiveium_admin_password }}"
+  archiveium_encryption_key: "{{ archiveium_encryption_key }}"
+  archiveium_meilisearch_master_key: "{{ archiveium_meilisearch_master_key }}"
+  archiveium_postgres_db_name: "{{ archiveium_postgres_db_name }}"
+  archiveium_postgres_user: "{{ archiveium_postgres_user }}"
+  archiveium_postgres_password: "{{ archiveium_postgres_password }}"
+  archiveium_minio_user: "{{ archiveium_minio_user }}"
+  archiveium_minio_password: "{{ archiveium_minio_password }}"
+
+archiveium_container_secrets_base:
+  - archiveium_admin_email,type=env,target=APP_ADMIN_EMAIL
+  - archiveium_admin_password,type=env,target=APP_ADMIN_PASSWORD
+  - archiveium_encryption_key,type=env,target=APP_ENCRYPTION_KEY
+  - archiveium_meilisearch_master_key,type=env,target=SEARCH_API_KEY
+
+archiveium_cron_container_secrets_base:
+  - archiveium_encryption_key,type=env,target=APP_ENCRYPTION_KEY
+  - archiveium_meilisearch_master_key,type=env,target=SEARCH_API_KEY
+
+archiveium_postgres_container_secrets_base:
+  - archiveium_postgres_db_name,type=env,target=POSTGRES_DB
+  - archiveium_postgres_user,type=env,target=POSTGRES_USER
+  - archiveium_postgres_password,type=env,target=POSTGRES_PASSWORD
+
+archiveium_minio_container_secrets_base:
+  - archiveium_minio_user,type=env,target=MINIO_ROOT_USER
+  - archiveium_minio_password,type=env,target=MINIO_ROOT_PASSWORD
+
+archiveium_redis_container_secrets_base: []
+
+archiveium_meilisearch_container_secrets_base:
+  - archiveium_meilisearch_master_key,type=env,target=MEILI_MASTER_KEY
 
 ###############################################################################
 # Container Labels

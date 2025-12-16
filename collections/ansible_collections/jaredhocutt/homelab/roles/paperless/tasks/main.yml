@@ -52,12 +52,26 @@
     - name: "{{ paperless_ai_volume_data }}"
       options: "{{ paperless_ai_volume_data_options | default(omit) }}"
 
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ paperless_secrets_base | combine(paperless_secrets, recursive=True) | dict2items }}"
+
 - name: Create postgres container
   containers.podman.podman_container:
     name: "{{ paperless_name }}-postgres"
     image: "{{ paperless_postgres_image }}:{{ paperless_postgres_image_tag }}"
     network: "{{ paperless_name }}.network"
-    env: "{{ paperless_postgres_env_vars_base | combine(paperless_postgres_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(paperless_postgres_env_vars_base, recursive=True)
+      | combine(paperless_postgres_env_vars, recursive=True) }}
+    secrets: >-
+      {{ paperless_postgres_container_secrets_base
+      + paperless_postgres_container_secrets }}
     volumes:
       - "{{ paperless_postgres_volume_data }}.volume:/var/lib/postgresql/data"
     healthcheck_interval: 30s
@@ -77,7 +91,13 @@
     name: "{{ paperless_name }}-redis"
     image: "{{ paperless_redis_image }}:{{ paperless_redis_image_tag }}"
     network: "{{ paperless_name }}.network"
-    env: "{{ paperless_redis_env_vars_base | combine(paperless_redis_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(paperless_redis_env_vars_base, recursive=True)
+      | combine(paperless_redis_env_vars, recursive=True) }}
+    secrets: >-
+      {{ paperless_redis_container_secrets_base
+      + paperless_redis_container_secrets }}
     volumes:
       - "{{ paperless_redis_volume_data }}.volume:/data"
     healthcheck_interval: 30s
@@ -97,7 +117,13 @@
     name: "{{ paperless_name }}-gotenberg"
     image: "{{ paperless_gotenberg_image }}:{{ paperless_gotenberg_image_tag }}"
     network: "{{ paperless_name }}.network"
-    env: "{{ paperless_gotenberg_env_vars_base | combine(paperless_gotenberg_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(paperless_gotenberg_env_vars_base, recursive=True)
+      | combine(paperless_gotenberg_env_vars, recursive=True) }}
+    secrets: >-
+      {{ paperless_gotenberg_container_secrets_base
+      + paperless_gotenberg_container_secrets }}
     command: gotenberg --chromium-disable-javascript=true --chromium-allow-list='file:///tmp/.*'
     labels: "{{ paperless_gotenberg_container_labels_base | combine(paperless_gotenberg_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
@@ -111,7 +137,13 @@
     name: "{{ paperless_name }}-tika"
     image: "{{ paperless_tika_image }}:{{ paperless_tika_image_tag }}"
     network: "{{ paperless_name }}.network"
-    env: "{{ paperless_tika_env_vars_base | combine(paperless_tika_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(paperless_tika_env_vars_base, recursive=True)
+      | combine(paperless_tika_env_vars, recursive=True) }}
+    secrets: >-
+      {{ paperless_tika_container_secrets_base
+      + paperless_tika_container_secrets }}
     labels: "{{ paperless_tika_container_labels_base | combine(paperless_tika_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ paperless_tika_quadlet_options_base + paperless_tika_quadlet_options }}"
@@ -124,7 +156,13 @@
     name: "{{ paperless_name }}"
     image: "{{ paperless_image }}:{{ paperless_image_tag }}"
     network: "{{ paperless_name }}.network"
-    env: "{{ paperless_env_vars_base | combine(paperless_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(paperless_env_vars_base, recursive=True)
+      | combine(paperless_env_vars, recursive=True) }}
+    secrets: >-
+      {{ paperless_container_secrets_base
+      + paperless_container_secrets }}
     volumes:
       - "{{ paperless_volume_data }}.volume:/usr/src/paperless/data"
       - "{{ paperless_volume_media }}.volume:/usr/src/paperless/media"
@@ -148,7 +186,13 @@
     name: "{{ paperless_name }}-ai"
     image: "{{ paperless_ai_image }}:{{ paperless_ai_image_tag }}"
     network: "{{ paperless_name }}.network"
-    env: "{{ paperless_ai_env_vars_base | combine(paperless_ai_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(paperless_ai_env_vars_base, recursive=True)
+      | combine(paperless_ai_env_vars, recursive=True) }}
+    secrets: >-
+      {{ paperless_ai_container_secrets_base
+      + paperless_ai_container_secrets }}
     volumes:
       - "{{ paperless_ai_volume_data }}.volume:/app/data"
     publish: "{{ paperless_traefik_enable | ternary(omit, paperless_ai_ports) }}"

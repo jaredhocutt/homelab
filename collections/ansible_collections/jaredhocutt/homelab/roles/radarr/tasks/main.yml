@@ -34,12 +34,26 @@
     - name: "{{ radarr_volume_media }}"
       options: "{{ radarr_volume_media_options | default(omit) }}"
 
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ radarr_secrets_base | combine(radarr_secrets, recursive=True) | dict2items }}"
+
 - name: Create radarr container
   containers.podman.podman_container:
     name: "{{ radarr_name }}"
     image: "{{ radarr_image }}:{{ radarr_image_tag }}"
     network: "{{ radarr_name }}.network"
-    env: "{{ radarr_env_vars_base | combine(radarr_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(radarr_env_vars_base, recursive=True)
+      | combine(radarr_env_vars, recursive=True) }}
+    secrets: >-
+      {{ radarr_container_secrets_base
+      + radarr_container_secrets }}
     volumes:
       - "{{ radarr_volume_config }}:/config"
       - "{{ radarr_volume_download }}:/mnt/download"

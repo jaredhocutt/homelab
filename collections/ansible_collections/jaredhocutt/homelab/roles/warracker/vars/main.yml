@@ -8,23 +8,35 @@ warracker_postgres_user: warracker
 # Envrionment Variables
 ###############################################################################
 
-warracker_env_vars_base_custom:
+warracker_env_vars_base:
   DB_HOST: "{{ warracker_name }}-postgres"
   DB_PORT: "5432"
-  DB_NAME: "{{ warracker_postgres_db_name }}"
-  DB_USER: "{{ warracker_postgres_user }}"
-  DB_PASSWORD: "{{ warracker_postgres_password }}"
-  SECRET_KEY: "{{ warracker_secret_key }}"
   FRONTEND_URL: "{{ warracker_url }}"
   APP_BASE_URL: "{{ warracker_url }}"
   PYTHONUNBUFFERED: "1"
-warracker_env_vars_base: "{{ common_env_vars_base | combine(warracker_env_vars_base_custom, recursive=True) }}"
 
-warracker_postgres_env_vars_base_custom:
-  POSTGRES_DB: "{{ warracker_postgres_db_name }}"
-  POSTGRES_USER: "{{ warracker_postgres_user }}"
-  POSTGRES_PASSWORD: "{{ warracker_postgres_password }}"
-warracker_postgres_env_vars_base: "{{ common_env_vars_base | combine(warracker_postgres_env_vars_base_custom, recursive=True) }}"
+warracker_postgres_env_vars_base: {}
+
+###############################################################################
+# Secrets
+###############################################################################
+
+warracker_secrets_base:
+  warracker_postgres_db_name: "{{ warracker_postgres_db_name }}"
+  warracker_postgres_user: "{{ warracker_postgres_user }}"
+  warracker_postgres_password: "{{ warracker_postgres_password }}"
+  warracker_secret_key: "{{ warracker_secret_key }}"
+
+warracker_container_secrets_base:
+  - warracker_postgres_db_name,type=env,target=DB_NAME
+  - warracker_postgres_user,type=env,target=DB_USER
+  - warracker_postgres_password,type=env,target=DB_PASSWORD
+  - warracker_secret_key,type=env,target=SECRET_KEY
+
+warracker_postgres_container_secrets_base:
+  - warracker_postgres_db_name,type=env,target=POSTGRES_DB
+  - warracker_postgres_user,type=env,target=POSTGRES_USER
+  - warracker_postgres_password,type=env,target=POSTGRES_PASSWORD
 
 ###############################################################################
 # Container Labels

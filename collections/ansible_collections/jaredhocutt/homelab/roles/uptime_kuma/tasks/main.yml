@@ -30,12 +30,26 @@
     - name: "{{ uptime_kuma_volume_data }}"
       options: "{{ uptime_kuma_volume_data_options | default(omit) }}"
 
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ uptime_kuma_secrets_base | combine(uptime_kuma_secrets, recursive=True) | dict2items }}"
+
 - name: Create uptime_kuma container
   containers.podman.podman_container:
     name: "{{ uptime_kuma_name }}"
     image: "{{ uptime_kuma_image }}:{{ uptime_kuma_image_tag }}"
     network: "{{ uptime_kuma_name }}.network"
-    env: "{{ uptime_kuma_env_vars_base | combine(uptime_kuma_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(uptime_kuma_env_vars_base, recursive=True)
+      | combine(uptime_kuma_env_vars, recursive=True) }}
+    secrets: >-
+      {{ uptime_kuma_container_secrets_base
+      + uptime_kuma_container_secrets }}
     volumes:
       - "{{ uptime_kuma_volume_data }}:/app/data"
     publish: "{{ uptime_kuma_traefik_enable | ternary(omit, uptime_kuma_ports) }}"

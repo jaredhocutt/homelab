@@ -42,12 +42,26 @@
     - name: "{{ authentik_redis_volume_data }}"
       options: "{{ authentik_redis_volume_data_options | default(omit) }}"
 
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ authentik_secrets_base | combine(authentik_secrets, recursive=True) | dict2items }}"
+
 - name: Create postgres container
   containers.podman.podman_container:
     name: "{{ authentik_name }}-postgres"
     image: "{{ authentik_postgres_image }}:{{ authentik_postgres_image_tag }}"
     network: "{{ authentik_name }}.network"
-    env: "{{ authentik_postgres_env_vars_base | combine(authentik_postgres_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(authentik_postgres_env_vars_base, recursive=True)
+      | combine(authentik_postgres_env_vars, recursive=True) }}
+    secrets: >-
+      {{ authentik_postgres_container_secrets_base
+      + authentik_postgres_container_secrets }}
     volumes:
       - "{{ authentik_postgres_volume_data }}.volume:/var/lib/postgresql/data"
     healthcheck_interval: 30s
@@ -67,7 +81,13 @@
     name: "{{ authentik_name }}-redis"
     image: "{{ authentik_redis_image }}:{{ authentik_redis_image_tag }}"
     network: "{{ authentik_name }}.network"
-    env: "{{ authentik_redis_env_vars_base | combine(authentik_redis_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(authentik_redis_env_vars_base, recursive=True)
+      | combine(authentik_redis_env_vars, recursive=True) }}
+    secrets: >-
+      {{ authentik_redis_container_secrets_base
+      + authentik_redis_container_secrets }}
     volumes:
       - "{{ authentik_redis_volume_data }}.volume:/data"
     healthcheck_interval: 30s
@@ -87,7 +107,13 @@
     name: "{{ authentik_name }}-server"
     image: "{{ authentik_image }}:{{ authentik_image_tag }}"
     network: "{{ authentik_name }}.network"
-    env: "{{ authentik_env_vars_base | combine(authentik_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(authentik_env_vars_base, recursive=True)
+      | combine(authentik_env_vars, recursive=True) }}
+    secrets: >-
+      {{ authentik_container_secrets_base
+      + authentik_container_secrets }}
     volumes:
       - "{{ authentik_volume_media }}.volume:/media"
       - "{{ authentik_volume_templates }}.volume:/templates"
@@ -105,7 +131,13 @@
     name: "{{ authentik_name }}-worker"
     image: "{{ authentik_image }}:{{ authentik_image_tag }}"
     network: "{{ authentik_name }}.network"
-    env: "{{ authentik_env_vars_base | combine(authentik_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(authentik_env_vars_base, recursive=True)
+      | combine(authentik_env_vars, recursive=True) }}
+    secrets: >-
+      {{ authentik_worker_container_secrets_base
+      + authentik_worker_container_secrets }}
     volumes:
       - "{{ authentik_volume_media }}.volume:/media"
       - "{{ authentik_volume_certs }}.volume:/certs"

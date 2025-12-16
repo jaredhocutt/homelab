@@ -1,0 +1,14 @@
+---
+
+- name: Sandbox
+  hosts: localhost
+  vars:
+    archiveium_postgres_container_secrets_base:
+      archiveium_postgres_db_name: archiveium_postgres_db_name,type=env,target=POSTGRES_DB
+      archiveium_postgres_user: archiveium_postgres_user,type=env,target=POSTGRES_USER
+      archiveium_postgres_password: archiveium_postgres_password,type=env,target=POSTGRES_PASSWORD
+  tasks:
+    - name: Set fact to verify
+      ansible.builtin.set_fact:
+        secrets: >-
+          {{ archiveium_postgres_container_secrets_base.values() | list }}

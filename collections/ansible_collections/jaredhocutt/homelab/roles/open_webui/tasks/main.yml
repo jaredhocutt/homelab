@@ -30,12 +30,26 @@
     - name: "{{ open_webui_volume_data }}"
       options: "{{ open_webui_volume_data_options | default(omit) }}"
 
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ open_webui_secrets_base | combine(open_webui_secrets, recursive=True) | dict2items }}"
+
 - name: Create open_webui container
   containers.podman.podman_container:
     name: "{{ open_webui_name }}"
     image: "{{ open_webui_image }}:{{ open_webui_image_tag }}"
     network: "{{ open_webui_name }}.network"
-    env: "{{ open_webui_env_vars_base | combine(open_webui_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(open_webui_env_vars_base, recursive=True)
+      | combine(open_webui_env_vars, recursive=True) }}
+    secrets: >-
+      {{ open_webui_container_secrets_base
+      + open_webui_container_secrets }}
     volumes:
       - "{{ open_webui_volume_data }}:/app/backend/data"
     publish: "{{ open_webui_traefik_enable | ternary(omit, open_webui_ports) }}"

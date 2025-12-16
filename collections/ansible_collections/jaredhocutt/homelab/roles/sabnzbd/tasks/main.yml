@@ -32,12 +32,26 @@
     - name: "{{ sabnzbd_volume_download }}"
       options: "{{ sabnzbd_volume_download_options | default(omit) }}"
 
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ sabnzbd_secrets_base | combine(sabnzbd_secrets, recursive=True) | dict2items }}"
+
 - name: Create sabnzbd container
   containers.podman.podman_container:
     name: "{{ sabnzbd_name }}"
     image: "{{ sabnzbd_image }}:{{ sabnzbd_image_tag }}"
     network: "{{ sabnzbd_name }}.network"
-    env: "{{ sabnzbd_env_vars_base | combine(sabnzbd_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(sabnzbd_env_vars_base, recursive=True)
+      | combine(sabnzbd_env_vars, recursive=True) }}
+    secrets: >-
+      {{ sabnzbd_container_secrets_base
+      + sabnzbd_container_secrets }}
     volumes:
       - "{{ sabnzbd_volume_config }}:/config"
       - "{{ sabnzbd_volume_download }}:/mnt/download"

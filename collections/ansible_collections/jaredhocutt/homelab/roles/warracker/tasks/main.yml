@@ -34,12 +34,26 @@
     - name: "{{ warracker_postgres_volume_data }}"
       options: "{{ warracker_postgres_volume_data_options | default(omit) }}"
 
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ warracker_secrets_base | combine(warracker_secrets, recursive=True) | dict2items }}"
+
 - name: Create postgres container
   containers.podman.podman_container:
     name: "{{ warracker_name }}-postgres"
     image: "{{ warracker_postgres_image }}:{{ warracker_postgres_image_tag }}"
     network: "{{ warracker_name }}.network"
-    env: "{{ warracker_postgres_env_vars_base | combine(warracker_postgres_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(warracker_postgres_env_vars_base, recursive=True)
+      | combine(warracker_postgres_env_vars, recursive=True) }}
+    secrets: >-
+      {{ warracker_postgres_container_secrets_base
+      + warracker_postgres_container_secrets }}
     volumes:
       - "{{ warracker_postgres_volume_data }}.volume:/var/lib/postgresql/data"
     healthcheck_interval: 30s
@@ -59,7 +73,13 @@
     name: "{{ warracker_name }}"
     image: "{{ warracker_image }}:{{ warracker_image_tag }}"
     network: "{{ warracker_name }}.network"
-    env: "{{ warracker_env_vars_base | combine(warracker_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(warracker_env_vars_base, recursive=True)
+      | combine(warracker_env_vars, recursive=True) }}
+    secrets: >-
+      {{ warracker_container_secrets_base
+      + warracker_container_secrets }}
     volumes:
       - "{{ warracker_volume_uploads }}.volume:/data/uploads"
     publish: "{{ warracker_traefik_enable | ternary(omit, warracker_ports) }}"

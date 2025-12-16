@@ -36,12 +36,26 @@
     - name: "{{ karakeep_meilisearch_volume_data }}"
       options: "{{ karakeep_meilisearch_volume_data_options | default(omit) }}"
 
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ karakeep_secrets_base | combine(karakeep_secrets, recursive=True) | dict2items }}"
+
 - name: Create chrome container
   containers.podman.podman_container:
     name: "{{ karakeep_name }}-chrome"
     image: "{{ karakeep_chrome_image }}:{{ karakeep_chrome_image_tag }}"
     network: "{{ karakeep_name }}.network"
-    env: "{{ karakeep_chrome_env_vars_base | combine(karakeep_chrome_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(karakeep_chrome_env_vars_base, recursive=True)
+      | combine(karakeep_chrome_env_vars, recursive=True) }}
+    secrets: >-
+      {{ karakeep_chrome_container_secrets_base
+      + karakeep_chrome_container_secrets }}
     command:
       - --no-sandbox
       - --disable-gpu
@@ -61,7 +75,13 @@
     name: "{{ karakeep_name }}-meilisearch"
     image: "{{ karakeep_meilisearch_image }}:{{ karakeep_meilisearch_image_tag }}"
     network: "{{ karakeep_name }}.network"
-    env: "{{ karakeep_meilisearch_env_vars_base | combine(karakeep_meilisearch_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(karakeep_meilisearch_env_vars_base, recursive=True)
+      | combine(karakeep_meilisearch_env_vars, recursive=True) }}
+    secrets: >-
+      {{ karakeep_meilisearch_container_secrets_base
+      + karakeep_meilisearch_container_secrets }}
     volumes:
       - "{{ karakeep_meilisearch_volume_data }}.volume:/meili_data"
     labels: "{{ karakeep_meilisearch_container_labels_base | combine(karakeep_meilisearch_container_labels, recursive=True) }}"
@@ -76,7 +96,13 @@
     name: "{{ karakeep_name }}"
     image: "{{ karakeep_image }}:{{ karakeep_image_tag }}"
     network: "{{ karakeep_name }}.network"
-    env: "{{ karakeep_env_vars_base | combine(karakeep_env_vars, recursive=True) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(karakeep_env_vars_base, recursive=True)
+      | combine(karakeep_env_vars, recursive=True) }}
+    secrets: >-
+      {{ karakeep_container_secrets_base
+      + karakeep_container_secrets }}
     volumes:
       - "{{ karakeep_volume_data }}.volume:/data"
     publish: "{{ karakeep_traefik_enable | ternary(omit, karakeep_ports) }}"

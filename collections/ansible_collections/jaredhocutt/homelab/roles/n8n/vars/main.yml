@@ -8,21 +8,32 @@ n8n_postgres_user: n8n
 # Envrionment Variables
 ###############################################################################
 
-n8n_env_vars_base_custom:
+n8n_env_vars_base:
   DB_TYPE: postgresdb
   DB_POSTGRESDB_HOST: "{{ n8n_name }}-postgres"
   DB_POSTGRESDB_PORT: "5432"
-  DB_POSTGRESDB_DATABASE: "{{ n8n_postgres_db_name }}"
-  DB_POSTGRESDB_USER: "{{ n8n_postgres_user }}"
-  DB_POSTGRESDB_PASSWORD: "{{ n8n_postgres_password }}"
   N8N_DIAGNOSTICS_ENABLED: "false"
-n8n_env_vars_base: "{{ common_env_vars_base | combine(n8n_env_vars_base_custom, recursive=True) }}"
 
-n8n_postgres_env_vars_base_custom:
-  POSTGRES_DB: "{{ n8n_postgres_db_name }}"
-  POSTGRES_USER: "{{ n8n_postgres_user }}"
-  POSTGRES_PASSWORD: "{{ n8n_postgres_password }}"
-n8n_postgres_env_vars_base: "{{ common_env_vars_base | combine(n8n_postgres_env_vars_base_custom, recursive=True) }}"
+n8n_postgres_env_vars_base: {}
+
+###############################################################################
+# Secrets
+###############################################################################
+
+n8n_secrets_base:
+  n8n_postgres_db_name: "{{ n8n_postgres_db_name }}"
+  n8n_postgres_user: "{{ n8n_postgres_user }}"
+  n8n_postgres_password: "{{ n8n_postgres_password }}"
+
+n8n_container_secrets_base:
+  - n8n_postgres_db_name,type=env,target=DB_POSTGRESDB_DATABASE
+  - n8n_postgres_user,type=env,target=DB_POSTGRESDB_USER
+  - n8n_postgres_password,type=env,target=DB_POSTGRESDB_PASSWORD
+
+n8n_postgres_container_secrets_base:
+  - n8n_postgres_db_name,type=env,target=POSTGRES_DB
+  - n8n_postgres_user,type=env,target=POSTGRES_USER
+  - n8n_postgres_password,type=env,target=POSTGRES_PASSWORD
 
 ###############################################################################
 # Container Labels

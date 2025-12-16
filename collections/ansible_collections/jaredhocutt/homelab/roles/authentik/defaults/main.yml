@@ -26,6 +26,12 @@ authentik_env_vars: {}
 authentik_postgres_env_vars: {}
 authentik_redis_env_vars: {}
 
+authentik_secrets: {}
+authentik_container_secrets: []
+authentik_worker_container_secrets: []
+authentik_postgres_container_secrets: []
+authentik_redis_container_secrets: []
+
 authentik_container_labels: {}
 authentik_worker_container_labels: {}
 authentik_postgres_container_labels: {}

@@ -5,7 +5,15 @@
 # Envrionment Variables
 ###############################################################################
 
-audiobookshelf_env_vars_base: "{{ common_env_vars_base }}"
+audiobookshelf_env_vars_base: {}
+
+###############################################################################
+# Secrets
+###############################################################################
+
+audiobookshelf_secrets_base: {}
+
+audiobookshelf_container_secrets_base: []
 
 ###############################################################################
 # Container Labels

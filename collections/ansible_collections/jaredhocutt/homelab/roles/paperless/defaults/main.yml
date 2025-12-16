@@ -39,6 +39,14 @@ paperless_gotenberg_env_vars: {}
 paperless_tika_env_vars: {}
 paperless_ai_env_vars: {}
 
+paperless_secrets: {}
+paperless_container_secrets: []
+paperless_postgres_container_secrets: []
+paperless_redis_container_secrets: []
+paperless_gotenberg_container_secrets: []
+paperless_tika_container_secrets: []
+paperless_ai_container_secrets: []
+
 paperless_container_labels: {}
 paperless_postgres_container_labels: {}
 paperless_redis_container_labels: {}

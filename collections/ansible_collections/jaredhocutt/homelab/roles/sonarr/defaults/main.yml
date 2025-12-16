@@ -17,6 +17,9 @@ sonarr_ports:
 
 sonarr_env_vars: {}
 
+sonarr_secrets: {}
+sonarr_container_secrets: []
+
 sonarr_container_labels: {}
 
 sonarr_quadlet_options: []

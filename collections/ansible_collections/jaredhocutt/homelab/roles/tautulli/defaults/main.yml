@@ -15,6 +15,9 @@ tautulli_ports:
 
 tautulli_env_vars: {}
 
+tautulli_secrets: {}
+tautulli_container_secrets: []
+
 tautulli_container_labels: {}
 
 tautulli_quadlet_options: []
