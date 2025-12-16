@@ -1,0 +1,80 @@
+---
+
+###############################################################################
+# kickstart
+###############################################################################
+
+kickstart_hostname: apps
+kickstart_network:
+  - device: enp2s0
+    activate: true
+  - device: wlp3s0
+    activate: false
+
+kickstart_storage_disks:
+  - name: nvme0n1
+    partitions:
+      - mountpoint: /boot/efi
+        filesystem: efi
+        size: 600
+        options: --fsoptions="umask=0077,shortname=winnt"
+      - mountpoint: /boot
+        filesystem: xfs
+        size: 1024
+      - mountpoint: pv.01
+        filesystem: lvmpv
+        size: 1
+        options: --grow
+  - name: sda
+    partitions:
+      - mountpoint: pv.02
+        filesystem: lvmpv
+        size: 1
+        options: --grow
+kickstart_storage_volume_groups:
+  - name: fedora
+    physical_volumes:
+      - pv.01
+    logical_volumes:
+      - name: root
+        mountpoint: /
+        filesystem: xfs
+        size: "{{ 1024 * 50 }}"  # 50 GB
+      - name: home
+        mountpoint: /home
+        filesystem: xfs
+        size: "{{ 1024 * 10 }}"  # 10 GB
+      - name: swap
+        mountpoint: swap
+        filesystem: swap
+        size: "{{ 1024 * 4 }}"  # 4 GB
+  - name: data
+    physical_volumes:
+      - pv.02
+    logical_volumes:
+      - name: docker
+        mountpoint: /var/lib/docker
+        filesystem: xfs
+        percent: 100
+
+kickstart_users:
+  - fullname: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_fullname) }}"
+    username: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_username) }}"
+    groups: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_groups) }}"
+    uid: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_uid) }}"
+    gid: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_gid) }}"
+    password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_password_crypted) }}"
+    authorized_keys:
+      - "{{ lookup('bitwarden.secrets.lookup', bws_uuid.ssh_authorized_key_1) }}"
+      - "{{ lookup('bitwarden.secrets.lookup', bws_uuid.ssh_authorized_key_2) }}"
+      - "{{ lookup('bitwarden.secrets.lookup', bws_uuid.ssh_authorized_key_3) }}"
+  - fullname: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_fullname) }}"
+    username: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_username) }}"
+    groups: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_groups) }}"
+    uid: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_uid) }}"
+    gid: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_gid) }}"
+    sudoers: |
+      {{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_username) }} ALL=(ALL) NOPASSWD: ALL
+      Defaults:{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_username) }} !requiretty
+    authorized_keys:
+      - "{{ lookup('bitwarden.secrets.lookup', bws_uuid.ssh_authorized_key_4) }}"

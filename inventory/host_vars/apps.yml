@@ -1,25 +1,5 @@
 ---
 
-global_volume_download: download
-
-global_volume_media: media
-global_volume_media_options:
-  - Device={{ lookup('bitwarden.secrets.lookup', bws_uuid.global_storage_host) }}:/mnt/data/media
-  - Type=nfs
-  - Options=soft,nfsvers=3
-
-global_media_uid: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.global_media_uid) }}"
-global_media_gid: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.global_media_gid) }}"
-
-###############################################################################
-# audiobookshelf
-###############################################################################
-
-audiobookshelf_image_tag: "2.29.0"
-
-audiobookshelf_volume_media: "{{ global_volume_media }}"
-audiobookshelf_volume_media_options: "{{ global_volume_media_options }}"
-
 ###############################################################################
 # authentik
 ###############################################################################
@@ -126,12 +106,6 @@ karakeep_nextauth_secret: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.karake
 karakeep_meilisearch_master_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.karakeep_meilisearch_master_key) }}"
 
 ###############################################################################
-# kometa
-###############################################################################
-
-kometa_image_tag: v2.2.2
-
-###############################################################################
 # n8n
 ###############################################################################
 
@@ -145,15 +119,6 @@ n8n_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.n8n_postg
 ###############################################################################
 
 open_webui_image_tag: v0.6.34
-
-###############################################################################
-# overseerr
-###############################################################################
-
-overseerr_image_tag: "1.34.0"
-
-overseerr_env_vars:
-  LOG_LEVEL: debug
 
 ###############################################################################
 # paperless
@@ -183,56 +148,6 @@ paperless_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.pap
 paperless_task_workers: 4
 
 ###############################################################################
-# prowlarr
-###############################################################################
-
-prowlarr_image_tag: version-2.0.5.5160
-
-###############################################################################
-# radarr
-###############################################################################
-
-radarr_image_tag: version-5.27.5.10198
-
-radarr_env_vars:
-  PUID: "{{ global_media_uid }}"
-  GUID: "{{ global_media_gid }}"
-
-radarr_volume_download: "{{ global_volume_download }}"
-radarr_volume_download_options: "{{ global_volume_download_options }}"
-radarr_volume_media: "{{ global_volume_media }}"
-radarr_volume_media_options: "{{ global_volume_media_options }}"
-
-###############################################################################
-# sabnzbd
-###############################################################################
-
-sabnzbd_image_tag: version-4.5.3
-
-sabnzbd_env_vars:
-  PUID: "{{ global_media_uid }}"
-  GUID: "{{ global_media_gid }}"
-  DOCKER_MODS: linuxserver/mods:universal-package-install
-  INSTALL_PACKAGES: file
-
-sabnzbd_volume_download: "{{ global_volume_download }}"
-
-###############################################################################
-# sonarr
-###############################################################################
-
-sonarr_image_tag: version-4.0.15.2941
-
-sonarr_env_vars:
-  PUID: "{{ global_media_uid }}"
-  GUID: "{{ global_media_gid }}"
-
-sonarr_volume_download: "{{ global_volume_download }}"
-sonarr_volume_download_options: "{{ global_volume_download_options }}"
-sonarr_volume_media: "{{ global_volume_media }}"
-sonarr_volume_media_options: "{{ global_volume_media_options }}"
-
-###############################################################################
 # stirling_pdf
 ###############################################################################
 
@@ -252,15 +167,6 @@ tandoor_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.tando
 tandoor_secret_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.tandoor_secret_key) }}"
 
 ###############################################################################
-# tautulli
-###############################################################################
-
-tautulli_image_tag: version-v2.16.0
-
-tautulli_env_vars:
-  DOCKER_ENABLE_SECURITY: "false"
-
-###############################################################################
 # traefik
 ###############################################################################
 
@@ -275,12 +181,6 @@ warracker_postgres_image_tag: "15.14"
 
 warracker_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.warracker_postgres_password) }}"
 warracker_secret_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.warracker_secret_key) }}"
-
-###############################################################################
-# wizarr
-###############################################################################
-
-wizarr_image_tag: v2025.10.7
 
 ###############################################################################
 # kickstart

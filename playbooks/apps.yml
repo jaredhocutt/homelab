@@ -24,11 +24,6 @@
 - name: Deploy and configure apps
   hosts: apps
   tasks:
-    - name: Install audiobookshelf
-      ansible.builtin.import_role:
-        name: jaredhocutt.homelab.audiobookshelf
-      tags: [audiobookshelf]
-
     - name: Install calibre
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.calibre
@@ -59,11 +54,6 @@
         name: jaredhocutt.homelab.karakeep
       tags: [karakeep]
 
-    - name: Install kometa
-      ansible.builtin.import_role:
-        name: jaredhocutt.homelab.kometa
-      tags: [kometa]
-
     - name: Install n8n
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.n8n
@@ -74,35 +64,10 @@
         name: jaredhocutt.homelab.open_webui
       tags: [open_webui]
 
-    - name: Install overseerr
-      ansible.builtin.import_role:
-        name: jaredhocutt.homelab.overseerr
-      tags: [overseerr]
-
     - name: Install paperless
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.paperless
       tags: [paperless]
-
-    - name: Install prowlarr
-      ansible.builtin.import_role:
-        name: jaredhocutt.homelab.prowlarr
-      tags: [prowlarr]
-
-    - name: Install radarr
-      ansible.builtin.import_role:
-        name: jaredhocutt.homelab.radarr
-      tags: [radarr]
-
-    - name: Install sabnzbd
-      ansible.builtin.import_role:
-        name: jaredhocutt.homelab.sabnzbd
-      tags: [sabnzbd]
-
-    - name: Install sonarr
-      ansible.builtin.import_role:
-        name: jaredhocutt.homelab.sonarr
-      tags: [sonarr]
 
     - name: Install stirling_pdf
       ansible.builtin.import_role:
@@ -114,17 +79,7 @@
         name: jaredhocutt.homelab.tandoor
       tags: [tandoor]
 
-    - name: Install tautulli
-      ansible.builtin.import_role:
-        name: jaredhocutt.homelab.tautulli
-      tags: [tautulli]
-
     - name: Install warracker
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.warracker
       tags: [warracker]
-
-    - name: Install wizarr
-      ansible.builtin.import_role:
-        name: jaredhocutt.homelab.wizarr
-      tags: [wizarr]
