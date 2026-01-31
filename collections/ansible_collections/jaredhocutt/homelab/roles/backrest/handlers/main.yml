@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.backrest
+
+- name: Restart {{ backrest_name }}
+  ansible.builtin.systemd:
+    name: "{{ backrest_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

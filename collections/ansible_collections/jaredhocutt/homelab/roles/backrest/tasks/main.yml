@@ -1,0 +1,113 @@
+---
+# tasks file for jaredhocutt.homelab.backrest
+
+- name: Get latest release version
+  when: backrest_version == "latest"
+  block:
+    - name: Query GitHub API for latest release
+      ansible.builtin.uri:
+        url: "https://api.github.com/repos/{{ backrest_github_repo }}/releases/latest"
+        return_content: true
+      register: _backrest_latest_github_release
+
+    - name: Set version from latest release
+      ansible.builtin.set_fact:
+        backrest_version: "{{ _backrest_latest_github_release.json.tag_name }}"
+
+- name: Check if backrest is already installed
+  ansible.builtin.stat:
+    path: "{{ backrest_bin_path }}"
+  register: _backrest_stat_bin_path
+
+- name: Get installed backrest version
+  when: _backrest_stat_bin_path.stat.exists
+  ansible.builtin.command:
+    cmd: "{{ backrest_bin_path }} --version"
+  register: _backrest_installed_version_output
+  changed_when: false
+  failed_when: false
+
+- name: Parse installed version
+  when: _backrest_stat_bin_path.stat.exists and _backrest_installed_version_output.rc == 0
+  ansible.builtin.set_fact:
+    backrest_installed_version: "v{{ _backrest_installed_version_output.stdout | regex_search('[0-9]+\\.[0-9]+\\.[0-9]+') }}"
+
+- name: Display version information
+  ansible.builtin.debug:
+    msg: >-
+      Installed: {{ backrest_installed_version }},
+      Target: {{ backrest_version }}
+
+- name: Install or upgrade backrest
+  when: backrest_installed_version != backrest_version
+  block:
+    - name: Stop backrest service if running
+      ansible.builtin.systemd:
+        name: "{{ backrest_name }}.service"
+        state: stopped
+      become: true
+      failed_when: false
+
+    - name: Create temporary directory for download
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: backrest
+      register: backrest_temp_dir
+
+    - name: Download backrest release
+      ansible.builtin.get_url:
+        url: "{{ backrest_download_url }}"
+        dest: "{{ backrest_temp_dir.path }}/backrest.tar.gz"
+        mode: "0644"
+
+    - name: Extract backrest binary
+      ansible.builtin.unarchive:
+        src: "{{ backrest_temp_dir.path }}/backrest.tar.gz"
+        dest: "{{ backrest_temp_dir.path }}"
+        remote_src: true
+
+    - name: Install backrest binary
+      ansible.builtin.copy:
+        src: "{{ backrest_temp_dir.path }}/backrest"
+        dest: "{{ backrest_bin_path }}"
+        owner: root
+        group: root
+        mode: "0755"
+        remote_src: true
+      become: true
+
+    - name: Clean up temporary directory
+      ansible.builtin.file:
+        path: "{{ backrest_temp_dir.path }}"
+        state: absent
+
+- name: Create systemd service file
+  ansible.builtin.template:
+    src: backrest.service.j2
+    dest: /etc/systemd/system/{{ backrest_name }}.service
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  notify: Restart {{ backrest_name }}
+
+- name: Create traefik config
+  when: backrest_traefik_enable
+  block:
+    - name: Get traefik dynamic volume info
+      containers.podman.podman_volume_info:
+        name: "{{ traefik_volume_dynamic | default(common_traefik_volume_dynamic) }}"
+      become: true
+      register: _backrest_traefik_dynamic_volume_info
+
+    - name: Create traefik dynamic config file for backrest
+      ansible.builtin.template:
+        src: traefik.yaml.j2
+        dest: "{{ _backrest_traefik_dynamic_volume_info.volumes[0].Mountpoint }}/{{ backrest_name }}.yaml"
+        owner: root
+        group: root
+        mode: "0644"
+      become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

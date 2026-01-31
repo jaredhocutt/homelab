@@ -1,0 +1,12 @@
+http:
+  routers:
+    {{ backrest_name }}:
+      rule: "Host(`{{ backrest_traefik_host }}`)"
+      entrypoints: "{{ common_traefik_entrypoint }}"
+      service: {{ backrest_name }}
+
+  services:
+    {{ backrest_name }}:
+      loadBalancer:
+        servers:
+          - url: "http://host.containers.internal:{{ (backrest_env_vars_base | combine(backrest_env_vars, recursive=True)).BACKREST_PORT | ansible.builtin.split(':') | last }}"

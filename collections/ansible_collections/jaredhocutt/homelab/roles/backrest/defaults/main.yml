@@ -1,0 +1,17 @@
+---
+# defaults file for jaredhocutt.homelab.backrest
+
+backrest_name: backrest
+
+backrest_github_repo: garethgeorge/backrest
+backrest_version: latest
+
+backrest_download_url: https://github.com/{{ backrest_github_repo }}/releases/download/{{ backrest_version }}/backrest_Linux_x86_64.tar.gz
+
+backrest_traefik_enable: true
+backrest_traefik_host: "{{ backrest_name }}.{{ common_traefik_domain }}"
+
+backrest_user: root
+backrest_group: root
+
+backrest_env_vars: {}

@@ -1,0 +1,12 @@
+---
+# vars file for jaredhocutt.homelab.backrest
+
+backrest_bin_path: /usr/local/bin/backrest
+backrest_installed_version: ""
+
+###############################################################################
+# Envrionment Variables
+###############################################################################
+
+backrest_env_vars_base:
+  BACKREST_PORT: 127.0.0.1:9898
