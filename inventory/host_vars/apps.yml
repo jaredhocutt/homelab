@@ -129,6 +129,14 @@ n8n_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.n8n_postg
 n8n_env_vars:
   N8N_LOG_LEVEL: debug
 
+###############################################################################
+# nocodb
+###############################################################################
+
+nocodb_image_tag: "0.301.1"  # skopeo list-tags docker://docker.io/nocodb/nocodb | jq -r '.Tags[] | select(test("^[0-9]"))'
+nocodb_postgres_image_tag: "16.11"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16.[0-9]"))'
+
+nocodb_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.nocodb_postgres_password) }}"
 
 ###############################################################################
 # open_webui

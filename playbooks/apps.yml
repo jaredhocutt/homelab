@@ -59,6 +59,11 @@
         name: jaredhocutt.homelab.n8n
       tags: [n8n]
 
+    - name: Install nocodb
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.nocodb
+      tags: [nocodb]
+
     - name: Install open_webui
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.open_webui
