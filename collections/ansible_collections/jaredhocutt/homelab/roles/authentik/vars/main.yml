@@ -10,11 +10,8 @@ authentik_postgres_user: authentik
 
 authentik_env_vars_base:
   AUTHENTIK_POSTGRESQL__HOST: "{{ authentik_name }}-postgres"
-  AUTHENTIK_REDIS__HOST: "{{ authentik_name }}-redis"
 
 authentik_postgres_env_vars_base: {}
-
-authentik_redis_env_vars_base: {}
 
 ###############################################################################
 # Secrets
@@ -43,8 +40,6 @@ authentik_postgres_container_secrets_base:
   - authentik_postgres_user,type=env,target=POSTGRES_USER
   - authentik_postgres_password,type=env,target=POSTGRES_PASSWORD
 
-authentik_redis_container_secrets_base: []
-
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -53,17 +48,19 @@ authentik_redis_container_secrets_base: []
 authentik_container_labels_traefik:
   - key: traefik.enable
     value: "true"
+  - key: traefik.docker.network
+    value: "{{ common_traefik_network }}"
   - key: traefik.http.routers.{{ authentik_name }}.rule
     value: Host(`{{ authentik_traefik_host }}`)
   - key: traefik.http.routers.{{ authentik_name }}.entrypoints
     value: "{{ common_traefik_entrypoint }}"
+  - key: traefik.http.services.{{ authentik_name }}-server.loadbalancer.server.port
+    value: "9000"
 authentik_container_labels_base: "{{ authentik_traefik_enable | ternary((authentik_container_labels_traefik | items2dict), {}) }}"
 
 authentik_worker_container_labels_base: {}
 
 authentik_postgres_container_labels_base: {}
-
-authentik_redis_container_labels_base: {}
 
 ###############################################################################
 # Quadlet Options
@@ -73,11 +70,7 @@ authentik_quadlet_options_base_custom:
   - |
     [Unit]
     Requires={{ authentik_name }}-postgres.service
-    Requires={{ authentik_name }}-redis.service
     After={{ authentik_name }}-postgres.service
-    After={{ authentik_name }}-redis.service
 authentik_quadlet_options_base: "{{ common_quadlet_options_base + authentik_quadlet_options_base_custom }}"
 
 authentik_postgres_quadlet_options_base: "{{ common_quadlet_options_base }}"
-
-authentik_redis_quadlet_options_base: "{{ common_quadlet_options_base }}"
