@@ -99,7 +99,7 @@ wizarr_image_tag: v2025.10.7
 # kickstart
 ###############################################################################
 
-kickstart_hostname: apps
+kickstart_hostname: media
 kickstart_network:
   - device: enp2s0
     activate: true

@@ -4,7 +4,7 @@
 # kickstart
 ###############################################################################
 
-kickstart_hostname: apps
+kickstart_hostname: work
 kickstart_network:
   - device: enp2s0
     activate: true
