@@ -54,8 +54,8 @@ calibre_volume_media_options: "{{ global_volume_media_options }}"
 # changedetection
 ###############################################################################
 
-changedetection_image_tag: "0.50.33"
-changedetection_browser_image_tag: "0.0.3"
+changedetection_image_tag: "0.51.4"  # skopeo list-tags docker://ghcr.io/dgtlmoon/changedetection.io | jq -r '.Tags[] | select(test("^[0-9]"))'
+changedetection_browser_image_tag: "0.0.3"  # skopeo list-tags docker://docker.io/dgtlmoon/sockpuppetbrowser | jq -r '.Tags[] | select(test("^[0-9]"))'
 
 ###############################################################################
 # healthchecks
