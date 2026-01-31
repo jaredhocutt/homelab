@@ -34,10 +34,10 @@ archiveium_url: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.archiveium_url) 
 # bar_assistant
 ###############################################################################
 
-bar_assistant_image_tag: v5.9.0
-bar_assistant_salt_rim_image_tag: v4.9.0
-bar_assistant_redis_image_tag: "8.2.2"
-bar_assistant_meilisearch_image_tag: v1.15.2
+bar_assistant_image_tag: "5.10.0"  # skopeo list-tags docker://docker.io/barassistant/server | jq -r '.Tags[] | select(test("^5.[0-9]"))'
+bar_assistant_salt_rim_image_tag: "4.12.0"  # skopeo list-tags docker://docker.io/barassistant/salt-rim | jq -r '.Tags[] | select(test("^4.[0-9]"))'
+bar_assistant_redis_image_tag: "8.4.0"  # skopeo list-tags docker://docker.io/library/redis | jq -r '.Tags[] | select(test("^[0-9]"))'
+bar_assistant_meilisearch_image_tag: v1.15.2  # skopeo list-tags docker://docker.io/getmeili/meilisearch | jq -r '.Tags[] | select(test("^v1.15"))'
 
 bar_assistant_meilisearch_master_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.bar_assistant_meilisearch_master_key) }}"
 
