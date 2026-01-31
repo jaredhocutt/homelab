@@ -9,6 +9,7 @@ collections/ansible_collections/*
 !collections/ansible_collections/jaredhocutt
 collections/ansible_collections/jaredhocutt/*
 !collections/ansible_collections/jaredhocutt/homelab
+playbooks/sandbox.yml
 
 # https://raw.githubusercontent.com/github/gitignore/main/Python.gitignore
 # Byte-compiled / optimized / DLL files
