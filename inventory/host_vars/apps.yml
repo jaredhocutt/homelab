@@ -171,7 +171,22 @@ tandoor_secret_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.tandoor_secr
 # traefik
 ###############################################################################
 
-traefik_image_tag: v3.5.4
+traefik_image_tag: v3.6.5  # skopeo list-tags docker://docker.io/library/traefik | jq -r '.Tags[] | select(test("^v[0-9]"))'
+
+traefik_traefik_host: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.traefik_traefik_host) }}"
+
+traefik_command:
+  - --certificatesresolvers.letsencrypt.acme.email={{ lookup('bitwarden.secrets.lookup', bws_uuid.traefik_letsencrypt_email) }}
+  - --certificatesresolvers.letsencrypt.acme.storage=/certs/acme.json
+  - --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare
+  - --entrypoints.websecure.http.tls.certresolver=letsencrypt
+
+traefik_secrets:
+  traefik_letsencrypt_cloudflare_dns_api_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.traefik_letsencrypt_cloudflare_dns_api_key) }}"
+  traefik_letsencrypt_cloudflare_zone_api_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.traefik_letsencrypt_cloudflare_zone_api_key) }}"
+traefik_container_secrets:
+  - traefik_letsencrypt_cloudflare_dns_api_key,type=env,target=CF_DNS_API_TOKEN
+  - traefik_letsencrypt_cloudflare_zone_api_key,type=env,target=CF_ZONE_API_TOKEN
 
 ###############################################################################
 # warracker
