@@ -23,6 +23,8 @@
     name: "{{ archiveium_name }}"
     driver: bridge
     disable_dns: false
+    opt:
+      isolate: "true"
     quadlet_file_mode: "0600"
     state: quadlet
   become: true
@@ -45,6 +47,7 @@
       options: "{{ archiveium_redis_volume_data_options | default(omit) }}"
     - name: "{{ archiveium_meilisearch_volume_data }}"
       options: "{{ archiveium_meilisearch_volume_data_options | default(omit) }}"
+  register: _archiveium_created_volumes
 
 - name: Create secrets
   containers.podman.podman_secret:
@@ -52,6 +55,7 @@
     data: "{{ item.value }}"
     state: present
   become: true
+  no_log: true
   loop: "{{ archiveium_secrets_base | combine(archiveium_secrets, recursive=True) | dict2items }}"
 
 - name: Reload systemd daemon
@@ -72,15 +76,15 @@
   become: true
   register: _archiveium_certs_volume_info
 
-- name: Create config.json configuration file
+- name: Create configuration file
   ansible.builtin.template:
     src: config.json.j2
-    dest: "{{ _archiveium_certs_volume_info.volumes[0].Mountpoint }}/config.json"
+    dest: "{{ _archiveium_certs_volume_info.volumes[0].Mountpoint }}/production-0.json"
     owner: root
     group: root
     mode: "0600"
   become: true
-  notify: Restart {{ traefik_name }}
+  notify: Restart {{ archiveium_name }}
 
 - name: Create postgres container
   containers.podman.podman_container:
@@ -121,7 +125,7 @@
       {{ archiveium_minio_container_secrets_base
       + archiveium_minio_container_secrets }}
     volumes:
-      - "{{ archiveium_minio_volume_data }}.volume:/data/minio"
+      - "{{ archiveium_minio_volume_data }}.volume:/data"
     healthcheck_interval: 30s
     healthcheck_retries: 5
     healthcheck_start_period: 20s
@@ -167,7 +171,9 @@
   containers.podman.podman_container:
     name: "{{ archiveium_name }}-meilisearch"
     image: "{{ archiveium_meilisearch_image }}:{{ archiveium_meilisearch_image_tag }}"
-    network: "{{ archiveium_name }}.network"
+    network:
+      - "{{ archiveium_name }}.network"
+      - "{{ archiveium_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
     env: >-
       {{ common_env_vars_base
       | combine(archiveium_meilisearch_env_vars_base, recursive=True)
@@ -215,7 +221,9 @@
   containers.podman.podman_container:
     name: "{{ archiveium_name }}"
     image: "{{ archiveium_image }}:{{ archiveium_image_tag }}"
-    network: "{{ archiveium_name }}.network"
+    network:
+      - "{{ archiveium_name }}.network"
+      - "{{ archiveium_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
     env: >-
       {{ common_env_vars_base
       | combine(archiveium_env_vars_base, recursive=True)

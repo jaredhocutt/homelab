@@ -76,10 +76,14 @@ archiveium_meilisearch_container_secrets_base:
 archiveium_container_labels_traefik:
   - key: traefik.enable
     value: "true"
+  - key: traefik.docker.network
+    value: "{{ common_traefik_network }}"
   - key: traefik.http.routers.{{ archiveium_name }}.rule
     value: Host(`{{ archiveium_traefik_host }}`)
   - key: traefik.http.routers.{{ archiveium_name }}.entrypoints
     value: "{{ common_traefik_entrypoint }}"
+  - key: traefik.http.services.{{ archiveium_name }}.loadbalancer.server.port
+    value: "3000"
 archiveium_container_labels_base: "{{ archiveium_traefik_enable | ternary((archiveium_container_labels_traefik | items2dict), {}) }}"
 
 archiveium_cron_container_labels_base: {}
@@ -91,10 +95,14 @@ archiveium_redis_container_labels_base: {}
 archiveium_meilisearch_container_labels_traefik:
   - key: traefik.enable
     value: "true"
+  - key: traefik.docker.network
+    value: "{{ common_traefik_network }}"
   - key: traefik.http.routers.{{ archiveium_name }}-meilisearch.rule
     value: Host(`{{ archiveium_meilisearch_traefik_host }}`)
   - key: traefik.http.routers.{{ archiveium_name }}-meilisearch.entrypoints
     value: "{{ common_traefik_entrypoint }}"
+  - key: traefik.http.services.{{ archiveium_name }}-meilisearch.loadbalancer.server.port
+    value: "7700"
 archiveium_meilisearch_container_labels_base: "{{ archiveium_traefik_enable | ternary((archiveium_meilisearch_container_labels_traefik | items2dict), {}) }}"
 
 ###############################################################################

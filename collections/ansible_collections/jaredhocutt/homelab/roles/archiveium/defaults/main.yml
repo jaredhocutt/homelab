@@ -56,3 +56,5 @@ archiveium_postgres_quadlet_options: []
 archiveium_minio_quadlet_options: []
 archiveium_redis_quadlet_options: []
 archiveium_meilisearch_quadlet_options: []
+
+archiveium_url: https://{{ archiveium_traefik_host }}
