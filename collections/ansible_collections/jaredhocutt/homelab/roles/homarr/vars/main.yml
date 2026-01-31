@@ -25,10 +25,14 @@ homarr_container_secrets_base:
 homarr_container_labels_traefik:
   - key: traefik.enable
     value: "true"
+  - key: traefik.docker.network
+    value: "{{ common_traefik_network }}"
   - key: traefik.http.routers.{{ homarr_name }}.rule
     value: Host(`{{ homarr_traefik_host }}`)
   - key: traefik.http.routers.{{ homarr_name }}.entrypoints
     value: "{{ common_traefik_entrypoint }}"
+  - key: traefik.http.services.{{ homarr_name }}.loadbalancer.server.port
+    value: "7575"
 homarr_container_labels_base: "{{ homarr_traefik_enable | ternary((homarr_container_labels_traefik | items2dict), {}) }}"
 
 ###############################################################################
