@@ -3,3 +3,6 @@
 
 common_traefik_domain: podman.localhost
 common_traefik_entrypoint: websecure
+common_traefik_network: "{{ traefik_name | default('traefik') }}"
+
+common_traefik_volume_dynamic: "{{ traefik_name | default('traefik') }}-dynamic"
