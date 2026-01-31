@@ -6,9 +6,8 @@ common_traefik_domain: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.apps_comm
 # authentik
 ###############################################################################
 
-authentik_image_tag: "2025.8.4"
-authentik_postgres_image_tag: "16.10"
-authentik_redis_image_tag: "8.2.2"
+authentik_image_tag: "2025.10.3"  # skopeo list-tags docker://ghcr.io/goauthentik/server | jq -r '.Tags[] | select(test("^[0-9]"))'
+authentik_postgres_image_tag: "16.11"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16.[0-9]"))'
 
 authentik_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.authentik_postgres_password) }}"
 authentik_secret_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.authentik_secret_key) }}"
