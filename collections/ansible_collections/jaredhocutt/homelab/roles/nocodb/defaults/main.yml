@@ -1,0 +1,32 @@
+---
+# defaults file for jaredhocutt.homelab.nocodb
+
+nocodb_name: nocodb
+
+nocodb_image: docker.io/nocodb/nocodb
+nocodb_image_tag: latest
+nocodb_postgres_image: docker.io/library/postgres
+nocodb_postgres_image_tag: "16"
+
+nocodb_volume_data: "{{ nocodb_name }}-data"
+nocodb_postgres_volume_data: "{{ nocodb_name }}-postgres-data"
+
+nocodb_traefik_enable: true
+nocodb_traefik_host: "{{ nocodb_name }}.{{ common_traefik_domain }}"
+nocodb_ports:
+  - 8080:8080
+
+nocodb_env_vars: {}
+nocodb_postgres_env_vars: {}
+
+nocodb_secrets: {}
+nocodb_container_secrets: []
+nocodb_postgres_container_secrets: []
+
+nocodb_container_labels: {}
+nocodb_postgres_container_labels: {}
+
+nocodb_quadlet_options: []
+nocodb_postgres_quadlet_options: []
+
+nocodb_url: https://{{ nocodb_traefik_host }}

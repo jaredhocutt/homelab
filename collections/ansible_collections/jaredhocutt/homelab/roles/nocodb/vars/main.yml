@@ -1,0 +1,66 @@
+---
+# vars file for jaredhocutt.homelab.nocodb
+
+nocodb_postgres_db_name: nocodb
+nocodb_postgres_user: nocodb
+
+###############################################################################
+# Envrionment Variables
+###############################################################################
+
+nocodb_env_vars_base:
+  NC_PUBLIC_URL: "{{ nocodb_url }}"
+  NC_DISABLE_TELE: "true"
+
+nocodb_postgres_env_vars_base: {}
+
+###############################################################################
+# Secrets
+###############################################################################
+
+nocodb_secrets_base:
+  nocodb_db: pg://{{ nocodb_name }}-postgres:5432?u={{ nocodb_postgres_user }}&p={{ nocodb_postgres_password }}&d={{ nocodb_postgres_db_name }}"
+  nocodb_postgres_db_name: "{{ nocodb_postgres_db_name }}"
+  nocodb_postgres_user: "{{ nocodb_postgres_user }}"
+  nocodb_postgres_password: "{{ nocodb_postgres_password }}"
+
+nocodb_container_secrets_base:
+  - nocodb_db,type=env,target=NC_DB
+
+nocodb_postgres_container_secrets_base:
+  - nocodb_postgres_db_name,type=env,target=POSTGRES_DB
+  - nocodb_postgres_user,type=env,target=POSTGRES_USER
+  - nocodb_postgres_password,type=env,target=POSTGRES_PASSWORD
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+# This is done as a list and converted to a dict in order to use variables in the key name
+nocodb_container_labels_traefik:
+  - key: traefik.enable
+    value: "true"
+  - key: traefik.docker.network
+    value: "{{ common_traefik_network }}"
+  - key: traefik.http.routers.{{ nocodb_name }}.rule
+    value: Host(`{{ nocodb_traefik_host }}`)
+  - key: traefik.http.routers.{{ nocodb_name }}.entrypoints
+    value: "{{ common_traefik_entrypoint }}"
+  - key: traefik.http.services.{{ nocodb_name }}.loadbalancer.server.port
+    value: "8080"
+nocodb_container_labels_base: "{{ nocodb_traefik_enable | ternary((nocodb_container_labels_traefik | items2dict), {}) }}"
+
+nocodb_postgres_container_labels_base: {}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+nocodb_quadlet_options_base_custom:
+  - |
+    [Unit]
+    Requires={{ nocodb_name }}-postgres.service
+    After={{ nocodb_name }}-postgres.service
+nocodb_quadlet_options_base: "{{ common_quadlet_options_base + nocodb_quadlet_options_base_custom }}"
+
+nocodb_postgres_quadlet_options_base: "{{ common_quadlet_options_base }}"

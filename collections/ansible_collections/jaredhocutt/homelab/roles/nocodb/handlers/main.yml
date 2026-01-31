@@ -1,0 +1,18 @@
+---
+# handlers file for jaredhocutt.homelab.nocodb
+
+- name: Restart {{ nocodb_name }}
+  ansible.builtin.systemd:
+    name: "{{ nocodb_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart postgres for {{ nocodb_name }}
+  ansible.builtin.systemd:
+    name: "{{ nocodb_name }}-postgres.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

@@ -1,0 +1,10 @@
+galaxy_info:
+  author: Jared Hocutt
+  description: nocodb
+  license: MIT
+
+  min_ansible_version: "2.14"
+
+dependencies:
+  - role: jaredhocutt.homelab.common
+  - role: jaredhocutt.homelab.podman

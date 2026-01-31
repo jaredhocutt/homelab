@@ -1,0 +1,98 @@
+---
+# tasks file for jaredhocutt.homelab.nocodb
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ nocodb_image }}"
+      image_tag: "{{ nocodb_image_tag }}"
+    - image: "{{ nocodb_postgres_image }}"
+      image_tag: "{{ nocodb_postgres_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ nocodb_name }}"
+    driver: bridge
+    disable_dns: false
+    opt:
+      isolate: "true"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ nocodb_volume_data }}"
+      options: "{{ nocodb_volume_data_options | default(omit) }}"
+    - name: "{{ nocodb_postgres_volume_data }}"
+      options: "{{ nocodb_postgres_volume_data_options | default(omit) }}"
+
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ nocodb_secrets_base | combine(nocodb_secrets, recursive=True) | dict2items }}"
+
+- name: Create postgres container
+  containers.podman.podman_container:
+    name: "{{ nocodb_name }}-postgres"
+    image: "{{ nocodb_postgres_image }}:{{ nocodb_postgres_image_tag }}"
+    network: "{{ nocodb_name }}.network"
+    env: >-
+      {{ common_env_vars_base
+      | combine(nocodb_postgres_env_vars_base, recursive=True)
+      | combine(nocodb_postgres_env_vars, recursive=True) }}
+    secrets: >-
+      {{ nocodb_postgres_container_secrets_base
+      + nocodb_postgres_container_secrets }}
+    volumes:
+      - "{{ nocodb_postgres_volume_data }}.volume:/var/lib/postgresql/data"
+    healthcheck_interval: 30s
+    healthcheck_retries: 5
+    healthcheck_start_period: 20s
+    healthcheck_timeout: 5s
+    healthcheck: CMD-SHELL pg_isready -d {{ nocodb_postgres_db_name }} -U {{ nocodb_postgres_user }}
+    labels: "{{ nocodb_postgres_container_labels_base | combine(nocodb_postgres_container_labels, recursive=True) }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ nocodb_postgres_quadlet_options_base + nocodb_postgres_quadlet_options }}"
+    state: quadlet
+  notify: Restart postgres for {{ nocodb_name }}
+  become: true
+
+- name: Create nocodb container
+  containers.podman.podman_container:
+    name: "{{ nocodb_name }}"
+    image: "{{ nocodb_image }}:{{ nocodb_image_tag }}"
+    network:
+      - "{{ nocodb_name }}.network"
+      - "{{ nocodb_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(nocodb_env_vars_base, recursive=True)
+      | combine(nocodb_env_vars, recursive=True) }}
+    secrets: >-
+      {{ nocodb_container_secrets_base
+      + nocodb_container_secrets }}
+    volumes:
+      - "{{ nocodb_volume_data }}.volume:/usr/app/data"
+    publish: "{{ nocodb_traefik_enable | ternary(omit, nocodb_ports) }}"
+    labels: "{{ nocodb_container_labels_base | combine(nocodb_container_labels, recursive=True) }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ nocodb_quadlet_options_base + nocodb_quadlet_options }}"
+    state: quadlet
+  notify: Restart {{ nocodb_name }}
+  become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
