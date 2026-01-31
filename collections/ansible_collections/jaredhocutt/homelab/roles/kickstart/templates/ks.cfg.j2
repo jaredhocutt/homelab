@@ -9,7 +9,7 @@ lang en_US.UTF-8
 
 # Network
 {% for interface in kickstart_network %}
-network  --bootproto="dhcp" --device="{{ interface.device }}" --ipv6="auto" {% if interface.activate %}--activate{% else %}--no-activate{% endif %}
+network  --bootproto="dhcp" --device="{{ interface.device }}" --ipv6="auto" {% if interface.activate %}--activate{% else %}--no-activate{% endif %} {{ interface.options | default('') }}
 
 {% endfor %}
 network  --hostname="{{ kickstart_hostname }}"
