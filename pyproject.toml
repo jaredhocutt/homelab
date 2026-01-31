@@ -12,6 +12,7 @@ dependencies = [
     "ansible-core~=2.19.0",
     "bitwarden-sdk~=1.0.0",
     "jmespath~=1.0.0",
+    "netaddr~=1.3.0",
 ]
 
 [tool.poetry]
