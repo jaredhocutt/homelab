@@ -110,8 +110,8 @@ karakeep_meilisearch_master_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid
 # n8n
 ###############################################################################
 
-n8n_image_tag: "1.116.2"
-n8n_postgres_image_tag: "16.10"
+n8n_image_tag: "2.3.1"  # skopeo list-tags docker://docker.n8n.io/n8nio/n8n | jq -r '.Tags[] | select(test("^[0-9]"))'
+n8n_postgres_image_tag: "16.11"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16.[0-9]"))'
 
 n8n_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.n8n_postgres_password) }}"
 
