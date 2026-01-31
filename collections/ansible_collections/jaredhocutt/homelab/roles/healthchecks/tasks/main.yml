@@ -15,6 +15,8 @@
     name: "{{ healthchecks_name }}"
     driver: bridge
     disable_dns: false
+    opt:
+      isolate: "true"
     quadlet_file_mode: "0600"
     state: quadlet
   become: true
@@ -36,13 +38,16 @@
     data: "{{ item.value }}"
     state: present
   become: true
+  no_log: true
   loop: "{{ healthchecks_secrets_base | combine(healthchecks_secrets, recursive=True) | dict2items }}"
 
 - name: Create healthchecks container
   containers.podman.podman_container:
     name: "{{ healthchecks_name }}"
     image: "{{ healthchecks_image }}:{{ healthchecks_image_tag }}"
-    network: "{{ healthchecks_name }}.network"
+    network:
+      - "{{ healthchecks_name }}.network"
+      - "{{ healthchecks_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
     env: >-
       {{ common_env_vars_base
       | combine(healthchecks_env_vars_base, recursive=True)

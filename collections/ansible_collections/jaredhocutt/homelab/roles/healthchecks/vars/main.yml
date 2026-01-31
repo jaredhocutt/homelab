@@ -9,15 +9,19 @@ healthchecks_env_vars_base:
   SITE_ROOT: "{{ healthchecks_url }}"
   SITE_NAME: "{{ healthchecks_site_name }}"
   SUPERUSER_EMAIL: "{{ healthchecks_email }}"
-  SUPERUSER_PASSWORD: "{{ healthchecks_password }}"
+  DEBUG: "False"
 
 ###############################################################################
 # Secrets
 ###############################################################################
 
-healthchecks_secrets_base: {}
+healthchecks_secrets_base:
+  healthchecks_password: "{{ healthchecks_password }}"
+  healthchecks_secret_key: "{{ healthchecks_secret_key }}"
 
-healthchecks_container_secrets_base: []
+healthchecks_container_secrets_base:
+  - healthchecks_password,type=env,target=SUPERUSER_PASSWORD
+  - healthchecks_secret_key,type=env,target=SECRET_KEY
 
 ###############################################################################
 # Container Labels
@@ -27,10 +31,14 @@ healthchecks_container_secrets_base: []
 healthchecks_container_labels_traefik:
   - key: traefik.enable
     value: "true"
+  - key: traefik.docker.network
+    value: "{{ common_traefik_network }}"
   - key: traefik.http.routers.{{ healthchecks_name }}.rule
     value: Host(`{{ healthchecks_traefik_host }}`)
   - key: traefik.http.routers.{{ healthchecks_name }}.entrypoints
     value: "{{ common_traefik_entrypoint }}"
+  - key: traefik.http.services.{{ healthchecks_name }}.loadbalancer.server.port
+    value: "8000"
 healthchecks_container_labels_base: "{{ healthchecks_traefik_enable | ternary((healthchecks_container_labels_traefik | items2dict), {}) }}"
 
 ###############################################################################
