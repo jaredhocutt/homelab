@@ -25,6 +25,21 @@
 - name: Deploy and configure apps
   hosts: apps
   tasks:
+    - name: Install archiveium
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.archiveium
+      tags: [archiveium]
+
+    - name: Install backrest
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.backrest
+      tags: [backrest]
+
+    - name: Install bar_assistant
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.bar_assistant
+      tags: [bar_assistant]
+
     - name: Install calibre
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.calibre

@@ -28,7 +28,17 @@ archiveium_encryption_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.archi
 archiveium_meilisearch_master_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.archiveium_meilisearch_master_key) }}"
 archiveium_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.archiveium_postgres_password) }}"
 archiveium_minio_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.archiveium_minio_password) }}"
-archiveium_url: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.archiveium_url) }}"
+
+###############################################################################
+# backrest
+###############################################################################
+
+backrest_version: v1.11.2
+
+backrest_traefik_host: "backrest-apps.{{ common_traefik_domain }}"
+
+backrest_env_vars:
+  BACKREST_PORT: 0.0.0.0:9898
 
 ###############################################################################
 # bar_assistant
