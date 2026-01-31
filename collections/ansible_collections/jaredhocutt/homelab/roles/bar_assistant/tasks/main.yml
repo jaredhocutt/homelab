@@ -21,6 +21,8 @@
     name: "{{ bar_assistant_name }}"
     driver: bridge
     disable_dns: false
+    opt:
+      isolate: "true"
     quadlet_file_mode: "0600"
     state: quadlet
   become: true
@@ -73,7 +75,9 @@
   containers.podman.podman_container:
     name: "{{ bar_assistant_name }}-meilisearch"
     image: "{{ bar_assistant_meilisearch_image }}:{{ bar_assistant_meilisearch_image_tag }}"
-    network: "{{ bar_assistant_name }}.network"
+    network:
+      - "{{ bar_assistant_name }}.network"
+      - "{{ bar_assistant_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
     env: >-
       {{ common_env_vars_base
       | combine(bar_assistant_meilisearch_env_vars_base, recursive=True)
@@ -95,7 +99,9 @@
   containers.podman.podman_container:
     name: "{{ bar_assistant_name }}"
     image: "{{ bar_assistant_image }}:{{ bar_assistant_image_tag }}"
-    network: "{{ bar_assistant_name }}.network"
+    network:
+      - "{{ bar_assistant_name }}.network"
+      - "{{ bar_assistant_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
     env: >-
       {{ common_env_vars_base
       | combine(bar_assistant_env_vars_base, recursive=True)
@@ -117,7 +123,9 @@
   containers.podman.podman_container:
     name: "{{ bar_assistant_name }}-salt-rim"
     image: "{{ bar_assistant_salt_rim_image }}:{{ bar_assistant_salt_rim_image_tag }}"
-    network: "{{ bar_assistant_name }}.network"
+    network:
+      - "{{ bar_assistant_name }}.network"
+      - "{{ bar_assistant_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
     env: >-
       {{ common_env_vars_base
       | combine(bar_assistant_salt_rim_env_vars_base, recursive=True)

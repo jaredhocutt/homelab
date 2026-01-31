@@ -7,7 +7,6 @@
 
 bar_assistant_env_vars_base:
   APP_URL: "{{ bar_assistant_api_url }}"
-  MEILISEARCH_KEY: $MEILI_MASTER_KEY
   MEILISEARCH_HOST: http://{{ bar_assistant_name }}-meilisearch:7700
   REDIS_HOST: "{{ bar_assistant_name }}-redis"
   CACHE_DRIVER: redis
@@ -18,9 +17,11 @@ bar_assistant_salt_rim_env_vars_base:
   API_URL: "{{ bar_assistant_api_url }}"
   MEILISEARCH_URL: "{{ bar_assistant_meilisearch_url }}"
 
-bar_assistant_redis_env_vars_base: {}
+bar_assistant_redis_env_vars_base:
+  ALLOW_EMPTY_PASSWORD: "yes"
 
 bar_assistant_meilisearch_env_vars_base:
+  MEILI_ENV: production
   MEILI_NO_ANALYTICS: "true"
 
 ###############################################################################
@@ -30,7 +31,8 @@ bar_assistant_meilisearch_env_vars_base:
 bar_assistant_secrets_base:
   bar_assistant_meilisearch_master_key: "{{ bar_assistant_meilisearch_master_key }}"
 
-bar_assistant_container_secrets_base: []
+bar_assistant_container_secrets_base:
+  - bar_assistant_meilisearch_master_key,type=env,target=MEILISEARCH_KEY
 
 bar_assistant_salt_rim_container_secrets_base: []
 
@@ -47,20 +49,28 @@ bar_assistant_meilisearch_container_secrets_base:
 bar_assistant_container_labels_traefik:
   - key: traefik.enable
     value: "true"
+  - key: traefik.docker.network
+    value: "{{ common_traefik_network }}"
   - key: traefik.http.routers.{{ bar_assistant_name }}.rule
     value: Host(`{{ bar_assistant_traefik_host }}`)
   - key: traefik.http.routers.{{ bar_assistant_name }}.entrypoints
     value: "{{ common_traefik_entrypoint }}"
+  - key: traefik.http.services.{{ bar_assistant_name }}.loadbalancer.server.port
+    value: "8080"
 bar_assistant_container_labels_base: "{{ bar_assistant_traefik_enable | ternary((bar_assistant_container_labels_traefik | items2dict), {}) }}"
 
 # This is done as a list and converted to a dict in order to use variables in the key name
 bar_assistant_salt_rim_container_labels_traefik:
   - key: traefik.enable
     value: "true"
+  - key: traefik.docker.network
+    value: "{{ common_traefik_network }}"
   - key: traefik.http.routers.{{ bar_assistant_name }}-salt-rim.rule
     value: Host(`{{ bar_assistant_salt_rim_traefik_host }}`)
   - key: traefik.http.routers.{{ bar_assistant_name }}-salt-rim.entrypoints
     value: "{{ common_traefik_entrypoint }}"
+  - key: traefik.http.services.{{ bar_assistant_name }}-salt-rim.loadbalancer.server.port
+    value: "8080"
 bar_assistant_salt_rim_container_labels_base: "{{ bar_assistant_traefik_enable | ternary((bar_assistant_salt_rim_container_labels_traefik | items2dict), {}) }}"
 
 bar_assistant_redis_container_labels_base: {}
@@ -69,10 +79,14 @@ bar_assistant_redis_container_labels_base: {}
 bar_assistant_meilisearch_container_labels_traefik:
   - key: traefik.enable
     value: "true"
+  - key: traefik.docker.network
+    value: "{{ common_traefik_network }}"
   - key: traefik.http.routers.{{ bar_assistant_name }}-meilisearch.rule
     value: Host(`{{ bar_assistant_meilisearch_traefik_host }}`)
   - key: traefik.http.routers.{{ bar_assistant_name }}-meilisearch.entrypoints
     value: "{{ common_traefik_entrypoint }}"
+  - key: traefik.http.services.{{ bar_assistant_name }}-meilisearch.loadbalancer.server.port
+    value: "7700"
 bar_assistant_meilisearch_container_labels_base: >-
   {{
     bar_assistant_traefik_enable |

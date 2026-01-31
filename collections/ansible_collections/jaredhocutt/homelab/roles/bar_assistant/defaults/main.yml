@@ -13,12 +13,12 @@ bar_assistant_meilisearch_image: docker.io/getmeili/meilisearch
 bar_assistant_meilisearch_image_tag: latest
 
 bar_assistant_volume_data: "{{ bar_assistant_name }}-data"
-bar_assistant_redis_volume_data: "{{ authentik_name }}-redis-data"
+bar_assistant_redis_volume_data: "{{ bar_assistant_name }}-redis-data"
 bar_assistant_meilisearch_volume_data: "{{ bar_assistant_name }}-meilisearch-data"
 
 bar_assistant_traefik_enable: true
-bar_assistant_traefik_host: "{{ bar_assistant_name }}.{{ common_traefik_domain }}"
-bar_assistant_salt_rim_traefik_host: "{{ bar_assistant_name }}-salt-rim.{{ common_traefik_domain }}"
+bar_assistant_traefik_host: "{{ bar_assistant_name }}-api.{{ common_traefik_domain }}"
+bar_assistant_salt_rim_traefik_host: "{{ bar_assistant_name }}.{{ common_traefik_domain }}"
 bar_assistant_meilisearch_traefik_host: "{{ bar_assistant_name }}-meilisearch.{{ common_traefik_domain }}"
 bar_assistant_ports:
   - 8082:8080
