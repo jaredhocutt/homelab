@@ -80,7 +80,7 @@ healthchecks_env_vars:
 # homarr
 ###############################################################################
 
-homarr_image_tag: v1.43.0
+homarr_image_tag: v1.46.0  # skopeo list-tags docker://ghcr.io/homarr-labs/homarr | jq -r '.Tags[] | select(test("^v[0-9]"))'
 
 homarr_secret_encryption_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.homarr_secret_encryption_key) }}"
 
