@@ -1,5 +1,7 @@
 ---
 
+common_traefik_domain: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.apps_common_traefik_domain) }}"
+
 ###############################################################################
 # authentik
 ###############################################################################
