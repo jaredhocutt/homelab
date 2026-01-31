@@ -11,12 +11,16 @@
       image_tag: "{{ n8n_image_tag }}"
     - image: "{{ n8n_postgres_image }}"
       image_tag: "{{ n8n_postgres_image_tag }}"
+    - image: "{{ n8n_redis_image }}"
+      image_tag: "{{ n8n_redis_image_tag }}"
 
 - name: Create network
   containers.podman.podman_network:
     name: "{{ n8n_name }}"
     driver: bridge
     disable_dns: false
+    opt:
+      isolate: "true"
     quadlet_file_mode: "0600"
     state: quadlet
   become: true
@@ -33,6 +37,8 @@
       options: "{{ n8n_volume_data_options | default(omit) }}"
     - name: "{{ n8n_postgres_volume_data }}"
       options: "{{ n8n_postgres_volume_data_options | default(omit) }}"
+    - name: "{{ n8n_redis_volume_data }}"
+      options: "{{ n8n_redis_volume_data_options | default(omit) }}"
 
 - name: Create secrets
   containers.podman.podman_secret:
@@ -68,11 +74,38 @@
   notify: Restart postgres for {{ n8n_name }}
   become: true
 
+- name: Create redis container
+  containers.podman.podman_container:
+    name: "{{ n8n_name }}-redis"
+    image: "{{ n8n_redis_image }}:{{ n8n_redis_image_tag }}"
+    network: "{{ n8n_name }}.network"
+    env: >-
+      {{ common_env_vars_base
+      | combine(n8n_redis_env_vars_base, recursive=True)
+      | combine(n8n_redis_env_vars, recursive=True) }}
+    secrets: >-
+      {{ n8n_redis_container_secrets_base
+      + n8n_redis_container_secrets }}
+    volumes:
+      - "{{ n8n_redis_volume_data }}.volume:/data"
+    healthcheck_interval: 5s
+    healthcheck_retries: 10
+    healthcheck_timeout: 5s
+    healthcheck: CMD-SHELL redis-cli ping
+    labels: "{{ n8n_redis_container_labels_base | combine(n8n_redis_container_labels, recursive=True) }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ n8n_redis_quadlet_options_base + n8n_redis_quadlet_options }}"
+    state: quadlet
+  notify: Restart redis for {{ n8n_name }}
+  become: true
+
 - name: Create n8n container
   containers.podman.podman_container:
     name: "{{ n8n_name }}"
     image: "{{ n8n_image }}:{{ n8n_image_tag }}"
-    network: "{{ n8n_name }}.network"
+    network:
+      - "{{ n8n_name }}.network"
+      - "{{ n8n_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
     env: >-
       {{ common_env_vars_base
       | combine(n8n_env_vars_base, recursive=True)
@@ -88,6 +121,28 @@
     quadlet_options: "{{ n8n_quadlet_options_base + n8n_quadlet_options }}"
     state: quadlet
   notify: Restart {{ n8n_name }}
+  become: true
+
+- name: Create worker container
+  containers.podman.podman_container:
+    name: "{{ n8n_name }}-worker"
+    image: "{{ n8n_image }}:{{ n8n_image_tag }}"
+    network: "{{ n8n_name }}.network"
+    env: >-
+      {{ common_env_vars_base
+      | combine(n8n_worker_env_vars_base, recursive=True)
+      | combine(n8n_worker_env_vars, recursive=True) }}
+    secrets: >-
+      {{ n8n_worker_container_secrets_base
+      + n8n_worker_container_secrets }}
+    volumes:
+      - "{{ n8n_volume_data }}.volume:/home/node/.n8n"
+    command: worker
+    labels: "{{ n8n_worker_container_labels_base | combine(n8n_worker_container_labels, recursive=True) }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ n8n_worker_quadlet_options_base + n8n_worker_quadlet_options }}"
+    state: quadlet
+  notify: Restart worker for {{ n8n_name }}
   become: true
 
 - name: Flush handlers

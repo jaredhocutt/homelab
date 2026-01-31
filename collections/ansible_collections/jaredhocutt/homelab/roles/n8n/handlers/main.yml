@@ -9,9 +9,25 @@
     daemon_reload: true
   become: true
 
+- name: Restart worker for {{ n8n_name }}
+  ansible.builtin.systemd:
+    name: "{{ n8n_name }}-worker.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
 - name: Restart postgres for {{ n8n_name }}
   ansible.builtin.systemd:
     name: "{{ n8n_name }}-postgres.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart redis for {{ n8n_name }}
+  ansible.builtin.systemd:
+    name: "{{ n8n_name }}-redis.service"
     state: restarted
     enabled: true
     daemon_reload: true

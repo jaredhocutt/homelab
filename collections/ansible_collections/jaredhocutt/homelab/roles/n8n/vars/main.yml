@@ -13,8 +13,17 @@ n8n_env_vars_base:
   DB_POSTGRESDB_HOST: "{{ n8n_name }}-postgres"
   DB_POSTGRESDB_PORT: "5432"
   N8N_DIAGNOSTICS_ENABLED: "false"
+  WEBHOOK_URL: "{{ n8n_url }}"
+  N8N_PROXY_HOPS: "1"
+  EXECUTIONS_MODE: queue
+  QUEUE_BULL_REDIS_HOST: "{{ n8n_name }}-redis"
+  QUEUE_HEALTH_CHECK_ACTIVE: "true"
+
+n8n_worker_env_vars_base: "{{ n8n_env_vars_base }}"
 
 n8n_postgres_env_vars_base: {}
+
+n8n_redis_env_vars_base: {}
 
 ###############################################################################
 # Secrets
@@ -30,10 +39,14 @@ n8n_container_secrets_base:
   - n8n_postgres_user,type=env,target=DB_POSTGRESDB_USER
   - n8n_postgres_password,type=env,target=DB_POSTGRESDB_PASSWORD
 
+n8n_worker_container_secrets_base: "{{ n8n_container_secrets_base }}"
+
 n8n_postgres_container_secrets_base:
   - n8n_postgres_db_name,type=env,target=POSTGRES_DB
   - n8n_postgres_user,type=env,target=POSTGRES_USER
   - n8n_postgres_password,type=env,target=POSTGRES_PASSWORD
+
+n8n_redis_container_secrets_base: []
 
 ###############################################################################
 # Container Labels
@@ -43,13 +56,21 @@ n8n_postgres_container_secrets_base:
 n8n_container_labels_traefik:
   - key: traefik.enable
     value: "true"
+  - key: traefik.docker.network
+    value: "{{ common_traefik_network }}"
   - key: traefik.http.routers.{{ n8n_name }}.rule
     value: Host(`{{ n8n_traefik_host }}`)
   - key: traefik.http.routers.{{ n8n_name }}.entrypoints
     value: "{{ common_traefik_entrypoint }}"
+  - key: traefik.http.services.{{ n8n_name }}.loadbalancer.server.port
+    value: "5678"
 n8n_container_labels_base: "{{ n8n_traefik_enable | ternary((n8n_container_labels_traefik | items2dict), {}) }}"
 
+n8n_worker_container_labels_base: {}
+
 n8n_postgres_container_labels_base: {}
+
+n8n_redis_container_labels_base: {}
 
 ###############################################################################
 # Quadlet Options
@@ -59,7 +80,22 @@ n8n_quadlet_options_base_custom:
   - |
     [Unit]
     Requires={{ n8n_name }}-postgres.service
+    Requires={{ n8n_name }}-redis.service
     After={{ n8n_name }}-postgres.service
+    After={{ n8n_name }}-redis.service
 n8n_quadlet_options_base: "{{ common_quadlet_options_base + n8n_quadlet_options_base_custom }}"
 
+n8n_worker_quadlet_options_base_custom:
+  - |
+    [Unit]
+    Requires={{ n8n_name }}.service
+    Requires={{ n8n_name }}-postgres.service
+    Requires={{ n8n_name }}-redis.service
+    After={{ n8n_name }}.service
+    After={{ n8n_name }}-postgres.service
+    After={{ n8n_name }}-redis.service
+n8n_worker_quadlet_options_base: "{{ common_quadlet_options_base + n8n_worker_quadlet_options_base_custom }}"
+
 n8n_postgres_quadlet_options_base: "{{ common_quadlet_options_base }}"
+
+n8n_redis_quadlet_options_base: "{{ common_quadlet_options_base }}"
