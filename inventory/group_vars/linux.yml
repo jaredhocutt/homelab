@@ -8,10 +8,13 @@ server_setup_packages:
   - cockpit-storaged
   - cockpit-system
   - curl
+  - dnf5-plugin-automatic
   - git
   - gnupg2
   - htop
   - net-tools
+  - pcp
+  - python3-pcp
   - rsync
   - stow
   - tmux
@@ -21,6 +24,7 @@ server_setup_packages:
 
 server_setup_enabled_services:
   - cockpit.socket
+  - pmlogger.service
 
 global_volume_download: download
 
