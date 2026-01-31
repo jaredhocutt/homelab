@@ -126,6 +126,10 @@ n8n_postgres_image_tag: "16.11"  # skopeo list-tags docker://docker.io/library/p
 
 n8n_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.n8n_postgres_password) }}"
 
+n8n_env_vars:
+  N8N_LOG_LEVEL: debug
+
+
 ###############################################################################
 # open_webui
 ###############################################################################
