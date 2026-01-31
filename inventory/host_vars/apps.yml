@@ -16,11 +16,11 @@ authentik_secret_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.authentik_
 # archiveium
 ###############################################################################
 
-archiveium_image_tag: "0.0.29"
-archiveium_postgres_image_tag: "13.22"
-archiveium_minio_image_tag: RELEASE.2023-12-23T07-19-11Z
-archiveium_redis_image_tag: "7.4.6"
-archiveium_meilisearch_image_tag: v1.13.3
+archiveium_image_tag: "0.0.29"  # skopeo list-tags docker://docker.io/archiveium/archiveium | jq -r '.Tags[] | select(test("^[0-9]"))'
+archiveium_postgres_image_tag: "13.23"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^13.[0-9]"))'
+archiveium_minio_image_tag: RELEASE.2023-12-23T07-19-11Z  # The project hard codes this tag, so let's keep it
+archiveium_redis_image_tag: "7.4.7"  # skopeo list-tags docker://docker.io/library/redis | jq -r '.Tags[] | select(test("^7.[0-9]"))'
+archiveium_meilisearch_image_tag: v1.30.0  # skopeo list-tags docker://docker.io/getmeili/meilisearch | jq -r '.Tags[] | select(test("^v[0-9]"))'
 
 archiveium_admin_email: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.archiveium_admin_email) }}"
 archiveium_admin_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.archiveium_admin_password) }}"
