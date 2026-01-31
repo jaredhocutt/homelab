@@ -1,31 +1,30 @@
 ---
 # vars file for jaredhocutt.homelab.traefik
 
+traefik_command_base:
+  - --entrypoints.web.address=:80
+  - --entrypoints.web.http.redirections.entrypoint.to=websecure
+  - --entrypoints.web.http.redirections.entrypoint.scheme=https
+  - --entrypoints.web.http.redirections.entrypoint.permanent=true
+  - --entrypoints.websecure.address=:443
+  # File provider for dynamic configuration (TLS, external services, etc.)
+  - --providers.file.directory=/dynamic
+  - --providers.file.watch=true
+  # Providers
+  - --providers.docker=true
+  - --providers.docker.exposedbydefault=false
+  - --providers.docker.network={{ traefik_name }}
+  # API & Dashboard
+  - --api.dashboard=true
+  # Observability
+  - --log.level={{ traefik_log_level | default('INFO') }}
+  - --accesslog=true
+
 ###############################################################################
 # Envrionment Variables
 ###############################################################################
 
-traefik_env_vars_base:
-  # Entrypoints
-  TRAEFIK_ENTRYPOINTS_WEB_ADDRESS: ":80"
-  TRAEFIK_ENTRYPOINTS_WEB_HTTP_REDIRECTIONS_ENTRYPOINT_TO: "websecure"
-  TRAEFIK_ENTRYPOINTS_WEB_HTTP_REDIRECTIONS_ENTRYPOINT_SCHEME: "https"
-  TRAEFIK_ENTRYPOINTS_WEB_HTTP_REDIRECTIONS_ENTRYPOINT_PERMANENT: "true"
-  TRAEFIK_ENTRYPOINTS_WEBSECURE_ADDRESS: ":443"
-  TRAEFIK_ENTRYPOINTS_WEBSECURE_HTTP_TLS: "true"
-  # Attach the static configuration tls.yaml file that contains the tls configuration settings
-  TRAEFIK_PROVIDERS_FILE_FILENAME: "/dynamic/tls.yaml"
-  # Providers
-  TRAEFIK_PROVIDERS_DOCKER: "true"
-  TRAEFIK_PROVIDERS_DOCKER_EXPOSEDBYDEFAULT: "false"
-  TRAEFIK_PROVIDERS_DOCKER_NETWORK: "{{ traefik_name }}"
-  # API & Dashboard
-  TRAEFIK_API_DASHBOARD: "true"
-  # TRAEFIK_API_INSECURE: "false"
-  # Observability
-  TRAEFIK_LOG_LEVEL: "INFO"
-  TRAEFIK_ACCESSLOG: "true"
-  TRAEFIK_METRICS_PROMETHEUS: "true"
+traefik_env_vars_base: {}
 
 ###############################################################################
 # Secrets
@@ -44,13 +43,11 @@ traefik_container_labels_traefik:
   - key: traefik.enable
     value: "true"
   - key: traefik.http.routers.{{ traefik_name }}.rule
-    value: "Host(`{{ traefik_traefik_host }}`)"
+    value: Host(`{{ traefik_traefik_host }}`)
   - key: traefik.http.routers.{{ traefik_name }}.entrypoints
     value: "{{ common_traefik_entrypoint }}"
   - key: traefik.http.routers.{{ traefik_name }}.service
     value: api@internal
-  - key: traefik.http.routers.{{ traefik_name }}.tls
-    value: "true"
 traefik_container_labels_base: "{{ traefik_traefik_enable | ternary((traefik_container_labels_traefik | items2dict), {}) }}"
 
 ###############################################################################

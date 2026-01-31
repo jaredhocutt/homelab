@@ -73,9 +73,10 @@
       - label=disable
     volumes:
       - /run/podman/podman.sock:/var/run/docker.sock:Z
-      - "{{ traefik_volume_certs }}:/certs:ro"
-      - "{{ traefik_volume_dynamic }}:/dynamic:ro"
+      - "{{ traefik_volume_certs }}:/certs"
+      - "{{ traefik_volume_dynamic }}:/dynamic"
     publish: "{{ traefik_ports }}"
+    command: "{{ traefik_command_base + traefik_command }}"
     labels: "{{ traefik_container_labels_base | combine(traefik_container_labels, recursive=True) }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ traefik_quadlet_options_base + traefik_quadlet_options }}"

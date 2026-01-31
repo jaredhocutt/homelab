@@ -6,15 +6,16 @@ traefik_name: traefik
 traefik_image: docker.io/library/traefik
 traefik_image_tag: latest
 
-traefik_volume_certs: "{{ traefik_name }}-config"
-traefik_volume_dynamic: "{{ traefik_name }}-dynamic"
+traefik_volume_certs: "{{ traefik_name }}-certs"
+traefik_volume_dynamic: "{{ common_traefik_volume_dynamic }}"
 
 traefik_traefik_enable: true
 traefik_traefik_host: "{{ traefik_name }}.{{ common_traefik_domain }}"
 traefik_ports:
   - 80:80
   - 443:443
-  - 8080:8080
+
+traefik_command: []
 
 traefik_env_vars: {}
 
