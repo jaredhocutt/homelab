@@ -204,13 +204,18 @@ warracker_secret_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.warracker_
 
 kickstart_hostname: apps
 kickstart_network:
-  - device: enp2s0
+  - device: enp1s0f0
     activate: true
-  - device: wlp3s0
+  - device: enp1s0f1
+    activate: true
+    options: --nodefroute
+  - device: eno1
+    activate: false
+  - device: wlp0s20f3
     activate: false
 
 kickstart_storage_disks:
-  - name: nvme0n1
+  - name: disk/by-id/nvme-Samsung_SSD_960_EVO_250GB_S3ESNX0J407135J
     partitions:
       - mountpoint: /boot/efi
         filesystem: efi
@@ -223,7 +228,7 @@ kickstart_storage_disks:
         filesystem: lvmpv
         size: 1
         options: --grow
-  - name: sda
+  - name: disk/by-id/nvme-Samsung_SSD_980_PRO_2TB_S76ENU0WC12575X
     partitions:
       - mountpoint: pv.02
         filesystem: lvmpv
@@ -241,7 +246,7 @@ kickstart_storage_volume_groups:
       - name: home
         mountpoint: /home
         filesystem: xfs
-        size: "{{ 1024 * 10 }}"  # 10 GB
+        size: "{{ 1024 * 30 }}"  # 30 GB
       - name: swap
         mountpoint: swap
         filesystem: swap
@@ -250,8 +255,8 @@ kickstart_storage_volume_groups:
     physical_volumes:
       - pv.02
     logical_volumes:
-      - name: docker
-        mountpoint: /var/lib/docker
+      - name: podman
+        mountpoint: /var/lib/containers
         filesystem: xfs
         percent: 100
 
