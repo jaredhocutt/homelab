@@ -32,10 +32,14 @@ changedetection_browser_container_secrets_base: []
 changedetection_container_labels_traefik:
   - key: traefik.enable
     value: "true"
+  - key: traefik.docker.network
+    value: "{{ common_traefik_network }}"
   - key: traefik.http.routers.{{ changedetection_name }}.rule
     value: Host(`{{ changedetection_traefik_host }}`)
   - key: traefik.http.routers.{{ changedetection_name }}.entrypoints
     value: "{{ common_traefik_entrypoint }}"
+  - key: traefik.http.services.{{ changedetection_name }}.loadbalancer.server.port
+    value: "5000"
 changedetection_container_labels_base: "{{ changedetection_traefik_enable | ternary((changedetection_container_labels_traefik | items2dict), {}) }}"
 
 changedetection_browser_container_labels_base: {}
