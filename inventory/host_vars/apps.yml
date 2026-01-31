@@ -61,20 +61,31 @@ changedetection_browser_image_tag: "0.0.3"  # skopeo list-tags docker://docker.i
 # healthchecks
 ###############################################################################
 
-healthchecks_image_tag: version-v3.9
+healthchecks_image_tag: version-v3.13  # skopeo list-tags docker://lscr.io/linuxserver/healthchecks | jq -r '.Tags[] | select(test("^version-v[0-9]"))'
 
-healthchecks_url: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_url) }}"
 healthchecks_email: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email) }}"
 healthchecks_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_password) }}"
+healthchecks_secret_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_secret_key) }}"
 healthchecks_env_vars:
   DEFAULT_FROM_EMAIL: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_from_email) }}"
   EMAIL_HOST: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email_host) }}"
   EMAIL_PORT: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email_port) }}"
   EMAIL_HOST_USER: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email_user) }}"
-  EMAIL_HOST_PASSWORD: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email_password) }}"
   EMAIL_USE_TLS: "True"
-  PUSHOVER_API_TOKEN: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_pushover_api_token) }}"
-  PUSHOVER_SUBSCRIPTION_URL: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_pushover_subscription_url) }}"
+  REGISTRATION_OPEN: "False"
+
+healthchecks_secrets:
+  healthchecks_discord_client_id: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_discord_client_id) }}"
+  healthchecks_discord_client_secret: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_discord_client_secret) }}"
+  healthchecks_email_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email_password) }}"
+  healthchecks_pushover_api_token: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_pushover_api_token) }}"
+  healthchecks_pushover_subscription_url: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_pushover_subscription_url) }}"
+healthchecks_container_secrets:
+  - healthchecks_discord_client_id,type=env,target=DISCORD_CLIENT_ID
+  - healthchecks_discord_client_secret,type=env,target=DISCORD_CLIENT_SECRET
+  - healthchecks_email_password,type=env,target=EMAIL_HOST_PASSWORD
+  - healthchecks_pushover_api_token,type=env,target=PUSHOVER_API_TOKEN
+  - healthchecks_pushover_subscription_url,type=env,target=PUSHOVER_SUBSCRIPTION_URL
 
 ###############################################################################
 # homarr
