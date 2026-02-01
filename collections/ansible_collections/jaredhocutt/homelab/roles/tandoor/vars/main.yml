@@ -13,7 +13,7 @@ tandoor_env_vars_base:
   POSTGRES_HOST: "{{ tandoor_name }}-postgres"
   POSTGRES_PORT: "5432"
 
-tandoor_postgres_env_vars_base_custom: {}
+tandoor_postgres_env_vars_base: {}
 
 ###############################################################################
 # Secrets
