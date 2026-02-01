@@ -6,8 +6,8 @@ common_traefik_domain: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.apps_comm
 # authentik
 ###############################################################################
 
-authentik_image_tag: "2025.10.3"  # skopeo list-tags docker://ghcr.io/goauthentik/server | jq -r '.Tags[] | select(test("^[0-9]"))'
-authentik_postgres_image_tag: "16.11"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16.[0-9]"))'
+authentik_image_tag: "2025.12.2"  # skopeo list-tags docker://ghcr.io/goauthentik/server | jq -r '.Tags[] | select(test("^[0-9]"))'
+authentik_postgres_image_tag: "16.11"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
 
 authentik_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.authentik_postgres_password) }}"
 authentik_secret_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.authentik_secret_key) }}"
@@ -17,10 +17,10 @@ authentik_secret_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.authentik_
 ###############################################################################
 
 archiveium_image_tag: "0.0.29"  # skopeo list-tags docker://docker.io/archiveium/archiveium | jq -r '.Tags[] | select(test("^[0-9]"))'
-archiveium_postgres_image_tag: "13.23"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^13.[0-9]"))'
+archiveium_postgres_image_tag: "13.23"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^13\\.[0-9]"))'
 archiveium_minio_image_tag: RELEASE.2023-12-23T07-19-11Z  # The project hard codes this tag, so let's keep it
 archiveium_redis_image_tag: "7.4.7"  # skopeo list-tags docker://docker.io/library/redis | jq -r '.Tags[] | select(test("^7.[0-9]"))'
-archiveium_meilisearch_image_tag: v1.30.0  # skopeo list-tags docker://docker.io/getmeili/meilisearch | jq -r '.Tags[] | select(test("^v[0-9]"))'
+archiveium_meilisearch_image_tag: v1.34.3  # skopeo list-tags docker://docker.io/getmeili/meilisearch | jq -r '.Tags[] | select(test("^v[0-9]"))'
 
 archiveium_admin_email: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.archiveium_admin_email) }}"
 archiveium_admin_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.archiveium_admin_password) }}"
@@ -44,9 +44,9 @@ backrest_env_vars:
 # bar_assistant
 ###############################################################################
 
-bar_assistant_image_tag: "5.10.0"  # skopeo list-tags docker://docker.io/barassistant/server | jq -r '.Tags[] | select(test("^5.[0-9]"))'
-bar_assistant_salt_rim_image_tag: "4.12.0"  # skopeo list-tags docker://docker.io/barassistant/salt-rim | jq -r '.Tags[] | select(test("^4.[0-9]"))'
-bar_assistant_redis_image_tag: "8.4.0"  # skopeo list-tags docker://docker.io/library/redis | jq -r '.Tags[] | select(test("^[0-9]"))'
+bar_assistant_image_tag: "5.12.0"  # skopeo list-tags docker://docker.io/barassistant/server | jq -r '.Tags[] | select(test("^5\\.[0-9]"))'
+bar_assistant_salt_rim_image_tag: "4.13.0"  # skopeo list-tags docker://docker.io/barassistant/salt-rim | jq -r '.Tags[] | select(test("^4\\.[0-9]"))'
+bar_assistant_redis_image_tag: "8.4.0"  # skopeo list-tags docker://docker.io/library/redis | jq -r '.Tags[] | select(test("^[0-9]\\.[0-9\\.]*$"))'
 bar_assistant_meilisearch_image_tag: v1.15.2  # skopeo list-tags docker://docker.io/getmeili/meilisearch | jq -r '.Tags[] | select(test("^v1.15"))'
 
 bar_assistant_meilisearch_master_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.bar_assistant_meilisearch_master_key) }}"
@@ -55,7 +55,7 @@ bar_assistant_meilisearch_master_key: "{{ lookup('bitwarden.secrets.lookup', bws
 # calibre
 ###############################################################################
 
-calibre_image_tag: "8.13.0"
+calibre_image_tag: "9.1.0"  # skopeo list-tags docker://lscr.io/linuxserver/calibre | jq -r '.Tags[] | select(test("^[0-9]"))'
 
 calibre_volume_media: "{{ global_volume_media }}"
 calibre_volume_media_options: "{{ global_volume_media_options }}"
@@ -64,14 +64,14 @@ calibre_volume_media_options: "{{ global_volume_media_options }}"
 # changedetection
 ###############################################################################
 
-changedetection_image_tag: "0.51.4"  # skopeo list-tags docker://ghcr.io/dgtlmoon/changedetection.io | jq -r '.Tags[] | select(test("^[0-9]"))'
+changedetection_image_tag: "0.52.9"  # skopeo list-tags docker://ghcr.io/dgtlmoon/changedetection.io | jq -r '.Tags[] | select(test("^[0-9]"))'
 changedetection_browser_image_tag: "0.0.3"  # skopeo list-tags docker://docker.io/dgtlmoon/sockpuppetbrowser | jq -r '.Tags[] | select(test("^[0-9]"))'
 
 ###############################################################################
 # healthchecks
 ###############################################################################
 
-healthchecks_image_tag: version-v3.13  # skopeo list-tags docker://lscr.io/linuxserver/healthchecks | jq -r '.Tags[] | select(test("^version-v[0-9]"))'
+healthchecks_image_tag: version-v4.0  # skopeo list-tags docker://lscr.io/linuxserver/healthchecks | jq -r '.Tags[] | select(test("^version-v[0-9]"))'
 
 healthchecks_email: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email) }}"
 healthchecks_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_password) }}"
@@ -101,7 +101,7 @@ healthchecks_container_secrets:
 # homarr
 ###############################################################################
 
-homarr_image_tag: v1.46.0  # skopeo list-tags docker://ghcr.io/homarr-labs/homarr | jq -r '.Tags[] | select(test("^v[0-9]"))'
+homarr_image_tag: v1.52.0  # skopeo list-tags docker://ghcr.io/homarr-labs/homarr | jq -r '.Tags[] | select(test("^v[0-9]"))'
 
 homarr_secret_encryption_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.homarr_secret_encryption_key) }}"
 
@@ -109,10 +109,10 @@ homarr_secret_encryption_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.ho
 # immich
 ###############################################################################
 
-immich_image_tag: v2.1.0
+immich_image_tag: v2.5.2  # skopeo list-tags docker://ghcr.io/immich-app/immich-server | jq -r '.Tags[] | select(test("^v[0-9]"))'
 immich_machine_learning_image_tag: "{{ immich_image_tag }}"
-immich_postgres_image_tag: 17-vectorchord0.4.3-pgvector0.8.1
-immich_redis_image_tag: 8.1.3-bookworm
+immich_postgres_image_tag: 14-vectorchord0.4.3-pgvectors0.2.0  # The project hard codes this tag, so let's keep it
+immich_redis_image_tag: 8.1.3-bookworm  # skopeo list-tags docker://docker.io/valkey/valkey | jq -r '.Tags[] | select(test("^8\\.[0-9\\.]+-bookworm"))'
 
 immich_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.immich_postgres_password) }}"
 
@@ -120,9 +120,9 @@ immich_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.immich
 # karakeep
 ###############################################################################
 
-karakeep_image_tag: "0.27.1"
-karakeep_chrome_image_tag: "124"
-karakeep_meilisearch_image_tag: v1.13.3
+karakeep_image_tag: "0.30.0"  # skopeo list-tags docker://ghcr.io/karakeep-app/karakeep | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
+karakeep_chrome_image_tag: "124"  # skopeo list-tags docker://gcr.io/zenika-hub/alpine-chrome | jq -r '.Tags[] | select(test("^[0-9]"))'
+karakeep_meilisearch_image_tag: v1.34.3  # skopeo list-tags docker://docker.io/getmeili/meilisearch | jq -r '.Tags[] | select(test("^v[0-9]"))'
 
 karakeep_nextauth_secret: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.karakeep_nextauth_secret) }}"
 karakeep_meilisearch_master_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.karakeep_meilisearch_master_key) }}"
@@ -131,8 +131,8 @@ karakeep_meilisearch_master_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid
 # n8n
 ###############################################################################
 
-n8n_image_tag: "2.3.1"  # skopeo list-tags docker://docker.n8n.io/n8nio/n8n | jq -r '.Tags[] | select(test("^[0-9]"))'
-n8n_postgres_image_tag: "16.11"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16.[0-9]"))'
+n8n_image_tag: "2.6.2"  # skopeo list-tags docker://docker.n8n.io/n8nio/n8n | jq -r '.Tags[] | select(test("^[0-9]\\."))'
+n8n_postgres_image_tag: "16.11"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
 
 n8n_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.n8n_postgres_password) }}"
 
@@ -143,8 +143,8 @@ n8n_env_vars:
 # nocodb
 ###############################################################################
 
-nocodb_image_tag: "0.301.1"  # skopeo list-tags docker://docker.io/nocodb/nocodb | jq -r '.Tags[] | select(test("^[0-9]"))'
-nocodb_postgres_image_tag: "16.11"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16.[0-9]"))'
+nocodb_image_tag: "0.301.2"  # skopeo list-tags docker://docker.io/nocodb/nocodb | jq -r '.Tags[] | select(test("^[0-9]"))'
+nocodb_postgres_image_tag: "16.11"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
 
 nocodb_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.nocodb_postgres_password) }}"
 
@@ -152,17 +152,17 @@ nocodb_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.nocodb
 # open_webui
 ###############################################################################
 
-open_webui_image_tag: v0.6.34
+open_webui_image_tag: v0.7.2  # skopeo list-tags docker://ghcr.io/open-webui/open-webui | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
 
 ###############################################################################
 # paperless
 ###############################################################################
 
-paperless_image_tag: "2.18.4"
-paperless_redis_image_tag: "7.4.2"
-paperless_gotenberg_image_tag: "8.18.0"
-paperless_tika_image_tag: "2.9.1.0-full"
-paperless_ai_image_tag: "3.0.4"
+paperless_image_tag: "2.20.6"  # skopeo list-tags docker://ghcr.io/paperless-ngx/paperless-ngx | jq -r '.Tags[] | select(test("^[0-9]"))'
+paperless_redis_image_tag: "8.4.0"  # skopeo list-tags docker://docker.io/library/redis | jq -r '.Tags[] | select(test("^8\\.[0-9\\.]+$"))'
+paperless_gotenberg_image_tag: "8.26.0"  # skopeo list-tags docker://docker.io/gotenberg/gotenberg | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
+paperless_tika_image_tag: "3.2.3.0-full"  # skopeo list-tags docker://docker.io/apache/tika | jq -r '.Tags[] | select(test("^[0-9\\.]+-full$"))'
+paperless_ai_image_tag: "3.0.9"  # skopeo list-tags docker://docker.io/clusterzx/paperless-ai | jq -r '.Tags[] | select(test("^[0-9]"))'
 
 paperless_env_vars:
   PAPERLESS_ALLOWED_HOSTS: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.paperless_allowed_hosts) }}"
@@ -185,7 +185,7 @@ paperless_task_workers: 4
 # stirling_pdf
 ###############################################################################
 
-stirling_pdf_image_tag: 1.5.0-fat
+stirling_pdf_image_tag: 2.4.2-fat  # skopeo list-tags docker://docker.stirlingpdf.com/stirlingtools/stirling-pdf | jq -r '.Tags[] | select(test("^[0-9\\.]+-fat$"))'
 
 stirling_pdf_env_vars:
   DOCKER_ENABLE_SECURITY: "false"
@@ -194,8 +194,8 @@ stirling_pdf_env_vars:
 # tandoor
 ###############################################################################
 
-tandoor_image_tag: "2.3.3"
-tandoor_postgres_image_tag: "16.10"
+tandoor_image_tag: "2.4.1"  # skopeo list-tags docker://docker.io/vabene1111/recipes | jq -r '.Tags[] | select(test("^[0-9]\\."))'
+tandoor_postgres_image_tag: "16.11"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
 
 tandoor_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.tandoor_postgres_password) }}"
 tandoor_secret_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.tandoor_secret_key) }}"
@@ -204,7 +204,7 @@ tandoor_secret_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.tandoor_secr
 # traefik
 ###############################################################################
 
-traefik_image_tag: v3.6.5  # skopeo list-tags docker://docker.io/library/traefik | jq -r '.Tags[] | select(test("^v[0-9]"))'
+traefik_image_tag: v3.6.7  # skopeo list-tags docker://docker.io/library/traefik | jq -r '.Tags[] | select(test("^v[0-9]"))'
 
 traefik_traefik_host: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.traefik_traefik_host) }}"
 
@@ -225,8 +225,8 @@ traefik_container_secrets:
 # warracker
 ###############################################################################
 
-warracker_image_tag: "1.0.2"
-warracker_postgres_image_tag: "15.14"
+warracker_image_tag: "1.0.2"  # skopeo list-tags docker://ghcr.io/sassanix/warracker/main | jq -r '.Tags[] | select(test("^[0-9]"))'
+warracker_postgres_image_tag: "15.15"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^15\\.[0-9]"))'
 
 warracker_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.warracker_postgres_password) }}"
 warracker_secret_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.warracker_secret_key) }}"
