@@ -128,11 +128,17 @@ immich_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.immich
 ###############################################################################
 
 karakeep_image_tag: "0.30.0"  # skopeo list-tags docker://ghcr.io/karakeep-app/karakeep | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
-karakeep_chrome_image_tag: "124"  # skopeo list-tags docker://gcr.io/zenika-hub/alpine-chrome | jq -r '.Tags[] | select(test("^[0-9]"))'
-karakeep_meilisearch_image_tag: v1.34.3  # skopeo list-tags docker://docker.io/getmeili/meilisearch | jq -r '.Tags[] | select(test("^v[0-9]"))'
+karakeep_chrome_image_tag: "124"  # The project hard codes this tag, so let's keep it
+karakeep_meilisearch_image_tag: v1.13.3  # The project hard codes this tag, so let's keep it
 
 karakeep_nextauth_secret: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.karakeep_nextauth_secret) }}"
 karakeep_meilisearch_master_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.karakeep_meilisearch_master_key) }}"
+
+
+karakeep_secrets:
+  karakeep_openai_api_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.karakeep_openai_api_key) }}"
+karakeep_container_secrets:
+  - karakeep_openai_api_key,type=env,target=OPENAI_API_KEY
 
 ###############################################################################
 # n8n
