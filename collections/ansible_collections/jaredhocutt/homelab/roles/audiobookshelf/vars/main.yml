@@ -36,10 +36,14 @@ audiobookshelf_container_secrets_combined: >-
 audiobookshelf_container_labels_traefik:
   - key: traefik.enable
     value: "true"
+  - key: traefik.docker.network
+    value: "{{ common_traefik_network }}"
   - key: traefik.http.routers.{{ audiobookshelf_name }}.rule
     value: Host(`{{ audiobookshelf_traefik_host }}`)
   - key: traefik.http.routers.{{ audiobookshelf_name }}.entrypoints
     value: "{{ common_traefik_entrypoint }}"
+  - key: traefik.http.services.{{ audiobookshelf_name }}.loadbalancer.server.port
+    value: "80"
 audiobookshelf_container_labels_base: "{{ audiobookshelf_traefik_enable | ternary((audiobookshelf_container_labels_traefik | items2dict), {}) }}"
 
 audiobookshelf_container_labels_combined: >-

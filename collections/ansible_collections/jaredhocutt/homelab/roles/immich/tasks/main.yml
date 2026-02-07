@@ -21,6 +21,8 @@
     name: "{{ immich_name }}"
     driver: bridge
     disable_dns: false
+    opt:
+      isolate: "true"
     quadlet_file_mode: "0600"
     state: quadlet
   become: true
@@ -113,7 +115,9 @@
   containers.podman.podman_container:
     name: "{{ immich_name }}"
     image: "{{ immich_image }}:{{ immich_image_tag }}"
-    network: "{{ immich_name }}.network"
+    network:
+      - "{{ immich_name }}.network"
+      - "{{ immich_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
     env: "{{ immich_container_env_combined }}"
     secrets: "{{ immich_container_secrets_combined }}"
     volumes:

@@ -19,6 +19,8 @@
     name: "{{ karakeep_name }}"
     driver: bridge
     disable_dns: false
+    opt:
+      isolate: "true"
     quadlet_file_mode: "0600"
     state: quadlet
   become: true
@@ -85,7 +87,9 @@
   containers.podman.podman_container:
     name: "{{ karakeep_name }}"
     image: "{{ karakeep_image }}:{{ karakeep_image_tag }}"
-    network: "{{ karakeep_name }}.network"
+    network:
+      - "{{ karakeep_name }}.network"
+      - "{{ karakeep_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
     env: "{{ karakeep_container_env_combined }}"
     secrets: "{{ karakeep_container_secrets_combined }}"
     volumes:

@@ -15,6 +15,8 @@
     name: "{{ sabnzbd_name }}"
     driver: bridge
     disable_dns: false
+    opt:
+      isolate: "true"
     quadlet_file_mode: "0600"
     state: quadlet
   become: true
@@ -44,7 +46,9 @@
   containers.podman.podman_container:
     name: "{{ sabnzbd_name }}"
     image: "{{ sabnzbd_image }}:{{ sabnzbd_image_tag }}"
-    network: "{{ sabnzbd_name }}.network"
+    network:
+      - "{{ sabnzbd_name }}.network"
+      - "{{ sabnzbd_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
     env: "{{ sabnzbd_container_env_combined }}"
     secrets: "{{ sabnzbd_container_secrets_combined }}"
     volumes:

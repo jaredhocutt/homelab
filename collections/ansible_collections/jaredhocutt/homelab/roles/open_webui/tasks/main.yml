@@ -15,6 +15,8 @@
     name: "{{ open_webui_name }}"
     driver: bridge
     disable_dns: false
+    opt:
+      isolate: "true"
     quadlet_file_mode: "0600"
     state: quadlet
   become: true
@@ -42,7 +44,9 @@
   containers.podman.podman_container:
     name: "{{ open_webui_name }}"
     image: "{{ open_webui_image }}:{{ open_webui_image_tag }}"
-    network: "{{ open_webui_name }}.network"
+    network:
+      - "{{ open_webui_name }}.network"
+      - "{{ open_webui_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
     env: "{{ open_webui_container_env_combined }}"
     secrets: "{{ open_webui_container_secrets_combined }}"
     volumes:

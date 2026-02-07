@@ -39,10 +39,14 @@ vault_container_secrets_combined: >-
 vault_container_labels_traefik:
   - key: traefik.enable
     value: "true"
+  - key: traefik.docker.network
+    value: "{{ common_traefik_network }}"
   - key: traefik.http.routers.{{ vault_name }}.rule
     value: Host(`{{ vault_traefik_host }}`)
   - key: traefik.http.routers.{{ vault_name }}.entrypoints
     value: "{{ common_traefik_entrypoint }}"
+  - key: traefik.http.services.{{ vault_name }}.loadbalancer.server.port
+    value: "8200"
 vault_container_labels_base: "{{ vault_traefik_enable | ternary((vault_container_labels_traefik | items2dict), {}) }}"
 
 vault_container_labels_combined: >-

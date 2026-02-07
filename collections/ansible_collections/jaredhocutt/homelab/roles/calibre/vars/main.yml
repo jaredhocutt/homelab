@@ -36,10 +36,14 @@ calibre_container_secrets_combined: >-
 calibre_container_labels_traefik:
   - key: traefik.enable
     value: "true"
+  - key: traefik.docker.network
+    value: "{{ common_traefik_network }}"
   - key: traefik.http.routers.{{ calibre_name }}.rule
     value: Host(`{{ calibre_traefik_host }}`)
   - key: traefik.http.routers.{{ calibre_name }}.entrypoints
     value: "{{ common_traefik_entrypoint }}"
+  - key: traefik.http.services.{{ calibre_name }}.loadbalancer.server.port
+    value: "8080"
 calibre_container_labels_base: "{{ calibre_traefik_enable | ternary((calibre_container_labels_traefik | items2dict), {}) }}"
 
 calibre_container_labels_combined: >-

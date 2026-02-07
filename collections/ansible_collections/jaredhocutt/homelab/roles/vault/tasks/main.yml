@@ -22,6 +22,8 @@
     name: "{{ vault_name }}"
     driver: bridge
     disable_dns: false
+    opt:
+      isolate: "true"
     quadlet_file_mode: "0600"
     state: quadlet
   become: true
@@ -124,7 +126,9 @@
   containers.podman.podman_container:
     name: "{{ vault_name }}"
     image: "{{ vault_image }}:{{ vault_image_tag }}"
-    network: "{{ vault_name }}.network"
+    network:
+      - "{{ vault_name }}.network"
+      - "{{ vault_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
     env: "{{ vault_container_env_combined }}"
     secrets: "{{ vault_container_secrets_combined }}"
     volumes:

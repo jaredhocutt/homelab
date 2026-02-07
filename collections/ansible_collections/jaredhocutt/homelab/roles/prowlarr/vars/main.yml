@@ -36,10 +36,14 @@ prowlarr_container_secrets_combined: >-
 prowlarr_container_labels_traefik:
   - key: traefik.enable
     value: "true"
+  - key: traefik.docker.network
+    value: "{{ common_traefik_network }}"
   - key: traefik.http.routers.{{ prowlarr_name }}.rule
     value: Host(`{{ prowlarr_traefik_host }}`)
   - key: traefik.http.routers.{{ prowlarr_name }}.entrypoints
     value: "{{ common_traefik_entrypoint }}"
+  - key: traefik.http.services.{{ prowlarr_name }}.loadbalancer.server.port
+    value: "9696"
 prowlarr_container_labels_base: "{{ prowlarr_traefik_enable | ternary((prowlarr_container_labels_traefik | items2dict), {}) }}"
 
 prowlarr_container_labels_combined: >-

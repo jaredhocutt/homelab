@@ -15,6 +15,8 @@
     name: "{{ tautulli_name }}"
     driver: bridge
     disable_dns: false
+    opt:
+      isolate: "true"
     quadlet_file_mode: "0600"
     state: quadlet
   become: true
@@ -42,7 +44,9 @@
   containers.podman.podman_container:
     name: "{{ tautulli_name }}"
     image: "{{ tautulli_image }}:{{ tautulli_image_tag }}"
-    network: "{{ tautulli_name }}.network"
+    network:
+      - "{{ tautulli_name }}.network"
+      - "{{ tautulli_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
     env: "{{ tautulli_container_env_combined }}"
     secrets: "{{ tautulli_container_secrets_combined }}"
     volumes:

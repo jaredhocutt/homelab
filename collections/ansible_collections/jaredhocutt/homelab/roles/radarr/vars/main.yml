@@ -36,10 +36,14 @@ radarr_container_secrets_combined: >-
 radarr_container_labels_traefik:
   - key: traefik.enable
     value: "true"
+  - key: traefik.docker.network
+    value: "{{ common_traefik_network }}"
   - key: traefik.http.routers.{{ radarr_name }}.rule
     value: Host(`{{ radarr_traefik_host }}`)
   - key: traefik.http.routers.{{ radarr_name }}.entrypoints
     value: "{{ common_traefik_entrypoint }}"
+  - key: traefik.http.services.{{ radarr_name }}.loadbalancer.server.port
+    value: "7878"
 radarr_container_labels_base: "{{ radarr_traefik_enable | ternary((radarr_container_labels_traefik | items2dict), {}) }}"
 
 radarr_container_labels_combined: >-

@@ -64,10 +64,14 @@ tandoor_postgres_container_secrets_combined: >-
 tandoor_container_labels_traefik:
   - key: traefik.enable
     value: "true"
+  - key: traefik.docker.network
+    value: "{{ common_traefik_network }}"
   - key: traefik.http.routers.{{ tandoor_name }}.rule
     value: Host(`{{ tandoor_traefik_host }}`)
   - key: traefik.http.routers.{{ tandoor_name }}.entrypoints
     value: "{{ common_traefik_entrypoint }}"
+  - key: traefik.http.services.{{ tandoor_name }}.loadbalancer.server.port
+    value: "80"
 tandoor_container_labels_base: "{{ tandoor_traefik_enable | ternary((tandoor_container_labels_traefik | items2dict), {}) }}"
 
 tandoor_postgres_container_labels_base: {}

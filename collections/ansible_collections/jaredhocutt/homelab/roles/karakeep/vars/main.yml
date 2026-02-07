@@ -69,10 +69,14 @@ karakeep_meilisearch_container_secrets_combined: >-
 karakeep_container_labels_traefik:
   - key: traefik.enable
     value: "true"
+  - key: traefik.docker.network
+    value: "{{ common_traefik_network }}"
   - key: traefik.http.routers.{{ karakeep_name }}.rule
     value: Host(`{{ karakeep_traefik_host }}`)
   - key: traefik.http.routers.{{ karakeep_name }}.entrypoints
     value: "{{ common_traefik_entrypoint }}"
+  - key: traefik.http.services.{{ karakeep_name }}.loadbalancer.server.port
+    value: "3000"
 karakeep_container_labels_base: "{{ karakeep_traefik_enable | ternary((karakeep_container_labels_traefik | items2dict), {}) }}"
 
 karakeep_chrome_container_labels_base: {}

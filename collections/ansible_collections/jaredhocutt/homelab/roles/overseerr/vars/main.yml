@@ -36,10 +36,14 @@ overseerr_container_secrets_combined: >-
 overseerr_container_labels_traefik:
   - key: traefik.enable
     value: "true"
+  - key: traefik.docker.network
+    value: "{{ common_traefik_network }}"
   - key: traefik.http.routers.{{ overseerr_name }}.rule
     value: Host(`{{ overseerr_traefik_host }}`)
   - key: traefik.http.routers.{{ overseerr_name }}.entrypoints
     value: "{{ common_traefik_entrypoint }}"
+  - key: traefik.http.services.{{ overseerr_name }}.loadbalancer.server.port
+    value: "5055"
 overseerr_container_labels_base: "{{ overseerr_traefik_enable | ternary((overseerr_container_labels_traefik | items2dict), {}) }}"
 
 overseerr_container_labels_combined: >-

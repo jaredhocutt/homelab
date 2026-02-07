@@ -25,6 +25,8 @@
     name: "{{ paperless_name }}"
     driver: bridge
     disable_dns: false
+    opt:
+      isolate: "true"
     quadlet_file_mode: "0600"
     state: quadlet
   become: true
@@ -135,7 +137,9 @@
   containers.podman.podman_container:
     name: "{{ paperless_name }}"
     image: "{{ paperless_image }}:{{ paperless_image_tag }}"
-    network: "{{ paperless_name }}.network"
+    network:
+      - "{{ paperless_name }}.network"
+      - "{{ paperless_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
     env: "{{ paperless_container_env_combined }}"
     secrets: "{{ paperless_container_secrets_combined }}"
     volumes:
@@ -160,7 +164,9 @@
   containers.podman.podman_container:
     name: "{{ paperless_name }}-ai"
     image: "{{ paperless_ai_image }}:{{ paperless_ai_image_tag }}"
-    network: "{{ paperless_name }}.network"
+    network:
+      - "{{ paperless_name }}.network"
+      - "{{ paperless_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
     env: "{{ paperless_ai_container_env_combined }}"
     secrets: "{{ paperless_ai_container_secrets_combined }}"
     volumes:

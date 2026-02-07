@@ -36,10 +36,14 @@ open_webui_container_secrets_combined: >-
 open_webui_container_labels_traefik:
   - key: traefik.enable
     value: "true"
+  - key: traefik.docker.network
+    value: "{{ common_traefik_network }}"
   - key: traefik.http.routers.{{ open_webui_name }}.rule
     value: Host(`{{ open_webui_traefik_host }}`)
   - key: traefik.http.routers.{{ open_webui_name }}.entrypoints
     value: "{{ common_traefik_entrypoint }}"
+  - key: traefik.http.services.{{ open_webui_name }}.loadbalancer.server.port
+    value: "8080"
 open_webui_container_labels_base: "{{ open_webui_traefik_enable | ternary((open_webui_container_labels_traefik | items2dict), {}) }}"
 
 open_webui_container_labels_combined: >-

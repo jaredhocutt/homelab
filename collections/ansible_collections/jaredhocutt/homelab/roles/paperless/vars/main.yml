@@ -113,10 +113,14 @@ paperless_ai_container_secrets_combined: >-
 paperless_container_labels_traefik:
   - key: traefik.enable
     value: "true"
+  - key: traefik.docker.network
+    value: "{{ common_traefik_network }}"
   - key: traefik.http.routers.{{ paperless_name }}.rule
     value: Host(`{{ paperless_traefik_host }}`)
   - key: traefik.http.routers.{{ paperless_name }}.entrypoints
     value: "{{ common_traefik_entrypoint }}"
+  - key: traefik.http.services.{{ paperless_name }}.loadbalancer.server.port
+    value: "8000"
 paperless_container_labels_base: "{{ paperless_traefik_enable | ternary((paperless_container_labels_traefik | items2dict), {}) }}"
 
 paperless_postgres_container_labels_base: {}
@@ -131,10 +135,14 @@ paperless_tika_container_labels_base: {}
 paperless_ai_container_labels_traefik:
   - key: traefik.enable
     value: "true"
+  - key: traefik.docker.network
+    value: "{{ common_traefik_network }}"
   - key: traefik.http.routers.{{ paperless_name }}-ai.rule
     value: Host(`{{ paperless_ai_traefik_host }}`)
   - key: traefik.http.routers.{{ paperless_name }}-ai.entrypoints
     value: "{{ common_traefik_entrypoint }}"
+  - key: traefik.http.services.{{ paperless_name }}-ai.loadbalancer.server.port
+    value: "3000"
 paperless_ai_container_labels_base: "{{ paperless_traefik_enable | ternary((paperless_ai_container_labels_traefik | items2dict), {}) }}"
 
 paperless_container_labels_combined: >-

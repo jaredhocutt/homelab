@@ -17,6 +17,8 @@
     name: "{{ tandoor_name }}"
     driver: bridge
     disable_dns: false
+    opt:
+      isolate: "true"
     quadlet_file_mode: "0600"
     state: quadlet
   become: true
@@ -68,7 +70,9 @@
   containers.podman.podman_container:
     name: "{{ tandoor_name }}"
     image: "{{ tandoor_image }}:{{ tandoor_image_tag }}"
-    network: "{{ tandoor_name }}.network"
+    network:
+      - "{{ tandoor_name }}.network"
+      - "{{ tandoor_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
     env: "{{ tandoor_container_env_combined }}"
     secrets: "{{ tandoor_container_secrets_combined }}"
     volumes:
