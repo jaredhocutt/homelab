@@ -1,0 +1,56 @@
+---
+# tasks file for jaredhocutt.homelab.bentopdf
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ bentopdf_image }}"
+      image_tag: "{{ bentopdf_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ bentopdf_name }}"
+    driver: bridge
+    disable_dns: false
+    opt:
+      isolate: "true"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  no_log: true
+  loop: "{{ bentopdf_secrets_base | combine(bentopdf_secrets, recursive=True) | dict2items }}"
+
+- name: Create bentopdf container
+  containers.podman.podman_container:
+    name: "{{ bentopdf_name }}"
+    image: "{{ bentopdf_image }}:{{ bentopdf_image_tag }}"
+    network:
+      - "{{ bentopdf_name }}.network"
+      - "{{ bentopdf_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
+    env: >-
+      {{ common_env_vars_base
+      | combine(bentopdf_env_vars_base, recursive=True)
+      | combine(bentopdf_env_vars, recursive=True) }}
+    secrets: >-
+      {{ bentopdf_container_secrets_base
+      + bentopdf_container_secrets }}
+    publish: "{{ bentopdf_traefik_enable | ternary(omit, bentopdf_ports) }}"
+    labels: "{{ bentopdf_container_labels_base | combine(bentopdf_container_labels, recursive=True) }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ bentopdf_quadlet_options_base + bentopdf_quadlet_options }}"
+    state: quadlet
+  notify: Restart {{ bentopdf_name }}
+  become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

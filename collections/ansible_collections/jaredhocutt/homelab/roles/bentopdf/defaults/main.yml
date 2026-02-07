@@ -1,0 +1,21 @@
+---
+# defaults file for jaredhocutt.homelab.bentopdf
+
+bentopdf_name: bentopdf
+
+bentopdf_image: ghcr.io/alam00000/bentopdf
+bentopdf_image_tag: latest
+
+bentopdf_traefik_enable: true
+bentopdf_traefik_host: "{{ bentopdf_name }}.{{ common_traefik_domain }}"
+bentopdf_ports:
+  - 3000:8080
+
+bentopdf_env_vars: {}
+
+bentopdf_secrets: {}
+bentopdf_container_secrets: []
+
+bentopdf_container_labels: {}
+
+bentopdf_quadlet_options: []

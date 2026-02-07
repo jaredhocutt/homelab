@@ -1,0 +1,40 @@
+---
+# vars file for jaredhocutt.homelab.bentopdf
+
+###############################################################################
+# Envrionment Variables
+###############################################################################
+
+bentopdf_env_vars_base: {}
+
+###############################################################################
+# Secrets
+###############################################################################
+
+bentopdf_secrets_base: {}
+
+bentopdf_container_secrets_base: []
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+# This is done as a list and converted to a dict in order to use variables in the key name
+bentopdf_container_labels_traefik:
+  - key: traefik.enable
+    value: "true"
+  - key: traefik.docker.network
+    value: "{{ common_traefik_network }}"
+  - key: traefik.http.routers.{{ bentopdf_name }}.rule
+    value: Host(`{{ bentopdf_traefik_host }}`)
+  - key: traefik.http.routers.{{ bentopdf_name }}.entrypoints
+    value: "{{ common_traefik_entrypoint }}"
+  - key: traefik.http.services.{{ bentopdf_name }}.loadbalancer.server.port
+    value: "8080"
+bentopdf_container_labels_base: "{{ bentopdf_traefik_enable | ternary((bentopdf_container_labels_traefik | items2dict), {}) }}"
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+bentopdf_quadlet_options_base: "{{ common_quadlet_options_base }}"
