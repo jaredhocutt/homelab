@@ -38,7 +38,7 @@
     data: "{{ item.value }}"
     state: present
   become: true
-  loop: "{{ calibre_secrets_base | combine(calibre_secrets, recursive=True) | dict2items }}"
+  loop: "{{ calibre_secrets_combined | dict2items }}"
 
 - name: Create calibre container
   containers.podman.podman_container:

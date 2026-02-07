@@ -13,6 +13,10 @@ stirling_pdf_env_vars_base: {}
 
 stirling_pdf_secrets_base: {}
 
+stirling_pdf_secrets_combined: >-
+  {{ stirling_pdf_secrets_base
+  | combine(stirling_pdf_secrets, recursive=True) }}
+
 stirling_pdf_container_secrets_base: []
 
 ###############################################################################

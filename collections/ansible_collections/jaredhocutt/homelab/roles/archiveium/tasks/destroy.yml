@@ -33,7 +33,7 @@
     state: absent
   become: true
   no_log: true
-  loop: "{{ archiveium_secrets_base | combine(archiveium_secrets, recursive=True) | dict2items }}"
+  loop: "{{ archiveium_secrets_combined | dict2items }}"
 
 - name: Destroy volumes
   containers.podman.podman_volume:

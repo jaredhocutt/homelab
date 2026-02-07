@@ -23,7 +23,7 @@
     state: absent
   become: true
   no_log: true
-  loop: "{{ homarr_secrets_base | combine(homarr_secrets, recursive=True) | dict2items }}"
+  loop: "{{ homarr_secrets_combined | dict2items }}"
 
 - name: Destroy volumes
   containers.podman.podman_volume:

@@ -48,7 +48,7 @@
     data: "{{ item.value }}"
     state: present
   become: true
-  loop: "{{ immich_secrets_base | combine(immich_secrets, recursive=True) | dict2items }}"
+  loop: "{{ immich_secrets_combined | dict2items }}"
 
 - name: Create postgres container
   containers.podman.podman_container:

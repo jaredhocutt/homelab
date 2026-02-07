@@ -23,7 +23,7 @@
     state: absent
   become: true
   no_log: true
-  loop: "{{ radarr_secrets_base | combine(radarr_secrets, recursive=True) | dict2items }}"
+  loop: "{{ radarr_secrets_combined | dict2items }}"
 
 - name: Destroy volumes
   containers.podman.podman_volume:

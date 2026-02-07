@@ -24,6 +24,10 @@ nocodb_secrets_base:
   nocodb_postgres_user: "{{ nocodb_postgres_user }}"
   nocodb_postgres_password: "{{ nocodb_postgres_password }}"
 
+nocodb_secrets_combined: >-
+  {{ nocodb_secrets_base
+  | combine(nocodb_secrets, recursive=True) }}
+
 nocodb_container_secrets_base:
   - nocodb_db,type=env,target=NC_DB
 

@@ -36,7 +36,7 @@
     data: "{{ item.value }}"
     state: present
   become: true
-  loop: "{{ prowlarr_secrets_base | combine(prowlarr_secrets, recursive=True) | dict2items }}"
+  loop: "{{ prowlarr_secrets_combined | dict2items }}"
 
 - name: Create prowlarr container
   containers.podman.podman_container:

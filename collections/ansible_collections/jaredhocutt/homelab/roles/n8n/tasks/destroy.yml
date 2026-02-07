@@ -29,7 +29,7 @@
     state: absent
   become: true
   no_log: true
-  loop: "{{ n8n_secrets_base | combine(n8n_secrets, recursive=True) | dict2items }}"
+  loop: "{{ n8n_secrets_combined | dict2items }}"
 
 - name: Destroy volumes
   containers.podman.podman_volume:

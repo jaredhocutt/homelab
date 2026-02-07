@@ -13,6 +13,10 @@ kometa_env_vars_base: {}
 
 kometa_secrets_base: {}
 
+kometa_secrets_combined: >-
+  {{ kometa_secrets_base
+  | combine(kometa_secrets, recursive=True) }}
+
 kometa_container_secrets_base: []
 
 ###############################################################################

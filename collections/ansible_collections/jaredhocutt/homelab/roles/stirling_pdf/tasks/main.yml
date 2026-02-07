@@ -44,7 +44,7 @@
     data: "{{ item.value }}"
     state: present
   become: true
-  loop: "{{ stirling_pdf_secrets_base | combine(stirling_pdf_secrets, recursive=True) | dict2items }}"
+  loop: "{{ stirling_pdf_secrets_combined | dict2items }}"
 
 - name: Create stirling_pdf container
   containers.podman.podman_container:

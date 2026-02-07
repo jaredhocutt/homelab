@@ -39,7 +39,7 @@
     state: present
   become: true
   no_log: true
-  loop: "{{ healthchecks_secrets_base | combine(healthchecks_secrets, recursive=True) | dict2items }}"
+  loop: "{{ healthchecks_secrets_combined | dict2items }}"
 
 - name: Create healthchecks container
   containers.podman.podman_container:

@@ -40,7 +40,7 @@
     data: "{{ item.value }}"
     state: present
   become: true
-  loop: "{{ radarr_secrets_base | combine(radarr_secrets, recursive=True) | dict2items }}"
+  loop: "{{ radarr_secrets_combined | dict2items }}"
 
 - name: Create radarr container
   containers.podman.podman_container:

@@ -13,6 +13,10 @@ portainer_env_vars_base: {}
 
 portainer_secrets_base: {}
 
+portainer_secrets_combined: >-
+  {{ portainer_secrets_base
+  | combine(portainer_secrets, recursive=True) }}
+
 portainer_container_secrets_base: []
 
 ###############################################################################

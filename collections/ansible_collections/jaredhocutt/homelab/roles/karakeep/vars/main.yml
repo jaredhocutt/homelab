@@ -24,6 +24,10 @@ karakeep_secrets_base:
   karakeep_nextauth_secret: "{{ karakeep_nextauth_secret }}"
   karakeep_meilisearch_master_key: "{{ karakeep_meilisearch_master_key }}"
 
+karakeep_secrets_combined: >-
+  {{ karakeep_secrets_base
+  | combine(karakeep_secrets, recursive=True) }}
+
 karakeep_container_secrets_base:
   - karakeep_meilisearch_master_key,type=env,target=MEILI_MASTER_KEY
   - karakeep_nextauth_secret,type=env,target=NEXTAUTH_SECRET

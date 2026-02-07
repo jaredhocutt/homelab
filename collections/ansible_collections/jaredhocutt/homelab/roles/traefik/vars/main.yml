@@ -32,6 +32,10 @@ traefik_env_vars_base: {}
 
 traefik_secrets_base: {}
 
+traefik_secrets_combined: >-
+  {{ traefik_secrets_base
+  | combine(traefik_secrets, recursive=True) }}
+
 traefik_container_secrets_base: []
 
 ###############################################################################

@@ -13,6 +13,10 @@ sonarr_env_vars_base: {}
 
 sonarr_secrets_base: {}
 
+sonarr_secrets_combined: >-
+  {{ sonarr_secrets_base
+  | combine(sonarr_secrets, recursive=True) }}
+
 sonarr_container_secrets_base: []
 
 ###############################################################################

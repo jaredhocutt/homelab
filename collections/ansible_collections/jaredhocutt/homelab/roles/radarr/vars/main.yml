@@ -13,6 +13,10 @@ radarr_env_vars_base: {}
 
 radarr_secrets_base: {}
 
+radarr_secrets_combined: >-
+  {{ radarr_secrets_base
+  | combine(radarr_secrets, recursive=True) }}
+
 radarr_container_secrets_base: []
 
 ###############################################################################

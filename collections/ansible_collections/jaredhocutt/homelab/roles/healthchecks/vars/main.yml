@@ -19,6 +19,10 @@ healthchecks_secrets_base:
   healthchecks_password: "{{ healthchecks_password }}"
   healthchecks_secret_key: "{{ healthchecks_secret_key }}"
 
+healthchecks_secrets_combined: >-
+  {{ healthchecks_secrets_base
+  | combine(healthchecks_secrets, recursive=True) }}
+
 healthchecks_container_secrets_base:
   - healthchecks_password,type=env,target=SUPERUSER_PASSWORD
   - healthchecks_secret_key,type=env,target=SECRET_KEY

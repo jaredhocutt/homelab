@@ -42,7 +42,7 @@
     data: "{{ item.value }}"
     state: present
   become: true
-  loop: "{{ karakeep_secrets_base | combine(karakeep_secrets, recursive=True) | dict2items }}"
+  loop: "{{ karakeep_secrets_combined | dict2items }}"
 
 - name: Create chrome container
   containers.podman.podman_container:

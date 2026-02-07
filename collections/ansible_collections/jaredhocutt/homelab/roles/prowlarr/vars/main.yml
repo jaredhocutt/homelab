@@ -13,6 +13,10 @@ prowlarr_env_vars_base: {}
 
 prowlarr_secrets_base: {}
 
+prowlarr_secrets_combined: >-
+  {{ prowlarr_secrets_base
+  | combine(prowlarr_secrets, recursive=True) }}
+
 prowlarr_container_secrets_base: []
 
 ###############################################################################

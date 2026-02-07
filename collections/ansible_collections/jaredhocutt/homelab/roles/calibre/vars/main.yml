@@ -13,6 +13,10 @@ calibre_env_vars_base: {}
 
 calibre_secrets_base: {}
 
+calibre_secrets_combined: >-
+  {{ calibre_secrets_base
+  | combine(calibre_secrets, recursive=True) }}
+
 calibre_container_secrets_base: []
 
 ###############################################################################

@@ -13,6 +13,10 @@ open_webui_env_vars_base: {}
 
 open_webui_secrets_base: {}
 
+open_webui_secrets_combined: >-
+  {{ open_webui_secrets_base
+  | combine(open_webui_secrets, recursive=True) }}
+
 open_webui_container_secrets_base: []
 
 ###############################################################################

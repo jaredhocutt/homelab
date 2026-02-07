@@ -28,6 +28,10 @@ immich_secrets_base:
   immich_postgres_user: "{{ immich_postgres_user }}"
   immich_postgres_password: "{{ immich_postgres_password }}"
 
+immich_secrets_combined: >-
+  {{ immich_secrets_base
+  | combine(immich_secrets, recursive=True) }}
+
 immich_container_secrets_base:
   - immich_postgres_db_name,type=env,target=DB_DATABASE_NAME
   - immich_postgres_user,type=env,target=DB_USERNAME

@@ -28,7 +28,7 @@
     state: present
   become: true
   no_log: true
-  loop: "{{ bentopdf_secrets_base | combine(bentopdf_secrets, recursive=True) | dict2items }}"
+  loop: "{{ bentopdf_secrets_combined | dict2items }}"
 
 - name: Create bentopdf container
   containers.podman.podman_container:

@@ -14,6 +14,10 @@ homarr_env_vars_base: {}
 homarr_secrets_base:
   homarr_secret_encryption_key: "{{ homarr_secret_encryption_key }}"
 
+homarr_secrets_combined: >-
+  {{ homarr_secrets_base
+  | combine(homarr_secrets, recursive=True) }}
+
 homarr_container_secrets_base:
   - homarr_secret_encryption_key,type=env,target=SECRET_ENCRYPTION_KEY
 

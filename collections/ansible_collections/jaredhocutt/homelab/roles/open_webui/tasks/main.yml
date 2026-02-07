@@ -36,7 +36,7 @@
     data: "{{ item.value }}"
     state: present
   become: true
-  loop: "{{ open_webui_secrets_base | combine(open_webui_secrets, recursive=True) | dict2items }}"
+  loop: "{{ open_webui_secrets_combined | dict2items }}"
 
 - name: Create open_webui container
   containers.podman.podman_container:

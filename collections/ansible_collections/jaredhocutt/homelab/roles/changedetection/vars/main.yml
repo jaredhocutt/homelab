@@ -20,6 +20,10 @@ changedetection_browser_env_vars_base:
 
 changedetection_secrets_base: {}
 
+changedetection_secrets_combined: >-
+  {{ changedetection_secrets_base
+  | combine(changedetection_secrets, recursive=True) }}
+
 changedetection_container_secrets_base: []
 
 changedetection_browser_container_secrets_base: []

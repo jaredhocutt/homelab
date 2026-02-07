@@ -39,6 +39,10 @@ paperless_secrets_base:
   paperless_postgres_user: "{{ paperless_postgres_user }}"
   paperless_postgres_password: "{{ paperless_postgres_password }}"
 
+paperless_secrets_combined: >-
+  {{ paperless_secrets_base
+  | combine(paperless_secrets, recursive=True) }}
+
 paperless_container_secrets_base:
   - paperless_postgres_db_name,type=env,target=PAPERLESS_DBNAME
   - paperless_postgres_user,type=env,target=PAPERLESS_DBUSER

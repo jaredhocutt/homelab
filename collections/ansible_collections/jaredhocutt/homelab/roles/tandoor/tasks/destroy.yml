@@ -25,7 +25,7 @@
     state: absent
   become: true
   no_log: true
-  loop: "{{ tandoor_secrets_base | combine(tandoor_secrets, recursive=True) | dict2items }}"
+  loop: "{{ tandoor_secrets_combined | dict2items }}"
 
 - name: Destroy volumes
   containers.podman.podman_volume:

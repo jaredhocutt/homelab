@@ -34,6 +34,10 @@ n8n_secrets_base:
   n8n_postgres_user: "{{ n8n_postgres_user }}"
   n8n_postgres_password: "{{ n8n_postgres_password }}"
 
+n8n_secrets_combined: >-
+  {{ n8n_secrets_base
+  | combine(n8n_secrets, recursive=True) }}
+
 n8n_container_secrets_base:
   - n8n_postgres_db_name,type=env,target=DB_POSTGRESDB_DATABASE
   - n8n_postgres_user,type=env,target=DB_POSTGRESDB_USER

@@ -40,7 +40,7 @@
     data: "{{ item.value }}"
     state: present
   become: true
-  loop: "{{ sonarr_secrets_base | combine(sonarr_secrets, recursive=True) | dict2items }}"
+  loop: "{{ sonarr_secrets_combined | dict2items }}"
 
 - name: Create sonarr container
   containers.podman.podman_container:

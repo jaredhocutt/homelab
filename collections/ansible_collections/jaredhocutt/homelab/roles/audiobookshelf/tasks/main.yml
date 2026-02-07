@@ -15,6 +15,8 @@
     name: "{{ audiobookshelf_name }}"
     driver: bridge
     disable_dns: false
+    opt:
+      isolate: "true"
     quadlet_file_mode: "0600"
     state: quadlet
   become: true
@@ -40,13 +42,15 @@
     data: "{{ item.value }}"
     state: present
   become: true
-  loop: "{{ audiobookshelf_secrets_base | combine(audiobookshelf_secrets, recursive=True) | dict2items }}"
+  loop: "{{ audiobookshelf_secrets_combined | dict2items }}"
 
 - name: Create audiobookshelf container
   containers.podman.podman_container:
     name: "{{ audiobookshelf_name }}"
     image: "{{ audiobookshelf_image }}:{{ audiobookshelf_image_tag }}"
-    network: "{{ audiobookshelf_name }}.network"
+    network:
+      - "{{ audiobookshelf_name }}.network"
+      - "{{ audiobookshelf_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
     env: >-
       {{ common_env_vars_base
       | combine(audiobookshelf_env_vars_base, recursive=True)

@@ -23,6 +23,10 @@ authentik_secrets_base:
   authentik_postgres_password: "{{ authentik_postgres_password }}"
   authentik_secret_key: "{{ authentik_secret_key }}"
 
+authentik_secrets_combined: >-
+  {{ authentik_secrets_base
+  | combine(authentik_secrets, recursive=True) }}
+
 authentik_container_secrets_base:
   - authentik_postgres_db_name,type=env,target=AUTHENTIK_POSTGRESQL__NAME
   - authentik_postgres_user,type=env,target=AUTHENTIK_POSTGRESQL__USER

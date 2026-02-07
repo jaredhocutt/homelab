@@ -25,6 +25,10 @@ tandoor_secrets_base:
   tandoor_postgres_user: "{{ tandoor_postgres_user }}"
   tandoor_postgres_password: "{{ tandoor_postgres_password }}"
 
+tandoor_secrets_combined: >-
+  {{ tandoor_secrets_base
+  | combine(tandoor_secrets, recursive=True) }}
+
 tandoor_container_secrets_base:
   - tandoor_secret_key,type=env,target=SECRET_KEY
   - tandoor_postgres_db_name,type=env,target=POSTGRES_DB

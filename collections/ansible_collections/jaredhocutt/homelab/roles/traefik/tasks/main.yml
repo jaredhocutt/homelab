@@ -55,7 +55,7 @@
     data: "{{ item.value }}"
     state: present
   become: true
-  loop: "{{ traefik_secrets_base | combine(traefik_secrets, recursive=True) | dict2items }}"
+  loop: "{{ traefik_secrets_combined | dict2items }}"
 
 - name: Create traefik container
   containers.podman.podman_container:

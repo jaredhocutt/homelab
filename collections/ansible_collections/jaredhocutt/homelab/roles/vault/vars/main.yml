@@ -16,6 +16,10 @@ vault_env_vars_base: {}
 
 vault_secrets_base: {}
 
+vault_secrets_combined: >-
+  {{ vault_secrets_base
+  | combine(vault_secrets, recursive=True) }}
+
 vault_container_secrets_base: []
 
 ###############################################################################

@@ -13,6 +13,10 @@ bentopdf_env_vars_base: {}
 
 bentopdf_secrets_base: {}
 
+bentopdf_secrets_combined: >-
+  {{ bentopdf_secrets_base
+  | combine(bentopdf_secrets, recursive=True) }}
+
 bentopdf_container_secrets_base: []
 
 ###############################################################################

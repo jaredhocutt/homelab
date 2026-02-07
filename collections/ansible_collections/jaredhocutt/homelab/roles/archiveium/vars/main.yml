@@ -44,6 +44,10 @@ archiveium_secrets_base:
   archiveium_minio_user: "{{ archiveium_minio_user }}"
   archiveium_minio_password: "{{ archiveium_minio_password }}"
 
+archiveium_secrets_combined: >-
+  {{ archiveium_secrets_base
+  | combine(archiveium_secrets, recursive=True) }}
+
 archiveium_container_secrets_base:
   - archiveium_admin_email,type=env,target=APP_ADMIN_EMAIL
   - archiveium_admin_password,type=env,target=APP_ADMIN_PASSWORD

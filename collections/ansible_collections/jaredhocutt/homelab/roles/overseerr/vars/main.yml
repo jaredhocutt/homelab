@@ -13,6 +13,10 @@ overseerr_env_vars_base: {}
 
 overseerr_secrets_base: {}
 
+overseerr_secrets_combined: >-
+  {{ overseerr_secrets_base
+  | combine(overseerr_secrets, recursive=True) }}
+
 overseerr_container_secrets_base: []
 
 ###############################################################################

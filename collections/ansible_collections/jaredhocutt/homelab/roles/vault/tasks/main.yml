@@ -118,7 +118,7 @@
     data: "{{ item.value }}"
     state: present
   become: true
-  loop: "{{ vault_secrets_base | combine(vault_secrets, recursive=True) | dict2items }}"
+  loop: "{{ vault_secrets_combined | dict2items }}"
 
 - name: Create vault container
   containers.podman.podman_container:

@@ -27,6 +27,10 @@ warracker_secrets_base:
   warracker_postgres_password: "{{ warracker_postgres_password }}"
   warracker_secret_key: "{{ warracker_secret_key }}"
 
+warracker_secrets_combined: >-
+  {{ warracker_secrets_base
+  | combine(warracker_secrets, recursive=True) }}
+
 warracker_container_secrets_base:
   - warracker_postgres_db_name,type=env,target=DB_NAME
   - warracker_postgres_user,type=env,target=DB_USER

@@ -13,6 +13,10 @@ wizarr_env_vars_base: {}
 
 wizarr_secrets_base: {}
 
+wizarr_secrets_combined: >-
+  {{ wizarr_secrets_base
+  | combine(wizarr_secrets, recursive=True) }}
+
 wizarr_container_secrets_base: []
 
 ###############################################################################
