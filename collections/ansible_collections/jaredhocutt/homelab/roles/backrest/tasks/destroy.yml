@@ -1,0 +1,42 @@
+---
+
+- name: Stop services
+  ansible.builtin.systemd:
+    name: "{{ item}}"
+    state: stopped
+  become: true
+  failed_when: false
+  loop:
+    - "{{ backrest_name }}.service"
+
+- name: Remove backrest binary
+  ansible.builtin.file:
+    path: "{{ backrest_bin_path }}"
+    state: absent
+  become: true
+
+- name: Remove systemd service file
+  ansible.builtin.file:
+    path: /etc/systemd/system/{{ backrest_name }}.service
+    state: absent
+  become: true
+
+- name: Remove traefik config
+  when: backrest_traefik_enable
+  block:
+    - name: Get traefik dynamic volume info
+      containers.podman.podman_volume_info:
+        name: "{{ traefik_volume_dynamic | default(common_traefik_volume_dynamic) }}"
+      become: true
+      register: _backrest_traefik_dynamic_volume_info
+
+    - name: Remove traefik dynamic config file for backrest
+      ansible.builtin.file:
+        path: "{{ _backrest_traefik_dynamic_volume_info.volumes[0].Mountpoint }}/{{ backrest_name }}.yaml"
+        state: absent
+      become: true
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true

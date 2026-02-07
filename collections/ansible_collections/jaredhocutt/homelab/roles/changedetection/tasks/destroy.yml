@@ -1,0 +1,58 @@
+---
+
+- name: Stop services
+  ansible.builtin.systemd:
+    name: "{{ item}}"
+    state: stopped
+  become: true
+  failed_when: false
+  loop:
+    - "{{ changedetection_name }}.service"
+    - "{{ changedetection_name }}-browser.service"
+
+- name: Destroy containers
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ changedetection_name }}"
+    - "{{ changedetection_name }}-browser"
+
+- name: Destroy secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    state: absent
+  become: true
+  no_log: true
+  loop: "{{ changedetection_secrets_base | combine(changedetection_secrets, recursive=True) | dict2items }}"
+
+- name: Destroy volumes
+  containers.podman.podman_volume:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ changedetection_volume_data }}"
+
+- name: Destroy network
+  containers.podman.podman_network:
+    name: "{{ changedetection_name }}"
+    state: absent
+  become: true
+
+- name: Cleanup quadlet files
+  ansible.builtin.file:
+    path: /etc/containers/systemd/{{ item }}
+    state: absent
+  become: true
+  loop:
+    - "{{ changedetection_name }}.container"
+    - "{{ changedetection_name }}-browser.container"
+    - "{{ changedetection_volume_data }}.volume"
+    - "{{ changedetection_name }}.network"
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true

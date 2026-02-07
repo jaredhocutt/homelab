@@ -1,0 +1,68 @@
+---
+
+- name: Stop services
+  ansible.builtin.systemd:
+    name: "{{ item}}"
+    state: stopped
+  become: true
+  failed_when: false
+  loop:
+    - "{{ bar_assistant_name }}.service"
+    - "{{ bar_assistant_name }}-salt-rim.service"
+    - "{{ bar_assistant_name }}-meilisearch.service"
+    - "{{ bar_assistant_name }}-redis.service"
+
+- name: Destroy containers
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ bar_assistant_name }}"
+    - "{{ bar_assistant_name }}-salt-rim"
+    - "{{ bar_assistant_name }}-meilisearch"
+    - "{{ bar_assistant_name }}-redis"
+
+- name: Destroy secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    state: absent
+  become: true
+  no_log: true
+  loop: "{{ bar_assistant_secrets_base | combine(bar_assistant_secrets, recursive=True) | dict2items }}"
+
+- name: Destroy volumes
+  containers.podman.podman_volume:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ bar_assistant_volume_data }}"
+    - "{{ bar_assistant_redis_volume_data }}"
+    - "{{ bar_assistant_meilisearch_volume_data }}"
+
+- name: Destroy network
+  containers.podman.podman_network:
+    name: "{{ bar_assistant_name }}"
+    state: absent
+  become: true
+
+- name: Cleanup quadlet files
+  ansible.builtin.file:
+    path: /etc/containers/systemd/{{ item }}
+    state: absent
+  become: true
+  loop:
+    - "{{ bar_assistant_name }}.container"
+    - "{{ bar_assistant_name }}-salt-rim.container"
+    - "{{ bar_assistant_name }}-meilisearch.container"
+    - "{{ bar_assistant_name }}-redis.container"
+    - "{{ bar_assistant_volume_data }}.volume"
+    - "{{ bar_assistant_redis_volume_data }}.volume"
+    - "{{ bar_assistant_meilisearch_volume_data }}.volume"
+    - "{{ bar_assistant_name }}.network"
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true

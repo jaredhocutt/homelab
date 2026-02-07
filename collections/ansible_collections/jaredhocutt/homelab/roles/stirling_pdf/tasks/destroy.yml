@@ -1,0 +1,63 @@
+---
+
+- name: Stop services
+  ansible.builtin.systemd:
+    name: "{{ item}}"
+    state: stopped
+  become: true
+  failed_when: false
+  loop:
+    - "{{ stirling_pdf_name }}.service"
+
+- name: Destroy containers
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ stirling_pdf_name }}"
+
+- name: Destroy secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    state: absent
+  become: true
+  no_log: true
+  loop: "{{ stirling_pdf_secrets_base | combine(stirling_pdf_secrets, recursive=True) | dict2items }}"
+
+- name: Destroy volumes
+  containers.podman.podman_volume:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ stirling_pdf_volume_configs }}"
+    - "{{ stirling_pdf_volume_training_data }}"
+    - "{{ stirling_pdf_volume_custom_files }}"
+    - "{{ stirling_pdf_volume_logs }}"
+    - "{{ stirling_pdf_volume_pipeline }}"
+
+- name: Destroy network
+  containers.podman.podman_network:
+    name: "{{ stirling_pdf_name }}"
+    state: absent
+  become: true
+
+- name: Cleanup quadlet files
+  ansible.builtin.file:
+    path: /etc/containers/systemd/{{ item }}
+    state: absent
+  become: true
+  loop:
+    - "{{ stirling_pdf_name }}.container"
+    - "{{ stirling_pdf_volume_configs }}.volume"
+    - "{{ stirling_pdf_volume_training_data }}.volume"
+    - "{{ stirling_pdf_volume_custom_files }}.volume"
+    - "{{ stirling_pdf_volume_logs }}.volume"
+    - "{{ stirling_pdf_volume_pipeline }}.volume"
+    - "{{ stirling_pdf_name }}.network"
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true

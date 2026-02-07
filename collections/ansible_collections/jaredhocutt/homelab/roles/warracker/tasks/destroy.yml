@@ -1,0 +1,60 @@
+---
+
+- name: Stop services
+  ansible.builtin.systemd:
+    name: "{{ item}}"
+    state: stopped
+  become: true
+  failed_when: false
+  loop:
+    - "{{ warracker_name }}.service"
+    - "{{ warracker_name }}-postgres.service"
+
+- name: Destroy containers
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ warracker_name }}"
+    - "{{ warracker_name }}-postgres"
+
+- name: Destroy secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    state: absent
+  become: true
+  no_log: true
+  loop: "{{ warracker_secrets_base | combine(warracker_secrets, recursive=True) | dict2items }}"
+
+- name: Destroy volumes
+  containers.podman.podman_volume:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ warracker_volume_uploads }}"
+    - "{{ warracker_postgres_volume_data }}"
+
+- name: Destroy network
+  containers.podman.podman_network:
+    name: "{{ warracker_name }}"
+    state: absent
+  become: true
+
+- name: Cleanup quadlet files
+  ansible.builtin.file:
+    path: /etc/containers/systemd/{{ item }}
+    state: absent
+  become: true
+  loop:
+    - "{{ warracker_name }}.container"
+    - "{{ warracker_name }}-postgres.container"
+    - "{{ warracker_volume_uploads }}.volume"
+    - "{{ warracker_postgres_volume_data }}.volume"
+    - "{{ warracker_name }}.network"
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true

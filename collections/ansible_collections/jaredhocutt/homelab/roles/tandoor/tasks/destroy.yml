@@ -1,0 +1,62 @@
+---
+
+- name: Stop services
+  ansible.builtin.systemd:
+    name: "{{ item}}"
+    state: stopped
+  become: true
+  failed_when: false
+  loop:
+    - "{{ tandoor_name }}.service"
+    - "{{ tandoor_name }}-postgres.service"
+
+- name: Destroy containers
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ tandoor_name }}"
+    - "{{ tandoor_name }}-postgres"
+
+- name: Destroy secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    state: absent
+  become: true
+  no_log: true
+  loop: "{{ tandoor_secrets_base | combine(tandoor_secrets, recursive=True) | dict2items }}"
+
+- name: Destroy volumes
+  containers.podman.podman_volume:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ tandoor_volume_staticfiles }}"
+    - "{{ tandoor_volume_mediafiles }}"
+    - "{{ tandoor_postgres_volume_data }}"
+
+- name: Destroy network
+  containers.podman.podman_network:
+    name: "{{ tandoor_name }}"
+    state: absent
+  become: true
+
+- name: Cleanup quadlet files
+  ansible.builtin.file:
+    path: /etc/containers/systemd/{{ item }}
+    state: absent
+  become: true
+  loop:
+    - "{{ tandoor_name }}.container"
+    - "{{ tandoor_name }}-postgres.container"
+    - "{{ tandoor_volume_staticfiles }}.volume"
+    - "{{ tandoor_volume_mediafiles }}.volume"
+    - "{{ tandoor_postgres_volume_data }}.volume"
+    - "{{ tandoor_name }}.network"
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true

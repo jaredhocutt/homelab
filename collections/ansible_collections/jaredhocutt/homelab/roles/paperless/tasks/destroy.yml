@@ -1,0 +1,82 @@
+---
+
+- name: Stop services
+  ansible.builtin.systemd:
+    name: "{{ item}}"
+    state: stopped
+  become: true
+  failed_when: false
+  loop:
+    - "{{ paperless_name }}.service"
+    - "{{ paperless_name }}-ai.service"
+    - "{{ paperless_name }}-tika.service"
+    - "{{ paperless_name }}-gotenberg.service"
+    - "{{ paperless_name }}-redis.service"
+    - "{{ paperless_name }}-postgres.service"
+
+- name: Destroy containers
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ paperless_name }}"
+    - "{{ paperless_name }}-ai"
+    - "{{ paperless_name }}-tika"
+    - "{{ paperless_name }}-gotenberg"
+    - "{{ paperless_name }}-redis"
+    - "{{ paperless_name }}-postgres"
+
+- name: Destroy secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    state: absent
+  become: true
+  no_log: true
+  loop: "{{ paperless_secrets_base | combine(paperless_secrets, recursive=True) | dict2items }}"
+
+- name: Destroy volumes
+  containers.podman.podman_volume:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ paperless_volume_data }}"
+    - "{{ paperless_volume_media }}"
+    - "{{ paperless_volume_export }}"
+    - "{{ paperless_volume_consume }}"
+    - "{{ paperless_postgres_volume_data }}"
+    - "{{ paperless_redis_volume_data }}"
+    - "{{ paperless_ai_volume_data }}"
+
+- name: Destroy network
+  containers.podman.podman_network:
+    name: "{{ paperless_name }}"
+    state: absent
+  become: true
+
+- name: Cleanup quadlet files
+  ansible.builtin.file:
+    path: /etc/containers/systemd/{{ item }}
+    state: absent
+  become: true
+  loop:
+    - "{{ paperless_name }}.container"
+    - "{{ paperless_name }}-ai.container"
+    - "{{ paperless_name }}-tika.container"
+    - "{{ paperless_name }}-gotenberg.container"
+    - "{{ paperless_name }}-redis.container"
+    - "{{ paperless_name }}-postgres.container"
+    - "{{ paperless_volume_data }}.volume"
+    - "{{ paperless_volume_media }}.volume"
+    - "{{ paperless_volume_export }}.volume"
+    - "{{ paperless_volume_consume }}.volume"
+    - "{{ paperless_postgres_volume_data }}.volume"
+    - "{{ paperless_redis_volume_data }}.volume"
+    - "{{ paperless_ai_volume_data }}.volume"
+    - "{{ paperless_name }}.network"
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true

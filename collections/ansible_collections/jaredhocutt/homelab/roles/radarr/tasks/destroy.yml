@@ -1,0 +1,59 @@
+---
+
+- name: Stop services
+  ansible.builtin.systemd:
+    name: "{{ item}}"
+    state: stopped
+  become: true
+  failed_when: false
+  loop:
+    - "{{ radarr_name }}.service"
+
+- name: Destroy containers
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ radarr_name }}"
+
+- name: Destroy secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    state: absent
+  become: true
+  no_log: true
+  loop: "{{ radarr_secrets_base | combine(radarr_secrets, recursive=True) | dict2items }}"
+
+- name: Destroy volumes
+  containers.podman.podman_volume:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ radarr_volume_config }}"
+    - "{{ radarr_volume_download }}"
+    - "{{ radarr_volume_media }}"
+
+- name: Destroy network
+  containers.podman.podman_network:
+    name: "{{ radarr_name }}"
+    state: absent
+  become: true
+
+- name: Cleanup quadlet files
+  ansible.builtin.file:
+    path: /etc/containers/systemd/{{ item }}
+    state: absent
+  become: true
+  loop:
+    - "{{ radarr_name }}.container"
+    - "{{ radarr_volume_config }}.volume"
+    - "{{ radarr_volume_download }}.volume"
+    - "{{ radarr_volume_media }}.volume"
+    - "{{ radarr_name }}.network"
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true

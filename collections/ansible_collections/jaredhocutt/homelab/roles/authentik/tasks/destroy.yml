@@ -1,0 +1,67 @@
+---
+
+- name: Stop services
+  ansible.builtin.systemd:
+    name: "{{ item}}"
+    state: stopped
+  become: true
+  failed_when: false
+  loop:
+    - "{{ authentik_name }}-server.service"
+    - "{{ authentik_name }}-worker.service"
+    - "{{ authentik_name }}-postgres.service"
+
+- name: Destroy containers
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ authentik_name }}-server"
+    - "{{ authentik_name }}-worker"
+    - "{{ authentik_name }}-postgres"
+
+- name: Destroy secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    state: absent
+  become: true
+  no_log: true
+  loop: "{{ authentik_secrets_base | combine(authentik_secrets, recursive=True) | dict2items }}"
+
+- name: Destroy volumes
+  containers.podman.podman_volume:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ authentik_volume_media }}"
+    - "{{ authentik_volume_certs }}"
+    - "{{ authentik_volume_templates }}"
+    - "{{ authentik_postgres_volume_data }}"
+
+- name: Destroy network
+  containers.podman.podman_network:
+    name: "{{ authentik_name }}"
+    state: absent
+  become: true
+
+- name: Cleanup quadlet files
+  ansible.builtin.file:
+    path: /etc/containers/systemd/{{ item }}
+    state: absent
+  become: true
+  loop:
+    - "{{ authentik_name }}-server.container"
+    - "{{ authentik_name }}-worker.container"
+    - "{{ authentik_name }}-postgres.container"
+    - "{{ authentik_volume_media }}.volume"
+    - "{{ authentik_volume_certs }}.volume"
+    - "{{ authentik_volume_templates }}.volume"
+    - "{{ authentik_postgres_volume_data }}.volume"
+    - "{{ authentik_name }}.network"
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true

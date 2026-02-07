@@ -1,0 +1,59 @@
+---
+
+- name: Stop services
+  ansible.builtin.systemd:
+    name: "{{ item}}"
+    state: stopped
+  become: true
+  failed_when: false
+  loop:
+    - "{{ audiobookshelf_name }}.service"
+
+- name: Destroy containers
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ audiobookshelf_name }}"
+
+- name: Destroy secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    state: absent
+  become: true
+  no_log: true
+  loop: "{{ audiobookshelf_secrets_base | combine(audiobookshelf_secrets, recursive=True) | dict2items }}"
+
+- name: Destroy volumes
+  containers.podman.podman_volume:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ audiobookshelf_volume_config }}"
+    - "{{ audiobookshelf_volume_metadata }}"
+    - "{{ audiobookshelf_volume_media }}"
+
+- name: Destroy network
+  containers.podman.podman_network:
+    name: "{{ audiobookshelf_name }}"
+    state: absent
+  become: true
+
+- name: Cleanup quadlet files
+  ansible.builtin.file:
+    path: /etc/containers/systemd/{{ item }}
+    state: absent
+  become: true
+  loop:
+    - "{{ audiobookshelf_name }}.container"
+    - "{{ audiobookshelf_volume_config }}.volume"
+    - "{{ audiobookshelf_volume_metadata }}.volume"
+    - "{{ audiobookshelf_volume_media }}.volume"
+    - "{{ audiobookshelf_name }}.network"
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true

@@ -1,0 +1,70 @@
+---
+
+- name: Stop services
+  ansible.builtin.systemd:
+    name: "{{ item}}"
+    state: stopped
+  become: true
+  failed_when: false
+  loop:
+    - "{{ immich_name }}.service"
+    - "{{ immich_name }}-machine-learning.service"
+    - "{{ immich_name }}-redis.service"
+    - "{{ immich_name }}-postgres.service"
+
+- name: Destroy containers
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ immich_name }}"
+    - "{{ immich_name }}-machine-learning"
+    - "{{ immich_name }}-redis"
+    - "{{ immich_name }}-postgres"
+
+- name: Destroy secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    state: absent
+  become: true
+  no_log: true
+  loop: "{{ immich_secrets_base | combine(immich_secrets, recursive=True) | dict2items }}"
+
+- name: Destroy volumes
+  containers.podman.podman_volume:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ immich_volume_data }}"
+    - "{{ immich_machine_learning_volume_cache }}"
+    - "{{ immich_postgres_volume_data }}"
+    - "{{ immich_redis_volume_data }}"
+
+- name: Destroy network
+  containers.podman.podman_network:
+    name: "{{ immich_name }}"
+    state: absent
+  become: true
+
+- name: Cleanup quadlet files
+  ansible.builtin.file:
+    path: /etc/containers/systemd/{{ item }}
+    state: absent
+  become: true
+  loop:
+    - "{{ immich_name }}.container"
+    - "{{ immich_name }}-machine-learning.container"
+    - "{{ immich_name }}-redis.container"
+    - "{{ immich_name }}-postgres.container"
+    - "{{ immich_volume_data }}.volume"
+    - "{{ immich_machine_learning_volume_cache }}.volume"
+    - "{{ immich_postgres_volume_data }}.volume"
+    - "{{ immich_redis_volume_data }}.volume"
+    - "{{ immich_name }}.network"
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true

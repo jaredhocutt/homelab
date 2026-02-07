@@ -1,0 +1,68 @@
+---
+
+- name: Stop services
+  ansible.builtin.systemd:
+    name: "{{ item}}"
+    state: stopped
+  become: true
+  failed_when: false
+  loop:
+    - "{{ n8n_name }}.service"
+    - "{{ n8n_name }}-worker.service"
+    - "{{ n8n_name }}-redis.service"
+    - "{{ n8n_name }}-postgres.service"
+
+- name: Destroy containers
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ n8n_name }}"
+    - "{{ n8n_name }}-worker"
+    - "{{ n8n_name }}-redis"
+    - "{{ n8n_name }}-postgres"
+
+- name: Destroy secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    state: absent
+  become: true
+  no_log: true
+  loop: "{{ n8n_secrets_base | combine(n8n_secrets, recursive=True) | dict2items }}"
+
+- name: Destroy volumes
+  containers.podman.podman_volume:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ n8n_volume_data }}"
+    - "{{ n8n_postgres_volume_data }}"
+    - "{{ n8n_redis_volume_data }}"
+
+- name: Destroy network
+  containers.podman.podman_network:
+    name: "{{ n8n_name }}"
+    state: absent
+  become: true
+
+- name: Cleanup quadlet files
+  ansible.builtin.file:
+    path: /etc/containers/systemd/{{ item }}
+    state: absent
+  become: true
+  loop:
+    - "{{ n8n_name }}.container"
+    - "{{ n8n_name }}-worker.container"
+    - "{{ n8n_name }}-redis.container"
+    - "{{ n8n_name }}-postgres.container"
+    - "{{ n8n_volume_data }}.volume"
+    - "{{ n8n_postgres_volume_data }}.volume"
+    - "{{ n8n_redis_volume_data }}.volume"
+    - "{{ n8n_name }}.network"
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
