@@ -2,10 +2,15 @@
 # vars file for jaredhocutt.homelab.tautulli
 
 ###############################################################################
-# Envrionment Variables
+# Envrionment
 ###############################################################################
 
-tautulli_env_vars_base: {}
+tautulli_container_env_base: {}
+
+tautulli_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(tautulli_container_env_base, recursive=True)
+  | combine(tautulli_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
@@ -18,6 +23,10 @@ tautulli_secrets_combined: >-
   | combine(tautulli_secrets, recursive=True) }}
 
 tautulli_container_secrets_base: []
+
+tautulli_container_secrets_combined: >-
+  {{ tautulli_container_secrets_base
+  + tautulli_container_secrets }}
 
 ###############################################################################
 # Container Labels
@@ -33,8 +42,16 @@ tautulli_container_labels_traefik:
     value: "{{ common_traefik_entrypoint }}"
 tautulli_container_labels_base: "{{ tautulli_traefik_enable | ternary((tautulli_container_labels_traefik | items2dict), {}) }}"
 
+tautulli_container_labels_combined: >-
+  {{ tautulli_container_labels_base
+  | combine(tautulli_container_labels, recursive=True) }}
+
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
 tautulli_quadlet_options_base: "{{ common_quadlet_options_base }}"
+
+tautulli_quadlet_options_combined: >-
+  {{ tautulli_quadlet_options_base
+  + tautulli_quadlet_options }}

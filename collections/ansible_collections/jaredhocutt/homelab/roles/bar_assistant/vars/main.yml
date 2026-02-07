@@ -2,10 +2,10 @@
 # vars file for jaredhocutt.homelab.bar_assistant
 
 ###############################################################################
-# Envrionment Variables
+# Envrionment
 ###############################################################################
 
-bar_assistant_env_vars_base:
+bar_assistant_container_env_base:
   APP_URL: "{{ bar_assistant_api_url }}"
   MEILISEARCH_HOST: http://{{ bar_assistant_name }}-meilisearch:7700
   REDIS_HOST: "{{ bar_assistant_name }}-redis"
@@ -13,16 +13,33 @@ bar_assistant_env_vars_base:
   SESSION_DRIVER: redis
   ALLOW_REGISTRATION: "true"
 
-bar_assistant_salt_rim_env_vars_base:
+bar_assistant_salt_rim_container_env_base:
   API_URL: "{{ bar_assistant_api_url }}"
   MEILISEARCH_URL: "{{ bar_assistant_meilisearch_url }}"
 
-bar_assistant_redis_env_vars_base:
+bar_assistant_redis_container_env_base:
   ALLOW_EMPTY_PASSWORD: "yes"
 
-bar_assistant_meilisearch_env_vars_base:
+bar_assistant_meilisearch_container_env_base:
   MEILI_ENV: production
   MEILI_NO_ANALYTICS: "true"
+
+bar_assistant_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(bar_assistant_container_env_base, recursive=True)
+  | combine(bar_assistant_container_env, recursive=True) }}
+bar_assistant_salt_rim_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(bar_assistant_salt_rim_container_env_base, recursive=True)
+  | combine(bar_assistant_salt_rim_container_env, recursive=True) }}
+bar_assistant_redis_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(bar_assistant_redis_container_env_base, recursive=True)
+  | combine(bar_assistant_redis_container_env, recursive=True) }}
+bar_assistant_meilisearch_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(bar_assistant_meilisearch_container_env_base, recursive=True)
+  | combine(bar_assistant_meilisearch_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
@@ -44,6 +61,19 @@ bar_assistant_redis_container_secrets_base: []
 
 bar_assistant_meilisearch_container_secrets_base:
   - bar_assistant_meilisearch_master_key,type=env,target=MEILI_MASTER_KEY
+
+bar_assistant_container_secrets_combined: >-
+  {{ bar_assistant_container_secrets_base
+  + bar_assistant_container_secrets }}
+bar_assistant_salt_rim_container_secrets_combined: >-
+  {{ bar_assistant_salt_rim_container_secrets_base
+  + bar_assistant_salt_rim_container_secrets }}
+bar_assistant_redis_container_secrets_combined: >-
+  {{ bar_assistant_redis_container_secrets_base
+  + bar_assistant_redis_container_secrets }}
+bar_assistant_meilisearch_container_secrets_combined: >-
+  {{ bar_assistant_meilisearch_container_secrets_base
+  + bar_assistant_meilisearch_container_secrets }}
 
 ###############################################################################
 # Container Labels
@@ -97,6 +127,19 @@ bar_assistant_meilisearch_container_labels_base: >-
     ternary((bar_assistant_meilisearch_container_labels_traefik | items2dict), {})
   }}
 
+bar_assistant_container_labels_combined: >-
+  {{ bar_assistant_container_labels_base
+  | combine(bar_assistant_container_labels, recursive=True) }}
+bar_assistant_salt_rim_container_labels_combined: >-
+  {{ bar_assistant_salt_rim_container_labels_base
+  | combine(bar_assistant_salt_rim_container_labels, recursive=True) }}
+bar_assistant_redis_container_labels_combined: >-
+  {{ bar_assistant_redis_container_labels_base
+  | combine(bar_assistant_redis_container_labels, recursive=True) }}
+bar_assistant_meilisearch_container_labels_combined: >-
+  {{ bar_assistant_meilisearch_container_labels_base
+  | combine(bar_assistant_meilisearch_container_labels, recursive=True) }}
+
 ###############################################################################
 # Quadlet Options
 ###############################################################################
@@ -120,3 +163,16 @@ bar_assistant_salt_rim_quadlet_options_base: "{{ common_quadlet_options_base + b
 bar_assistant_redis_quadlet_options_base: "{{ common_quadlet_options_base }}"
 
 bar_assistant_meilisearch_quadlet_options_base: "{{ common_quadlet_options_base }}"
+
+bar_assistant_quadlet_options_combined: >-
+  {{ bar_assistant_quadlet_options_base
+  + bar_assistant_quadlet_options }}
+bar_assistant_salt_rim_quadlet_options_combined: >-
+  {{ bar_assistant_salt_rim_quadlet_options_base
+  + bar_assistant_salt_rim_quadlet_options }}
+bar_assistant_redis_quadlet_options_combined: >-
+  {{ bar_assistant_redis_quadlet_options_base
+  + bar_assistant_redis_quadlet_options }}
+bar_assistant_meilisearch_quadlet_options_combined: >-
+  {{ bar_assistant_meilisearch_quadlet_options_base
+  + bar_assistant_meilisearch_quadlet_options }}

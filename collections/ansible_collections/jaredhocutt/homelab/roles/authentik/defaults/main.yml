@@ -21,14 +21,15 @@ authentik_ports:
 
 authentik_secrets: {}
 
-authentik_env_vars: {}
+authentik_container_env: {}
 authentik_container_secrets: []
 authentik_container_labels: {}
 authentik_quadlet_options: []
 
 authentik_worker_container_secrets: []
+authentik_worker_container_labels: {}
 
-authentik_postgres_env_vars: {}
+authentik_postgres_container_env: {}
 authentik_postgres_container_secrets: []
 authentik_postgres_container_labels: {}
 authentik_postgres_quadlet_options: []

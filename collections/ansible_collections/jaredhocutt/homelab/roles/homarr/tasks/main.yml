@@ -48,19 +48,14 @@
     network:
       - "{{ homarr_name }}.network"
       - "{{ homarr_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
-    env: >-
-      {{ common_env_vars_base
-      | combine(homarr_env_vars_base, recursive=True)
-      | combine(homarr_env_vars, recursive=True) }}
-    secrets: >-
-      {{ homarr_container_secrets_base
-      + homarr_container_secrets }}
+    env: "{{ homarr_container_env_combined }}"
+    secrets: "{{ homarr_container_secrets_combined }}"
     volumes:
       - "{{ homarr_volume_data }}:/appdata"
     publish: "{{ homarr_traefik_enable | ternary(omit, homarr_ports) }}"
-    labels: "{{ homarr_container_labels_base | combine(homarr_container_labels, recursive=True) }}"
+    labels: "{{ homarr_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ homarr_quadlet_options_base + homarr_quadlet_options }}"
+    quadlet_options: "{{ homarr_quadlet_options_combined }}"
     state: quadlet
   notify: Restart {{ homarr_name }}
   become: true

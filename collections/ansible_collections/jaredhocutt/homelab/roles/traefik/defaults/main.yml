@@ -19,7 +19,7 @@ traefik_command: []
 
 traefik_secrets: {}
 
-traefik_env_vars: {}
+traefik_container_env: {}
 traefik_container_secrets: []
 traefik_container_labels: {}
 traefik_quadlet_options: []

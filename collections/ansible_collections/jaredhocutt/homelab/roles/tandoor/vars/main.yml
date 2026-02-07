@@ -5,15 +5,24 @@ tandoor_postgres_db_name: tandoor
 tandoor_postgres_user: tandoor
 
 ###############################################################################
-# Envrionment Variables
+# Envrionment
 ###############################################################################
 
-tandoor_env_vars_base:
+tandoor_container_env_base:
   DB_ENGINE: django.db.backends.postgresql
   POSTGRES_HOST: "{{ tandoor_name }}-postgres"
   POSTGRES_PORT: "5432"
 
-tandoor_postgres_env_vars_base: {}
+tandoor_postgres_container_env_base: {}
+
+tandoor_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(tandoor_container_env_base, recursive=True)
+  | combine(tandoor_container_env, recursive=True) }}
+tandoor_postgres_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(tandoor_postgres_container_env_base, recursive=True)
+  | combine(tandoor_postgres_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
@@ -40,6 +49,13 @@ tandoor_postgres_container_secrets_base:
   - tandoor_postgres_user,type=env,target=POSTGRES_USER
   - tandoor_postgres_password,type=env,target=POSTGRES_PASSWORD
 
+tandoor_container_secrets_combined: >-
+  {{ tandoor_container_secrets_base
+  + tandoor_container_secrets }}
+tandoor_postgres_container_secrets_combined: >-
+  {{ tandoor_postgres_container_secrets_base
+  + tandoor_postgres_container_secrets }}
+
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -56,6 +72,13 @@ tandoor_container_labels_base: "{{ tandoor_traefik_enable | ternary((tandoor_con
 
 tandoor_postgres_container_labels_base: {}
 
+tandoor_container_labels_combined: >-
+  {{ tandoor_container_labels_base
+  | combine(tandoor_container_labels, recursive=True) }}
+tandoor_postgres_container_labels_combined: >-
+  {{ tandoor_postgres_container_labels_base
+  | combine(tandoor_postgres_container_labels, recursive=True) }}
+
 ###############################################################################
 # Quadlet Options
 ###############################################################################
@@ -68,3 +91,10 @@ tandoor_quadlet_options_base_custom:
 tandoor_quadlet_options_base: "{{ common_quadlet_options_base + tandoor_quadlet_options_base_custom }}"
 
 tandoor_postgres_quadlet_options_base: "{{ common_quadlet_options_base }}"
+
+tandoor_quadlet_options_combined: >-
+  {{ tandoor_quadlet_options_base
+  + tandoor_quadlet_options }}
+tandoor_postgres_quadlet_options_combined: >-
+  {{ tandoor_postgres_quadlet_options_base
+  + tandoor_postgres_quadlet_options }}

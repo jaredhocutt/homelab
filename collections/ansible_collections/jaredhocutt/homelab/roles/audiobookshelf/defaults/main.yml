@@ -17,7 +17,7 @@ audiobookshelf_ports:
 
 audiobookshelf_secrets: {}
 
-audiobookshelf_env_vars: {}
+audiobookshelf_container_env: {}
 audiobookshelf_container_secrets: []
 audiobookshelf_container_labels: {}
 audiobookshelf_quadlet_options: []

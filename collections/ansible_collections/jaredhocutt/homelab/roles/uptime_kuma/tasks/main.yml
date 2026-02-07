@@ -43,19 +43,14 @@
     name: "{{ uptime_kuma_name }}"
     image: "{{ uptime_kuma_image }}:{{ uptime_kuma_image_tag }}"
     network: "{{ uptime_kuma_name }}.network"
-    env: >-
-      {{ common_env_vars_base
-      | combine(uptime_kuma_env_vars_base, recursive=True)
-      | combine(uptime_kuma_env_vars, recursive=True) }}
-    secrets: >-
-      {{ uptime_kuma_container_secrets_base
-      + uptime_kuma_container_secrets }}
+    env: "{{ uptime_kuma_container_env_combined }}"
+    secrets: "{{ uptime_kuma_container_secrets_combined }}"
     volumes:
       - "{{ uptime_kuma_volume_data }}:/app/data"
     publish: "{{ uptime_kuma_traefik_enable | ternary(omit, uptime_kuma_ports) }}"
-    labels: "{{ uptime_kuma_container_labels_base | combine(uptime_kuma_container_labels, recursive=True) }}"
+    labels: "{{ uptime_kuma_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ uptime_kuma_quadlet_options_base + uptime_kuma_quadlet_options }}"
+    quadlet_options: "{{ uptime_kuma_quadlet_options_combined }}"
     state: quadlet
   notify: Restart {{ uptime_kuma_name }}
   become: true

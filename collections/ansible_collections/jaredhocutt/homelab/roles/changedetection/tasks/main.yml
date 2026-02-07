@@ -47,18 +47,13 @@
     name: "{{ changedetection_name }}-browser"
     image: "{{ changedetection_browser_image }}:{{ changedetection_browser_image_tag }}"
     network: "{{ changedetection_name }}.network"
-    env: >-
-      {{ common_env_vars_base
-      | combine(changedetection_browser_env_vars_base, recursive=True)
-      | combine(changedetection_browser_env_vars, recursive=True) }}
-    secrets: >-
-      {{ changedetection_browser_container_secrets_base
-      + changedetection_browser_container_secrets }}
+    env: "{{ changedetection_browser_container_env_combined }}"
+    secrets: "{{ changedetection_browser_container_secrets_combined }}"
     cap_add:
       - SYS_ADMIN
-    labels: "{{ changedetection_browser_container_labels_base | combine(changedetection_container_labels, recursive=True) }}"
+    labels: "{{ changedetection_browser_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ changedetection_browser_quadlet_options_base + changedetection_browser_quadlet_options }}"
+    quadlet_options: "{{ changedetection_browser_quadlet_options_combined }}"
     state: quadlet
   notify: Restart browser for {{ changedetection_name }}
   become: true
@@ -70,19 +65,14 @@
     network:
       - "{{ changedetection_name }}.network"
       - "{{ changedetection_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
-    env: >-
-      {{ common_env_vars_base
-      | combine(changedetection_env_vars_base, recursive=True)
-      | combine(changedetection_env_vars, recursive=True) }}
-    secrets: >-
-      {{ changedetection_container_secrets_base
-      + changedetection_container_secrets }}
+    env: "{{ changedetection_container_env_combined }}"
+    secrets: "{{ changedetection_container_secrets_combined }}"
     volumes:
       - "{{ changedetection_volume_data }}.volume:/datastore"
     publish: "{{ changedetection_traefik_enable | ternary(omit, changedetection_ports) }}"
-    labels: "{{ changedetection_container_labels_base | combine(changedetection_container_labels, recursive=True) }}"
+    labels: "{{ changedetection_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ changedetection_quadlet_options_base + changedetection_quadlet_options }}"
+    quadlet_options: "{{ changedetection_quadlet_options_combined }}"
     state: quadlet
   notify: Restart {{ changedetection_name }}
   become: true

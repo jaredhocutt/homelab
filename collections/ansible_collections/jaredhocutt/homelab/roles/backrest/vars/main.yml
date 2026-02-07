@@ -5,8 +5,12 @@ backrest_bin_path: /usr/local/bin/backrest
 backrest_installed_version: ""
 
 ###############################################################################
-# Envrionment Variables
+# Envrionment
 ###############################################################################
 
-backrest_env_vars_base:
+backrest_container_env_base:
   BACKREST_PORT: 127.0.0.1:9898
+
+backrest_container_env_combined: >-
+  {{ backrest_container_env_base
+  | combine(backrest_container_env, recursive=True) }}

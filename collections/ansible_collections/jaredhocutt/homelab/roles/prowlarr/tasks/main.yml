@@ -43,19 +43,14 @@
     name: "{{ prowlarr_name }}"
     image: "{{ prowlarr_image }}:{{ prowlarr_image_tag }}"
     network: "{{ prowlarr_name }}.network"
-    env: >-
-      {{ common_env_vars_base
-      | combine(prowlarr_env_vars_base, recursive=True)
-      | combine(prowlarr_env_vars, recursive=True) }}
-    secrets: >-
-      {{ prowlarr_container_secrets_base
-      + prowlarr_container_secrets }}
+    env: "{{ prowlarr_container_env_combined }}"
+    secrets: "{{ prowlarr_container_secrets_combined }}"
     volumes:
       - "{{ prowlarr_volume_config }}:/config"
     publish: "{{ prowlarr_traefik_enable | ternary(omit, prowlarr_ports) }}"
-    labels: "{{ prowlarr_container_labels_base | combine(prowlarr_container_labels, recursive=True) }}"
+    labels: "{{ prowlarr_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ prowlarr_quadlet_options_base + prowlarr_quadlet_options }}"
+    quadlet_options: "{{ prowlarr_quadlet_options_combined }}"
     state: quadlet
   notify: Restart {{ prowlarr_name }}
   become: true

@@ -15,7 +15,7 @@ vault_traefik_host: "{{ vault_name }}.{{ common_traefik_domain }}"
 vault_ports:
   - 8200:8200
 
-vault_env_vars: {}
+vault_container_env: {}
 
 vault_secrets: {}
 vault_container_secrets: []

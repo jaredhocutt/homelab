@@ -37,17 +37,12 @@
     network:
       - "{{ bentopdf_name }}.network"
       - "{{ bentopdf_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
-    env: >-
-      {{ common_env_vars_base
-      | combine(bentopdf_env_vars_base, recursive=True)
-      | combine(bentopdf_env_vars, recursive=True) }}
-    secrets: >-
-      {{ bentopdf_container_secrets_base
-      + bentopdf_container_secrets }}
+    env: "{{ bentopdf_container_env_combined }}"
+    secrets: "{{ bentopdf_container_secrets_combined }}"
     publish: "{{ bentopdf_traefik_enable | ternary(omit, bentopdf_ports) }}"
-    labels: "{{ bentopdf_container_labels_base | combine(bentopdf_container_labels, recursive=True) }}"
+    labels: "{{ bentopdf_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ bentopdf_quadlet_options_base + bentopdf_quadlet_options }}"
+    quadlet_options: "{{ bentopdf_quadlet_options_combined }}"
     state: quadlet
   notify: Restart {{ bentopdf_name }}
   become: true

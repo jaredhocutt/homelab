@@ -5,19 +5,36 @@ immich_postgres_db_name: immich
 immich_postgres_user: immich
 
 ###############################################################################
-# Envrionment Variables
+# Envrionment
 ###############################################################################
 
-immich_env_vars_base:
+immich_container_env_base:
   DB_HOSTNAME: "{{ immich_name }}-postgres"
   REDIS_HOSTNAME: "{{ immich_name }}-redis"
 
-immich_machine_learning_env_vars_base: {}
+immich_machine_learning_container_env_base: {}
 
-immich_postgres_env_vars_base:
+immich_postgres_container_env_base:
   POSTGRES_INITDB_ARGS: --data-checksums
 
-immich_redis_env_vars_base: {}
+immich_redis_container_env_base: {}
+
+immich_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(immich_container_env_base, recursive=True)
+  | combine(immich_container_env, recursive=True) }}
+immich_machine_learning_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(immich_machine_learning_container_env_base, recursive=True)
+  | combine(immich_machine_learning_container_env, recursive=True) }}
+immich_postgres_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(immich_postgres_container_env_base, recursive=True)
+  | combine(immich_postgres_container_env, recursive=True) }}
+immich_redis_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(immich_redis_container_env_base, recursive=True)
+  | combine(immich_redis_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
@@ -49,6 +66,19 @@ immich_postgres_container_secrets_base:
 
 immich_redis_container_secrets_base: []
 
+immich_container_secrets_combined: >-
+  {{ immich_container_secrets_base
+  + immich_container_secrets }}
+immich_machine_learning_container_secrets_combined: >-
+  {{ immich_machine_learning_container_secrets_base
+  + immich_machine_learning_container_secrets }}
+immich_postgres_container_secrets_combined: >-
+  {{ immich_postgres_container_secrets_base
+  + immich_postgres_container_secrets }}
+immich_redis_container_secrets_combined: >-
+  {{ immich_redis_container_secrets_base
+  + immich_redis_container_secrets }}
+
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -69,6 +99,19 @@ immich_postgres_container_labels_base: {}
 
 immich_redis_container_labels_base: {}
 
+immich_container_labels_combined: >-
+  {{ immich_container_labels_base
+  | combine(immich_container_labels, recursive=True) }}
+immich_machine_learning_container_labels_combined: >-
+  {{ immich_machine_learning_container_labels_base
+  | combine(immich_machine_learning_container_labels, recursive=True) }}
+immich_postgres_container_labels_combined: >-
+  {{ immich_postgres_container_labels_base
+  | combine(immich_postgres_container_labels, recursive=True) }}
+immich_redis_container_labels_combined: >-
+  {{ immich_redis_container_labels_base
+  | combine(immich_redis_container_labels, recursive=True) }}
+
 ###############################################################################
 # Quadlet Options
 ###############################################################################
@@ -87,3 +130,16 @@ immich_machine_learning_quadlet_options_base: "{{ common_quadlet_options_base }}
 immich_postgres_quadlet_options_base: "{{ common_quadlet_options_base }}"
 
 immich_redis_quadlet_options_base: "{{ common_quadlet_options_base }}"
+
+immich_quadlet_options_combined: >-
+  {{ immich_quadlet_options_base
+  + immich_quadlet_options }}
+immich_machine_learning_quadlet_options_combined: >-
+  {{ immich_machine_learning_quadlet_options_base
+  + immich_machine_learning_quadlet_options }}
+immich_postgres_quadlet_options_combined: >-
+  {{ immich_postgres_quadlet_options_base
+  + immich_postgres_quadlet_options }}
+immich_redis_quadlet_options_combined: >-
+  {{ immich_redis_quadlet_options_base
+  + immich_redis_quadlet_options }}

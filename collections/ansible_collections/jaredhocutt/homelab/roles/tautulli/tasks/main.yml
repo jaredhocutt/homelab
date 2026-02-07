@@ -43,19 +43,14 @@
     name: "{{ tautulli_name }}"
     image: "{{ tautulli_image }}:{{ tautulli_image_tag }}"
     network: "{{ tautulli_name }}.network"
-    env: >-
-      {{ common_env_vars_base
-      | combine(tautulli_env_vars_base, recursive=True)
-      | combine(tautulli_env_vars, recursive=True) }}
-    secrets: >-
-      {{ tautulli_container_secrets_base
-      + tautulli_container_secrets }}
+    env: "{{ tautulli_container_env_combined }}"
+    secrets: "{{ tautulli_container_secrets_combined }}"
     volumes:
       - "{{ tautulli_volume_config }}:/config"
     publish: "{{ tautulli_traefik_enable | ternary(omit, tautulli_ports) }}"
-    labels: "{{ tautulli_container_labels_base | combine(tautulli_container_labels, recursive=True) }}"
+    labels: "{{ tautulli_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ tautulli_quadlet_options_base + tautulli_quadlet_options }}"
+    quadlet_options: "{{ tautulli_quadlet_options_combined }}"
     state: quadlet
   notify: Restart {{ tautulli_name }}
   become: true

@@ -45,20 +45,15 @@
     name: "{{ sabnzbd_name }}"
     image: "{{ sabnzbd_image }}:{{ sabnzbd_image_tag }}"
     network: "{{ sabnzbd_name }}.network"
-    env: >-
-      {{ common_env_vars_base
-      | combine(sabnzbd_env_vars_base, recursive=True)
-      | combine(sabnzbd_env_vars, recursive=True) }}
-    secrets: >-
-      {{ sabnzbd_container_secrets_base
-      + sabnzbd_container_secrets }}
+    env: "{{ sabnzbd_container_env_combined }}"
+    secrets: "{{ sabnzbd_container_secrets_combined }}"
     volumes:
       - "{{ sabnzbd_volume_config }}:/config"
       - "{{ sabnzbd_volume_download }}:/mnt/download"
     publish: "{{ sabnzbd_traefik_enable | ternary(omit, sabnzbd_ports) }}"
-    labels: "{{ sabnzbd_container_labels_base | combine(sabnzbd_container_labels, recursive=True) }}"
+    labels: "{{ sabnzbd_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ sabnzbd_quadlet_options_base + sabnzbd_quadlet_options }}"
+    quadlet_options: "{{ sabnzbd_quadlet_options_combined }}"
     state: quadlet
   notify: Restart {{ sabnzbd_name }}
   become: true

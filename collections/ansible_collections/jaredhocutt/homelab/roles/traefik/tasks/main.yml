@@ -62,13 +62,8 @@
     name: "{{ traefik_name }}"
     image: "{{ traefik_image }}:{{ traefik_image_tag }}"
     network: "{{ traefik_name }}.network"
-    env: >-
-      {{ common_env_vars_base
-      | combine(traefik_env_vars_base, recursive=True)
-      | combine(traefik_env_vars, recursive=True) }}
-    secrets: >-
-      {{ traefik_container_secrets_base
-      + traefik_container_secrets }}
+    env: "{{ traefik_container_env_combined }}"
+    secrets: "{{ traefik_container_secrets_combined }}"
     security_opt:
       - label=disable
     volumes:
@@ -77,9 +72,9 @@
       - "{{ traefik_volume_dynamic }}:/dynamic"
     publish: "{{ traefik_ports }}"
     command: "{{ traefik_command_base + traefik_command }}"
-    labels: "{{ traefik_container_labels_base | combine(traefik_container_labels, recursive=True) }}"
+    labels: "{{ traefik_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ traefik_quadlet_options_base + traefik_quadlet_options }}"
+    quadlet_options: "{{ traefik_quadlet_options_combined }}"
     state: quadlet
   notify: Restart {{ traefik_name }}
   become: true

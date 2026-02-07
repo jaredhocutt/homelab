@@ -43,19 +43,14 @@
     name: "{{ open_webui_name }}"
     image: "{{ open_webui_image }}:{{ open_webui_image_tag }}"
     network: "{{ open_webui_name }}.network"
-    env: >-
-      {{ common_env_vars_base
-      | combine(open_webui_env_vars_base, recursive=True)
-      | combine(open_webui_env_vars, recursive=True) }}
-    secrets: >-
-      {{ open_webui_container_secrets_base
-      + open_webui_container_secrets }}
+    env: "{{ open_webui_container_env_combined }}"
+    secrets: "{{ open_webui_container_secrets_combined }}"
     volumes:
       - "{{ open_webui_volume_data }}:/app/backend/data"
     publish: "{{ open_webui_traefik_enable | ternary(omit, open_webui_ports) }}"
-    labels: "{{ open_webui_container_labels_base | combine(open_webui_container_labels, recursive=True) }}"
+    labels: "{{ open_webui_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ open_webui_quadlet_options_base + open_webui_quadlet_options }}"
+    quadlet_options: "{{ open_webui_quadlet_options_combined }}"
     state: quadlet
   notify: Restart {{ open_webui_name }}
   become: true

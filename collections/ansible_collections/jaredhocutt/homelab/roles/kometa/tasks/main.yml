@@ -43,18 +43,13 @@
     name: "{{ kometa_name }}"
     image: "{{ kometa_image }}:{{ kometa_image_tag }}"
     network: "{{ kometa_name }}.network"
-    env: >-
-      {{ common_env_vars_base
-      | combine(kometa_env_vars_base, recursive=True)
-      | combine(kometa_env_vars, recursive=True) }}
-    secrets: >-
-      {{ kometa_container_secrets_base
-      + kometa_container_secrets }}
+    env: "{{ kometa_container_env_combined }}"
+    secrets: "{{ kometa_container_secrets_combined }}"
     volumes:
       - "{{ kometa_volume_config }}:/config"
-    labels: "{{ kometa_container_labels_base | combine(kometa_container_labels, recursive=True) }}"
+    labels: "{{ kometa_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ kometa_quadlet_options_base + kometa_quadlet_options }}"
+    quadlet_options: "{{ kometa_quadlet_options_combined }}"
     state: quadlet
   notify: Restart {{ kometa_name }}
   become: true

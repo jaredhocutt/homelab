@@ -2,10 +2,15 @@
 # vars file for jaredhocutt.homelab.bentopdf
 
 ###############################################################################
-# Envrionment Variables
+# Envrionment
 ###############################################################################
 
-bentopdf_env_vars_base: {}
+bentopdf_container_env_base: {}
+
+bentopdf_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(bentopdf_container_env_base, recursive=True)
+  | combine(bentopdf_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
@@ -18,6 +23,10 @@ bentopdf_secrets_combined: >-
   | combine(bentopdf_secrets, recursive=True) }}
 
 bentopdf_container_secrets_base: []
+
+bentopdf_container_secrets_combined: >-
+  {{ bentopdf_container_secrets_base
+  + bentopdf_container_secrets }}
 
 ###############################################################################
 # Container Labels
@@ -37,8 +46,16 @@ bentopdf_container_labels_traefik:
     value: "8080"
 bentopdf_container_labels_base: "{{ bentopdf_traefik_enable | ternary((bentopdf_container_labels_traefik | items2dict), {}) }}"
 
+bentopdf_container_labels_combined: >-
+  {{ bentopdf_container_labels_base
+  | combine(bentopdf_container_labels, recursive=True) }}
+
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
 bentopdf_quadlet_options_base: "{{ common_quadlet_options_base }}"
+
+bentopdf_quadlet_options_combined: >-
+  {{ bentopdf_quadlet_options_base
+  + bentopdf_quadlet_options }}

@@ -48,19 +48,14 @@
     network:
       - "{{ healthchecks_name }}.network"
       - "{{ healthchecks_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
-    env: >-
-      {{ common_env_vars_base
-      | combine(healthchecks_env_vars_base, recursive=True)
-      | combine(healthchecks_env_vars, recursive=True) }}
-    secrets: >-
-      {{ healthchecks_container_secrets_base
-      + healthchecks_container_secrets }}
+    env: "{{ healthchecks_container_env_combined }}"
+    secrets: "{{ healthchecks_container_secrets_combined }}"
     volumes:
       - "{{ healthchecks_volume_config }}:/config"
     publish: "{{ healthchecks_traefik_enable | ternary(omit, healthchecks_ports) }}"
-    labels: "{{ healthchecks_container_labels_base | combine(healthchecks_container_labels, recursive=True) }}"
+    labels: "{{ healthchecks_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ healthchecks_quadlet_options_base + healthchecks_quadlet_options }}"
+    quadlet_options: "{{ healthchecks_quadlet_options_combined }}"
     state: quadlet
   notify: Restart {{ healthchecks_name }}
   become: true

@@ -47,13 +47,8 @@
     name: "{{ warracker_name }}-postgres"
     image: "{{ warracker_postgres_image }}:{{ warracker_postgres_image_tag }}"
     network: "{{ warracker_name }}.network"
-    env: >-
-      {{ common_env_vars_base
-      | combine(warracker_postgres_env_vars_base, recursive=True)
-      | combine(warracker_postgres_env_vars, recursive=True) }}
-    secrets: >-
-      {{ warracker_postgres_container_secrets_base
-      + warracker_postgres_container_secrets }}
+    env: "{{ warracker_postgres_container_env_combined }}"
+    secrets: "{{ warracker_postgres_container_secrets_combined }}"
     volumes:
       - "{{ warracker_postgres_volume_data }}.volume:/var/lib/postgresql/data"
     healthcheck_interval: 30s
@@ -61,9 +56,9 @@
     healthcheck_start_period: 20s
     healthcheck_timeout: 5s
     healthcheck: CMD-SHELL pg_isready -d {{ warracker_postgres_db_name }} -U {{ warracker_postgres_user }}
-    labels: "{{ warracker_postgres_container_labels_base | combine(warracker_postgres_container_labels, recursive=True) }}"
+    labels: "{{ warracker_postgres_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ warracker_postgres_quadlet_options_base + warracker_postgres_quadlet_options }}"
+    quadlet_options: "{{ warracker_postgres_quadlet_options_combined }}"
     state: quadlet
   notify: Restart postgres for {{ warracker_name }}
   become: true
@@ -73,19 +68,14 @@
     name: "{{ warracker_name }}"
     image: "{{ warracker_image }}:{{ warracker_image_tag }}"
     network: "{{ warracker_name }}.network"
-    env: >-
-      {{ common_env_vars_base
-      | combine(warracker_env_vars_base, recursive=True)
-      | combine(warracker_env_vars, recursive=True) }}
-    secrets: >-
-      {{ warracker_container_secrets_base
-      + warracker_container_secrets }}
+    env: "{{ warracker_container_env_combined }}"
+    secrets: "{{ warracker_container_secrets_combined }}"
     volumes:
       - "{{ warracker_volume_uploads }}.volume:/data/uploads"
     publish: "{{ warracker_traefik_enable | ternary(omit, warracker_ports) }}"
-    labels: "{{ warracker_container_labels_base | combine(warracker_container_labels, recursive=True) }}"
+    labels: "{{ warracker_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ warracker_quadlet_options_base + warracker_quadlet_options }}"
+    quadlet_options: "{{ warracker_quadlet_options_combined }}"
     state: quadlet
   notify: Restart {{ warracker_name }}
   become: true

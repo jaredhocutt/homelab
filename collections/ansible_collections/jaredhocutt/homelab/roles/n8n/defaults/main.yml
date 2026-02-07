@@ -21,22 +21,22 @@ n8n_ports:
 
 n8n_secrets: {}
 
-n8n_env_vars: {}
+n8n_env: {}
 n8n_container_secrets: []
 n8n_container_labels: {}
 n8n_quadlet_options: []
 
-n8n_worker_env_vars: {}
+n8n_worker_env: {}
 n8n_worker_container_secrets: []
 n8n_worker_container_labels: {}
 n8n_worker_quadlet_options: []
 
-n8n_postgres_env_vars: {}
+n8n_postgres_env: {}
 n8n_postgres_container_secrets: []
 n8n_postgres_container_labels: {}
 n8n_postgres_quadlet_options: []
 
-n8n_redis_env_vars: {}
+n8n_redis_env: {}
 n8n_redis_container_secrets: []
 n8n_redis_container_labels: {}
 n8n_redis_quadlet_options: []

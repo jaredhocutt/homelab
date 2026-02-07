@@ -15,7 +15,7 @@ portainer_ports:
 
 portainer_secrets: {}
 
-portainer_env_vars: {}
+portainer_container_env: {}
 portainer_container_secrets: []
 portainer_container_labels: {}
 portainer_quadlet_options: []

@@ -65,13 +65,8 @@
     name: "{{ paperless_name }}-postgres"
     image: "{{ paperless_postgres_image }}:{{ paperless_postgres_image_tag }}"
     network: "{{ paperless_name }}.network"
-    env: >-
-      {{ common_env_vars_base
-      | combine(paperless_postgres_env_vars_base, recursive=True)
-      | combine(paperless_postgres_env_vars, recursive=True) }}
-    secrets: >-
-      {{ paperless_postgres_container_secrets_base
-      + paperless_postgres_container_secrets }}
+    env: "{{ paperless_postgres_container_env_combined }}"
+    secrets: "{{ paperless_postgres_container_secrets_combined }}"
     volumes:
       - "{{ paperless_postgres_volume_data }}.volume:/var/lib/postgresql/data"
     healthcheck_interval: 30s
@@ -79,9 +74,9 @@
     healthcheck_start_period: 20s
     healthcheck_timeout: 5s
     healthcheck: CMD-SHELL pg_isready -d {{ paperless_postgres_db_name }} -U {{ paperless_postgres_user }}
-    labels: "{{ paperless_postgres_container_labels_base | combine(paperless_postgres_container_labels, recursive=True) }}"
+    labels: "{{ paperless_postgres_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ paperless_postgres_quadlet_options_base + paperless_postgres_quadlet_options }}"
+    quadlet_options: "{{ paperless_postgres_quadlet_options_combined }}"
     state: quadlet
   notify: Restart postgres for {{ paperless_name }}
   become: true
@@ -91,13 +86,8 @@
     name: "{{ paperless_name }}-redis"
     image: "{{ paperless_redis_image }}:{{ paperless_redis_image_tag }}"
     network: "{{ paperless_name }}.network"
-    env: >-
-      {{ common_env_vars_base
-      | combine(paperless_redis_env_vars_base, recursive=True)
-      | combine(paperless_redis_env_vars, recursive=True) }}
-    secrets: >-
-      {{ paperless_redis_container_secrets_base
-      + paperless_redis_container_secrets }}
+    env: "{{ paperless_redis_container_env_combined }}"
+    secrets: "{{ paperless_redis_container_secrets_combined }}"
     volumes:
       - "{{ paperless_redis_volume_data }}.volume:/data"
     healthcheck_interval: 30s
@@ -105,9 +95,9 @@
     healthcheck_start_period: 20s
     healthcheck_timeout: 3s
     healthcheck: CMD-SHELL redis-cli ping | grep PONG
-    labels: "{{ paperless_redis_container_labels_base | combine(paperless_redis_container_labels, recursive=True) }}"
+    labels: "{{ paperless_redis_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ paperless_redis_quadlet_options_base + paperless_redis_quadlet_options }}"
+    quadlet_options: "{{ paperless_redis_quadlet_options_combined }}"
     state: quadlet
   notify: Restart redis for {{ paperless_name }}
   become: true
@@ -117,17 +107,12 @@
     name: "{{ paperless_name }}-gotenberg"
     image: "{{ paperless_gotenberg_image }}:{{ paperless_gotenberg_image_tag }}"
     network: "{{ paperless_name }}.network"
-    env: >-
-      {{ common_env_vars_base
-      | combine(paperless_gotenberg_env_vars_base, recursive=True)
-      | combine(paperless_gotenberg_env_vars, recursive=True) }}
-    secrets: >-
-      {{ paperless_gotenberg_container_secrets_base
-      + paperless_gotenberg_container_secrets }}
+    env: "{{ paperless_gotenberg_container_env_combined }}"
+    secrets: "{{ paperless_gotenberg_container_secrets_combined }}"
     command: gotenberg --chromium-disable-javascript=true --chromium-allow-list='file:///tmp/.*'
-    labels: "{{ paperless_gotenberg_container_labels_base | combine(paperless_gotenberg_container_labels, recursive=True) }}"
+    labels: "{{ paperless_gotenberg_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ paperless_gotenberg_quadlet_options_base + paperless_gotenberg_quadlet_options }}"
+    quadlet_options: "{{ paperless_gotenberg_quadlet_options_combined }}"
     state: quadlet
   notify: Restart gotenberg for {{ paperless_name }}
   become: true
@@ -137,16 +122,11 @@
     name: "{{ paperless_name }}-tika"
     image: "{{ paperless_tika_image }}:{{ paperless_tika_image_tag }}"
     network: "{{ paperless_name }}.network"
-    env: >-
-      {{ common_env_vars_base
-      | combine(paperless_tika_env_vars_base, recursive=True)
-      | combine(paperless_tika_env_vars, recursive=True) }}
-    secrets: >-
-      {{ paperless_tika_container_secrets_base
-      + paperless_tika_container_secrets }}
-    labels: "{{ paperless_tika_container_labels_base | combine(paperless_tika_container_labels, recursive=True) }}"
+    env: "{{ paperless_tika_container_env_combined }}"
+    secrets: "{{ paperless_tika_container_secrets_combined }}"
+    labels: "{{ paperless_tika_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ paperless_tika_quadlet_options_base + paperless_tika_quadlet_options }}"
+    quadlet_options: "{{ paperless_tika_quadlet_options_combined }}"
     state: quadlet
   notify: Restart tika for {{ paperless_name }}
   become: true
@@ -156,27 +136,22 @@
     name: "{{ paperless_name }}"
     image: "{{ paperless_image }}:{{ paperless_image_tag }}"
     network: "{{ paperless_name }}.network"
-    env: >-
-      {{ common_env_vars_base
-      | combine(paperless_env_vars_base, recursive=True)
-      | combine(paperless_env_vars, recursive=True) }}
-    secrets: >-
-      {{ paperless_container_secrets_base
-      + paperless_container_secrets }}
+    env: "{{ paperless_container_env_combined }}"
+    secrets: "{{ paperless_container_secrets_combined }}"
     volumes:
       - "{{ paperless_volume_data }}.volume:/usr/src/paperless/data"
       - "{{ paperless_volume_media }}.volume:/usr/src/paperless/media"
       - "{{ paperless_volume_export }}.volume:/usr/src/paperless/export"
       - "{{ paperless_volume_consume }}.volume:/usr/src/paperless/consume"
     publish: "{{ paperless_traefik_enable | ternary(omit, paperless_ports) }}"
-    labels: "{{ paperless_container_labels_base | combine(paperless_container_labels, recursive=True) }}"
+    labels: "{{ paperless_container_labels_combined }}"
     healthcheck_interval: 30s
     healthcheck_retries: 5
     healthcheck_start_period: 20s
     healthcheck_timeout: 10s
     healthcheck: CMD-SHELL /usr/bin/curl -fs -S --max-time 2 http://localhost:8000
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ paperless_quadlet_options_base + paperless_quadlet_options }}"
+    quadlet_options: "{{ paperless_quadlet_options_combined }}"
     state: quadlet
   notify: Restart {{ paperless_name }}
   become: true
@@ -186,19 +161,14 @@
     name: "{{ paperless_name }}-ai"
     image: "{{ paperless_ai_image }}:{{ paperless_ai_image_tag }}"
     network: "{{ paperless_name }}.network"
-    env: >-
-      {{ common_env_vars_base
-      | combine(paperless_ai_env_vars_base, recursive=True)
-      | combine(paperless_ai_env_vars, recursive=True) }}
-    secrets: >-
-      {{ paperless_ai_container_secrets_base
-      + paperless_ai_container_secrets }}
+    env: "{{ paperless_ai_container_env_combined }}"
+    secrets: "{{ paperless_ai_container_secrets_combined }}"
     volumes:
       - "{{ paperless_ai_volume_data }}.volume:/app/data"
     publish: "{{ paperless_traefik_enable | ternary(omit, paperless_ai_ports) }}"
-    labels: "{{ paperless_ai_container_labels_base | combine(paperless_ai_container_labels, recursive=True) }}"
+    labels: "{{ paperless_ai_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ paperless_ai_quadlet_options_base + paperless_ai_quadlet_options }}"
+    quadlet_options: "{{ paperless_ai_quadlet_options_combined }}"
     state: quadlet
   notify: Restart ai for {{ paperless_name }}
   become: true

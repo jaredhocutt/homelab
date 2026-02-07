@@ -18,12 +18,12 @@ nocodb_ports:
 
 nocodb_secrets: {}
 
-nocodb_env_vars: {}
+nocodb_container_env: {}
 nocodb_container_secrets: []
 nocodb_container_labels: {}
 nocodb_quadlet_options: []
 
-nocodb_postgres_env_vars: {}
+nocodb_postgres_container_env: {}
 nocodb_postgres_container_secrets: []
 nocodb_postgres_container_labels: {}
 nocodb_postgres_quadlet_options: []

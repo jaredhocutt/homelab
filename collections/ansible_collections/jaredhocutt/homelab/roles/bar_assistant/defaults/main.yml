@@ -29,22 +29,22 @@ bar_assistant_meilisearch_ports:
 
 bar_assistant_secrets: {}
 
-bar_assistant_env_vars: {}
+bar_assistant_container_env: {}
 bar_assistant_container_secrets: []
 bar_assistant_container_labels: {}
 bar_assistant_quadlet_options: []
 
-bar_assistant_salt_rim_env_vars: {}
+bar_assistant_salt_rim_container_env: {}
 bar_assistant_salt_rim_container_secrets: []
 bar_assistant_salt_rim_container_labels: {}
 bar_assistant_salt_rim_quadlet_options: []
 
-bar_assistant_redis_env_vars: {}
+bar_assistant_redis_container_env: {}
 bar_assistant_redis_container_secrets: []
 bar_assistant_redis_container_labels: {}
 bar_assistant_redis_quadlet_options: []
 
-bar_assistant_meilisearch_env_vars: {}
+bar_assistant_meilisearch_container_env: {}
 bar_assistant_meilisearch_container_secrets: []
 bar_assistant_meilisearch_container_labels: {}
 bar_assistant_meilisearch_quadlet_options: []

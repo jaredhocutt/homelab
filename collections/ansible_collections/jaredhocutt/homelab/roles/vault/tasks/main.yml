@@ -125,24 +125,19 @@
     name: "{{ vault_name }}"
     image: "{{ vault_image }}:{{ vault_image_tag }}"
     network: "{{ vault_name }}.network"
-    env: >-
-      {{ common_env_vars_base
-      | combine(vault_env_vars_base, recursive=True)
-      | combine(vault_env_vars, recursive=True) }}
-    secrets: >-
-      {{ vault_container_secrets_base
-      + vault_container_secrets }}
+    env: "{{ vault_container_env_combined }}"
+    secrets: "{{ vault_container_secrets_combined }}"
     volumes:
       - "{{ vault_volume_config }}:/vault/config"
       - "{{ vault_volume_data }}:/vault/file"
       - "{{ vault_volume_logs }}:/vault/logs"
     publish: "{{ vault_traefik_enable | ternary(omit, vault_ports) }}"
-    labels: "{{ vault_container_labels_base | combine(vault_container_labels, recursive=True) }}"
+    labels: "{{ vault_container_labels_combined }}"
     cap_add:
       - IPC_LOCK
     command: server
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ vault_quadlet_options_base + vault_quadlet_options }}"
+    quadlet_options: "{{ vault_quadlet_options_combined }}"
     state: quadlet
   become: true
   notify: Restart {{ vault_name }}

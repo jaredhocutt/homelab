@@ -2,10 +2,15 @@
 # vars file for jaredhocutt.homelab.wizarr
 
 ###############################################################################
-# Envrionment Variables
+# Envrionment
 ###############################################################################
 
-wizarr_env_vars_base: {}
+wizarr_container_env_base: {}
+
+wizarr_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(wizarr_container_env_base, recursive=True)
+  | combine(wizarr_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
@@ -18,6 +23,10 @@ wizarr_secrets_combined: >-
   | combine(wizarr_secrets, recursive=True) }}
 
 wizarr_container_secrets_base: []
+
+wizarr_container_secrets_combined: >-
+  {{ wizarr_container_secrets_base
+  + wizarr_container_secrets }}
 
 ###############################################################################
 # Container Labels
@@ -33,8 +42,16 @@ wizarr_container_labels_traefik:
     value: "{{ common_traefik_entrypoint }}"
 wizarr_container_labels_base: "{{ wizarr_traefik_enable | ternary((wizarr_container_labels_traefik | items2dict), {}) }}"
 
+wizarr_container_labels_combined: >-
+  {{ wizarr_container_labels_base
+  | combine(wizarr_container_labels, recursive=True) }}
+
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
 wizarr_quadlet_options_base: "{{ common_quadlet_options_base }}"
+
+wizarr_quadlet_options_combined: >-
+  {{ wizarr_quadlet_options_base
+  + wizarr_quadlet_options }}

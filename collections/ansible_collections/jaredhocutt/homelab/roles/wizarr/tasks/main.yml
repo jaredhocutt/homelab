@@ -43,19 +43,14 @@
     name: "{{ wizarr_name }}"
     image: "{{ wizarr_image }}:{{ wizarr_image_tag }}"
     network: "{{ wizarr_name }}.network"
-    env: >-
-      {{ common_env_vars_base
-      | combine(wizarr_env_vars_base, recursive=True)
-      | combine(wizarr_env_vars, recursive=True) }}
-    secrets: >-
-      {{ wizarr_container_secrets_base
-      + wizarr_container_secrets }}
+    env: "{{ wizarr_container_env_combined }}"
+    secrets: "{{ wizarr_container_secrets_combined }}"
     volumes:
       - "{{ wizarr_volume_data }}://data"
     publish: "{{ wizarr_traefik_enable | ternary(omit, wizarr_ports) }}"
-    labels: "{{ wizarr_container_labels_base | combine(wizarr_container_labels, recursive=True) }}"
+    labels: "{{ wizarr_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ wizarr_quadlet_options_base + wizarr_quadlet_options }}"
+    quadlet_options: "{{ wizarr_quadlet_options_combined }}"
     state: quadlet
   notify: Restart {{ wizarr_name }}
   become: true

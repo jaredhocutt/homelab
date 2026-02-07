@@ -5,13 +5,22 @@ authentik_postgres_db_name: authentik
 authentik_postgres_user: authentik
 
 ###############################################################################
-# Envrionment Variables
+# Envrionment
 ###############################################################################
 
-authentik_env_vars_base:
+authentik_container_env_base:
   AUTHENTIK_POSTGRESQL__HOST: "{{ authentik_name }}-postgres"
 
-authentik_postgres_env_vars_base: {}
+authentik_postgres_container_env_base: {}
+
+authentik_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(authentik_container_env_base, recursive=True)
+  | combine(authentik_container_env, recursive=True) }}
+authentik_postgres_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(authentik_postgres_container_env_base, recursive=True)
+  | combine(authentik_postgres_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
@@ -44,6 +53,16 @@ authentik_postgres_container_secrets_base:
   - authentik_postgres_user,type=env,target=POSTGRES_USER
   - authentik_postgres_password,type=env,target=POSTGRES_PASSWORD
 
+authentik_container_secrets_combined: >-
+  {{ authentik_container_secrets_base
+  + authentik_container_secrets }}
+authentik_worker_container_secrets_combined: >-
+  {{ authentik_worker_container_secrets_base
+  + authentik_worker_container_secrets }}
+authentik_postgres_container_secrets_combined: >-
+  {{ authentik_postgres_container_secrets_base
+  + authentik_postgres_container_secrets }}
+
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -66,6 +85,16 @@ authentik_worker_container_labels_base: {}
 
 authentik_postgres_container_labels_base: {}
 
+authentik_container_labels_combined: >-
+  {{ authentik_container_labels_base
+  | combine(authentik_container_labels, recursive=True) }}
+authentik_worker_container_labels_combined: >-
+  {{ authentik_worker_container_labels_base
+  | combine(authentik_worker_container_labels, recursive=True) }}
+authentik_postgres_container_labels_combined: >-
+  {{ authentik_postgres_container_labels_base
+  | combine(authentik_postgres_container_labels, recursive=True) }}
+
 ###############################################################################
 # Quadlet Options
 ###############################################################################
@@ -78,3 +107,10 @@ authentik_quadlet_options_base_custom:
 authentik_quadlet_options_base: "{{ common_quadlet_options_base + authentik_quadlet_options_base_custom }}"
 
 authentik_postgres_quadlet_options_base: "{{ common_quadlet_options_base }}"
+
+authentik_quadlet_options_combined: >-
+  {{ authentik_quadlet_options_base
+  + authentik_quadlet_options }}
+authentik_postgres_quadlet_options_combined: >-
+  {{ authentik_postgres_quadlet_options_base
+  + authentik_postgres_quadlet_options }}

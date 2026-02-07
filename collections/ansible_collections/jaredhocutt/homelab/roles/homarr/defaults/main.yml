@@ -15,7 +15,7 @@ homarr_ports:
 
 homarr_secrets: {}
 
-homarr_env_vars: {}
+homarr_container_env: {}
 homarr_container_secrets: []
 homarr_container_labels: {}
 homarr_quadlet_options: []

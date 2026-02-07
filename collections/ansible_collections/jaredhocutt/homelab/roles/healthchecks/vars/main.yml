@@ -2,14 +2,19 @@
 # vars file for jaredhocutt.homelab.healthchecks
 
 ###############################################################################
-# Envrionment Variables
+# Envrionment
 ###############################################################################
 
-healthchecks_env_vars_base:
+healthchecks_container_env_base:
   SITE_ROOT: "{{ healthchecks_url }}"
   SITE_NAME: "{{ healthchecks_site_name }}"
   SUPERUSER_EMAIL: "{{ healthchecks_email }}"
   DEBUG: "False"
+
+healthchecks_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(healthchecks_container_env_base, recursive=True)
+  | combine(healthchecks_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
@@ -26,6 +31,10 @@ healthchecks_secrets_combined: >-
 healthchecks_container_secrets_base:
   - healthchecks_password,type=env,target=SUPERUSER_PASSWORD
   - healthchecks_secret_key,type=env,target=SECRET_KEY
+
+healthchecks_container_secrets_combined: >-
+  {{ healthchecks_container_secrets_base
+  + healthchecks_container_secrets }}
 
 ###############################################################################
 # Container Labels
@@ -45,8 +54,16 @@ healthchecks_container_labels_traefik:
     value: "8000"
 healthchecks_container_labels_base: "{{ healthchecks_traefik_enable | ternary((healthchecks_container_labels_traefik | items2dict), {}) }}"
 
+healthchecks_container_labels_combined: >-
+  {{ healthchecks_container_labels_base
+  | combine(healthchecks_container_labels, recursive=True) }}
+
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
 healthchecks_quadlet_options_base: "{{ common_quadlet_options_base }}"
+
+healthchecks_quadlet_options_combined: >-
+  {{ healthchecks_quadlet_options_base
+  + healthchecks_quadlet_options }}

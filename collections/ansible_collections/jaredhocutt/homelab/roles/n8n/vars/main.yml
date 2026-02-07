@@ -5,10 +5,10 @@ n8n_postgres_db_name: n8n
 n8n_postgres_user: n8n
 
 ###############################################################################
-# Envrionment Variables
+# Envrionment
 ###############################################################################
 
-n8n_env_vars_base:
+n8n_env_base:
   DB_TYPE: postgresdb
   DB_POSTGRESDB_HOST: "{{ n8n_name }}-postgres"
   DB_POSTGRESDB_PORT: "5432"
@@ -19,11 +19,11 @@ n8n_env_vars_base:
   QUEUE_BULL_REDIS_HOST: "{{ n8n_name }}-redis"
   QUEUE_HEALTH_CHECK_ACTIVE: "true"
 
-n8n_worker_env_vars_base: "{{ n8n_env_vars_base }}"
+n8n_worker_env_base: "{{ n8n_env_vars_base }}"
 
-n8n_postgres_env_vars_base: {}
+n8n_postgres_env_base: {}
 
-n8n_redis_env_vars_base: {}
+n8n_redis_env_base: {}
 
 ###############################################################################
 # Secrets
@@ -52,6 +52,19 @@ n8n_postgres_container_secrets_base:
 
 n8n_redis_container_secrets_base: []
 
+n8n_container_secrets_combined: >-
+  {{ n8n_container_secrets_base
+  + n8n_container_secrets }}
+n8n_worker_container_secrets_combined: >-
+  {{ n8n_worker_container_secrets_base
+  + n8n_worker_container_secrets }}
+n8n_postgres_container_secrets_combined: >-
+  {{ n8n_postgres_container_secrets_base
+  + n8n_postgres_container_secrets }}
+n8n_redis_container_secrets_combined: >-
+  {{ n8n_redis_container_secrets_base
+  + n8n_redis_container_secrets }}
+
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -75,6 +88,19 @@ n8n_worker_container_labels_base: {}
 n8n_postgres_container_labels_base: {}
 
 n8n_redis_container_labels_base: {}
+
+n8n_container_labels_combined: >-
+  {{ n8n_container_labels_base
+  | combine(n8n_container_labels, recursive=True) }}
+n8n_worker_container_labels_combined: >-
+  {{ n8n_worker_container_labels_base
+  | combine(n8n_worker_container_labels, recursive=True) }}
+n8n_postgres_container_labels_combined: >-
+  {{ n8n_postgres_container_labels_base
+  | combine(n8n_postgres_container_labels, recursive=True) }}
+n8n_redis_container_labels_combined: >-
+  {{ n8n_redis_container_labels_base
+  | combine(n8n_redis_container_labels, recursive=True) }}
 
 ###############################################################################
 # Quadlet Options
@@ -103,3 +129,16 @@ n8n_worker_quadlet_options_base: "{{ common_quadlet_options_base + n8n_worker_qu
 n8n_postgres_quadlet_options_base: "{{ common_quadlet_options_base }}"
 
 n8n_redis_quadlet_options_base: "{{ common_quadlet_options_base }}"
+
+n8n_quadlet_options_combined: >-
+  {{ n8n_quadlet_options_base
+  + n8n_quadlet_options }}
+n8n_worker_quadlet_options_combined: >-
+  {{ n8n_worker_quadlet_options_base
+  + n8n_worker_quadlet_options }}
+n8n_postgres_quadlet_options_combined: >-
+  {{ n8n_postgres_quadlet_options_base
+  + n8n_postgres_quadlet_options }}
+n8n_redis_quadlet_options_combined: >-
+  {{ n8n_redis_quadlet_options_base
+  + n8n_redis_quadlet_options }}

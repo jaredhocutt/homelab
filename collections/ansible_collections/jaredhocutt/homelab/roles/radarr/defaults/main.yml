@@ -17,7 +17,7 @@ radarr_ports:
 
 radarr_secrets: {}
 
-radarr_env_vars: {}
+radarr_container_env: {}
 radarr_container_secrets: []
 radarr_container_labels: {}
 radarr_quadlet_options: []

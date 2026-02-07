@@ -6,28 +6,53 @@ archiveium_postgres_user: archiveium
 archiveium_minio_user: archiveium
 
 ###############################################################################
-# Envrionment Variables
+# Envrionment
 ###############################################################################
 
-archiveium_env_vars_base:
+archiveium_container_env_base:
   NODE_APP_INSTANCE: "0"
 
-archiveium_cron_env_vars_base:
+archiveium_cron_container_env_base:
   NODE_APP_INSTANCE: "0"
   USE_AS_CRON_PROCESSOR: "true"
 
-archiveium_postgres_env_vars_base: {}
+archiveium_postgres_container_env_base: {}
 
-archiveium_minio_env_vars_base:
+archiveium_minio_container_env_base:
   MINIO_COMPRESSION_ENABLE: "on"
   MINIO_COMPRESSION_EXTENSIONS: ""
   MINIO_COMPRESSION_MIME_TYPES: ""
 
-archiveium_redis_env_vars_base: {}
+archiveium_redis_container_env_base: {}
 
-archiveium_meilisearch_env_vars_base:
+archiveium_meilisearch_container_env_base:
   MEILI_ENV: production
   MEILI_NO_ANALYTICS: "true"
+
+archiveium_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(archiveium_container_env_base, recursive=True)
+  | combine(archiveium_container_env, recursive=True) }}
+archiveium_cron_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(archiveium_cron_container_env_base, recursive=True)
+  | combine(archiveium_cron_container_env, recursive=True) }}
+archiveium_postgres_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(archiveium_postgres_container_env_base, recursive=True)
+  | combine(archiveium_postgres_container_env, recursive=True) }}
+archiveium_minio_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(archiveium_minio_container_env_base, recursive=True)
+  | combine(archiveium_minio_container_env, recursive=True) }}
+archiveium_redis_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(archiveium_redis_container_env_base, recursive=True)
+  | combine(archiveium_redis_container_env, recursive=True) }}
+archiveium_meilisearch_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(archiveium_meilisearch_container_env_base, recursive=True)
+  | combine(archiveium_meilisearch_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
@@ -72,6 +97,25 @@ archiveium_redis_container_secrets_base: []
 archiveium_meilisearch_container_secrets_base:
   - archiveium_meilisearch_master_key,type=env,target=MEILI_MASTER_KEY
 
+archiveium_container_secrets_combined: >-
+  {{ archiveium_container_secrets_base
+  + archiveium_container_secrets }}
+archiveium_cron_container_secrets_combined: >-
+  {{ archiveium_cron_container_secrets_base
+  + archiveium_cron_container_secrets }}
+archiveium_postgres_container_secrets_combined: >-
+  {{ archiveium_postgres_container_secrets_base
+  + archiveium_postgres_container_secrets }}
+archiveium_minio_container_secrets_combined: >-
+  {{ archiveium_minio_container_secrets_base
+  + archiveium_minio_container_secrets }}
+archiveium_redis_container_secrets_combined: >-
+  {{ archiveium_redis_container_secrets_base
+  + archiveium_redis_container_secrets }}
+archiveium_meilisearch_container_secrets_combined: >-
+  {{ archiveium_meilisearch_container_secrets_base
+  + archiveium_meilisearch_container_secrets }}
+
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -109,6 +153,25 @@ archiveium_meilisearch_container_labels_traefik:
     value: "7700"
 archiveium_meilisearch_container_labels_base: "{{ archiveium_traefik_enable | ternary((archiveium_meilisearch_container_labels_traefik | items2dict), {}) }}"
 
+archiveium_container_labels_combined: >-
+  {{ archiveium_container_labels_base
+  | combine(archiveium_container_labels, recursive=True) }}
+archiveium_cron_container_labels_combined: >-
+  {{ archiveium_cron_container_labels_base
+  | combine(archiveium_cron_container_labels, recursive=True) }}
+archiveium_postgres_container_labels_combined: >-
+  {{ archiveium_postgres_container_labels_base
+  | combine(archiveium_postgres_container_labels, recursive=True) }}
+archiveium_minio_container_labels_combined: >-
+  {{ archiveium_minio_container_labels_base
+  | combine(archiveium_minio_container_labels, recursive=True) }}
+archiveium_redis_container_labels_combined: >-
+  {{ archiveium_redis_container_labels_base
+  | combine(archiveium_redis_container_labels, recursive=True) }}
+archiveium_meilisearch_container_labels_combined: >-
+  {{ archiveium_meilisearch_container_labels_base
+  | combine(archiveium_meilisearch_container_labels, recursive=True) }}
+
 ###############################################################################
 # Quadlet Options
 ###############################################################################
@@ -143,3 +206,22 @@ archiveium_postgres_quadlet_options_base: "{{ common_quadlet_options_base }}"
 archiveium_minio_quadlet_options_base: "{{ common_quadlet_options_base }}"
 archiveium_redis_quadlet_options_base: "{{ common_quadlet_options_base }}"
 archiveium_meilisearch_quadlet_options_base: "{{ common_quadlet_options_base }}"
+
+archiveium_quadlet_options_combined: >-
+  {{ archiveium_quadlet_options_base
+  + archiveium_quadlet_options }}
+archiveium_cron_quadlet_options_combined: >-
+  {{ archiveium_cron_quadlet_options_base
+  + archiveium_cron_quadlet_options }}
+archiveium_postgres_quadlet_options_combined: >-
+  {{ archiveium_postgres_quadlet_options_base
+  + archiveium_postgres_quadlet_options }}
+archiveium_minio_quadlet_options_combined: >-
+  {{ archiveium_minio_quadlet_options_base
+  + archiveium_minio_quadlet_options }}
+archiveium_redis_quadlet_options_combined: >-
+  {{ archiveium_redis_quadlet_options_base
+  + archiveium_redis_quadlet_options }}
+archiveium_meilisearch_quadlet_options_combined: >-
+  {{ archiveium_meilisearch_quadlet_options_base
+  + archiveium_meilisearch_quadlet_options }}

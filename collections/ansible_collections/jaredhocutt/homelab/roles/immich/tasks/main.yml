@@ -55,13 +55,8 @@
     name: "{{ immich_name }}-postgres"
     image: "{{ immich_postgres_image }}:{{ immich_postgres_image_tag }}"
     network: "{{ immich_name }}.network"
-    env: >-
-      {{ common_env_vars_base
-      | combine(immich_postgres_env_vars_base, recursive=True)
-      | combine(immich_postgres_env_vars, recursive=True) }}
-    secrets: >-
-      {{ immich_postgres_container_secrets_base
-      + immich_postgres_container_secrets }}
+    env: "{{ immich_postgres_container_env_combined }}"
+    secrets: "{{ immich_postgres_container_secrets_combined }}"
     volumes:
       - "{{ immich_postgres_volume_data }}.volume:/var/lib/postgresql/data"
     shm_size: 128mb
@@ -70,9 +65,9 @@
     healthcheck_start_period: 20s
     healthcheck_timeout: 5s
     healthcheck: CMD-SHELL pg_isready -d {{ immich_postgres_db_name }} -U {{ immich_postgres_user }}
-    labels: "{{ immich_postgres_container_labels_base | combine(immich_postgres_container_labels, recursive=True) }}"
+    labels: "{{ immich_postgres_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ immich_postgres_quadlet_options_base + immich_postgres_quadlet_options }}"
+    quadlet_options: "{{ immich_postgres_quadlet_options_combined }}"
     state: quadlet
   notify: Restart postgres for {{ immich_name }}
   become: true
@@ -82,13 +77,8 @@
     name: "{{ immich_name }}-redis"
     image: "{{ immich_redis_image }}:{{ immich_redis_image_tag }}"
     network: "{{ immich_name }}.network"
-    env: >-
-      {{ common_env_vars_base
-      | combine(immich_redis_env_vars_base, recursive=True)
-      | combine(immich_redis_env_vars, recursive=True) }}
-    secrets: >-
-      {{ immich_redis_container_secrets_base
-      + immich_redis_container_secrets }}
+    env: "{{ immich_redis_container_env_combined }}"
+    secrets: "{{ immich_redis_container_secrets_combined }}"
     volumes:
       - "{{ immich_redis_volume_data }}.volume:/data"
     healthcheck_interval: 30s
@@ -96,9 +86,9 @@
     healthcheck_start_period: 20s
     healthcheck_timeout: 3s
     healthcheck: CMD-SHELL redis-cli ping | grep PONG
-    labels: "{{ immich_redis_container_labels_base | combine(immich_redis_container_labels, recursive=True) }}"
+    labels: "{{ immich_redis_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ immich_redis_quadlet_options_base + immich_redis_quadlet_options }}"
+    quadlet_options: "{{ immich_redis_quadlet_options_combined }}"
     state: quadlet
   notify: Restart redis for {{ immich_name }}
   become: true
@@ -108,18 +98,13 @@
     name: "{{ immich_name }}-machine-learning"
     image: "{{ immich_image }}:{{ immich_image_tag }}"
     network: "{{ immich_name }}.network"
-    env: >-
-      {{ common_env_vars_base
-      | combine(immich_machine_learning_env_vars_base, recursive=True)
-      | combine(immich_machine_learning_env_vars, recursive=True) }}
-    secrets: >-
-      {{ immich_machine_learning_container_secrets_base
-      + immich_machine_learning_container_secrets }}
+    env: "{{ immich_machine_learning_container_env_combined }}"
+    secrets: "{{ immich_machine_learning_container_secrets_combined }}"
     volumes:
       - "{{ immich_machine_learning_volume_cache }}.volume:/cache"
-    labels: "{{ immich_machine_learning_container_labels_base | combine(immich_machine_learning_container_labels, recursive=True) }}"
+    labels: "{{ immich_machine_learning_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ immich_quadlet_options_base + immich_quadlet_options }}"
+    quadlet_options: "{{ immich_quadlet_options_combined }}"
     state: quadlet
   notify: Restart machine_learning for {{ immich_name }}
   become: true
@@ -129,20 +114,15 @@
     name: "{{ immich_name }}"
     image: "{{ immich_image }}:{{ immich_image_tag }}"
     network: "{{ immich_name }}.network"
-    env: >-
-      {{ common_env_vars_base
-      | combine(immich_env_vars_base, recursive=True)
-      | combine(immich_env_vars, recursive=True) }}
-    secrets: >-
-      {{ immich_container_secrets_base
-      + immich_container_secrets }}
+    env: "{{ immich_container_env_combined }}"
+    secrets: "{{ immich_container_secrets_combined }}"
     volumes:
       - "{{ immich_volume_data }}.volume:/data"
       - /etc/localtime:/etc/localtime:ro
     publish: "{{ immich_traefik_enable | ternary(omit, immich_ports) }}"
-    labels: "{{ immich_container_labels_base | combine(immich_container_labels, recursive=True) }}"
+    labels: "{{ immich_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ immich_quadlet_options_base + immich_quadlet_options }}"
+    quadlet_options: "{{ immich_quadlet_options_combined }}"
     state: quadlet
   notify: Restart {{ immich_name }}
   become: true

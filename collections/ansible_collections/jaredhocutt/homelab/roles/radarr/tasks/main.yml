@@ -47,21 +47,16 @@
     name: "{{ radarr_name }}"
     image: "{{ radarr_image }}:{{ radarr_image_tag }}"
     network: "{{ radarr_name }}.network"
-    env: >-
-      {{ common_env_vars_base
-      | combine(radarr_env_vars_base, recursive=True)
-      | combine(radarr_env_vars, recursive=True) }}
-    secrets: >-
-      {{ radarr_container_secrets_base
-      + radarr_container_secrets }}
+    env: "{{ radarr_container_env_combined }}"
+    secrets: "{{ radarr_container_secrets_combined }}"
     volumes:
       - "{{ radarr_volume_config }}:/config"
       - "{{ radarr_volume_download }}:/mnt/download"
       - "{{ radarr_volume_media }}:/mnt/media"
     publish: "{{ radarr_traefik_enable | ternary(omit, radarr_ports) }}"
-    labels: "{{ radarr_container_labels_base | combine(radarr_container_labels, recursive=True) }}"
+    labels: "{{ radarr_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ radarr_quadlet_options_base + radarr_quadlet_options }}"
+    quadlet_options: "{{ radarr_quadlet_options_combined }}"
     state: quadlet
   notify: Restart {{ radarr_name }}
   become: true

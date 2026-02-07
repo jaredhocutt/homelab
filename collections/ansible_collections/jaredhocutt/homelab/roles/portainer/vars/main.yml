@@ -2,10 +2,15 @@
 # vars file for jaredhocutt.homelab.portainer
 
 ###############################################################################
-# Envrionment Variables
+# Envrionment
 ###############################################################################
 
-portainer_env_vars_base: {}
+portainer_container_env_base: {}
+
+portainer_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(portainer_container_env_base, recursive=True)
+  | combine(portainer_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
@@ -18,6 +23,10 @@ portainer_secrets_combined: >-
   | combine(portainer_secrets, recursive=True) }}
 
 portainer_container_secrets_base: []
+
+portainer_container_secrets_combined: >-
+  {{ portainer_container_secrets_base
+  + portainer_container_secrets }}
 
 ###############################################################################
 # Container Labels
@@ -33,8 +42,16 @@ portainer_container_labels_traefik:
     value: "{{ common_traefik_entrypoint }}"
 portainer_container_labels_base: "{{ portainer_traefik_enable | ternary((portainer_container_labels_traefik | items2dict), {}) }}"
 
+portainer_container_labels_combined: >-
+  {{ portainer_container_labels_base
+  | combine(portainer_container_labels, recursive=True) }}
+
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
 portainer_quadlet_options_base: "{{ common_quadlet_options_base }}"
+
+portainer_quadlet_options_combined: >-
+  {{ portainer_quadlet_options_base
+  + portainer_quadlet_options }}

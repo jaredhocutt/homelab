@@ -49,13 +49,8 @@
     name: "{{ nocodb_name }}-postgres"
     image: "{{ nocodb_postgres_image }}:{{ nocodb_postgres_image_tag }}"
     network: "{{ nocodb_name }}.network"
-    env: >-
-      {{ common_env_vars_base
-      | combine(nocodb_postgres_env_vars_base, recursive=True)
-      | combine(nocodb_postgres_env_vars, recursive=True) }}
-    secrets: >-
-      {{ nocodb_postgres_container_secrets_base
-      + nocodb_postgres_container_secrets }}
+    env: "{{ nocodb_postgres_container_env_combined }}"
+    secrets: "{{ nocodb_postgres_container_secrets_combined }}"
     volumes:
       - "{{ nocodb_postgres_volume_data }}.volume:/var/lib/postgresql/data"
     healthcheck_interval: 30s
@@ -63,9 +58,9 @@
     healthcheck_start_period: 20s
     healthcheck_timeout: 5s
     healthcheck: CMD-SHELL pg_isready -d {{ nocodb_postgres_db_name }} -U {{ nocodb_postgres_user }}
-    labels: "{{ nocodb_postgres_container_labels_base | combine(nocodb_postgres_container_labels, recursive=True) }}"
+    labels: "{{ nocodb_postgres_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ nocodb_postgres_quadlet_options_base + nocodb_postgres_quadlet_options }}"
+    quadlet_options: "{{ nocodb_postgres_quadlet_options_combined }}"
     state: quadlet
   notify: Restart postgres for {{ nocodb_name }}
   become: true
@@ -77,19 +72,14 @@
     network:
       - "{{ nocodb_name }}.network"
       - "{{ nocodb_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
-    env: >-
-      {{ common_env_vars_base
-      | combine(nocodb_env_vars_base, recursive=True)
-      | combine(nocodb_env_vars, recursive=True) }}
-    secrets: >-
-      {{ nocodb_container_secrets_base
-      + nocodb_container_secrets }}
+    env: "{{ nocodb_container_env_combined }}"
+    secrets: "{{ nocodb_container_secrets_combined }}"
     volumes:
       - "{{ nocodb_volume_data }}.volume:/usr/app/data"
     publish: "{{ nocodb_traefik_enable | ternary(omit, nocodb_ports) }}"
-    labels: "{{ nocodb_container_labels_base | combine(nocodb_container_labels, recursive=True) }}"
+    labels: "{{ nocodb_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ nocodb_quadlet_options_base + nocodb_quadlet_options }}"
+    quadlet_options: "{{ nocodb_quadlet_options_combined }}"
     state: quadlet
   notify: Restart {{ nocodb_name }}
   become: true

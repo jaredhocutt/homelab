@@ -34,32 +34,32 @@ paperless_ai_ports:
 
 paperless_secrets: {}
 
-paperless_env_vars: {}
+paperless_container_env: {}
 paperless_container_secrets: []
 paperless_container_labels: {}
 paperless_quadlet_options: []
 
-paperless_postgres_env_vars: {}
+paperless_postgres_container_env: {}
 paperless_postgres_container_secrets: []
 paperless_postgres_container_labels: {}
 paperless_postgres_quadlet_options: []
 
-paperless_redis_env_vars: {}
+paperless_redis_container_env: {}
 paperless_redis_container_secrets: []
 paperless_redis_container_labels: {}
 paperless_redis_quadlet_options: []
 
-paperless_gotenberg_env_vars: {}
+paperless_gotenberg_container_env: {}
 paperless_gotenberg_container_secrets: []
 paperless_gotenberg_container_labels: {}
 paperless_gotenberg_quadlet_options: []
 
-paperless_tika_env_vars: {}
+paperless_tika_container_env: {}
 paperless_tika_container_secrets: []
 paperless_tika_container_labels: {}
 paperless_tika_quadlet_options: []
 
-paperless_ai_env_vars: {}
+paperless_ai_container_env: {}
 paperless_ai_container_secrets: []
 paperless_ai_container_labels: {}
 paperless_ai_quadlet_options: []

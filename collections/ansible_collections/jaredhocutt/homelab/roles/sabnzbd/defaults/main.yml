@@ -16,7 +16,7 @@ sabnzbd_ports:
 
 sabnzbd_secrets: {}
 
-sabnzbd_env_vars: {}
+sabnzbd_container_env: {}
 sabnzbd_container_secrets: []
 sabnzbd_container_labels: {}
 sabnzbd_quadlet_options: []

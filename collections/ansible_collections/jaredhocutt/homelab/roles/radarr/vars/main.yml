@@ -2,10 +2,15 @@
 # vars file for jaredhocutt.homelab.radarr
 
 ###############################################################################
-# Envrionment Variables
+# Envrionment
 ###############################################################################
 
-radarr_env_vars_base: {}
+radarr_container_env_base: {}
+
+radarr_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(radarr_container_env_base, recursive=True)
+  | combine(radarr_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
@@ -18,6 +23,10 @@ radarr_secrets_combined: >-
   | combine(radarr_secrets, recursive=True) }}
 
 radarr_container_secrets_base: []
+
+radarr_container_secrets_combined: >-
+  {{ radarr_container_secrets_base
+  + radarr_container_secrets }}
 
 ###############################################################################
 # Container Labels
@@ -33,8 +42,16 @@ radarr_container_labels_traefik:
     value: "{{ common_traefik_entrypoint }}"
 radarr_container_labels_base: "{{ radarr_traefik_enable | ternary((radarr_container_labels_traefik | items2dict), {}) }}"
 
+radarr_container_labels_combined: >-
+  {{ radarr_container_labels_base
+  | combine(radarr_container_labels, recursive=True) }}
+
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
 radarr_quadlet_options_base: "{{ common_quadlet_options_base }}"
+
+radarr_quadlet_options_combined: >-
+  {{ radarr_quadlet_options_base
+  + radarr_quadlet_options }}

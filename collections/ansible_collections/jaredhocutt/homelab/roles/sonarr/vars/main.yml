@@ -2,10 +2,15 @@
 # vars file for jaredhocutt.homelab.sonarr
 
 ###############################################################################
-# Envrionment Variables
+# Envrionment
 ###############################################################################
 
-sonarr_env_vars_base: {}
+sonarr_container_env_base: {}
+
+sonarr_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(sonarr_container_env_base, recursive=True)
+  | combine(sonarr_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
@@ -18,6 +23,10 @@ sonarr_secrets_combined: >-
   | combine(sonarr_secrets, recursive=True) }}
 
 sonarr_container_secrets_base: []
+
+sonarr_container_secrets_combined: >-
+  {{ sonarr_container_secrets_base
+  + sonarr_container_secrets }}
 
 ###############################################################################
 # Container Labels
@@ -33,8 +42,16 @@ sonarr_container_labels_traefik:
     value: "{{ common_traefik_entrypoint }}"
 sonarr_container_labels_base: "{{ sonarr_traefik_enable | ternary((sonarr_container_labels_traefik | items2dict), {}) }}"
 
+sonarr_container_labels_combined: >-
+  {{ sonarr_container_labels_base
+  | combine(sonarr_container_labels, recursive=True) }}
+
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
 sonarr_quadlet_options_base: "{{ common_quadlet_options_base }}"
+
+sonarr_quadlet_options_combined: >-
+  {{ sonarr_quadlet_options_base
+  + sonarr_quadlet_options }}

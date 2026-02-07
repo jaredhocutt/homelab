@@ -2,10 +2,15 @@
 # vars file for jaredhocutt.homelab.kometa
 
 ###############################################################################
-# Envrionment Variables
+# Envrionment
 ###############################################################################
 
-kometa_env_vars_base: {}
+kometa_container_env_base: {}
+
+kometa_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(kometa_container_env_base, recursive=True)
+  | combine(kometa_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
@@ -19,14 +24,26 @@ kometa_secrets_combined: >-
 
 kometa_container_secrets_base: []
 
+kometa_container_secrets_combined: >-
+  {{ kometa_container_secrets_base
+  + kometa_container_secrets }}
+
 ###############################################################################
 # Container Labels
 ###############################################################################
 
 kometa_container_labels_base: {}
 
+kometa_container_labels_combined: >-
+  {{ kometa_container_labels_base
+  | combine(kometa_container_labels, recursive=True) }}
+
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
 kometa_quadlet_options_base: "{{ common_quadlet_options_base }}"
+
+kometa_quadlet_options_combined: >-
+  {{ kometa_quadlet_options_base
+  + kometa_quadlet_options }}

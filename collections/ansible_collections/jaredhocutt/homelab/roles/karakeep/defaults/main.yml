@@ -20,17 +20,17 @@ karakeep_ports:
 
 karakeep_secrets: {}
 
-karakeep_env_vars: {}
+karakeep_container_env: {}
 karakeep_container_secrets: []
 karakeep_container_labels: {}
 karakeep_quadlet_options: []
 
-karakeep_chrome_env_vars: {}
+karakeep_chrome_container_env: {}
 karakeep_chrome_container_secrets: []
 karakeep_chrome_container_labels: {}
 karakeep_chrome_quadlet_options: []
 
-karakeep_meilisearch_env_vars: {}
+karakeep_meilisearch_container_env: {}
 karakeep_meilisearch_container_secrets: []
 karakeep_meilisearch_container_labels: {}
 karakeep_meilisearch_quadlet_options: []

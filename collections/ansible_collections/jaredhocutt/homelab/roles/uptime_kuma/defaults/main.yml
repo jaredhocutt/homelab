@@ -15,7 +15,7 @@ uptime_kuma_ports:
 
 uptime_kuma_secrets: {}
 
-uptime_kuma_env_vars: {}
+uptime_kuma_container_env: {}
 uptime_kuma_container_secrets: []
 uptime_kuma_container_labels: {}
 uptime_kuma_quadlet_options: []

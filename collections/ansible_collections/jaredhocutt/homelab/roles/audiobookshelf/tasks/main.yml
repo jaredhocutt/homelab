@@ -51,21 +51,16 @@
     network:
       - "{{ audiobookshelf_name }}.network"
       - "{{ audiobookshelf_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
-    env: >-
-      {{ common_env_vars_base
-      | combine(audiobookshelf_env_vars_base, recursive=True)
-      | combine(audiobookshelf_env_vars, recursive=True) }}
-    secrets: >-
-      {{ audiobookshelf_container_secrets_base
-      + audiobookshelf_container_secrets }}
+    env: "{{ audiobookshelf_container_env_combined }}"
+    secrets: "{{ audiobookshelf_container_secrets_combined }}"
     volumes:
       - "{{ audiobookshelf_volume_config }}:/config"
       - "{{ audiobookshelf_volume_metadata }}:/metadata"
       - "{{ audiobookshelf_volume_media }}:/mnt/media"
     publish: "{{ audiobookshelf_traefik_enable | ternary(omit, audiobookshelf_ports) }}"
-    labels: "{{ audiobookshelf_container_labels_base | combine(audiobookshelf_container_labels, recursive=True) }}"
+    labels: "{{ audiobookshelf_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ audiobookshelf_quadlet_options_base + audiobookshelf_quadlet_options }}"
+    quadlet_options: "{{ audiobookshelf_quadlet_options_combined }}"
     state: quadlet
   notify: Restart {{ audiobookshelf_name }}
   become: true

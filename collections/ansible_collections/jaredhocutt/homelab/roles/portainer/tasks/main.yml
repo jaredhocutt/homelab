@@ -43,21 +43,16 @@
     name: "{{ portainer_name }}"
     image: "{{ portainer_image }}:{{ portainer_image_tag }}"
     network: "{{ portainer_name }}.network"
-    env: >-
-      {{ common_env_vars_base
-      | combine(portainer_env_vars_base, recursive=True)
-      | combine(portainer_env_vars, recursive=True) }}
-    secrets: >-
-      {{ portainer_container_secrets_base
-      + portainer_container_secrets }}
+    env: "{{ portainer_container_env_combined }}"
+    secrets: "{{ portainer_container_secrets_combined }}"
     volumes:
       - "{{ portainer_volume_config }}:/data"
       - /var/run/podman.sock:/var/run/docker.sock
     publish: "{{ portainer_traefik_enable | ternary(omit, portainer_ports) }}"
-    labels: "{{ portainer_container_labels_base | combine(portainer_container_labels, recursive=True) }}"
+    labels: "{{ portainer_container_labels_combined }}"
     privileged: true
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ portainer_quadlet_options_base + portainer_quadlet_options }}"
+    quadlet_options: "{{ portainer_quadlet_options_combined }}"
     state: quadlet
   notify: Restart {{ portainer_name }}
   become: true

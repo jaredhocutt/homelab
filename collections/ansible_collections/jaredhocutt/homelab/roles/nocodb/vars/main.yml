@@ -5,14 +5,23 @@ nocodb_postgres_db_name: nocodb
 nocodb_postgres_user: nocodb
 
 ###############################################################################
-# Envrionment Variables
+# Envrionment
 ###############################################################################
 
-nocodb_env_vars_base:
+nocodb_container_env_base:
   NC_PUBLIC_URL: "{{ nocodb_url }}"
   NC_DISABLE_TELE: "true"
 
-nocodb_postgres_env_vars_base: {}
+nocodb_postgres_container_env_base: {}
+
+nocodb_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(nocodb_container_env_base, recursive=True)
+  | combine(nocodb_container_env, recursive=True) }}
+nocodb_postgres_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(nocodb_postgres_container_env_base, recursive=True)
+  | combine(nocodb_postgres_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
@@ -36,6 +45,13 @@ nocodb_postgres_container_secrets_base:
   - nocodb_postgres_user,type=env,target=POSTGRES_USER
   - nocodb_postgres_password,type=env,target=POSTGRES_PASSWORD
 
+nocodb_container_secrets_combined: >-
+  {{ nocodb_container_secrets_base
+  + nocodb_container_secrets }}
+nocodb_postgres_container_secrets_combined: >-
+  {{ nocodb_postgres_container_secrets_base
+  + nocodb_postgres_container_secrets }}
+
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -56,6 +72,13 @@ nocodb_container_labels_base: "{{ nocodb_traefik_enable | ternary((nocodb_contai
 
 nocodb_postgres_container_labels_base: {}
 
+nocodb_container_labels_combined: >-
+  {{ nocodb_container_labels_base
+  | combine(nocodb_container_labels, recursive=True) }}
+nocodb_postgres_container_labels_combined: >-
+  {{ nocodb_postgres_container_labels_base
+  | combine(nocodb_postgres_container_labels, recursive=True) }}
+
 ###############################################################################
 # Quadlet Options
 ###############################################################################
@@ -68,3 +91,10 @@ nocodb_quadlet_options_base_custom:
 nocodb_quadlet_options_base: "{{ common_quadlet_options_base + nocodb_quadlet_options_base_custom }}"
 
 nocodb_postgres_quadlet_options_base: "{{ common_quadlet_options_base }}"
+
+nocodb_quadlet_options_combined: >-
+  {{ nocodb_quadlet_options_base
+  + nocodb_quadlet_options }}
+nocodb_postgres_quadlet_options_combined: >-
+  {{ nocodb_postgres_quadlet_options_base
+  + nocodb_postgres_quadlet_options }}

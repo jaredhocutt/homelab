@@ -2,10 +2,15 @@
 # vars file for jaredhocutt.homelab.homarr
 
 ###############################################################################
-# Envrionment Variables
+# Envrionment
 ###############################################################################
 
-homarr_env_vars_base: {}
+homarr_container_env_base: {}
+
+homarr_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(homarr_container_env_base, recursive=True)
+  | combine(homarr_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
@@ -20,6 +25,10 @@ homarr_secrets_combined: >-
 
 homarr_container_secrets_base:
   - homarr_secret_encryption_key,type=env,target=SECRET_ENCRYPTION_KEY
+
+homarr_container_secrets_combined: >-
+  {{ homarr_container_secrets_base
+  + homarr_container_secrets }}
 
 ###############################################################################
 # Container Labels
@@ -39,8 +48,16 @@ homarr_container_labels_traefik:
     value: "7575"
 homarr_container_labels_base: "{{ homarr_traefik_enable | ternary((homarr_container_labels_traefik | items2dict), {}) }}"
 
+homarr_container_labels_combined: >-
+  {{ homarr_container_labels_base
+  | combine(homarr_container_labels, recursive=True) }}
+
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
 homarr_quadlet_options_base: "{{ common_quadlet_options_base }}"
+
+homarr_quadlet_options_combined: >-
+  {{ homarr_quadlet_options_base
+  + homarr_quadlet_options }}

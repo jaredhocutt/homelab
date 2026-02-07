@@ -2,10 +2,10 @@
 # vars file for jaredhocutt.homelab.common
 
 ###############################################################################
-# Envrionment Variables
+# Envrionment
 ###############################################################################
 
-common_env_vars_base:
+common_container_env_base:
   TZ: "America/New_York"
 
 ###############################################################################

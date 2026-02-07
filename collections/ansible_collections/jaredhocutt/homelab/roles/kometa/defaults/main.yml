@@ -10,7 +10,7 @@ kometa_volume_config: "{{ kometa_name }}-config"
 
 kometa_secrets: {}
 
-kometa_env_vars: {}
+kometa_container_env: {}
 kometa_container_secrets: []
 kometa_container_labels: {}
 kometa_quadlet_options: []

@@ -13,7 +13,7 @@ bentopdf_ports:
 
 bentopdf_secrets: {}
 
-bentopdf_env_vars: {}
+bentopdf_container_env: {}
 bentopdf_container_secrets: []
 bentopdf_container_labels: {}
 bentopdf_quadlet_options: []

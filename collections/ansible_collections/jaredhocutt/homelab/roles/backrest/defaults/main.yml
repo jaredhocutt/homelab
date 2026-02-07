@@ -14,4 +14,4 @@ backrest_traefik_host: "{{ backrest_name }}.{{ common_traefik_domain }}"
 backrest_user: root
 backrest_group: root
 
-backrest_env_vars: {}
+backrest_container_env: {}

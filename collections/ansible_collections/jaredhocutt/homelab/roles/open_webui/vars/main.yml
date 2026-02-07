@@ -2,10 +2,15 @@
 # vars file for jaredhocutt.homelab.open_webui
 
 ###############################################################################
-# Envrionment Variables
+# Envrionment
 ###############################################################################
 
-open_webui_env_vars_base: {}
+open_webui_container_env_base: {}
+
+open_webui_container_env_combined: >-
+  {{ common_container_env_base
+  | combine(open_webui_container_env_base, recursive=True)
+  | combine(open_webui_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
@@ -18,6 +23,10 @@ open_webui_secrets_combined: >-
   | combine(open_webui_secrets, recursive=True) }}
 
 open_webui_container_secrets_base: []
+
+open_webui_container_secrets_combined: >-
+  {{ open_webui_container_secrets_base
+  + open_webui_container_secrets }}
 
 ###############################################################################
 # Container Labels
@@ -33,8 +42,16 @@ open_webui_container_labels_traefik:
     value: "{{ common_traefik_entrypoint }}"
 open_webui_container_labels_base: "{{ open_webui_traefik_enable | ternary((open_webui_container_labels_traefik | items2dict), {}) }}"
 
+open_webui_container_labels_combined: >-
+  {{ open_webui_container_labels_base
+  | combine(open_webui_container_labels, recursive=True) }}
+
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
 open_webui_quadlet_options_base: "{{ common_quadlet_options_base }}"
+
+open_webui_quadlet_options_combined: >-
+  {{ open_webui_quadlet_options_base
+  + open_webui_quadlet_options }}

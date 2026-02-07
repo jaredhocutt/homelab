@@ -47,21 +47,16 @@
     name: "{{ sonarr_name }}"
     image: "{{ sonarr_image }}:{{ sonarr_image_tag }}"
     network: "{{ sonarr_name }}.network"
-    env: >-
-      {{ common_env_vars_base
-      | combine(sonarr_env_vars_base, recursive=True)
-      | combine(sonarr_env_vars, recursive=True) }}
-    secrets: >-
-      {{ sonarr_container_secrets_base
-      + sonarr_container_secrets }}
+    env: "{{ sonarr_container_env_combined }}"
+    secrets: "{{ sonarr_container_secrets_combined }}"
     volumes:
       - "{{ sonarr_volume_config }}:/config"
       - "{{ sonarr_volume_download }}:/mnt/download"
       - "{{ sonarr_volume_media }}:/mnt/media"
     publish: "{{ sonarr_traefik_enable | ternary(omit, sonarr_ports) }}"
-    labels: "{{ sonarr_container_labels_base | combine(sonarr_container_labels, recursive=True) }}"
+    labels: "{{ sonarr_container_labels_combined }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ sonarr_quadlet_options_base + sonarr_quadlet_options }}"
+    quadlet_options: "{{ sonarr_quadlet_options_combined }}"
     state: quadlet
   notify: Restart {{ sonarr_name }}
   become: true

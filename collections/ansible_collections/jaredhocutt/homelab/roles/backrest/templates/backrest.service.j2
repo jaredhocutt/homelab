@@ -7,7 +7,7 @@ Type=simple
 User={{ backrest_user }}
 Group={{ backrest_group }}
 ExecStart={{ backrest_bin_path }}
-{% for key, value in (common_env_vars_base | combine(backrest_env_vars_base, recursive=True) | combine(backrest_env_vars, recursive=True)).items() %}
+{% for key, value in (common_container_env_base | combine(backrest_env_vars_base, recursive=True) | combine(backrest_env_vars, recursive=True)).items() %}
 Environment="{{ key }}={{ value }}"
 {% endfor %}
 

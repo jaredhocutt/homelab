@@ -19,7 +19,7 @@ stirling_pdf_ports:
 
 stirling_pdf_secrets: {}
 
-stirling_pdf_env_vars: {}
+stirling_pdf_container_env: {}
 stirling_pdf_container_secrets: []
 stirling_pdf_container_labels: {}
 stirling_pdf_quadlet_options: []

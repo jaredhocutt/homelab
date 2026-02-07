@@ -30,32 +30,32 @@ archiveium_meilisearch_ports:
 
 archiveium_secrets: {}
 
-archiveium_env_vars: {}
+archiveium_container_env: {}
 archiveium_container_secrets: []
 archiveium_container_labels: {}
 archiveium_quadlet_options: []
 
-archiveium_cron_env_vars: {}
+archiveium_cron_container_env: {}
 archiveium_cron_container_secrets: []
 archiveium_cron_container_labels: {}
 archiveium_cron_quadlet_options: []
 
-archiveium_postgres_env_vars: {}
+archiveium_postgres_container_env: {}
 archiveium_postgres_container_secrets: []
 archiveium_postgres_container_labels: {}
 archiveium_postgres_quadlet_options: []
 
-archiveium_minio_env_vars: {}
+archiveium_minio_container_env: {}
 archiveium_minio_container_secrets: []
 archiveium_minio_container_labels: {}
 archiveium_minio_quadlet_options: []
 
-archiveium_redis_env_vars: {}
+archiveium_redis_container_env: {}
 archiveium_redis_container_secrets: []
 archiveium_redis_container_labels: {}
 archiveium_redis_quadlet_options: []
 
-archiveium_meilisearch_env_vars: {}
+archiveium_meilisearch_container_env: {}
 archiveium_meilisearch_container_secrets: []
 archiveium_meilisearch_container_labels: {}
 archiveium_meilisearch_quadlet_options: []
