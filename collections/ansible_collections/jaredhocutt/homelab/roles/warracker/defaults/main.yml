@@ -16,17 +16,16 @@ warracker_traefik_host: "{{ warracker_name }}.{{ common_traefik_domain }}"
 warracker_ports:
   - 8005:80
 
-warracker_env_vars: {}
-warracker_postgres_env_vars: {}
-
 warracker_secrets: {}
+
+warracker_env_vars: {}
 warracker_container_secrets: []
-warracker_postgres_container_secrets: []
-
 warracker_container_labels: {}
-warracker_postgres_container_labels: {}
-
 warracker_quadlet_options: []
+
+warracker_postgres_env_vars: {}
+warracker_postgres_container_secrets: []
+warracker_postgres_container_labels: {}
 warracker_postgres_quadlet_options: []
 
 warracker_url: https://{{ warracker_traefik_host }}

@@ -13,11 +13,9 @@ uptime_kuma_traefik_host: "{{ uptime_kuma_name }}.{{ common_traefik_domain }}"
 uptime_kuma_ports:
   - 3001:3001
 
-uptime_kuma_env_vars: {}
-
 uptime_kuma_secrets: {}
+
+uptime_kuma_env_vars: {}
 uptime_kuma_container_secrets: []
-
 uptime_kuma_container_labels: {}
-
 uptime_kuma_quadlet_options: []

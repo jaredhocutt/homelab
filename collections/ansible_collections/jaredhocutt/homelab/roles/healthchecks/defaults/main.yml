@@ -13,13 +13,11 @@ healthchecks_traefik_host: "{{ healthchecks_name }}.{{ common_traefik_domain }}"
 healthchecks_ports:
   - 8000:8000
 
-healthchecks_env_vars: {}
-
 healthchecks_secrets: {}
+
+healthchecks_env_vars: {}
 healthchecks_container_secrets: []
-
 healthchecks_container_labels: {}
-
 healthchecks_quadlet_options: []
 
 healthchecks_site_name: Healthchecks

@@ -15,11 +15,9 @@ radarr_traefik_host: "{{ radarr_name }}.{{ common_traefik_domain }}"
 radarr_ports:
   - 7878:7878
 
-radarr_env_vars: {}
-
 radarr_secrets: {}
+
+radarr_env_vars: {}
 radarr_container_secrets: []
-
 radarr_container_labels: {}
-
 radarr_quadlet_options: []

@@ -13,11 +13,9 @@ portainer_traefik_host: "{{ portainer_name }}.{{ common_traefik_domain }}"
 portainer_ports:
   - 9443:9443
 
-portainer_env_vars: {}
-
 portainer_secrets: {}
+
+portainer_env_vars: {}
 portainer_container_secrets: []
-
 portainer_container_labels: {}
-
 portainer_quadlet_options: []

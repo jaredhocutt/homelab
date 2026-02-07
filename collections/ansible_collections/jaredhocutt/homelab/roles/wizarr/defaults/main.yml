@@ -13,11 +13,9 @@ wizarr_traefik_host: "{{ wizarr_name }}.{{ common_traefik_domain }}"
 wizarr_ports:
   - 5690:5690
 
-wizarr_env_vars: {}
-
 wizarr_secrets: {}
+
+wizarr_env_vars: {}
 wizarr_container_secrets: []
-
 wizarr_container_labels: {}
-
 wizarr_quadlet_options: []

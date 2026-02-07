@@ -22,23 +22,24 @@ immich_traefik_host: "{{ immich_name }}.{{ common_traefik_domain }}"
 immich_ports:
   - 2283:2283
 
-immich_env_vars: {}
-immich_machine_learning_env_vars: {}
-immich_postgres_env_vars: {}
-immich_redis_env_vars: {}
-
 immich_secrets: {}
+
+immich_env_vars: {}
 immich_container_secrets: []
-immich_machine_learning_container_secrets: []
-immich_postgres_container_secrets: []
-immich_redis_container_secrets: []
-
 immich_container_labels: {}
-immich_machine_learning_container_labels: {}
-immich_postgres_container_labels: {}
-immich_redis_container_labels: {}
-
 immich_quadlet_options: []
+
+immich_machine_learning_env_vars: {}
+immich_machine_learning_container_secrets: []
+immich_machine_learning_container_labels: {}
 immich_machine_learning_quadlet_options: []
+
+immich_postgres_env_vars: {}
+immich_postgres_container_secrets: []
+immich_postgres_container_labels: {}
 immich_postgres_quadlet_options: []
+
+immich_redis_env_vars: {}
+immich_redis_container_secrets: []
+immich_redis_container_labels: {}
 immich_redis_quadlet_options: []

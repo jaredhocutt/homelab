@@ -15,11 +15,9 @@ sonarr_traefik_host: "{{ sonarr_name }}.{{ common_traefik_domain }}"
 sonarr_ports:
   - 8989:8989
 
-sonarr_env_vars: {}
-
 sonarr_secrets: {}
+
+sonarr_env_vars: {}
 sonarr_container_secrets: []
-
 sonarr_container_labels: {}
-
 sonarr_quadlet_options: []

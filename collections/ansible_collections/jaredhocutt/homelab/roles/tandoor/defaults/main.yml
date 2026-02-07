@@ -17,15 +17,14 @@ tandoor_traefik_host: "{{ tandoor_name }}.{{ common_traefik_domain }}"
 tandoor_ports:
   - 80:80
 
-tandoor_env_vars: {}
-tandoor_postgres_env_vars: {}
-
 tandoor_secrets: {}
+
+tandoor_env_vars: {}
 tandoor_container_secrets: []
-tandoor_postgres_container_secrets: []
-
 tandoor_container_labels: {}
-tandoor_postgres_container_labels: {}
-
 tandoor_quadlet_options: []
+
+tandoor_postgres_env_vars: {}
+tandoor_postgres_container_secrets: []
+tandoor_postgres_container_labels: {}
 tandoor_postgres_quadlet_options: []

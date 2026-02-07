@@ -13,11 +13,9 @@ homarr_traefik_host: "{{ homarr_name }}.{{ common_traefik_domain }}"
 homarr_ports:
   - 7575:7575
 
-homarr_env_vars: {}
-
 homarr_secrets: {}
+
+homarr_env_vars: {}
 homarr_container_secrets: []
-
 homarr_container_labels: {}
-
 homarr_quadlet_options: []

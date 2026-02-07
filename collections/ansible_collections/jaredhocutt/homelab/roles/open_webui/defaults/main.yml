@@ -13,11 +13,9 @@ open_webui_traefik_host: "{{ open_webui_name }}.{{ common_traefik_domain }}"
 open_webui_ports:
   - 3000:8080
 
-open_webui_env_vars: {}
-
 open_webui_secrets: {}
+
+open_webui_env_vars: {}
 open_webui_container_secrets: []
-
 open_webui_container_labels: {}
-
 open_webui_quadlet_options: []

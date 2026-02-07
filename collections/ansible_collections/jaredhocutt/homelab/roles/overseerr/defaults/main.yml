@@ -13,11 +13,9 @@ overseerr_traefik_host: "{{ overseerr_name }}.{{ common_traefik_domain }}"
 overseerr_ports:
   - 5055:5055
 
-overseerr_env_vars: {}
-
 overseerr_secrets: {}
+
+overseerr_env_vars: {}
 overseerr_container_secrets: []
-
 overseerr_container_labels: {}
-
 overseerr_quadlet_options: []

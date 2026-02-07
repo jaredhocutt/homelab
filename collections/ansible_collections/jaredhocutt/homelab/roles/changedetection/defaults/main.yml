@@ -15,15 +15,14 @@ changedetection_traefik_host: "{{ changedetection_name }}.{{ common_traefik_doma
 changedetection_ports:
   - 5000:5000
 
-changedetection_env_vars: {}
-changedetection_browser_env_vars: {}
-
 changedetection_secrets: {}
+
+changedetection_env_vars: {}
 changedetection_container_secrets: []
-changedetection_browser_container_secrets: []
-
 changedetection_container_labels: {}
-changedetection_browser_container_labels: {}
-
 changedetection_quadlet_options: []
+
+changedetection_browser_env_vars: {}
+changedetection_browser_container_secrets: []
+changedetection_browser_container_labels: {}
 changedetection_browser_quadlet_options: []

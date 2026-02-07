@@ -19,17 +19,16 @@ authentik_ports:
   - 9000:9000
   - 9443:9443
 
-authentik_env_vars: {}
-authentik_postgres_env_vars: {}
-
 authentik_secrets: {}
+
+authentik_env_vars: {}
 authentik_container_secrets: []
-authentik_worker_container_secrets: []
-authentik_postgres_container_secrets: []
-
 authentik_container_labels: {}
-authentik_worker_container_labels: {}
-authentik_postgres_container_labels: {}
-
 authentik_quadlet_options: []
+
+authentik_worker_container_secrets: []
+
+authentik_postgres_env_vars: {}
+authentik_postgres_container_secrets: []
+authentik_postgres_container_labels: {}
 authentik_postgres_quadlet_options: []

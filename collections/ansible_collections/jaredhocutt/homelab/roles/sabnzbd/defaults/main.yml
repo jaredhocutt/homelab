@@ -14,11 +14,9 @@ sabnzbd_traefik_host: "{{ sabnzbd_name }}.{{ common_traefik_domain }}"
 sabnzbd_ports:
   - 8080:8080
 
-sabnzbd_env_vars: {}
-
 sabnzbd_secrets: {}
+
+sabnzbd_env_vars: {}
 sabnzbd_container_secrets: []
-
 sabnzbd_container_labels: {}
-
 sabnzbd_quadlet_options: []

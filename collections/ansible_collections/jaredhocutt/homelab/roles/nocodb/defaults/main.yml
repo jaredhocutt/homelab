@@ -16,17 +16,16 @@ nocodb_traefik_host: "{{ nocodb_name }}.{{ common_traefik_domain }}"
 nocodb_ports:
   - 8080:8080
 
-nocodb_env_vars: {}
-nocodb_postgres_env_vars: {}
-
 nocodb_secrets: {}
+
+nocodb_env_vars: {}
 nocodb_container_secrets: []
-nocodb_postgres_container_secrets: []
-
 nocodb_container_labels: {}
-nocodb_postgres_container_labels: {}
-
 nocodb_quadlet_options: []
+
+nocodb_postgres_env_vars: {}
+nocodb_postgres_container_secrets: []
+nocodb_postgres_container_labels: {}
 nocodb_postgres_quadlet_options: []
 
 nocodb_url: https://{{ nocodb_traefik_host }}

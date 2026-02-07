@@ -11,11 +11,9 @@ bentopdf_traefik_host: "{{ bentopdf_name }}.{{ common_traefik_domain }}"
 bentopdf_ports:
   - 3000:8080
 
-bentopdf_env_vars: {}
-
 bentopdf_secrets: {}
+
+bentopdf_env_vars: {}
 bentopdf_container_secrets: []
-
 bentopdf_container_labels: {}
-
 bentopdf_quadlet_options: []

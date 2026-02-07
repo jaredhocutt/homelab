@@ -15,11 +15,9 @@ audiobookshelf_traefik_host: "{{ audiobookshelf_name }}.{{ common_traefik_domain
 audiobookshelf_ports:
   - 13378:80
 
-audiobookshelf_env_vars: {}
-
 audiobookshelf_secrets: {}
+
+audiobookshelf_env_vars: {}
 audiobookshelf_container_secrets: []
-
 audiobookshelf_container_labels: {}
-
 audiobookshelf_quadlet_options: []

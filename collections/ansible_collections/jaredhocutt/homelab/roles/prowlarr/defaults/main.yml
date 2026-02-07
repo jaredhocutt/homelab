@@ -13,11 +13,9 @@ prowlarr_traefik_host: "{{ prowlarr_name }}.{{ common_traefik_domain }}"
 prowlarr_ports:
   - 9696:9696
 
-prowlarr_env_vars: {}
-
 prowlarr_secrets: {}
+
+prowlarr_env_vars: {}
 prowlarr_container_secrets: []
-
 prowlarr_container_labels: {}
-
 prowlarr_quadlet_options: []
