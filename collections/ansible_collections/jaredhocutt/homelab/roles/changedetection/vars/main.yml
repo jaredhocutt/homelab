@@ -5,43 +5,43 @@
 # Envrionment
 ###############################################################################
 
-changedetection_container_env_base:
+changedetection_container_env_defaults:
   PLAYWRIGHT_DRIVER_URL: "ws://{{ changedetection_name }}-browser:3000"
 
-changedetection_browser_container_env_base:
+changedetection_browser_container_env_defaults:
   SCREEN_WIDTH: "1920"
   SCREEN_HEIGHT: "1024"
   SCREEN_DEPTH: "16"
   MAX_CONCURRENT_CHROME_PROCESSES: "10"
 
 changedetection_container_env_combined: >-
-  {{ common_container_env_base
-  | combine(changedetection_container_env_base, recursive=True)
+  {{ common_container_env_defaults
+  | combine(changedetection_container_env_defaults, recursive=True)
   | combine(changedetection_container_env, recursive=True) }}
 changedetection_browser_container_env_combined: >-
-  {{ common_container_env_base
-  | combine(changedetection_browser_container_env_base, recursive=True)
+  {{ common_container_env_defaults
+  | combine(changedetection_browser_container_env_defaults, recursive=True)
   | combine(changedetection_browser_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
 ###############################################################################
 
-changedetection_secrets_base: {}
+changedetection_secrets_defaults: {}
 
 changedetection_secrets_combined: >-
-  {{ changedetection_secrets_base
+  {{ changedetection_secrets_defaults
   | combine(changedetection_secrets, recursive=True) }}
 
-changedetection_container_secrets_base: []
+changedetection_container_secrets_defaults: []
 
-changedetection_browser_container_secrets_base: []
+changedetection_browser_container_secrets_defaults: []
 
 changedetection_container_secrets_combined: >-
-  {{ changedetection_container_secrets_base
+  {{ changedetection_container_secrets_defaults
   + changedetection_container_secrets }}
 changedetection_browser_container_secrets_combined: >-
-  {{ changedetection_browser_container_secrets_base
+  {{ changedetection_browser_container_secrets_defaults
   + changedetection_browser_container_secrets }}
 
 ###############################################################################
@@ -60,33 +60,33 @@ changedetection_container_labels_traefik:
     value: "{{ common_traefik_entrypoint }}"
   - key: traefik.http.services.{{ changedetection_name }}.loadbalancer.server.port
     value: "5000"
-changedetection_container_labels_base: "{{ changedetection_traefik_enable | ternary((changedetection_container_labels_traefik | items2dict), {}) }}"
+changedetection_container_labels_defaults: "{{ changedetection_traefik_enable | ternary((changedetection_container_labels_traefik | items2dict), {}) }}"
 
-changedetection_browser_container_labels_base: {}
+changedetection_browser_container_labels_defaults: {}
 
 changedetection_container_labels_combined: >-
-  {{ changedetection_container_labels_base
+  {{ changedetection_container_labels_defaults
   | combine(changedetection_container_labels, recursive=True) }}
 changedetection_browser_container_labels_combined: >-
-  {{ changedetection_browser_container_labels_base
+  {{ changedetection_browser_container_labels_defaults
   | combine(changedetection_browser_container_labels, recursive=True) }}
 
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-changedetection_quadlet_options_base_custom:
+changedetection_quadlet_options_depends:
   - |
     [Unit]
     Requires={{ changedetection_name }}-browser.service
     After={{ changedetection_name }}-browser.service
-changedetection_quadlet_options_base: "{{ common_quadlet_options_base + changedetection_quadlet_options_base_custom }}"
+changedetection_quadlet_options_defaults: "{{ common_quadlet_options_defaults + changedetection_quadlet_options_depends }}"
 
-changedetection_browser_quadlet_options_base: "{{ common_quadlet_options_base }}"
+changedetection_browser_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
 
 changedetection_quadlet_options_combined: >-
-  {{ changedetection_quadlet_options_base
+  {{ changedetection_quadlet_options_defaults
   + changedetection_quadlet_options }}
 changedetection_browser_quadlet_options_combined: >-
-  {{ changedetection_browser_quadlet_options_base
+  {{ changedetection_browser_quadlet_options_defaults
   + changedetection_browser_quadlet_options }}

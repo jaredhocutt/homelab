@@ -5,27 +5,27 @@
 # Envrionment
 ###############################################################################
 
-calibre_container_env_base: {}
+calibre_container_env_defaults: {}
 
 calibre_container_env_combined: >-
-  {{ common_container_env_base
-  | combine(calibre_container_env_base, recursive=True)
+  {{ common_container_env_defaults
+  | combine(calibre_container_env_defaults, recursive=True)
   | combine(calibre_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
 ###############################################################################
 
-calibre_secrets_base: {}
+calibre_secrets_defaults: {}
 
 calibre_secrets_combined: >-
-  {{ calibre_secrets_base
+  {{ calibre_secrets_defaults
   | combine(calibre_secrets, recursive=True) }}
 
-calibre_container_secrets_base: []
+calibre_container_secrets_defaults: []
 
 calibre_container_secrets_combined: >-
-  {{ calibre_container_secrets_base
+  {{ calibre_container_secrets_defaults
   + calibre_container_secrets }}
 
 ###############################################################################
@@ -44,18 +44,18 @@ calibre_container_labels_traefik:
     value: "{{ common_traefik_entrypoint }}"
   - key: traefik.http.services.{{ calibre_name }}.loadbalancer.server.port
     value: "8080"
-calibre_container_labels_base: "{{ calibre_traefik_enable | ternary((calibre_container_labels_traefik | items2dict), {}) }}"
+calibre_container_labels_defaults: "{{ calibre_traefik_enable | ternary((calibre_container_labels_traefik | items2dict), {}) }}"
 
 calibre_container_labels_combined: >-
-  {{ calibre_container_labels_base
+  {{ calibre_container_labels_defaults
   | combine(calibre_container_labels, recursive=True) }}
 
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-calibre_quadlet_options_base: "{{ common_quadlet_options_base }}"
+calibre_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
 
 calibre_quadlet_options_combined: >-
-  {{ calibre_quadlet_options_base
+  {{ calibre_quadlet_options_defaults
   + calibre_quadlet_options }}

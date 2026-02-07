@@ -5,27 +5,27 @@
 # Envrionment
 ###############################################################################
 
-tautulli_container_env_base: {}
+tautulli_container_env_defaults: {}
 
 tautulli_container_env_combined: >-
-  {{ common_container_env_base
-  | combine(tautulli_container_env_base, recursive=True)
+  {{ common_container_env_defaults
+  | combine(tautulli_container_env_defaults, recursive=True)
   | combine(tautulli_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
 ###############################################################################
 
-tautulli_secrets_base: {}
+tautulli_secrets_defaults: {}
 
 tautulli_secrets_combined: >-
-  {{ tautulli_secrets_base
+  {{ tautulli_secrets_defaults
   | combine(tautulli_secrets, recursive=True) }}
 
-tautulli_container_secrets_base: []
+tautulli_container_secrets_defaults: []
 
 tautulli_container_secrets_combined: >-
-  {{ tautulli_container_secrets_base
+  {{ tautulli_container_secrets_defaults
   + tautulli_container_secrets }}
 
 ###############################################################################
@@ -44,18 +44,18 @@ tautulli_container_labels_traefik:
     value: "{{ common_traefik_entrypoint }}"
   - key: traefik.http.services.{{ tautulli_name }}.loadbalancer.server.port
     value: "8181"
-tautulli_container_labels_base: "{{ tautulli_traefik_enable | ternary((tautulli_container_labels_traefik | items2dict), {}) }}"
+tautulli_container_labels_defaults: "{{ tautulli_traefik_enable | ternary((tautulli_container_labels_traefik | items2dict), {}) }}"
 
 tautulli_container_labels_combined: >-
-  {{ tautulli_container_labels_base
+  {{ tautulli_container_labels_defaults
   | combine(tautulli_container_labels, recursive=True) }}
 
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-tautulli_quadlet_options_base: "{{ common_quadlet_options_base }}"
+tautulli_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
 
 tautulli_quadlet_options_combined: >-
-  {{ tautulli_quadlet_options_base
+  {{ tautulli_quadlet_options_defaults
   + tautulli_quadlet_options }}

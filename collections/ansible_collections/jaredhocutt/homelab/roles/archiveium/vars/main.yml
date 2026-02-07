@@ -9,56 +9,56 @@ archiveium_minio_user: archiveium
 # Envrionment
 ###############################################################################
 
-archiveium_container_env_base:
+archiveium_container_env_defaults:
   NODE_APP_INSTANCE: "0"
 
-archiveium_cron_container_env_base:
+archiveium_cron_container_env_defaults:
   NODE_APP_INSTANCE: "0"
   USE_AS_CRON_PROCESSOR: "true"
 
-archiveium_postgres_container_env_base: {}
+archiveium_postgres_container_env_defaults: {}
 
-archiveium_minio_container_env_base:
+archiveium_minio_container_env_defaults:
   MINIO_COMPRESSION_ENABLE: "on"
   MINIO_COMPRESSION_EXTENSIONS: ""
   MINIO_COMPRESSION_MIME_TYPES: ""
 
-archiveium_redis_container_env_base: {}
+archiveium_redis_container_env_defaults: {}
 
-archiveium_meilisearch_container_env_base:
+archiveium_meilisearch_container_env_defaults:
   MEILI_ENV: production
   MEILI_NO_ANALYTICS: "true"
 
 archiveium_container_env_combined: >-
-  {{ common_container_env_base
-  | combine(archiveium_container_env_base, recursive=True)
+  {{ common_container_env_defaults
+  | combine(archiveium_container_env_defaults, recursive=True)
   | combine(archiveium_container_env, recursive=True) }}
 archiveium_cron_container_env_combined: >-
-  {{ common_container_env_base
-  | combine(archiveium_cron_container_env_base, recursive=True)
+  {{ common_container_env_defaults
+  | combine(archiveium_cron_container_env_defaults, recursive=True)
   | combine(archiveium_cron_container_env, recursive=True) }}
 archiveium_postgres_container_env_combined: >-
-  {{ common_container_env_base
-  | combine(archiveium_postgres_container_env_base, recursive=True)
+  {{ common_container_env_defaults
+  | combine(archiveium_postgres_container_env_defaults, recursive=True)
   | combine(archiveium_postgres_container_env, recursive=True) }}
 archiveium_minio_container_env_combined: >-
-  {{ common_container_env_base
-  | combine(archiveium_minio_container_env_base, recursive=True)
+  {{ common_container_env_defaults
+  | combine(archiveium_minio_container_env_defaults, recursive=True)
   | combine(archiveium_minio_container_env, recursive=True) }}
 archiveium_redis_container_env_combined: >-
-  {{ common_container_env_base
-  | combine(archiveium_redis_container_env_base, recursive=True)
+  {{ common_container_env_defaults
+  | combine(archiveium_redis_container_env_defaults, recursive=True)
   | combine(archiveium_redis_container_env, recursive=True) }}
 archiveium_meilisearch_container_env_combined: >-
-  {{ common_container_env_base
-  | combine(archiveium_meilisearch_container_env_base, recursive=True)
+  {{ common_container_env_defaults
+  | combine(archiveium_meilisearch_container_env_defaults, recursive=True)
   | combine(archiveium_meilisearch_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
 ###############################################################################
 
-archiveium_secrets_base:
+archiveium_secrets_defaults:
   archiveium_admin_email: "{{ archiveium_admin_email }}"
   archiveium_admin_password: "{{ archiveium_admin_password }}"
   archiveium_encryption_key: "{{ archiveium_encryption_key }}"
@@ -70,50 +70,50 @@ archiveium_secrets_base:
   archiveium_minio_password: "{{ archiveium_minio_password }}"
 
 archiveium_secrets_combined: >-
-  {{ archiveium_secrets_base
+  {{ archiveium_secrets_defaults
   | combine(archiveium_secrets, recursive=True) }}
 
-archiveium_container_secrets_base:
+archiveium_container_secrets_defaults:
   - archiveium_admin_email,type=env,target=APP_ADMIN_EMAIL
   - archiveium_admin_password,type=env,target=APP_ADMIN_PASSWORD
   - archiveium_encryption_key,type=env,target=APP_ENCRYPTION_KEY
   - archiveium_meilisearch_master_key,type=env,target=SEARCH_API_KEY
 
-archiveium_cron_container_secrets_base:
+archiveium_cron_container_secrets_defaults:
   - archiveium_encryption_key,type=env,target=APP_ENCRYPTION_KEY
   - archiveium_meilisearch_master_key,type=env,target=SEARCH_API_KEY
 
-archiveium_postgres_container_secrets_base:
+archiveium_postgres_container_secrets_defaults:
   - archiveium_postgres_db_name,type=env,target=POSTGRES_DB
   - archiveium_postgres_user,type=env,target=POSTGRES_USER
   - archiveium_postgres_password,type=env,target=POSTGRES_PASSWORD
 
-archiveium_minio_container_secrets_base:
+archiveium_minio_container_secrets_defaults:
   - archiveium_minio_user,type=env,target=MINIO_ROOT_USER
   - archiveium_minio_password,type=env,target=MINIO_ROOT_PASSWORD
 
-archiveium_redis_container_secrets_base: []
+archiveium_redis_container_secrets_defaults: []
 
-archiveium_meilisearch_container_secrets_base:
+archiveium_meilisearch_container_secrets_defaults:
   - archiveium_meilisearch_master_key,type=env,target=MEILI_MASTER_KEY
 
 archiveium_container_secrets_combined: >-
-  {{ archiveium_container_secrets_base
+  {{ archiveium_container_secrets_defaults
   + archiveium_container_secrets }}
 archiveium_cron_container_secrets_combined: >-
-  {{ archiveium_cron_container_secrets_base
+  {{ archiveium_cron_container_secrets_defaults
   + archiveium_cron_container_secrets }}
 archiveium_postgres_container_secrets_combined: >-
-  {{ archiveium_postgres_container_secrets_base
+  {{ archiveium_postgres_container_secrets_defaults
   + archiveium_postgres_container_secrets }}
 archiveium_minio_container_secrets_combined: >-
-  {{ archiveium_minio_container_secrets_base
+  {{ archiveium_minio_container_secrets_defaults
   + archiveium_minio_container_secrets }}
 archiveium_redis_container_secrets_combined: >-
-  {{ archiveium_redis_container_secrets_base
+  {{ archiveium_redis_container_secrets_defaults
   + archiveium_redis_container_secrets }}
 archiveium_meilisearch_container_secrets_combined: >-
-  {{ archiveium_meilisearch_container_secrets_base
+  {{ archiveium_meilisearch_container_secrets_defaults
   + archiveium_meilisearch_container_secrets }}
 
 ###############################################################################
@@ -132,12 +132,12 @@ archiveium_container_labels_traefik:
     value: "{{ common_traefik_entrypoint }}"
   - key: traefik.http.services.{{ archiveium_name }}.loadbalancer.server.port
     value: "3000"
-archiveium_container_labels_base: "{{ archiveium_traefik_enable | ternary((archiveium_container_labels_traefik | items2dict), {}) }}"
+archiveium_container_labels_defaults: "{{ archiveium_traefik_enable | ternary((archiveium_container_labels_traefik | items2dict), {}) }}"
 
-archiveium_cron_container_labels_base: {}
-archiveium_postgres_container_labels_base: {}
-archiveium_minio_container_labels_base: {}
-archiveium_redis_container_labels_base: {}
+archiveium_cron_container_labels_defaults: {}
+archiveium_postgres_container_labels_defaults: {}
+archiveium_minio_container_labels_defaults: {}
+archiveium_redis_container_labels_defaults: {}
 
 # This is done as a list and converted to a dict in order to use variables in the key name
 archiveium_meilisearch_container_labels_traefik:
@@ -151,32 +151,34 @@ archiveium_meilisearch_container_labels_traefik:
     value: "{{ common_traefik_entrypoint }}"
   - key: traefik.http.services.{{ archiveium_name }}-meilisearch.loadbalancer.server.port
     value: "7700"
-archiveium_meilisearch_container_labels_base: "{{ archiveium_traefik_enable | ternary((archiveium_meilisearch_container_labels_traefik | items2dict), {}) }}"
+archiveium_meilisearch_container_labels_defaults: >-
+  {{ archiveium_traefik_enable
+  | ternary((archiveium_meilisearch_container_labels_traefik | items2dict), {}) }}
 
 archiveium_container_labels_combined: >-
-  {{ archiveium_container_labels_base
+  {{ archiveium_container_labels_defaults
   | combine(archiveium_container_labels, recursive=True) }}
 archiveium_cron_container_labels_combined: >-
-  {{ archiveium_cron_container_labels_base
+  {{ archiveium_cron_container_labels_defaults
   | combine(archiveium_cron_container_labels, recursive=True) }}
 archiveium_postgres_container_labels_combined: >-
-  {{ archiveium_postgres_container_labels_base
+  {{ archiveium_postgres_container_labels_defaults
   | combine(archiveium_postgres_container_labels, recursive=True) }}
 archiveium_minio_container_labels_combined: >-
-  {{ archiveium_minio_container_labels_base
+  {{ archiveium_minio_container_labels_defaults
   | combine(archiveium_minio_container_labels, recursive=True) }}
 archiveium_redis_container_labels_combined: >-
-  {{ archiveium_redis_container_labels_base
+  {{ archiveium_redis_container_labels_defaults
   | combine(archiveium_redis_container_labels, recursive=True) }}
 archiveium_meilisearch_container_labels_combined: >-
-  {{ archiveium_meilisearch_container_labels_base
+  {{ archiveium_meilisearch_container_labels_defaults
   | combine(archiveium_meilisearch_container_labels, recursive=True) }}
 
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-archiveium_quadlet_options_base_custom:
+archiveium_quadlet_options_depends:
   - |
     [Unit]
     Requires={{ archiveium_name }}-postgres.service
@@ -187,9 +189,9 @@ archiveium_quadlet_options_base_custom:
     After={{ archiveium_name }}-minio.service
     After={{ archiveium_name }}-redis.service
     After={{ archiveium_name }}-meilisearch.service
-archiveium_quadlet_options_base: "{{ common_quadlet_options_base + archiveium_quadlet_options_base_custom }}"
+archiveium_quadlet_options_defaults: "{{ common_quadlet_options_defaults + archiveium_quadlet_options_depends }}"
 
-archiveium_cron_quadlet_options_base_custom:
+archiveium_cron_quadlet_options_depends:
   - |
     [Unit]
     Requires={{ archiveium_name }}-postgres.service
@@ -200,28 +202,28 @@ archiveium_cron_quadlet_options_base_custom:
     After={{ archiveium_name }}-minio.service
     After={{ archiveium_name }}-redis.service
     After={{ archiveium_name }}-meilisearch.service
-archiveium_cron_quadlet_options_base: "{{ common_quadlet_options_base + archiveium_cron_quadlet_options_base_custom }}"
+archiveium_cron_quadlet_options_defaults: "{{ common_quadlet_options_defaults + archiveium_cron_quadlet_options_depends }}"
 
-archiveium_postgres_quadlet_options_base: "{{ common_quadlet_options_base }}"
-archiveium_minio_quadlet_options_base: "{{ common_quadlet_options_base }}"
-archiveium_redis_quadlet_options_base: "{{ common_quadlet_options_base }}"
-archiveium_meilisearch_quadlet_options_base: "{{ common_quadlet_options_base }}"
+archiveium_postgres_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+archiveium_minio_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+archiveium_redis_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+archiveium_meilisearch_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
 
 archiveium_quadlet_options_combined: >-
-  {{ archiveium_quadlet_options_base
+  {{ archiveium_quadlet_options_defaults
   + archiveium_quadlet_options }}
 archiveium_cron_quadlet_options_combined: >-
-  {{ archiveium_cron_quadlet_options_base
+  {{ archiveium_cron_quadlet_options_defaults
   + archiveium_cron_quadlet_options }}
 archiveium_postgres_quadlet_options_combined: >-
-  {{ archiveium_postgres_quadlet_options_base
+  {{ archiveium_postgres_quadlet_options_defaults
   + archiveium_postgres_quadlet_options }}
 archiveium_minio_quadlet_options_combined: >-
-  {{ archiveium_minio_quadlet_options_base
+  {{ archiveium_minio_quadlet_options_defaults
   + archiveium_minio_quadlet_options }}
 archiveium_redis_quadlet_options_combined: >-
-  {{ archiveium_redis_quadlet_options_base
+  {{ archiveium_redis_quadlet_options_defaults
   + archiveium_redis_quadlet_options }}
 archiveium_meilisearch_quadlet_options_combined: >-
-  {{ archiveium_meilisearch_quadlet_options_base
+  {{ archiveium_meilisearch_quadlet_options_defaults
   + archiveium_meilisearch_quadlet_options }}

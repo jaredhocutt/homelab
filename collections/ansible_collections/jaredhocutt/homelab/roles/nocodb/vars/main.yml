@@ -8,48 +8,48 @@ nocodb_postgres_user: nocodb
 # Envrionment
 ###############################################################################
 
-nocodb_container_env_base:
+nocodb_container_env_defaults:
   NC_PUBLIC_URL: "{{ nocodb_url }}"
   NC_DISABLE_TELE: "true"
 
-nocodb_postgres_container_env_base: {}
+nocodb_postgres_container_env_defaults: {}
 
 nocodb_container_env_combined: >-
-  {{ common_container_env_base
-  | combine(nocodb_container_env_base, recursive=True)
+  {{ common_container_env_defaults
+  | combine(nocodb_container_env_defaults, recursive=True)
   | combine(nocodb_container_env, recursive=True) }}
 nocodb_postgres_container_env_combined: >-
-  {{ common_container_env_base
-  | combine(nocodb_postgres_container_env_base, recursive=True)
+  {{ common_container_env_defaults
+  | combine(nocodb_postgres_container_env_defaults, recursive=True)
   | combine(nocodb_postgres_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
 ###############################################################################
 
-nocodb_secrets_base:
+nocodb_secrets_defaults:
   nocodb_db: pg://{{ nocodb_name }}-postgres:5432?u={{ nocodb_postgres_user }}&p={{ nocodb_postgres_password }}&d={{ nocodb_postgres_db_name }}"
   nocodb_postgres_db_name: "{{ nocodb_postgres_db_name }}"
   nocodb_postgres_user: "{{ nocodb_postgres_user }}"
   nocodb_postgres_password: "{{ nocodb_postgres_password }}"
 
 nocodb_secrets_combined: >-
-  {{ nocodb_secrets_base
+  {{ nocodb_secrets_defaults
   | combine(nocodb_secrets, recursive=True) }}
 
-nocodb_container_secrets_base:
+nocodb_container_secrets_defaults:
   - nocodb_db,type=env,target=NC_DB
 
-nocodb_postgres_container_secrets_base:
+nocodb_postgres_container_secrets_defaults:
   - nocodb_postgres_db_name,type=env,target=POSTGRES_DB
   - nocodb_postgres_user,type=env,target=POSTGRES_USER
   - nocodb_postgres_password,type=env,target=POSTGRES_PASSWORD
 
 nocodb_container_secrets_combined: >-
-  {{ nocodb_container_secrets_base
+  {{ nocodb_container_secrets_defaults
   + nocodb_container_secrets }}
 nocodb_postgres_container_secrets_combined: >-
-  {{ nocodb_postgres_container_secrets_base
+  {{ nocodb_postgres_container_secrets_defaults
   + nocodb_postgres_container_secrets }}
 
 ###############################################################################
@@ -68,33 +68,33 @@ nocodb_container_labels_traefik:
     value: "{{ common_traefik_entrypoint }}"
   - key: traefik.http.services.{{ nocodb_name }}.loadbalancer.server.port
     value: "8080"
-nocodb_container_labels_base: "{{ nocodb_traefik_enable | ternary((nocodb_container_labels_traefik | items2dict), {}) }}"
+nocodb_container_labels_defaults: "{{ nocodb_traefik_enable | ternary((nocodb_container_labels_traefik | items2dict), {}) }}"
 
-nocodb_postgres_container_labels_base: {}
+nocodb_postgres_container_labels_defaults: {}
 
 nocodb_container_labels_combined: >-
-  {{ nocodb_container_labels_base
+  {{ nocodb_container_labels_defaults
   | combine(nocodb_container_labels, recursive=True) }}
 nocodb_postgres_container_labels_combined: >-
-  {{ nocodb_postgres_container_labels_base
+  {{ nocodb_postgres_container_labels_defaults
   | combine(nocodb_postgres_container_labels, recursive=True) }}
 
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-nocodb_quadlet_options_base_custom:
+nocodb_quadlet_options_depends:
   - |
     [Unit]
     Requires={{ nocodb_name }}-postgres.service
     After={{ nocodb_name }}-postgres.service
-nocodb_quadlet_options_base: "{{ common_quadlet_options_base + nocodb_quadlet_options_base_custom }}"
+nocodb_quadlet_options_defaults: "{{ common_quadlet_options_defaults + nocodb_quadlet_options_depends }}"
 
-nocodb_postgres_quadlet_options_base: "{{ common_quadlet_options_base }}"
+nocodb_postgres_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
 
 nocodb_quadlet_options_combined: >-
-  {{ nocodb_quadlet_options_base
+  {{ nocodb_quadlet_options_defaults
   + nocodb_quadlet_options }}
 nocodb_postgres_quadlet_options_combined: >-
-  {{ nocodb_postgres_quadlet_options_base
+  {{ nocodb_postgres_quadlet_options_defaults
   + nocodb_postgres_quadlet_options }}

@@ -5,27 +5,27 @@
 # Envrionment
 ###############################################################################
 
-stirling_pdf_container_env_base: {}
+stirling_pdf_container_env_defaults: {}
 
 stirling_pdf_container_env_combined: >-
-  {{ common_container_env_base
-  | combine(stirling_pdf_container_env_base, recursive=True)
+  {{ common_container_env_defaults
+  | combine(stirling_pdf_container_env_defaults, recursive=True)
   | combine(stirling_pdf_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
 ###############################################################################
 
-stirling_pdf_secrets_base: {}
+stirling_pdf_secrets_defaults: {}
 
 stirling_pdf_secrets_combined: >-
-  {{ stirling_pdf_secrets_base
+  {{ stirling_pdf_secrets_defaults
   | combine(stirling_pdf_secrets, recursive=True) }}
 
-stirling_pdf_container_secrets_base: []
+stirling_pdf_container_secrets_defaults: []
 
 stirling_pdf_container_secrets_combined: >-
-  {{ stirling_pdf_container_secrets_base
+  {{ stirling_pdf_container_secrets_defaults
   + stirling_pdf_container_secrets }}
 
 ###############################################################################
@@ -44,18 +44,18 @@ stirling_pdf_container_labels_traefik:
     value: "{{ common_traefik_entrypoint }}"
   - key: traefik.http.services.{{ stirling_pdf_name }}.loadbalancer.server.port
     value: "8080"
-stirling_pdf_container_labels_base: "{{ stirling_pdf_traefik_enable | ternary((stirling_pdf_container_labels_traefik | items2dict), {}) }}"
+stirling_pdf_container_labels_defaults: "{{ stirling_pdf_traefik_enable | ternary((stirling_pdf_container_labels_traefik | items2dict), {}) }}"
 
 stirling_pdf_container_labels_combined: >-
-  {{ stirling_pdf_container_labels_base
+  {{ stirling_pdf_container_labels_defaults
   | combine(stirling_pdf_container_labels, recursive=True) }}
 
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-stirling_pdf_quadlet_options_base: "{{ common_quadlet_options_base }}"
+stirling_pdf_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
 
 stirling_pdf_quadlet_options_combined: >-
-  {{ stirling_pdf_quadlet_options_base
+  {{ stirling_pdf_quadlet_options_defaults
   + stirling_pdf_quadlet_options }}

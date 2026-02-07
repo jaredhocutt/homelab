@@ -5,35 +5,35 @@
 # Envrionment
 ###############################################################################
 
-healthchecks_container_env_base:
+healthchecks_container_env_defaults:
   SITE_ROOT: "{{ healthchecks_url }}"
   SITE_NAME: "{{ healthchecks_site_name }}"
   SUPERUSER_EMAIL: "{{ healthchecks_email }}"
   DEBUG: "False"
 
 healthchecks_container_env_combined: >-
-  {{ common_container_env_base
-  | combine(healthchecks_container_env_base, recursive=True)
+  {{ common_container_env_defaults
+  | combine(healthchecks_container_env_defaults, recursive=True)
   | combine(healthchecks_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
 ###############################################################################
 
-healthchecks_secrets_base:
+healthchecks_secrets_defaults:
   healthchecks_password: "{{ healthchecks_password }}"
   healthchecks_secret_key: "{{ healthchecks_secret_key }}"
 
 healthchecks_secrets_combined: >-
-  {{ healthchecks_secrets_base
+  {{ healthchecks_secrets_defaults
   | combine(healthchecks_secrets, recursive=True) }}
 
-healthchecks_container_secrets_base:
+healthchecks_container_secrets_defaults:
   - healthchecks_password,type=env,target=SUPERUSER_PASSWORD
   - healthchecks_secret_key,type=env,target=SECRET_KEY
 
 healthchecks_container_secrets_combined: >-
-  {{ healthchecks_container_secrets_base
+  {{ healthchecks_container_secrets_defaults
   + healthchecks_container_secrets }}
 
 ###############################################################################
@@ -52,18 +52,18 @@ healthchecks_container_labels_traefik:
     value: "{{ common_traefik_entrypoint }}"
   - key: traefik.http.services.{{ healthchecks_name }}.loadbalancer.server.port
     value: "8000"
-healthchecks_container_labels_base: "{{ healthchecks_traefik_enable | ternary((healthchecks_container_labels_traefik | items2dict), {}) }}"
+healthchecks_container_labels_defaults: "{{ healthchecks_traefik_enable | ternary((healthchecks_container_labels_traefik | items2dict), {}) }}"
 
 healthchecks_container_labels_combined: >-
-  {{ healthchecks_container_labels_base
+  {{ healthchecks_container_labels_defaults
   | combine(healthchecks_container_labels, recursive=True) }}
 
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-healthchecks_quadlet_options_base: "{{ common_quadlet_options_base }}"
+healthchecks_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
 
 healthchecks_quadlet_options_combined: >-
-  {{ healthchecks_quadlet_options_base
+  {{ healthchecks_quadlet_options_defaults
   + healthchecks_quadlet_options }}

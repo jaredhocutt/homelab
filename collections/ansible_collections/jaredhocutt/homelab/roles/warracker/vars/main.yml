@@ -8,54 +8,54 @@ warracker_postgres_user: warracker
 # Envrionment
 ###############################################################################
 
-warracker_container_env_base:
+warracker_container_env_defaults:
   DB_HOST: "{{ warracker_name }}-postgres"
   DB_PORT: "5432"
   FRONTEND_URL: "{{ warracker_url }}"
   APP_BASE_URL: "{{ warracker_url }}"
   PYTHONUNBUFFERED: "1"
 
-warracker_postgres_container_env_base: {}
+warracker_postgres_container_env_defaults: {}
 
 warracker_container_env_combined: >-
-  {{ common_container_env_base
-  | combine(warracker_container_env_base, recursive=True)
+  {{ common_container_env_defaults
+  | combine(warracker_container_env_defaults, recursive=True)
   | combine(warracker_container_env, recursive=True) }}
 warracker_postgres_container_env_combined: >-
-  {{ common_container_env_base
-  | combine(warracker_postgres_container_env_base, recursive=True)
+  {{ common_container_env_defaults
+  | combine(warracker_postgres_container_env_defaults, recursive=True)
   | combine(warracker_postgres_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
 ###############################################################################
 
-warracker_secrets_base:
+warracker_secrets_defaults:
   warracker_postgres_db_name: "{{ warracker_postgres_db_name }}"
   warracker_postgres_user: "{{ warracker_postgres_user }}"
   warracker_postgres_password: "{{ warracker_postgres_password }}"
   warracker_secret_key: "{{ warracker_secret_key }}"
 
 warracker_secrets_combined: >-
-  {{ warracker_secrets_base
+  {{ warracker_secrets_defaults
   | combine(warracker_secrets, recursive=True) }}
 
-warracker_container_secrets_base:
+warracker_container_secrets_defaults:
   - warracker_postgres_db_name,type=env,target=DB_NAME
   - warracker_postgres_user,type=env,target=DB_USER
   - warracker_postgres_password,type=env,target=DB_PASSWORD
   - warracker_secret_key,type=env,target=SECRET_KEY
 
-warracker_postgres_container_secrets_base:
+warracker_postgres_container_secrets_defaults:
   - warracker_postgres_db_name,type=env,target=POSTGRES_DB
   - warracker_postgres_user,type=env,target=POSTGRES_USER
   - warracker_postgres_password,type=env,target=POSTGRES_PASSWORD
 
 warracker_container_secrets_combined: >-
-  {{ warracker_container_secrets_base
+  {{ warracker_container_secrets_defaults
   + warracker_container_secrets }}
 warracker_postgres_container_secrets_combined: >-
-  {{ warracker_postgres_container_secrets_base
+  {{ warracker_postgres_container_secrets_defaults
   + warracker_postgres_container_secrets }}
 
 ###############################################################################
@@ -74,33 +74,33 @@ warracker_container_labels_traefik:
     value: "{{ common_traefik_entrypoint }}"
   - key: traefik.http.services.{{ warracker_name }}.loadbalancer.server.port
     value: "80"
-warracker_container_labels_base: "{{ warracker_traefik_enable | ternary((warracker_container_labels_traefik | items2dict), {}) }}"
+warracker_container_labels_defaults: "{{ warracker_traefik_enable | ternary((warracker_container_labels_traefik | items2dict), {}) }}"
 
-warracker_postgres_container_labels_base: {}
+warracker_postgres_container_labels_defaults: {}
 
 warracker_container_labels_combined: >-
-  {{ warracker_container_labels_base
+  {{ warracker_container_labels_defaults
   | combine(warracker_container_labels, recursive=True) }}
 warracker_postgres_container_labels_combined: >-
-  {{ warracker_postgres_container_labels_base
+  {{ warracker_postgres_container_labels_defaults
   | combine(warracker_postgres_container_labels, recursive=True) }}
 
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-warracker_quadlet_options_base_custom:
+warracker_quadlet_options_depends:
   - |
     [Unit]
     Requires={{ warracker_name }}-postgres.service
     After={{ warracker_name }}-postgres.service
-warracker_quadlet_options_base: "{{ common_quadlet_options_base + warracker_quadlet_options_base_custom }}"
+warracker_quadlet_options_defaults: "{{ common_quadlet_options_defaults + warracker_quadlet_options_depends }}"
 
-warracker_postgres_quadlet_options_base: "{{ common_quadlet_options_base }}"
+warracker_postgres_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
 
 warracker_quadlet_options_combined: >-
-  {{ warracker_quadlet_options_base
+  {{ warracker_quadlet_options_defaults
   + warracker_quadlet_options }}
 warracker_postgres_quadlet_options_combined: >-
-  {{ warracker_postgres_quadlet_options_base
+  {{ warracker_postgres_quadlet_options_defaults
   + warracker_postgres_quadlet_options }}

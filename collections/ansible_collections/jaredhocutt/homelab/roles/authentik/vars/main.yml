@@ -8,59 +8,59 @@ authentik_postgres_user: authentik
 # Envrionment
 ###############################################################################
 
-authentik_container_env_base:
+authentik_container_env_defaults:
   AUTHENTIK_POSTGRESQL__HOST: "{{ authentik_name }}-postgres"
 
-authentik_postgres_container_env_base: {}
+authentik_postgres_container_env_defaults: {}
 
 authentik_container_env_combined: >-
-  {{ common_container_env_base
-  | combine(authentik_container_env_base, recursive=True)
+  {{ common_container_env_defaults
+  | combine(authentik_container_env_defaults, recursive=True)
   | combine(authentik_container_env, recursive=True) }}
 authentik_postgres_container_env_combined: >-
-  {{ common_container_env_base
-  | combine(authentik_postgres_container_env_base, recursive=True)
+  {{ common_container_env_defaults
+  | combine(authentik_postgres_container_env_defaults, recursive=True)
   | combine(authentik_postgres_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
 ###############################################################################
 
-authentik_secrets_base:
+authentik_secrets_defaults:
   authentik_postgres_db_name: "{{ authentik_postgres_db_name }}"
   authentik_postgres_user: "{{ authentik_postgres_user }}"
   authentik_postgres_password: "{{ authentik_postgres_password }}"
   authentik_secret_key: "{{ authentik_secret_key }}"
 
 authentik_secrets_combined: >-
-  {{ authentik_secrets_base
+  {{ authentik_secrets_defaults
   | combine(authentik_secrets, recursive=True) }}
 
-authentik_container_secrets_base:
+authentik_container_secrets_defaults:
   - authentik_postgres_db_name,type=env,target=AUTHENTIK_POSTGRESQL__NAME
   - authentik_postgres_user,type=env,target=AUTHENTIK_POSTGRESQL__USER
   - authentik_postgres_password,type=env,target=AUTHENTIK_POSTGRESQL__PASSWORD
   - authentik_secret_key,type=env,target=AUTHENTIK_SECRET_KEY
 
-authentik_worker_container_secrets_base:
+authentik_worker_container_secrets_defaults:
   - authentik_postgres_db_name,type=env,target=AUTHENTIK_POSTGRESQL__NAME
   - authentik_postgres_user,type=env,target=AUTHENTIK_POSTGRESQL__USER
   - authentik_postgres_password,type=env,target=AUTHENTIK_POSTGRESQL__PASSWORD
   - authentik_secret_key,type=env,target=AUTHENTIK_SECRET_KEY
 
-authentik_postgres_container_secrets_base:
+authentik_postgres_container_secrets_defaults:
   - authentik_postgres_db_name,type=env,target=POSTGRES_DB
   - authentik_postgres_user,type=env,target=POSTGRES_USER
   - authentik_postgres_password,type=env,target=POSTGRES_PASSWORD
 
 authentik_container_secrets_combined: >-
-  {{ authentik_container_secrets_base
+  {{ authentik_container_secrets_defaults
   + authentik_container_secrets }}
 authentik_worker_container_secrets_combined: >-
-  {{ authentik_worker_container_secrets_base
+  {{ authentik_worker_container_secrets_defaults
   + authentik_worker_container_secrets }}
 authentik_postgres_container_secrets_combined: >-
-  {{ authentik_postgres_container_secrets_base
+  {{ authentik_postgres_container_secrets_defaults
   + authentik_postgres_container_secrets }}
 
 ###############################################################################
@@ -79,38 +79,38 @@ authentik_container_labels_traefik:
     value: "{{ common_traefik_entrypoint }}"
   - key: traefik.http.services.{{ authentik_name }}-server.loadbalancer.server.port
     value: "9000"
-authentik_container_labels_base: "{{ authentik_traefik_enable | ternary((authentik_container_labels_traefik | items2dict), {}) }}"
+authentik_container_labels_defaults: "{{ authentik_traefik_enable | ternary((authentik_container_labels_traefik | items2dict), {}) }}"
 
-authentik_worker_container_labels_base: {}
+authentik_worker_container_labels_defaults: {}
 
-authentik_postgres_container_labels_base: {}
+authentik_postgres_container_labels_defaults: {}
 
 authentik_container_labels_combined: >-
-  {{ authentik_container_labels_base
+  {{ authentik_container_labels_defaults
   | combine(authentik_container_labels, recursive=True) }}
 authentik_worker_container_labels_combined: >-
-  {{ authentik_worker_container_labels_base
+  {{ authentik_worker_container_labels_defaults
   | combine(authentik_worker_container_labels, recursive=True) }}
 authentik_postgres_container_labels_combined: >-
-  {{ authentik_postgres_container_labels_base
+  {{ authentik_postgres_container_labels_defaults
   | combine(authentik_postgres_container_labels, recursive=True) }}
 
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-authentik_quadlet_options_base_custom:
+authentik_quadlet_options_depends:
   - |
     [Unit]
     Requires={{ authentik_name }}-postgres.service
     After={{ authentik_name }}-postgres.service
-authentik_quadlet_options_base: "{{ common_quadlet_options_base + authentik_quadlet_options_base_custom }}"
+authentik_quadlet_options_defaults: "{{ common_quadlet_options_defaults + authentik_quadlet_options_depends }}"
 
-authentik_postgres_quadlet_options_base: "{{ common_quadlet_options_base }}"
+authentik_postgres_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
 
 authentik_quadlet_options_combined: >-
-  {{ authentik_quadlet_options_base
+  {{ authentik_quadlet_options_defaults
   + authentik_quadlet_options }}
 authentik_postgres_quadlet_options_combined: >-
-  {{ authentik_postgres_quadlet_options_base
+  {{ authentik_postgres_quadlet_options_defaults
   + authentik_postgres_quadlet_options }}

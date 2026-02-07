@@ -5,29 +5,29 @@
 # Envrionment
 ###############################################################################
 
-homarr_container_env_base: {}
+homarr_container_env_defaults: {}
 
 homarr_container_env_combined: >-
-  {{ common_container_env_base
-  | combine(homarr_container_env_base, recursive=True)
+  {{ common_container_env_defaults
+  | combine(homarr_container_env_defaults, recursive=True)
   | combine(homarr_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
 ###############################################################################
 
-homarr_secrets_base:
+homarr_secrets_defaults:
   homarr_secret_encryption_key: "{{ homarr_secret_encryption_key }}"
 
 homarr_secrets_combined: >-
-  {{ homarr_secrets_base
+  {{ homarr_secrets_defaults
   | combine(homarr_secrets, recursive=True) }}
 
-homarr_container_secrets_base:
+homarr_container_secrets_defaults:
   - homarr_secret_encryption_key,type=env,target=SECRET_ENCRYPTION_KEY
 
 homarr_container_secrets_combined: >-
-  {{ homarr_container_secrets_base
+  {{ homarr_container_secrets_defaults
   + homarr_container_secrets }}
 
 ###############################################################################
@@ -46,18 +46,18 @@ homarr_container_labels_traefik:
     value: "{{ common_traefik_entrypoint }}"
   - key: traefik.http.services.{{ homarr_name }}.loadbalancer.server.port
     value: "7575"
-homarr_container_labels_base: "{{ homarr_traefik_enable | ternary((homarr_container_labels_traefik | items2dict), {}) }}"
+homarr_container_labels_defaults: "{{ homarr_traefik_enable | ternary((homarr_container_labels_traefik | items2dict), {}) }}"
 
 homarr_container_labels_combined: >-
-  {{ homarr_container_labels_base
+  {{ homarr_container_labels_defaults
   | combine(homarr_container_labels, recursive=True) }}
 
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-homarr_quadlet_options_base: "{{ common_quadlet_options_base }}"
+homarr_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
 
 homarr_quadlet_options_combined: >-
-  {{ homarr_quadlet_options_base
+  {{ homarr_quadlet_options_defaults
   + homarr_quadlet_options }}

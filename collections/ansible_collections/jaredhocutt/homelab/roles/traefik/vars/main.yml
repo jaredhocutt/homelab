@@ -24,27 +24,27 @@ traefik_command_base:
 # Envrionment
 ###############################################################################
 
-traefik_container_env_base: {}
+traefik_container_env_defaults: {}
 
 traefik_container_env_combined: >-
-  {{ common_container_env_base
-  | combine(traefik_container_env_base, recursive=True)
+  {{ common_container_env_defaults
+  | combine(traefik_container_env_defaults, recursive=True)
   | combine(traefik_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
 ###############################################################################
 
-traefik_secrets_base: {}
+traefik_secrets_defaults: {}
 
 traefik_secrets_combined: >-
-  {{ traefik_secrets_base
+  {{ traefik_secrets_defaults
   | combine(traefik_secrets, recursive=True) }}
 
-traefik_container_secrets_base: []
+traefik_container_secrets_defaults: []
 
 traefik_container_secrets_combined: >-
-  {{ traefik_container_secrets_base
+  {{ traefik_container_secrets_defaults
   + traefik_container_secrets }}
 
 ###############################################################################
@@ -61,18 +61,18 @@ traefik_container_labels_traefik:
     value: "{{ common_traefik_entrypoint }}"
   - key: traefik.http.routers.{{ traefik_name }}.service
     value: api@internal
-traefik_container_labels_base: "{{ traefik_traefik_enable | ternary((traefik_container_labels_traefik | items2dict), {}) }}"
+traefik_container_labels_defaults: "{{ traefik_traefik_enable | ternary((traefik_container_labels_traefik | items2dict), {}) }}"
 
 traefik_container_labels_combined: >-
-  {{ traefik_container_labels_base
+  {{ traefik_container_labels_defaults
   | combine(traefik_container_labels, recursive=True) }}
 
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-traefik_quadlet_options_base: "{{ common_quadlet_options_base }}"
+traefik_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
 
 traefik_quadlet_options_combined: >-
-  {{ traefik_quadlet_options_base
+  {{ traefik_quadlet_options_defaults
   + traefik_quadlet_options }}

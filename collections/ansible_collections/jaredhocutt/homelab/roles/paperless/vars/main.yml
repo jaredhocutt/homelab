@@ -8,7 +8,7 @@ paperless_postgres_user: paperless
 # Envrionment
 ###############################################################################
 
-paperless_container_env_base:
+paperless_container_env_defaults:
   PAPERLESS_DBENGINE: postgresql
   PAPERLESS_DBHOST: "{{ paperless_name }}-postgres"
   PAPERLESS_REDIS: redis://{{ paperless_name }}-redis:6379
@@ -20,89 +20,89 @@ paperless_container_env_base:
   PAPERLESS_CONSUMER_POLLING: 30
   PAPERLESS_TASK_WORKERS: "{{ paperless_task_workers }}"
 
-paperless_postgres_container_env_base: {}
+paperless_postgres_container_env_defaults: {}
 
-paperless_redis_container_env_base: {}
+paperless_redis_container_env_defaults: {}
 
-paperless_gotenberg_container_env_base: {}
+paperless_gotenberg_container_env_defaults: {}
 
-paperless_tika_container_env_base: {}
+paperless_tika_container_env_defaults: {}
 
-paperless_ai_container_env_base: {}
+paperless_ai_container_env_defaults: {}
 
 paperless_container_env_combined: >-
-  {{ common_container_env_base
-  | combine(paperless_container_env_base, recursive=True)
+  {{ common_container_env_defaults
+  | combine(paperless_container_env_defaults, recursive=True)
   | combine(paperless_container_env, recursive=True) }}
 paperless_postgres_container_env_combined: >-
-  {{ common_container_env_base
-  | combine(paperless_postgres_container_env_base, recursive=True)
+  {{ common_container_env_defaults
+  | combine(paperless_postgres_container_env_defaults, recursive=True)
   | combine(paperless_postgres_container_env, recursive=True) }}
 paperless_redis_container_env_combined: >-
-  {{ common_container_env_base
-  | combine(paperless_redis_container_env_base, recursive=True)
+  {{ common_container_env_defaults
+  | combine(paperless_redis_container_env_defaults, recursive=True)
   | combine(paperless_redis_container_env, recursive=True) }}
 paperless_gotenberg_container_env_combined: >-
-  {{ common_container_env_base
-  | combine(paperless_gotenberg_container_env_base, recursive=True)
+  {{ common_container_env_defaults
+  | combine(paperless_gotenberg_container_env_defaults, recursive=True)
   | combine(paperless_gotenberg_container_env, recursive=True) }}
 paperless_tika_container_env_combined: >-
-  {{ common_container_env_base
-  | combine(paperless_tika_container_env_base, recursive=True)
+  {{ common_container_env_defaults
+  | combine(paperless_tika_container_env_defaults, recursive=True)
   | combine(paperless_tika_container_env, recursive=True) }}
 paperless_ai_container_env_combined: >-
-  {{ common_container_env_base
-  | combine(paperless_ai_container_env_base, recursive=True)
+  {{ common_container_env_defaults
+  | combine(paperless_ai_container_env_defaults, recursive=True)
   | combine(paperless_ai_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
 ###############################################################################
 
-paperless_secrets_base:
+paperless_secrets_defaults:
   paperless_postgres_db_name: "{{ paperless_postgres_db_name }}"
   paperless_postgres_user: "{{ paperless_postgres_user }}"
   paperless_postgres_password: "{{ paperless_postgres_password }}"
 
 paperless_secrets_combined: >-
-  {{ paperless_secrets_base
+  {{ paperless_secrets_defaults
   | combine(paperless_secrets, recursive=True) }}
 
-paperless_container_secrets_base:
+paperless_container_secrets_defaults:
   - paperless_postgres_db_name,type=env,target=PAPERLESS_DBNAME
   - paperless_postgres_user,type=env,target=PAPERLESS_DBUSER
   - paperless_postgres_password,type=env,target=PAPERLESS_DBPASS
 
-paperless_postgres_container_secrets_base:
+paperless_postgres_container_secrets_defaults:
   - paperless_postgres_db_name,type=env,target=POSTGRES_DB
   - paperless_postgres_user,type=env,target=POSTGRES_USER
   - paperless_postgres_password,type=env,target=POSTGRES_PASSWORD
 
-paperless_redis_container_secrets_base: []
+paperless_redis_container_secrets_defaults: []
 
-paperless_gotenberg_container_secrets_base: []
+paperless_gotenberg_container_secrets_defaults: []
 
-paperless_tika_container_secrets_base: []
+paperless_tika_container_secrets_defaults: []
 
-paperless_ai_container_secrets_base: []
+paperless_ai_container_secrets_defaults: []
 
 paperless_container_secrets_combined: >-
-  {{ paperless_container_secrets_base
+  {{ paperless_container_secrets_defaults
   + paperless_container_secrets }}
 paperless_postgres_container_secrets_combined: >-
-  {{ paperless_postgres_container_secrets_base
+  {{ paperless_postgres_container_secrets_defaults
   + paperless_postgres_container_secrets }}
 paperless_redis_container_secrets_combined: >-
-  {{ paperless_redis_container_secrets_base
+  {{ paperless_redis_container_secrets_defaults
   + paperless_redis_container_secrets }}
 paperless_gotenberg_container_secrets_combined: >-
-  {{ paperless_gotenberg_container_secrets_base
+  {{ paperless_gotenberg_container_secrets_defaults
   + paperless_gotenberg_container_secrets }}
 paperless_tika_container_secrets_combined: >-
-  {{ paperless_tika_container_secrets_base
+  {{ paperless_tika_container_secrets_defaults
   + paperless_tika_container_secrets }}
 paperless_ai_container_secrets_combined: >-
-  {{ paperless_ai_container_secrets_base
+  {{ paperless_ai_container_secrets_defaults
   + paperless_ai_container_secrets }}
 
 ###############################################################################
@@ -121,15 +121,15 @@ paperless_container_labels_traefik:
     value: "{{ common_traefik_entrypoint }}"
   - key: traefik.http.services.{{ paperless_name }}.loadbalancer.server.port
     value: "8000"
-paperless_container_labels_base: "{{ paperless_traefik_enable | ternary((paperless_container_labels_traefik | items2dict), {}) }}"
+paperless_container_labels_defaults: "{{ paperless_traefik_enable | ternary((paperless_container_labels_traefik | items2dict), {}) }}"
 
-paperless_postgres_container_labels_base: {}
+paperless_postgres_container_labels_defaults: {}
 
-paperless_redis_container_labels_base: {}
+paperless_redis_container_labels_defaults: {}
 
-paperless_gotenberg_container_labels_base: {}
+paperless_gotenberg_container_labels_defaults: {}
 
-paperless_tika_container_labels_base: {}
+paperless_tika_container_labels_defaults: {}
 
 # This is done as a list and converted to a dict in order to use variables in the key name
 paperless_ai_container_labels_traefik:
@@ -143,32 +143,32 @@ paperless_ai_container_labels_traefik:
     value: "{{ common_traefik_entrypoint }}"
   - key: traefik.http.services.{{ paperless_name }}-ai.loadbalancer.server.port
     value: "3000"
-paperless_ai_container_labels_base: "{{ paperless_traefik_enable | ternary((paperless_ai_container_labels_traefik | items2dict), {}) }}"
+paperless_ai_container_labels_defaults: "{{ paperless_traefik_enable | ternary((paperless_ai_container_labels_traefik | items2dict), {}) }}"
 
 paperless_container_labels_combined: >-
-  {{ paperless_container_labels_base
+  {{ paperless_container_labels_defaults
   | combine(paperless_container_labels, recursive=True) }}
 paperless_postgres_container_labels_combined: >-
-  {{ paperless_postgres_container_labels_base
+  {{ paperless_postgres_container_labels_defaults
   | combine(paperless_postgres_container_labels, recursive=True) }}
 paperless_redis_container_labels_combined: >-
-  {{ paperless_redis_container_labels_base
+  {{ paperless_redis_container_labels_defaults
   | combine(paperless_redis_container_labels, recursive=True) }}
 paperless_gotenberg_container_labels_combined: >-
-  {{ paperless_gotenberg_container_labels_base
+  {{ paperless_gotenberg_container_labels_defaults
   | combine(paperless_gotenberg_container_labels, recursive=True) }}
 paperless_tika_container_labels_combined: >-
-  {{ paperless_tika_container_labels_base
+  {{ paperless_tika_container_labels_defaults
   | combine(paperless_tika_container_labels, recursive=True) }}
 paperless_ai_container_labels_combined: >-
-  {{ paperless_ai_container_labels_base
+  {{ paperless_ai_container_labels_defaults
   | combine(paperless_ai_container_labels, recursive=True) }}
 
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-paperless_quadlet_options_base_custom:
+paperless_quadlet_options_depends:
   - |
     [Unit]
     Requires={{ paperless_name }}-postgres.service
@@ -179,38 +179,38 @@ paperless_quadlet_options_base_custom:
     After={{ paperless_name }}-redis.service
     After={{ paperless_name }}-gotenberg.service
     After={{ paperless_name }}-tika.service
-paperless_quadlet_options_base: "{{ common_quadlet_options_base + paperless_quadlet_options_base_custom }}"
+paperless_quadlet_options_defaults: "{{ common_quadlet_options_defaults + paperless_quadlet_options_depends }}"
 
-paperless_postgres_quadlet_options_base: "{{ common_quadlet_options_base }}"
+paperless_postgres_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
 
-paperless_redis_quadlet_options_base: "{{ common_quadlet_options_base }}"
+paperless_redis_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
 
-paperless_gotenberg_quadlet_options_base: "{{ common_quadlet_options_base }}"
+paperless_gotenberg_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
 
-paperless_tika_quadlet_options_base: "{{ common_quadlet_options_base }}"
+paperless_tika_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
 
-paperless_ai_quadlet_options_base_custom:
+paperless_ai_quadlet_options_depends:
   - |
     [Unit]
     Requires={{ paperless_name }}.service
     After={{ paperless_name }}.service
-paperless_ai_quadlet_options_base: "{{ common_quadlet_options_base + paperless_ai_quadlet_options_base_custom }}"
+paperless_ai_quadlet_options_defaults: "{{ common_quadlet_options_defaults + paperless_ai_quadlet_options_depends }}"
 
 paperless_quadlet_options_combined: >-
-  {{ paperless_quadlet_options_base
+  {{ paperless_quadlet_options_defaults
   + paperless_quadlet_options }}
 paperless_postgres_quadlet_options_combined: >-
-  {{ paperless_postgres_quadlet_options_base
+  {{ paperless_postgres_quadlet_options_defaults
   + paperless_postgres_quadlet_options }}
 paperless_redis_quadlet_options_combined: >-
-  {{ paperless_redis_quadlet_options_base
+  {{ paperless_redis_quadlet_options_defaults
   + paperless_redis_quadlet_options }}
 paperless_gotenberg_quadlet_options_combined: >-
-  {{ paperless_gotenberg_quadlet_options_base
+  {{ paperless_gotenberg_quadlet_options_defaults
   + paperless_gotenberg_quadlet_options }}
 paperless_tika_quadlet_options_combined: >-
-  {{ paperless_tika_quadlet_options_base
+  {{ paperless_tika_quadlet_options_defaults
   + paperless_tika_quadlet_options }}
 paperless_ai_quadlet_options_combined: >-
-  {{ paperless_ai_quadlet_options_base
+  {{ paperless_ai_quadlet_options_defaults
   + paperless_ai_quadlet_options }}

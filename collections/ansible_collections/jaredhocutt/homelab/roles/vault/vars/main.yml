@@ -8,27 +8,27 @@ vault_gid: 1000
 # Envrionment
 ###############################################################################
 
-vault_container_env_base: {}
+vault_container_env_defaults: {}
 
 vault_container_env_combined: >-
-  {{ common_container_env_base
-  | combine(vault_container_env_base, recursive=True)
+  {{ common_container_env_defaults
+  | combine(vault_container_env_defaults, recursive=True)
   | combine(vault_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
 ###############################################################################
 
-vault_secrets_base: {}
+vault_secrets_defaults: {}
 
 vault_secrets_combined: >-
-  {{ vault_secrets_base
+  {{ vault_secrets_defaults
   | combine(vault_secrets, recursive=True) }}
 
-vault_container_secrets_base: []
+vault_container_secrets_defaults: []
 
 vault_container_secrets_combined: >-
-  {{ vault_container_secrets_base
+  {{ vault_container_secrets_defaults
   + vault_container_secrets }}
 
 ###############################################################################
@@ -47,18 +47,18 @@ vault_container_labels_traefik:
     value: "{{ common_traefik_entrypoint }}"
   - key: traefik.http.services.{{ vault_name }}.loadbalancer.server.port
     value: "8200"
-vault_container_labels_base: "{{ vault_traefik_enable | ternary((vault_container_labels_traefik | items2dict), {}) }}"
+vault_container_labels_defaults: "{{ vault_traefik_enable | ternary((vault_container_labels_traefik | items2dict), {}) }}"
 
 vault_container_labels_combined: >-
-  {{ vault_container_labels_base
+  {{ vault_container_labels_defaults
   | combine(vault_container_labels, recursive=True) }}
 
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-vault_quadlet_options_base: "{{ common_quadlet_options_base }}"
+vault_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
 
 vault_quadlet_options_combined: >-
-  {{ vault_quadlet_options_base
+  {{ vault_quadlet_options_defaults
   + vault_quadlet_options }}

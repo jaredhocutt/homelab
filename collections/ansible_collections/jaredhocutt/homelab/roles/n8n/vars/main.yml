@@ -29,40 +29,40 @@ n8n_redis_env_base: {}
 # Secrets
 ###############################################################################
 
-n8n_secrets_base:
+n8n_secrets_defaults:
   n8n_postgres_db_name: "{{ n8n_postgres_db_name }}"
   n8n_postgres_user: "{{ n8n_postgres_user }}"
   n8n_postgres_password: "{{ n8n_postgres_password }}"
 
 n8n_secrets_combined: >-
-  {{ n8n_secrets_base
+  {{ n8n_secrets_defaults
   | combine(n8n_secrets, recursive=True) }}
 
-n8n_container_secrets_base:
+n8n_container_secrets_defaults:
   - n8n_postgres_db_name,type=env,target=DB_POSTGRESDB_DATABASE
   - n8n_postgres_user,type=env,target=DB_POSTGRESDB_USER
   - n8n_postgres_password,type=env,target=DB_POSTGRESDB_PASSWORD
 
-n8n_worker_container_secrets_base: "{{ n8n_container_secrets_base }}"
+n8n_worker_container_secrets_defaults: "{{ n8n_container_secrets_defaults }}"
 
-n8n_postgres_container_secrets_base:
+n8n_postgres_container_secrets_defaults:
   - n8n_postgres_db_name,type=env,target=POSTGRES_DB
   - n8n_postgres_user,type=env,target=POSTGRES_USER
   - n8n_postgres_password,type=env,target=POSTGRES_PASSWORD
 
-n8n_redis_container_secrets_base: []
+n8n_redis_container_secrets_defaults: []
 
 n8n_container_secrets_combined: >-
-  {{ n8n_container_secrets_base
+  {{ n8n_container_secrets_defaults
   + n8n_container_secrets }}
 n8n_worker_container_secrets_combined: >-
-  {{ n8n_worker_container_secrets_base
+  {{ n8n_worker_container_secrets_defaults
   + n8n_worker_container_secrets }}
 n8n_postgres_container_secrets_combined: >-
-  {{ n8n_postgres_container_secrets_base
+  {{ n8n_postgres_container_secrets_defaults
   + n8n_postgres_container_secrets }}
 n8n_redis_container_secrets_combined: >-
-  {{ n8n_redis_container_secrets_base
+  {{ n8n_redis_container_secrets_defaults
   + n8n_redis_container_secrets }}
 
 ###############################################################################
@@ -81,41 +81,41 @@ n8n_container_labels_traefik:
     value: "{{ common_traefik_entrypoint }}"
   - key: traefik.http.services.{{ n8n_name }}.loadbalancer.server.port
     value: "5678"
-n8n_container_labels_base: "{{ n8n_traefik_enable | ternary((n8n_container_labels_traefik | items2dict), {}) }}"
+n8n_container_labels_defaults: "{{ n8n_traefik_enable | ternary((n8n_container_labels_traefik | items2dict), {}) }}"
 
-n8n_worker_container_labels_base: {}
+n8n_worker_container_labels_defaults: {}
 
-n8n_postgres_container_labels_base: {}
+n8n_postgres_container_labels_defaults: {}
 
-n8n_redis_container_labels_base: {}
+n8n_redis_container_labels_defaults: {}
 
 n8n_container_labels_combined: >-
-  {{ n8n_container_labels_base
+  {{ n8n_container_labels_defaults
   | combine(n8n_container_labels, recursive=True) }}
 n8n_worker_container_labels_combined: >-
-  {{ n8n_worker_container_labels_base
+  {{ n8n_worker_container_labels_defaults
   | combine(n8n_worker_container_labels, recursive=True) }}
 n8n_postgres_container_labels_combined: >-
-  {{ n8n_postgres_container_labels_base
+  {{ n8n_postgres_container_labels_defaults
   | combine(n8n_postgres_container_labels, recursive=True) }}
 n8n_redis_container_labels_combined: >-
-  {{ n8n_redis_container_labels_base
+  {{ n8n_redis_container_labels_defaults
   | combine(n8n_redis_container_labels, recursive=True) }}
 
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-n8n_quadlet_options_base_custom:
+n8n_quadlet_options_depends:
   - |
     [Unit]
     Requires={{ n8n_name }}-postgres.service
     Requires={{ n8n_name }}-redis.service
     After={{ n8n_name }}-postgres.service
     After={{ n8n_name }}-redis.service
-n8n_quadlet_options_base: "{{ common_quadlet_options_base + n8n_quadlet_options_base_custom }}"
+n8n_quadlet_options_defaults: "{{ common_quadlet_options_defaults + n8n_quadlet_options_depends }}"
 
-n8n_worker_quadlet_options_base_custom:
+n8n_worker_quadlet_options_depends:
   - |
     [Unit]
     Requires={{ n8n_name }}.service
@@ -124,21 +124,21 @@ n8n_worker_quadlet_options_base_custom:
     After={{ n8n_name }}.service
     After={{ n8n_name }}-postgres.service
     After={{ n8n_name }}-redis.service
-n8n_worker_quadlet_options_base: "{{ common_quadlet_options_base + n8n_worker_quadlet_options_base_custom }}"
+n8n_worker_quadlet_options_defaults: "{{ common_quadlet_options_defaults + n8n_worker_quadlet_options_depends }}"
 
-n8n_postgres_quadlet_options_base: "{{ common_quadlet_options_base }}"
+n8n_postgres_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
 
-n8n_redis_quadlet_options_base: "{{ common_quadlet_options_base }}"
+n8n_redis_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
 
 n8n_quadlet_options_combined: >-
-  {{ n8n_quadlet_options_base
+  {{ n8n_quadlet_options_defaults
   + n8n_quadlet_options }}
 n8n_worker_quadlet_options_combined: >-
-  {{ n8n_worker_quadlet_options_base
+  {{ n8n_worker_quadlet_options_defaults
   + n8n_worker_quadlet_options }}
 n8n_postgres_quadlet_options_combined: >-
-  {{ n8n_postgres_quadlet_options_base
+  {{ n8n_postgres_quadlet_options_defaults
   + n8n_postgres_quadlet_options }}
 n8n_redis_quadlet_options_combined: >-
-  {{ n8n_redis_quadlet_options_base
+  {{ n8n_redis_quadlet_options_defaults
   + n8n_redis_quadlet_options }}

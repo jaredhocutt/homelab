@@ -5,14 +5,14 @@
 # Envrionment
 ###############################################################################
 
-common_container_env_base:
+common_container_env_defaults:
   TZ: "America/New_York"
 
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-common_quadlet_options_base:
+common_quadlet_options_defaults:
   - |
     [Service]
     Restart=always

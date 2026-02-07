@@ -5,45 +5,45 @@
 # Envrionment
 ###############################################################################
 
-kometa_container_env_base: {}
+kometa_container_env_defaults: {}
 
 kometa_container_env_combined: >-
-  {{ common_container_env_base
-  | combine(kometa_container_env_base, recursive=True)
+  {{ common_container_env_defaults
+  | combine(kometa_container_env_defaults, recursive=True)
   | combine(kometa_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets
 ###############################################################################
 
-kometa_secrets_base: {}
+kometa_secrets_defaults: {}
 
 kometa_secrets_combined: >-
-  {{ kometa_secrets_base
+  {{ kometa_secrets_defaults
   | combine(kometa_secrets, recursive=True) }}
 
-kometa_container_secrets_base: []
+kometa_container_secrets_defaults: []
 
 kometa_container_secrets_combined: >-
-  {{ kometa_container_secrets_base
+  {{ kometa_container_secrets_defaults
   + kometa_container_secrets }}
 
 ###############################################################################
 # Container Labels
 ###############################################################################
 
-kometa_container_labels_base: {}
+kometa_container_labels_defaults: {}
 
 kometa_container_labels_combined: >-
-  {{ kometa_container_labels_base
+  {{ kometa_container_labels_defaults
   | combine(kometa_container_labels, recursive=True) }}
 
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-kometa_quadlet_options_base: "{{ common_quadlet_options_base }}"
+kometa_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
 
 kometa_quadlet_options_combined: >-
-  {{ kometa_quadlet_options_base
+  {{ kometa_quadlet_options_defaults
   + kometa_quadlet_options }}
