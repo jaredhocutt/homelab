@@ -107,8 +107,9 @@ healthchecks_container_secrets:
 # homarr
 ###############################################################################
 
-homarr_image_tag: v1.52.0  # skopeo list-tags docker://ghcr.io/homarr-labs/homarr | jq -r '.Tags[] | select(test("^v[0-9]"))'
+homarr_image_tag: v1.51.0  # skopeo list-tags docker://ghcr.io/homarr-labs/homarr | jq -r '.Tags[] | select(test("^v[0-9]"))'
 
+homarr_api_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.homarr_api_key) }}"
 homarr_secret_encryption_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.homarr_secret_encryption_key) }}"
 
 ###############################################################################
