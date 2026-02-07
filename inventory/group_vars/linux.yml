@@ -1,6 +1,7 @@
 ---
 
 server_setup_packages:
+  - chezmoi
   - cockpit
   - cockpit-files
   - cockpit-networkmanager
@@ -21,6 +22,7 @@ server_setup_packages:
   - unzip
   - vim
   - wget
+  - zsh
 
 server_setup_enabled_services:
   - cockpit.socket
