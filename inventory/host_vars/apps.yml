@@ -52,6 +52,12 @@ bar_assistant_meilisearch_image_tag: v1.15.2  # skopeo list-tags docker://docker
 bar_assistant_meilisearch_master_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.bar_assistant_meilisearch_master_key) }}"
 
 ###############################################################################
+# bentopdf
+###############################################################################
+
+bentopdf_image_tag: v2.0.0  # skopeo list-tags docker://ghcr.io/alam00000/bentopdf | jq -r '.Tags[] | select(test("^v[0-9]"))'
+
+###############################################################################
 # calibre
 ###############################################################################
 
