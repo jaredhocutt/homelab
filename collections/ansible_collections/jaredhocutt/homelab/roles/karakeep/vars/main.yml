@@ -25,12 +25,14 @@ karakeep_secrets_base:
   karakeep_meilisearch_master_key: "{{ karakeep_meilisearch_master_key }}"
 
 karakeep_container_secrets_base:
+  - karakeep_meilisearch_master_key,type=env,target=MEILI_MASTER_KEY
   - karakeep_nextauth_secret,type=env,target=NEXTAUTH_SECRET
 
 karakeep_chrome_container_secrets_base: []
 
 karakeep_meilisearch_container_secrets_base:
   - karakeep_meilisearch_master_key,type=env,target=MEILI_MASTER_KEY
+  - karakeep_nextauth_secret,type=env,target=NEXTAUTH_SECRET
 
 ###############################################################################
 # Container Labels
