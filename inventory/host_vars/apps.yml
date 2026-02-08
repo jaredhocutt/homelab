@@ -13,23 +13,6 @@ authentik_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.aut
 authentik_secret_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.authentik_secret_key) }}"
 
 ###############################################################################
-# archiveium
-###############################################################################
-
-archiveium_image_tag: "0.0.29"  # skopeo list-tags docker://docker.io/archiveium/archiveium | jq -r '.Tags[] | select(test("^[0-9]"))'
-archiveium_postgres_image_tag: "13.23"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^13\\.[0-9]"))'
-archiveium_minio_image_tag: RELEASE.2023-12-23T07-19-11Z  # The project hard codes this tag, so let's keep it
-archiveium_redis_image_tag: "7.4.7"  # skopeo list-tags docker://docker.io/library/redis | jq -r '.Tags[] | select(test("^7.[0-9]"))'
-archiveium_meilisearch_image_tag: v1.13.0  # This project hard codes this tag, so let's keep it
-
-archiveium_admin_email: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.archiveium_admin_email) }}"
-archiveium_admin_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.archiveium_admin_password) }}"
-archiveium_encryption_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.archiveium_encryption_key) }}"
-archiveium_meilisearch_master_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.archiveium_meilisearch_master_key) }}"
-archiveium_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.archiveium_postgres_password) }}"
-archiveium_minio_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.archiveium_minio_password) }}"
-
-###############################################################################
 # backrest
 ###############################################################################
 
@@ -37,7 +20,7 @@ backrest_version: v1.11.2
 
 backrest_traefik_host: "backrest-apps.{{ common_traefik_domain }}"
 
-backrest_env:
+backrest_container_env:
   BACKREST_PORT: 0.0.0.0:9898
 
 ###############################################################################
@@ -56,15 +39,6 @@ bar_assistant_meilisearch_master_key: "{{ lookup('bitwarden.secrets.lookup', bws
 ###############################################################################
 
 bentopdf_image_tag: v2.0.0  # skopeo list-tags docker://ghcr.io/alam00000/bentopdf | jq -r '.Tags[] | select(test("^v[0-9]"))'
-
-###############################################################################
-# calibre
-###############################################################################
-
-calibre_image_tag: "9.1.0"  # skopeo list-tags docker://lscr.io/linuxserver/calibre | jq -r '.Tags[] | select(test("^[0-9]"))'
-
-calibre_volume_media: "{{ global_volume_media }}"
-calibre_volume_media_options: "{{ global_volume_media_options }}"
 
 ###############################################################################
 # calibre_web_automated
@@ -119,17 +93,6 @@ homarr_api_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.homarr_api_key) 
 homarr_secret_encryption_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.homarr_secret_encryption_key) }}"
 
 ###############################################################################
-# immich
-###############################################################################
-
-immich_image_tag: v2.5.2  # skopeo list-tags docker://ghcr.io/immich-app/immich-server | jq -r '.Tags[] | select(test("^v[0-9]"))'
-immich_machine_learning_image_tag: "{{ immich_image_tag }}"
-immich_postgres_image_tag: 14-vectorchord0.4.3-pgvectors0.2.0  # The project hard codes this tag, so let's keep it
-immich_redis_image_tag: 8.1.3-bookworm  # skopeo list-tags docker://docker.io/valkey/valkey | jq -r '.Tags[] | select(test("^8\\.[0-9\\.]+-bookworm"))'
-
-immich_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.immich_postgres_password) }}"
-
-###############################################################################
 # karakeep
 ###############################################################################
 
@@ -172,33 +135,6 @@ nocodb_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.nocodb
 ###############################################################################
 
 open_webui_image_tag: v0.7.2  # skopeo list-tags docker://ghcr.io/open-webui/open-webui | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
-
-###############################################################################
-# paperless
-###############################################################################
-
-paperless_image_tag: "2.20.6"  # skopeo list-tags docker://ghcr.io/paperless-ngx/paperless-ngx | jq -r '.Tags[] | select(test("^[0-9]"))'
-paperless_redis_image_tag: "8.4.0"  # skopeo list-tags docker://docker.io/library/redis | jq -r '.Tags[] | select(test("^8\\.[0-9\\.]+$"))'
-paperless_gotenberg_image_tag: "8.26.0"  # skopeo list-tags docker://docker.io/gotenberg/gotenberg | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
-paperless_tika_image_tag: "3.2.3.0-full"  # skopeo list-tags docker://docker.io/apache/tika | jq -r '.Tags[] | select(test("^[0-9\\.]+-full$"))'
-paperless_ai_image_tag: "3.0.9"  # skopeo list-tags docker://docker.io/clusterzx/paperless-ai | jq -r '.Tags[] | select(test("^[0-9]"))'
-
-paperless_env:
-  PAPERLESS_ALLOWED_HOSTS: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.paperless_allowed_hosts) }}"
-  PAPERLESS_OCR_USER_ARGS: '{"invalidate_digital_signatures": true}'
-
-paperless_volume_export_options:
-  - Device={{ lookup('bitwarden.secrets.lookup', bws_uuid.global_storage_host) }}:/mnt/data/paperless/export
-  - Type=nfs
-  - Options=soft,nfsvers=3,nolock
-paperless_volume_consume_options:
-  - Device={{ lookup('bitwarden.secrets.lookup', bws_uuid.global_storage_host) }}:/mnt/data/paperless/consume
-  - Type=nfs
-  - Options=soft,nfsvers=3,nolock
-
-paperless_url: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.paperless_url) }}"
-paperless_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.paperless_postgres_password) }}"
-paperless_task_workers: 4
 
 ###############################################################################
 # stirling_pdf

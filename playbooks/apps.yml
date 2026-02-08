@@ -40,6 +40,11 @@
         name: jaredhocutt.homelab.bentopdf
       tags: [bentopdf]
 
+    - name: Install calibre_web_automated
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.calibre_web_automated
+      tags: [calibre_web_automated]
+
     - name: Install changedetection
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.changedetection
