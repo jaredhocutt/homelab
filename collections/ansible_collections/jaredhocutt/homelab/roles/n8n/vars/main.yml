@@ -8,7 +8,7 @@ n8n_postgres_user: n8n
 # Envrionment
 ###############################################################################
 
-n8n_env_base:
+n8n_container_env_defaults:
   DB_TYPE: postgresdb
   DB_POSTGRESDB_HOST: "{{ n8n_name }}-postgres"
   DB_POSTGRESDB_PORT: "5432"
@@ -19,11 +19,28 @@ n8n_env_base:
   QUEUE_BULL_REDIS_HOST: "{{ n8n_name }}-redis"
   QUEUE_HEALTH_CHECK_ACTIVE: "true"
 
-n8n_worker_env_base: "{{ n8n_env_vars_base }}"
+n8n_worker_container_env_defaults: "{{ n8n_container_env_defaults }}"
 
-n8n_postgres_env_base: {}
+n8n_postgres_container_env_defaults: {}
 
-n8n_redis_env_base: {}
+n8n_redis_container_env_defaults: {}
+
+n8n_container_env_combined: >-
+  {{ common_container_env_defaults
+  | combine(n8n_container_env_defaults, recursive=True)
+  | combine(n8n_container_env, recursive=True) }}
+n8n_worker_container_env_combined: >-
+  {{ common_container_env_defaults
+  | combine(n8n_worker_container_env_defaults, recursive=True)
+  | combine(n8n_worker_container_env, recursive=True) }}
+n8n_postgres_container_env_combined: >-
+  {{ common_container_env_defaults
+  | combine(n8n_postgres_container_env_defaults, recursive=True)
+  | combine(n8n_postgres_container_env, recursive=True) }}
+n8n_redis_container_env_combined: >-
+  {{ common_container_env_defaults
+  | combine(n8n_redis_container_env_defaults, recursive=True)
+  | combine(n8n_redis_container_env, recursive=True) }}
 
 ###############################################################################
 # Secrets

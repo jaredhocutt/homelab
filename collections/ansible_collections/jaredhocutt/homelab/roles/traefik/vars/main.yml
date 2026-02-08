@@ -1,7 +1,7 @@
 ---
 # vars file for jaredhocutt.homelab.traefik
 
-traefik_command_base:
+traefik_command_defaults:
   - --entrypoints.web.address=:80
   - --entrypoints.web.http.redirections.entrypoint.to=websecure
   - --entrypoints.web.http.redirections.entrypoint.scheme=https
