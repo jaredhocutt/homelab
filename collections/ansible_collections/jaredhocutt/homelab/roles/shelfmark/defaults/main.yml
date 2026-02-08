@@ -1,0 +1,22 @@
+---
+# defaults file for jaredhocutt.homelab.shelfmark
+
+shelfmark_name: shelfmark
+
+shelfmark_image: ghcr.io/calibrain/shelfmark
+shelfmark_image_tag: latest
+
+shelfmark_volume_config: "{{ shelfmark_name }}-config"
+shelfmark_volume_books: "{{ shelfmark_name }}-books"
+
+shelfmark_traefik_enable: true
+shelfmark_traefik_host: "{{ shelfmark_name }}.{{ common_traefik_domain }}"
+shelfmark_ports:
+  - 8084:8084
+
+shelfmark_secrets: {}
+
+shelfmark_container_env: {}
+shelfmark_container_secrets: []
+shelfmark_container_labels: {}
+shelfmark_quadlet_options: []

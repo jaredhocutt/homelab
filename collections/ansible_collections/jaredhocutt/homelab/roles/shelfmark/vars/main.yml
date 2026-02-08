@@ -1,0 +1,51 @@
+---
+# vars file for jaredhocutt.homelab.shelfmark
+
+###############################################################################
+# Envrionment
+###############################################################################
+
+shelfmark_container_env_defaults: {}
+
+shelfmark_container_env_combined: >-
+  {{ common_container_env_defaults
+  | combine(shelfmark_container_env_defaults, recursive=True)
+  | combine(shelfmark_container_env, recursive=True) }}
+
+###############################################################################
+# Secrets
+###############################################################################
+
+shelfmark_secrets_defaults: {}
+
+shelfmark_secrets_combined: >-
+  {{ shelfmark_secrets_defaults
+  | combine(shelfmark_secrets, recursive=True) }}
+
+shelfmark_container_secrets_defaults: []
+
+shelfmark_container_secrets_combined: >-
+  {{ shelfmark_container_secrets_defaults
+  + shelfmark_container_secrets }}
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+shelfmark_container_labels_defaults: >
+  {{ shelfmark_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', shelfmark_name, shelfmark_traefik_host, '80'), {}) }}
+
+shelfmark_container_labels_combined: >-
+  {{ shelfmark_container_labels_defaults
+  | combine(shelfmark_container_labels, recursive=True) }}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+shelfmark_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+
+shelfmark_quadlet_options_combined: >-
+  {{ shelfmark_quadlet_options_defaults
+  + shelfmark_quadlet_options }}
