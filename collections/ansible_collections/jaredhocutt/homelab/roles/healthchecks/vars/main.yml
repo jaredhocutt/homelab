@@ -40,19 +40,9 @@ healthchecks_container_secrets_combined: >-
 # Container Labels
 ###############################################################################
 
-# This is done as a list and converted to a dict in order to use variables in the key name
-healthchecks_container_labels_traefik:
-  - key: traefik.enable
-    value: "true"
-  - key: traefik.docker.network
-    value: "{{ common_traefik_network }}"
-  - key: traefik.http.routers.{{ healthchecks_name }}.rule
-    value: Host(`{{ healthchecks_traefik_host }}`)
-  - key: traefik.http.routers.{{ healthchecks_name }}.entrypoints
-    value: "{{ common_traefik_entrypoint }}"
-  - key: traefik.http.services.{{ healthchecks_name }}.loadbalancer.server.port
-    value: "8000"
-healthchecks_container_labels_defaults: "{{ healthchecks_traefik_enable | ternary((healthchecks_container_labels_traefik | items2dict), {}) }}"
+healthchecks_container_labels_defaults: >
+  {{ healthchecks_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', healthchecks_name, healthchecks_traefik_host, '8000'), {}) }}
 
 healthchecks_container_labels_combined: >-
   {{ healthchecks_container_labels_defaults

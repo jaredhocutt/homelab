@@ -32,19 +32,9 @@ radarr_container_secrets_combined: >-
 # Container Labels
 ###############################################################################
 
-# This is done as a list and converted to a dict in order to use variables in the key name
-radarr_container_labels_traefik:
-  - key: traefik.enable
-    value: "true"
-  - key: traefik.docker.network
-    value: "{{ common_traefik_network }}"
-  - key: traefik.http.routers.{{ radarr_name }}.rule
-    value: Host(`{{ radarr_traefik_host }}`)
-  - key: traefik.http.routers.{{ radarr_name }}.entrypoints
-    value: "{{ common_traefik_entrypoint }}"
-  - key: traefik.http.services.{{ radarr_name }}.loadbalancer.server.port
-    value: "7878"
-radarr_container_labels_defaults: "{{ radarr_traefik_enable | ternary((radarr_container_labels_traefik | items2dict), {}) }}"
+radarr_container_labels_defaults: >
+  {{ radarr_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', radarr_name, radarr_traefik_host, '7878'), {}) }}
 
 radarr_container_labels_combined: >-
   {{ radarr_container_labels_defaults

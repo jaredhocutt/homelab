@@ -32,19 +32,9 @@ wizarr_container_secrets_combined: >-
 # Container Labels
 ###############################################################################
 
-# This is done as a list and converted to a dict in order to use variables in the key name
-wizarr_container_labels_traefik:
-  - key: traefik.enable
-    value: "true"
-  - key: traefik.docker.network
-    value: "{{ common_traefik_network }}"
-  - key: traefik.http.routers.{{ wizarr_name }}.rule
-    value: Host(`{{ wizarr_traefik_host }}`)
-  - key: traefik.http.routers.{{ wizarr_name }}.entrypoints
-    value: "{{ common_traefik_entrypoint }}"
-  - key: traefik.http.services.{{ wizarr_name }}.loadbalancer.server.port
-    value: "5690"
-wizarr_container_labels_defaults: "{{ wizarr_traefik_enable | ternary((wizarr_container_labels_traefik | items2dict), {}) }}"
+wizarr_container_labels_defaults: >
+  {{ wizarr_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', wizarr_name, wizarr_traefik_host, '5690'), {}) }}
 
 wizarr_container_labels_combined: >-
   {{ wizarr_container_labels_defaults

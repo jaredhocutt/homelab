@@ -60,19 +60,9 @@ tandoor_postgres_container_secrets_combined: >-
 # Container Labels
 ###############################################################################
 
-# This is done as a list and converted to a dict in order to use variables in the key name
-tandoor_container_labels_traefik:
-  - key: traefik.enable
-    value: "true"
-  - key: traefik.docker.network
-    value: "{{ common_traefik_network }}"
-  - key: traefik.http.routers.{{ tandoor_name }}.rule
-    value: Host(`{{ tandoor_traefik_host }}`)
-  - key: traefik.http.routers.{{ tandoor_name }}.entrypoints
-    value: "{{ common_traefik_entrypoint }}"
-  - key: traefik.http.services.{{ tandoor_name }}.loadbalancer.server.port
-    value: "80"
-tandoor_container_labels_defaults: "{{ tandoor_traefik_enable | ternary((tandoor_container_labels_traefik | items2dict), {}) }}"
+tandoor_container_labels_defaults: >
+  {{ tandoor_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', tandoor_name, tandoor_traefik_host, '80'), {}) }}
 
 tandoor_postgres_container_labels_defaults: {}
 

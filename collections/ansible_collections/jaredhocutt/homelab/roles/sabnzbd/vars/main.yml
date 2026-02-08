@@ -32,19 +32,9 @@ sabnzbd_container_secrets_combined: >-
 # Container Labels
 ###############################################################################
 
-# This is done as a list and converted to a dict in order to use variables in the key name
-sabnzbd_container_labels_traefik:
-  - key: traefik.enable
-    value: "true"
-  - key: traefik.docker.network
-    value: "{{ common_traefik_network }}"
-  - key: traefik.http.routers.{{ sabnzbd_name }}.rule
-    value: Host(`{{ sabnzbd_traefik_host }}`)
-  - key: traefik.http.routers.{{ sabnzbd_name }}.entrypoints
-    value: "{{ common_traefik_entrypoint }}"
-  - key: traefik.http.services.{{ sabnzbd_name }}.loadbalancer.server.port
-    value: "8080"
-sabnzbd_container_labels_defaults: "{{ sabnzbd_traefik_enable | ternary((sabnzbd_container_labels_traefik | items2dict), {}) }}"
+sabnzbd_container_labels_defaults: >
+  {{ sabnzbd_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', sabnzbd_name, sabnzbd_traefik_host, '8080'), {}) }}
 
 sabnzbd_container_labels_combined: >-
   {{ sabnzbd_container_labels_defaults

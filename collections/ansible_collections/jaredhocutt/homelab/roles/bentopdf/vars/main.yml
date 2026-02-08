@@ -32,19 +32,9 @@ bentopdf_container_secrets_combined: >-
 # Container Labels
 ###############################################################################
 
-# This is done as a list and converted to a dict in order to use variables in the key name
-bentopdf_container_labels_traefik:
-  - key: traefik.enable
-    value: "true"
-  - key: traefik.docker.network
-    value: "{{ common_traefik_network }}"
-  - key: traefik.http.routers.{{ bentopdf_name }}.rule
-    value: Host(`{{ bentopdf_traefik_host }}`)
-  - key: traefik.http.routers.{{ bentopdf_name }}.entrypoints
-    value: "{{ common_traefik_entrypoint }}"
-  - key: traefik.http.services.{{ bentopdf_name }}.loadbalancer.server.port
-    value: "8080"
-bentopdf_container_labels_defaults: "{{ bentopdf_traefik_enable | ternary((bentopdf_container_labels_traefik | items2dict), {}) }}"
+bentopdf_container_labels_defaults: >-
+  {{ bentopdf_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', bentopdf_name, bentopdf_traefik_host, '8080'), {}) }}
 
 bentopdf_container_labels_combined: >-
   {{ bentopdf_container_labels_defaults

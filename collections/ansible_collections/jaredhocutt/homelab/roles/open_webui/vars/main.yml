@@ -32,19 +32,9 @@ open_webui_container_secrets_combined: >-
 # Container Labels
 ###############################################################################
 
-# This is done as a list and converted to a dict in order to use variables in the key name
-open_webui_container_labels_traefik:
-  - key: traefik.enable
-    value: "true"
-  - key: traefik.docker.network
-    value: "{{ common_traefik_network }}"
-  - key: traefik.http.routers.{{ open_webui_name }}.rule
-    value: Host(`{{ open_webui_traefik_host }}`)
-  - key: traefik.http.routers.{{ open_webui_name }}.entrypoints
-    value: "{{ common_traefik_entrypoint }}"
-  - key: traefik.http.services.{{ open_webui_name }}.loadbalancer.server.port
-    value: "8080"
-open_webui_container_labels_defaults: "{{ open_webui_traefik_enable | ternary((open_webui_container_labels_traefik | items2dict), {}) }}"
+open_webui_container_labels_defaults: >
+  {{ open_webui_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', open_webui_name, open_webui_traefik_host, '8080'), {}) }}
 
 open_webui_container_labels_combined: >-
   {{ open_webui_container_labels_defaults

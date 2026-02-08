@@ -32,19 +32,9 @@ prowlarr_container_secrets_combined: >-
 # Container Labels
 ###############################################################################
 
-# This is done as a list and converted to a dict in order to use variables in the key name
-prowlarr_container_labels_traefik:
-  - key: traefik.enable
-    value: "true"
-  - key: traefik.docker.network
-    value: "{{ common_traefik_network }}"
-  - key: traefik.http.routers.{{ prowlarr_name }}.rule
-    value: Host(`{{ prowlarr_traefik_host }}`)
-  - key: traefik.http.routers.{{ prowlarr_name }}.entrypoints
-    value: "{{ common_traefik_entrypoint }}"
-  - key: traefik.http.services.{{ prowlarr_name }}.loadbalancer.server.port
-    value: "9696"
-prowlarr_container_labels_defaults: "{{ prowlarr_traefik_enable | ternary((prowlarr_container_labels_traefik | items2dict), {}) }}"
+prowlarr_container_labels_defaults: >
+  {{ prowlarr_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', prowlarr_name, prowlarr_traefik_host, '9696'), {}) }}
 
 prowlarr_container_labels_combined: >-
   {{ prowlarr_container_labels_defaults

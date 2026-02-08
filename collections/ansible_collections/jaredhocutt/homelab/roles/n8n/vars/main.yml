@@ -69,19 +69,9 @@ n8n_redis_container_secrets_combined: >-
 # Container Labels
 ###############################################################################
 
-# This is done as a list and converted to a dict in order to use variables in the key name
-n8n_container_labels_traefik:
-  - key: traefik.enable
-    value: "true"
-  - key: traefik.docker.network
-    value: "{{ common_traefik_network }}"
-  - key: traefik.http.routers.{{ n8n_name }}.rule
-    value: Host(`{{ n8n_traefik_host }}`)
-  - key: traefik.http.routers.{{ n8n_name }}.entrypoints
-    value: "{{ common_traefik_entrypoint }}"
-  - key: traefik.http.services.{{ n8n_name }}.loadbalancer.server.port
-    value: "5678"
-n8n_container_labels_defaults: "{{ n8n_traefik_enable | ternary((n8n_container_labels_traefik | items2dict), {}) }}"
+n8n_container_labels_defaults: >
+  {{ n8n_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', n8n_name, n8n_traefik_host, '5678'), {}) }}
 
 n8n_worker_container_labels_defaults: {}
 

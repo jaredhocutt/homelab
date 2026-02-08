@@ -32,19 +32,9 @@ overseerr_container_secrets_combined: >-
 # Container Labels
 ###############################################################################
 
-# This is done as a list and converted to a dict in order to use variables in the key name
-overseerr_container_labels_traefik:
-  - key: traefik.enable
-    value: "true"
-  - key: traefik.docker.network
-    value: "{{ common_traefik_network }}"
-  - key: traefik.http.routers.{{ overseerr_name }}.rule
-    value: Host(`{{ overseerr_traefik_host }}`)
-  - key: traefik.http.routers.{{ overseerr_name }}.entrypoints
-    value: "{{ common_traefik_entrypoint }}"
-  - key: traefik.http.services.{{ overseerr_name }}.loadbalancer.server.port
-    value: "5055"
-overseerr_container_labels_defaults: "{{ overseerr_traefik_enable | ternary((overseerr_container_labels_traefik | items2dict), {}) }}"
+overseerr_container_labels_defaults: >
+  {{ overseerr_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', overseerr_name, overseerr_traefik_host, '5055'), {}) }}
 
 overseerr_container_labels_combined: >-
   {{ overseerr_container_labels_defaults

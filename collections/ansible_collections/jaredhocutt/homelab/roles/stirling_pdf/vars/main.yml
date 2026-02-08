@@ -32,19 +32,9 @@ stirling_pdf_container_secrets_combined: >-
 # Container Labels
 ###############################################################################
 
-# This is done as a list and converted to a dict in order to use variables in the key name
-stirling_pdf_container_labels_traefik:
-  - key: traefik.enable
-    value: "true"
-  - key: traefik.docker.network
-    value: "{{ common_traefik_network }}"
-  - key: traefik.http.routers.{{ stirling_pdf_name }}.rule
-    value: Host(`{{ stirling_pdf_traefik_host }}`)
-  - key: traefik.http.routers.{{ stirling_pdf_name }}.entrypoints
-    value: "{{ common_traefik_entrypoint }}"
-  - key: traefik.http.services.{{ stirling_pdf_name }}.loadbalancer.server.port
-    value: "8080"
-stirling_pdf_container_labels_defaults: "{{ stirling_pdf_traefik_enable | ternary((stirling_pdf_container_labels_traefik | items2dict), {}) }}"
+stirling_pdf_container_labels_defaults: >
+  {{ stirling_pdf_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', stirling_pdf_name, stirling_pdf_traefik_host, '8080'), {}) }}
 
 stirling_pdf_container_labels_combined: >-
   {{ stirling_pdf_container_labels_defaults

@@ -109,19 +109,9 @@ paperless_ai_container_secrets_combined: >-
 # Container Labels
 ###############################################################################
 
-# This is done as a list and converted to a dict in order to use variables in the key name
-paperless_container_labels_traefik:
-  - key: traefik.enable
-    value: "true"
-  - key: traefik.docker.network
-    value: "{{ common_traefik_network }}"
-  - key: traefik.http.routers.{{ paperless_name }}.rule
-    value: Host(`{{ paperless_traefik_host }}`)
-  - key: traefik.http.routers.{{ paperless_name }}.entrypoints
-    value: "{{ common_traefik_entrypoint }}"
-  - key: traefik.http.services.{{ paperless_name }}.loadbalancer.server.port
-    value: "8000"
-paperless_container_labels_defaults: "{{ paperless_traefik_enable | ternary((paperless_container_labels_traefik | items2dict), {}) }}"
+paperless_container_labels_defaults: >
+  {{ paperless_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', paperless_name, paperless_traefik_host, '8000'), {}) }}
 
 paperless_postgres_container_labels_defaults: {}
 
@@ -131,19 +121,9 @@ paperless_gotenberg_container_labels_defaults: {}
 
 paperless_tika_container_labels_defaults: {}
 
-# This is done as a list and converted to a dict in order to use variables in the key name
-paperless_ai_container_labels_traefik:
-  - key: traefik.enable
-    value: "true"
-  - key: traefik.docker.network
-    value: "{{ common_traefik_network }}"
-  - key: traefik.http.routers.{{ paperless_name }}-ai.rule
-    value: Host(`{{ paperless_ai_traefik_host }}`)
-  - key: traefik.http.routers.{{ paperless_name }}-ai.entrypoints
-    value: "{{ common_traefik_entrypoint }}"
-  - key: traefik.http.services.{{ paperless_name }}-ai.loadbalancer.server.port
-    value: "3000"
-paperless_ai_container_labels_defaults: "{{ paperless_traefik_enable | ternary((paperless_ai_container_labels_traefik | items2dict), {}) }}"
+paperless_ai_container_labels_defaults: >
+  {{ paperless_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', paperless_name ~ '-ai', paperless_ai_traefik_host, '3000'), {}) }}
 
 paperless_container_labels_combined: >-
   {{ paperless_container_labels_defaults

@@ -32,19 +32,9 @@ audiobookshelf_container_secrets_combined: >-
 # Container Labels
 ###############################################################################
 
-# This is done as a list and converted to a dict in order to use variables in the key name
-audiobookshelf_container_labels_traefik:
-  - key: traefik.enable
-    value: "true"
-  - key: traefik.docker.network
-    value: "{{ common_traefik_network }}"
-  - key: traefik.http.routers.{{ audiobookshelf_name }}.rule
-    value: Host(`{{ audiobookshelf_traefik_host }}`)
-  - key: traefik.http.routers.{{ audiobookshelf_name }}.entrypoints
-    value: "{{ common_traefik_entrypoint }}"
-  - key: traefik.http.services.{{ audiobookshelf_name }}.loadbalancer.server.port
-    value: "80"
-audiobookshelf_container_labels_defaults: "{{ audiobookshelf_traefik_enable | ternary((audiobookshelf_container_labels_traefik | items2dict), {}) }}"
+audiobookshelf_container_labels_defaults: >
+  {{ audiobookshelf_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', audiobookshelf_name, audiobookshelf_traefik_host, '80'), {}) }}
 
 audiobookshelf_container_labels_combined: >-
   {{ audiobookshelf_container_labels_defaults

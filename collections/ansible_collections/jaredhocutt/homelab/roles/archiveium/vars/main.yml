@@ -120,40 +120,18 @@ archiveium_meilisearch_container_secrets_combined: >-
 # Container Labels
 ###############################################################################
 
-# This is done as a list and converted to a dict in order to use variables in the key name
-archiveium_container_labels_traefik:
-  - key: traefik.enable
-    value: "true"
-  - key: traefik.docker.network
-    value: "{{ common_traefik_network }}"
-  - key: traefik.http.routers.{{ archiveium_name }}.rule
-    value: Host(`{{ archiveium_traefik_host }}`)
-  - key: traefik.http.routers.{{ archiveium_name }}.entrypoints
-    value: "{{ common_traefik_entrypoint }}"
-  - key: traefik.http.services.{{ archiveium_name }}.loadbalancer.server.port
-    value: "3000"
-archiveium_container_labels_defaults: "{{ archiveium_traefik_enable | ternary((archiveium_container_labels_traefik | items2dict), {}) }}"
+archiveium_container_labels_defaults: >
+  {{ archiveium_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', archiveium_name, archiveium_traefik_host, '3000'), {}) }}
 
 archiveium_cron_container_labels_defaults: {}
 archiveium_postgres_container_labels_defaults: {}
 archiveium_minio_container_labels_defaults: {}
 archiveium_redis_container_labels_defaults: {}
 
-# This is done as a list and converted to a dict in order to use variables in the key name
-archiveium_meilisearch_container_labels_traefik:
-  - key: traefik.enable
-    value: "true"
-  - key: traefik.docker.network
-    value: "{{ common_traefik_network }}"
-  - key: traefik.http.routers.{{ archiveium_name }}-meilisearch.rule
-    value: Host(`{{ archiveium_meilisearch_traefik_host }}`)
-  - key: traefik.http.routers.{{ archiveium_name }}-meilisearch.entrypoints
-    value: "{{ common_traefik_entrypoint }}"
-  - key: traefik.http.services.{{ archiveium_name }}-meilisearch.loadbalancer.server.port
-    value: "7700"
 archiveium_meilisearch_container_labels_defaults: >-
   {{ archiveium_traefik_enable
-  | ternary((archiveium_meilisearch_container_labels_traefik | items2dict), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', archiveium_name ~ '-meilisearch', archiveium_meilisearch_traefik_host, '7700'), {}) }}
 
 archiveium_container_labels_combined: >-
   {{ archiveium_container_labels_defaults

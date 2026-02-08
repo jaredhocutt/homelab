@@ -67,19 +67,9 @@ authentik_postgres_container_secrets_combined: >-
 # Container Labels
 ###############################################################################
 
-# This is done as a list and converted to a dict in order to use variables in the key name
-authentik_container_labels_traefik:
-  - key: traefik.enable
-    value: "true"
-  - key: traefik.docker.network
-    value: "{{ common_traefik_network }}"
-  - key: traefik.http.routers.{{ authentik_name }}.rule
-    value: Host(`{{ authentik_traefik_host }}`)
-  - key: traefik.http.routers.{{ authentik_name }}.entrypoints
-    value: "{{ common_traefik_entrypoint }}"
-  - key: traefik.http.services.{{ authentik_name }}-server.loadbalancer.server.port
-    value: "9000"
-authentik_container_labels_defaults: "{{ authentik_traefik_enable | ternary((authentik_container_labels_traefik | items2dict), {}) }}"
+authentik_container_labels_defaults: >
+  {{ authentik_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', authentik_name, authentik_traefik_host, '9000'), {}) }}
 
 authentik_worker_container_labels_defaults: {}
 

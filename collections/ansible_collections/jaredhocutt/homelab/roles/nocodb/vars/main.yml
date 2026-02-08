@@ -56,19 +56,9 @@ nocodb_postgres_container_secrets_combined: >-
 # Container Labels
 ###############################################################################
 
-# This is done as a list and converted to a dict in order to use variables in the key name
-nocodb_container_labels_traefik:
-  - key: traefik.enable
-    value: "true"
-  - key: traefik.docker.network
-    value: "{{ common_traefik_network }}"
-  - key: traefik.http.routers.{{ nocodb_name }}.rule
-    value: Host(`{{ nocodb_traefik_host }}`)
-  - key: traefik.http.routers.{{ nocodb_name }}.entrypoints
-    value: "{{ common_traefik_entrypoint }}"
-  - key: traefik.http.services.{{ nocodb_name }}.loadbalancer.server.port
-    value: "8080"
-nocodb_container_labels_defaults: "{{ nocodb_traefik_enable | ternary((nocodb_container_labels_traefik | items2dict), {}) }}"
+nocodb_container_labels_defaults: >
+  {{ nocodb_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', nocodb_name, nocodb_traefik_host, '8080'), {}) }}
 
 nocodb_postgres_container_labels_defaults: {}
 

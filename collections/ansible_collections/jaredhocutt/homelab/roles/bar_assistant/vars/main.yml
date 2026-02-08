@@ -79,52 +79,20 @@ bar_assistant_meilisearch_container_secrets_combined: >-
 # Container Labels
 ###############################################################################
 
-# This is done as a list and converted to a dict in order to use variables in the key name
-bar_assistant_container_labels_traefik:
-  - key: traefik.enable
-    value: "true"
-  - key: traefik.docker.network
-    value: "{{ common_traefik_network }}"
-  - key: traefik.http.routers.{{ bar_assistant_name }}.rule
-    value: Host(`{{ bar_assistant_traefik_host }}`)
-  - key: traefik.http.routers.{{ bar_assistant_name }}.entrypoints
-    value: "{{ common_traefik_entrypoint }}"
-  - key: traefik.http.services.{{ bar_assistant_name }}.loadbalancer.server.port
-    value: "8080"
-bar_assistant_container_labels_defaults: "{{ bar_assistant_traefik_enable | ternary((bar_assistant_container_labels_traefik | items2dict), {}) }}"
+bar_assistant_container_labels_defaults: >
+  {{ bar_assistant_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', bar_assistant_name, bar_assistant_traefik_host, '8080'), {}) }}
 
-# This is done as a list and converted to a dict in order to use variables in the key name
-bar_assistant_salt_rim_container_labels_traefik:
-  - key: traefik.enable
-    value: "true"
-  - key: traefik.docker.network
-    value: "{{ common_traefik_network }}"
-  - key: traefik.http.routers.{{ bar_assistant_name }}-salt-rim.rule
-    value: Host(`{{ bar_assistant_salt_rim_traefik_host }}`)
-  - key: traefik.http.routers.{{ bar_assistant_name }}-salt-rim.entrypoints
-    value: "{{ common_traefik_entrypoint }}"
-  - key: traefik.http.services.{{ bar_assistant_name }}-salt-rim.loadbalancer.server.port
-    value: "8080"
-bar_assistant_salt_rim_container_labels_defaults: "{{ bar_assistant_traefik_enable | ternary((bar_assistant_salt_rim_container_labels_traefik | items2dict), {}) }}"
+bar_assistant_salt_rim_container_labels_defaults: >
+  {{ bar_assistant_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', bar_assistant_name ~ '-salt-rim', bar_assistant_salt_rim_traefik_host, '8080'), {}) }}
 
 bar_assistant_redis_container_labels_defaults: {}
 
-# This is done as a list and converted to a dict in order to use variables in the key name
-bar_assistant_meilisearch_container_labels_traefik:
-  - key: traefik.enable
-    value: "true"
-  - key: traefik.docker.network
-    value: "{{ common_traefik_network }}"
-  - key: traefik.http.routers.{{ bar_assistant_name }}-meilisearch.rule
-    value: Host(`{{ bar_assistant_meilisearch_traefik_host }}`)
-  - key: traefik.http.routers.{{ bar_assistant_name }}-meilisearch.entrypoints
-    value: "{{ common_traefik_entrypoint }}"
-  - key: traefik.http.services.{{ bar_assistant_name }}-meilisearch.loadbalancer.server.port
-    value: "7700"
 bar_assistant_meilisearch_container_labels_defaults: >-
   {{
     bar_assistant_traefik_enable |
-    ternary((bar_assistant_meilisearch_container_labels_traefik | items2dict), {})
+    ternary(lookup('jaredhocutt.homelab.traefik_labels', bar_assistant_name ~ '-meilisearch', bar_assistant_meilisearch_traefik_host, '7700'), {})
   }}
 
 bar_assistant_container_labels_combined: >-
