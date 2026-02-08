@@ -31,10 +31,13 @@ server_setup_enabled_services:
 global_volume_download: download
 
 global_volume_media: media
+global_volume_media_options_device: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.global_storage_host) }}:/mnt/data/media"
+global_volume_media_options_type: nfs
+global_volume_media_options_options: soft,nfsvers=3
 global_volume_media_options:
-  - Device={{ lookup('bitwarden.secrets.lookup', bws_uuid.global_storage_host) }}:/mnt/data/media
-  - Type=nfs
-  - Options=soft,nfsvers=3
+  - Device={{ global_volume_media_options_device }}
+  - Type={{ global_volume_media_options_type }}
+  - Options={{ global_volume_media_options_options }}
 
 global_media_uid: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.global_media_uid) }}"
 global_media_gid: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.global_media_gid) }}"
