@@ -11,7 +11,7 @@ EXISTING_ROLE="$1"
 NEW_ROLE="$2"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROLES_DIR="$(dirname "$SCRIPT_DIR")/roles"
+ROLES_DIR="$(dirname "$SCRIPT_DIR")/collections/ansible_collections/jaredhocutt/homelab/roles"
 
 if [ ! -d "$ROLES_DIR/$EXISTING_ROLE" ]; then
     echo "Error: Role '$EXISTING_ROLE' does not exist in $ROLES_DIR" >&2
