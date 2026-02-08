@@ -1,0 +1,59 @@
+---
+
+- name: Stop services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: stopped
+  become: true
+  failed_when: false
+  loop:
+    - "{{ calibre_web_automated_name }}.service"
+
+- name: Destroy containers
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ calibre_web_automated_name }}"
+
+- name: Destroy secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    state: absent
+  become: true
+  no_log: true
+  loop: "{{ calibre_web_automated_secrets_combined | dict2items }}"
+
+- name: Destroy volumes
+  containers.podman.podman_volume:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ calibre_web_automated_volume_config }}"
+    - "{{ calibre_web_automated_volume_ingest }}"
+    - "{{ calibre_web_automated_volume_library }}"
+
+- name: Destroy network
+  containers.podman.podman_network:
+    name: "{{ calibre_web_automated_name }}"
+    state: absent
+  become: true
+
+- name: Cleanup quadlet files
+  ansible.builtin.file:
+    path: /etc/containers/systemd/{{ item }}
+    state: absent
+  become: true
+  loop:
+    - "{{ calibre_web_automated_name }}.container"
+    - "{{ calibre_web_automated_volume_config }}.volume"
+    - "{{ calibre_web_automated_volume_ingest }}.volume"
+    - "{{ calibre_web_automated_volume_library }}.volume"
+    - "{{ calibre_web_automated_name }}.network"
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true

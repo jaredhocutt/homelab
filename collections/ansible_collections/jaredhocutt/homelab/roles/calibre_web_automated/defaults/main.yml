@@ -1,0 +1,23 @@
+---
+# defaults file for jaredhocutt.homelab.calibre_web_automated
+
+calibre_web_automated_name: calibre-web-automated
+
+calibre_web_automated_image: ghcr.io/crocodilestick/calibre-web-automated
+calibre_web_automated_image_tag: latest
+
+calibre_web_automated_volume_config: "{{ calibre_web_automated_name }}-config"
+calibre_web_automated_volume_ingest: "{{ calibre_web_automated_name }}-ingest"
+calibre_web_automated_volume_library: "{{ calibre_web_automated_name }}-library"
+
+calibre_web_automated_traefik_enable: true
+calibre_web_automated_traefik_host: "{{ calibre_web_automated_name }}.{{ common_traefik_domain }}"
+calibre_web_automated_ports:
+  - 8083:8083
+
+calibre_web_automated_secrets: {}
+
+calibre_web_automated_container_env: {}
+calibre_web_automated_container_secrets: []
+calibre_web_automated_container_labels: {}
+calibre_web_automated_quadlet_options: []

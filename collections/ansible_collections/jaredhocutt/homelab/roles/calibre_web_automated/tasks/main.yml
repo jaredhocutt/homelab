@@ -1,0 +1,69 @@
+---
+# tasks file for jaredhocutt.homelab.calibre_web_automated
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ calibre_web_automated_image }}"
+      image_tag: "{{ calibre_web_automated_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ calibre_web_automated_name }}"
+    driver: bridge
+    disable_dns: false
+    opt:
+      isolate: "true"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ calibre_web_automated_volume_config }}"
+      options: "{{ calibre_web_automated_volume_config_options | default(omit) }}"
+    - name: "{{ calibre_web_automated_volume_ingest }}"
+      options: "{{ calibre_web_automated_volume_ingest_options | default(omit) }}"
+    - name: "{{ calibre_web_automated_volume_library }}"
+      options: "{{ calibre_web_automated_volume_library_options | default(omit) }}"
+
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ calibre_web_automated_secrets_combined | dict2items }}"
+
+- name: Create calibre_web_automated container
+  containers.podman.podman_container:
+    name: "{{ calibre_web_automated_name }}"
+    image: "{{ calibre_web_automated_image }}:{{ calibre_web_automated_image_tag }}"
+    network:
+      - "{{ calibre_web_automated_name }}.network"
+      - "{{ calibre_web_automated_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
+    env: "{{ calibre_web_automated_container_env_combined }}"
+    secrets: "{{ calibre_web_automated_container_secrets_combined }}"
+    volumes:
+      - "{{ calibre_web_automated_volume_config }}:/config"
+      - "{{ calibre_web_automated_volume_ingest }}:/cwa-book-ingest"
+      - "{{ calibre_web_automated_volume_library }}:/calibre-library"
+    publish: "{{ calibre_web_automated_traefik_enable | ternary(omit, calibre_web_automated_ports) }}"
+    labels: "{{ calibre_web_automated_container_labels_combined }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ calibre_web_automated_quadlet_options_combined }}"
+    state: quadlet
+  notify: Restart {{ calibre_web_automated_name }}
+  become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

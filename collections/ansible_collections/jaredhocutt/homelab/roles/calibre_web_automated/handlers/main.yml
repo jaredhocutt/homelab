@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.calibre_web_automated
+
+- name: Restart {{ calibre_web_automated_name }}
+  ansible.builtin.systemd:
+    name: "{{ calibre_web_automated_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

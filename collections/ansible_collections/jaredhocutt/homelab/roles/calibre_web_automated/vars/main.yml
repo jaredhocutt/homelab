@@ -1,0 +1,51 @@
+---
+# vars file for jaredhocutt.homelab.calibre_web_automated
+
+###############################################################################
+# Envrionment
+###############################################################################
+
+calibre_web_automated_container_env_defaults: {}
+
+calibre_web_automated_container_env_combined: >-
+  {{ common_container_env_defaults
+  | combine(calibre_web_automated_container_env_defaults, recursive=True)
+  | combine(calibre_web_automated_container_env, recursive=True) }}
+
+###############################################################################
+# Secrets
+###############################################################################
+
+calibre_web_automated_secrets_defaults: {}
+
+calibre_web_automated_secrets_combined: >-
+  {{ calibre_web_automated_secrets_defaults
+  | combine(calibre_web_automated_secrets, recursive=True) }}
+
+calibre_web_automated_container_secrets_defaults: []
+
+calibre_web_automated_container_secrets_combined: >-
+  {{ calibre_web_automated_container_secrets_defaults
+  + calibre_web_automated_container_secrets }}
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+calibre_web_automated_container_labels_defaults: >
+  {{ calibre_web_automated_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', calibre_web_automated_name, calibre_web_automated_traefik_host, '8083'), {}) }}
+
+calibre_web_automated_container_labels_combined: >-
+  {{ calibre_web_automated_container_labels_defaults
+  | combine(calibre_web_automated_container_labels, recursive=True) }}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+calibre_web_automated_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+
+calibre_web_automated_quadlet_options_combined: >-
+  {{ calibre_web_automated_quadlet_options_defaults
+  + calibre_web_automated_quadlet_options }}
