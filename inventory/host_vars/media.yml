@@ -21,7 +21,7 @@ kometa_image_tag: v2.2.2
 
 overseerr_image_tag: "1.34.0"
 
-overseerr_env_vars:
+overseerr_env:
   LOG_LEVEL: debug
 
 ###############################################################################
@@ -36,7 +36,7 @@ prowlarr_image_tag: version-2.0.5.5160
 
 radarr_image_tag: version-5.27.5.10198
 
-radarr_env_vars:
+radarr_env:
   PUID: "{{ global_media_uid }}"
   GUID: "{{ global_media_gid }}"
 
@@ -51,7 +51,7 @@ radarr_volume_media_options: "{{ global_volume_media_options }}"
 
 sabnzbd_image_tag: version-4.5.3
 
-sabnzbd_env_vars:
+sabnzbd_env:
   PUID: "{{ global_media_uid }}"
   GUID: "{{ global_media_gid }}"
   DOCKER_MODS: linuxserver/mods:universal-package-install
@@ -65,7 +65,7 @@ sabnzbd_volume_download: "{{ global_volume_download }}"
 
 sonarr_image_tag: version-4.0.15.2941
 
-sonarr_env_vars:
+sonarr_env:
   PUID: "{{ global_media_uid }}"
   GUID: "{{ global_media_gid }}"
 
@@ -80,7 +80,7 @@ sonarr_volume_media_options: "{{ global_volume_media_options }}"
 
 tautulli_image_tag: version-v2.16.0
 
-tautulli_env_vars:
+tautulli_env:
   DOCKER_ENABLE_SECURITY: "false"
 
 ###############################################################################

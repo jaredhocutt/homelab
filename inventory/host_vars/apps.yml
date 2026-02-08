@@ -37,7 +37,7 @@ backrest_version: v1.11.2
 
 backrest_traefik_host: "backrest-apps.{{ common_traefik_domain }}"
 
-backrest_env_vars:
+backrest_env:
   BACKREST_PORT: 0.0.0.0:9898
 
 ###############################################################################
@@ -67,6 +67,12 @@ calibre_volume_media: "{{ global_volume_media }}"
 calibre_volume_media_options: "{{ global_volume_media_options }}"
 
 ###############################################################################
+# calibre_web_automated
+###############################################################################
+
+calibre_web_automated_image_tag: v4.0.6  # skopeo list-tags docker://ghcr.io/crocodilestick/calibre-web-automated | jq -r '.Tags[] | select(test("^v[0-9]"))'
+
+###############################################################################
 # changedetection
 ###############################################################################
 
@@ -82,7 +88,7 @@ healthchecks_image_tag: version-v4.0  # skopeo list-tags docker://lscr.io/linuxs
 healthchecks_email: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email) }}"
 healthchecks_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_password) }}"
 healthchecks_secret_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_secret_key) }}"
-healthchecks_env_vars:
+healthchecks_env:
   DEFAULT_FROM_EMAIL: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_from_email) }}"
   EMAIL_HOST: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email_host) }}"
   EMAIL_PORT: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email_port) }}"
@@ -149,7 +155,7 @@ n8n_postgres_image_tag: "16.11"  # skopeo list-tags docker://docker.io/library/p
 
 n8n_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.n8n_postgres_password) }}"
 
-n8n_env_vars:
+n8n_env:
   N8N_LOG_LEVEL: debug
 
 ###############################################################################
@@ -177,7 +183,7 @@ paperless_gotenberg_image_tag: "8.26.0"  # skopeo list-tags docker://docker.io/g
 paperless_tika_image_tag: "3.2.3.0-full"  # skopeo list-tags docker://docker.io/apache/tika | jq -r '.Tags[] | select(test("^[0-9\\.]+-full$"))'
 paperless_ai_image_tag: "3.0.9"  # skopeo list-tags docker://docker.io/clusterzx/paperless-ai | jq -r '.Tags[] | select(test("^[0-9]"))'
 
-paperless_env_vars:
+paperless_env:
   PAPERLESS_ALLOWED_HOSTS: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.paperless_allowed_hosts) }}"
   PAPERLESS_OCR_USER_ARGS: '{"invalidate_digital_signatures": true}'
 
@@ -200,7 +206,7 @@ paperless_task_workers: 4
 
 stirling_pdf_image_tag: 2.4.2-fat  # skopeo list-tags docker://docker.stirlingpdf.com/stirlingtools/stirling-pdf | jq -r '.Tags[] | select(test("^[0-9\\.]+-fat$"))'
 
-stirling_pdf_env_vars:
+stirling_pdf_env:
   DOCKER_ENABLE_SECURITY: "false"
 
 ###############################################################################
