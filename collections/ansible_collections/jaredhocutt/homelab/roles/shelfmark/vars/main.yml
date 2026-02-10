@@ -34,7 +34,7 @@ shelfmark_container_secrets_combined: >-
 
 shelfmark_container_labels_defaults: >
   {{ shelfmark_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', shelfmark_name, shelfmark_traefik_host, '80'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', shelfmark_name, shelfmark_traefik_host, '8084'), {}) }}
 
 shelfmark_container_labels_combined: >-
   {{ shelfmark_container_labels_defaults
