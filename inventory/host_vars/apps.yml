@@ -46,6 +46,11 @@ bentopdf_image_tag: v2.0.0  # skopeo list-tags docker://ghcr.io/alam00000/bentop
 
 calibre_web_automated_image_tag: v4.0.6  # skopeo list-tags docker://ghcr.io/crocodilestick/calibre-web-automated | jq -r '.Tags[] | select(test("^v[0-9]"))'
 
+calibre_web_automated_secrets:
+  calibre_web_automated_hardcover_token: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.calibre_web_automated_hardcover_token) }}"
+calibre_web_automated_container_secrets:
+  - calibre_web_automated_hardcover_token,type=env,target=HARDCOVER_TOKEN
+
 ###############################################################################
 # changedetection
 ###############################################################################
