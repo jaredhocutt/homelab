@@ -1,0 +1,22 @@
+---
+
+# For become to work with pfsense modules, the user must be root or pfSense-pkg-sudo
+# must be installed and configured for the user.
+# https://galaxy.ansible.com/ui/repo/published/pfsensible/core/docs/
+
+- name: Configure router
+  hosts: router
+  tasks:
+    # TODO: Dynamically add DNS entries from Traefik
+    - name: Create DNS entries
+      pfsensible.core.pfsense_dns_resolver:
+        forwarding: true
+        regdhcp: true
+        regdhcpstatic: true
+        custom_options: |-
+          server:
+          private-domain: "plex.direct"
+        hosts: "{{ pfsense_dns_hosts }}"
+        state: present
+      become: true
+      tags: [pfsense_dns]
