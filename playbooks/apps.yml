@@ -80,6 +80,11 @@
         name: jaredhocutt.homelab.open_webui
       tags: [open_webui]
 
+    - name: Install shelfmark
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.shelfmark
+      tags: [shelfmark]
+
     - name: Install stirling_pdf
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.stirling_pdf

@@ -29,6 +29,7 @@ server_setup_enabled_services:
   - pmlogger.service
 
 global_volume_download: download
+global_volume_download_options: {}
 
 global_volume_media: media
 global_volume_media_options_device: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.global_storage_host) }}:/mnt/data/media"

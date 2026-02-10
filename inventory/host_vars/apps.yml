@@ -142,6 +142,15 @@ nocodb_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.nocodb
 open_webui_image_tag: v0.7.2  # skopeo list-tags docker://ghcr.io/open-webui/open-webui | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
 
 ###############################################################################
+# shelfmark
+###############################################################################
+
+shelfmark_image_tag: v1.0.4  # skopeo list-tags docker://ghcr.io/calibrain/shelfmark | jq -r '.Tags[] | select(test("^v[0-9]"))'
+
+# shelfmark_volume_books: "{{ global_volume_download }}"
+# shelfmark_volume_books_options: "{{ global_volume_download_options }}"
+
+###############################################################################
 # stirling_pdf
 ###############################################################################
 
