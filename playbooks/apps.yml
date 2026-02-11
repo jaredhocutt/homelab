@@ -40,6 +40,11 @@
         name: jaredhocutt.homelab.bentopdf
       tags: [bentopdf]
 
+    - name: Install booklore
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.booklore
+      tags: [booklore]
+
     - name: Install calibre_web_automated
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.calibre_web_automated

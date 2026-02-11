@@ -41,6 +41,16 @@ bar_assistant_meilisearch_master_key: "{{ lookup('bitwarden.secrets.lookup', bws
 bentopdf_image_tag: v2.0.0  # skopeo list-tags docker://ghcr.io/alam00000/bentopdf | jq -r '.Tags[] | select(test("^v[0-9]"))'
 
 ###############################################################################
+# booklore
+###############################################################################
+
+booklore_image_tag: v1.18.5  # skopeo list-tags docker://ghcr.io/booklore-app/booklore | jq -r '.Tags[] | select(test("^v[0-9]"))'
+booklore_mariadb_image_tag: "11.4.5"  # The project hard codes this tag, so let's keep it
+
+booklore_mariadb_root_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.booklore_mariadb_root_password) }}"
+booklore_mariadb_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.booklore_mariadb_password) }}"
+
+###############################################################################
 # calibre_web_automated
 ###############################################################################
 

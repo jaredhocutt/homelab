@@ -1,0 +1,64 @@
+---
+
+- name: Stop services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: stopped
+  become: true
+  failed_when: false
+  loop:
+    - "{{ booklore_name }}.service"
+    - "{{ booklore_name }}-mariadb.service"
+
+- name: Destroy containers
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ booklore_name }}"
+    - "{{ booklore_name }}-mariadb"
+
+- name: Destroy secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    state: absent
+  become: true
+  no_log: true
+  loop: "{{ booklore_secrets_combined | dict2items }}"
+
+- name: Destroy volumes
+  containers.podman.podman_volume:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ booklore_volume_data }}"
+    - "{{ booklore_volume_books }}"
+    - "{{ booklore_volume_bookdrop }}"
+    - "{{ booklore_mariadb_volume_config }}"
+
+- name: Destroy network
+  containers.podman.podman_network:
+    name: "{{ booklore_name }}"
+    state: absent
+  become: true
+
+- name: Cleanup quadlet files
+  ansible.builtin.file:
+    path: /etc/containers/systemd/{{ item }}
+    state: absent
+  become: true
+  loop:
+    - "{{ booklore_name }}.container"
+    - "{{ booklore_name }}-mariadb.container"
+    - "{{ booklore_volume_data }}.volume"
+    - "{{ booklore_volume_books }}.volume"
+    - "{{ booklore_volume_bookdrop }}.volume"
+    - "{{ booklore_mariadb_volume_config }}.volume"
+    - "{{ booklore_name }}.network"
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true

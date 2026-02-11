@@ -1,0 +1,94 @@
+---
+# tasks file for jaredhocutt.homelab.booklore
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ booklore_image }}"
+      image_tag: "{{ booklore_image_tag }}"
+    - image: "{{ booklore_mariadb_image }}"
+      image_tag: "{{ booklore_mariadb_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ booklore_name }}"
+    driver: bridge
+    disable_dns: false
+    opt:
+      isolate: "true"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ booklore_volume_data }}"
+      options: "{{ booklore_volume_data_options | default(omit) }}"
+    - name: "{{ booklore_volume_books }}"
+      options: "{{ booklore_volume_books_options | default(omit) }}"
+    - name: "{{ booklore_volume_bookdrop }}"
+      options: "{{ booklore_volume_bookdrop_options | default(omit) }}"
+    - name: "{{ booklore_mariadb_volume_config }}"
+      options: "{{ booklore_mariadb_volume_config_options | default(omit) }}"
+
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ booklore_secrets_combined | dict2items }}"
+
+- name: Create mariadb container
+  containers.podman.podman_container:
+    name: "{{ booklore_name }}-mariadb"
+    image: "{{ booklore_mariadb_image }}:{{ booklore_mariadb_image_tag }}"
+    network: "{{ booklore_name }}.network"
+    env: "{{ booklore_mariadb_container_env_combined }}"
+    secrets: "{{ booklore_mariadb_container_secrets_combined }}"
+    volumes:
+      - "{{ booklore_mariadb_volume_config }}.volume:/config"
+    healthcheck_interval: 5s
+    healthcheck_retries: 10
+    healthcheck_start_period: 10s
+    healthcheck_timeout: 5s
+    healthcheck: CMD mariadb-admin ping -h localhost
+    labels: "{{ booklore_mariadb_container_labels_combined }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ booklore_mariadb_quadlet_options_combined }}"
+    state: quadlet
+  notify: Restart mariadb for {{ booklore_name }}
+  become: true
+
+- name: Create booklore container
+  containers.podman.podman_container:
+    name: "{{ booklore_name }}"
+    image: "{{ booklore_image }}:{{ booklore_image_tag }}"
+    network:
+      - "{{ booklore_name }}.network"
+      - "{{ booklore_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
+    env: "{{ booklore_container_env_combined }}"
+    secrets: "{{ booklore_container_secrets_combined }}"
+    volumes:
+      - "{{ booklore_volume_data }}.volume:/app/data"
+      - "{{ booklore_volume_books }}.volume:/books"
+      - "{{ booklore_volume_bookdrop }}.volume:/bookdrop"
+    publish: "{{ booklore_traefik_enable | ternary(omit, booklore_ports) }}"
+    labels: "{{ booklore_container_labels_combined }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ booklore_quadlet_options_combined }}"
+    state: quadlet
+  notify: Restart {{ booklore_name }}
+  become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

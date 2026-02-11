@@ -1,0 +1,93 @@
+---
+# vars file for jaredhocutt.homelab.booklore
+
+booklore_mariadb_db_name: booklore
+booklore_mariadb_user: booklore
+
+###############################################################################
+# Envrionment
+###############################################################################
+
+booklore_container_env_defaults:
+  BOOKLORE_PORT: "6060"
+
+booklore_mariadb_container_env_defaults: {}
+
+booklore_container_env_combined: >-
+  {{ common_container_env_defaults
+  | combine(booklore_container_env_defaults, recursive=True)
+  | combine(booklore_container_env, recursive=True) }}
+booklore_mariadb_container_env_combined: >-
+  {{ common_container_env_defaults
+  | combine(booklore_mariadb_container_env_defaults, recursive=True)
+  | combine(booklore_mariadb_container_env, recursive=True) }}
+
+###############################################################################
+# Secrets
+###############################################################################
+
+booklore_secrets_defaults:
+  booklore_mariadb_url: jdbc:mariadb://{{ booklore_name }}-mariadb:3306/{{ booklore_mariadb_db_name }}
+  booklore_mariadb_root_password: "{{ booklore_mariadb_root_password }}"
+  booklore_mariadb_db_name: "{{ booklore_mariadb_db_name }}"
+  booklore_mariadb_user: "{{ booklore_mariadb_user }}"
+  booklore_mariadb_password: "{{ booklore_mariadb_password }}"
+
+booklore_secrets_combined: >-
+  {{ booklore_secrets_defaults
+  | combine(booklore_secrets, recursive=True) }}
+
+booklore_container_secrets_defaults:
+  - booklore_mariadb_url,type=env,target=DATABASE_URL
+  - booklore_mariadb_user,type=env,target=DATABASE_USERNAME
+  - booklore_mariadb_password,type=env,target=DATABASE_PASSWORD
+
+booklore_mariadb_container_secrets_defaults:
+  - booklore_mariadb_root_password,type=env,target=MYSQL_ROOT_PASSWORD
+  - booklore_mariadb_db_name,type=env,target=MYSQL_DATABASE
+  - booklore_mariadb_user,type=env,target=MYSQL_USER
+  - booklore_mariadb_password,type=env,target=MYSQL_PASSWORD
+
+booklore_container_secrets_combined: >-
+  {{ booklore_container_secrets_defaults
+  + booklore_container_secrets }}
+booklore_mariadb_container_secrets_combined: >-
+  {{ booklore_mariadb_container_secrets_defaults
+  + booklore_mariadb_container_secrets }}
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+booklore_container_labels_defaults: >
+  {{ booklore_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', booklore_name, booklore_traefik_host, '6060'), {}) }}
+
+booklore_mariadb_container_labels_defaults: {}
+
+booklore_container_labels_combined: >-
+  {{ booklore_container_labels_defaults
+  | combine(booklore_container_labels, recursive=True) }}
+booklore_mariadb_container_labels_combined: >-
+  {{ booklore_mariadb_container_labels_defaults
+  | combine(booklore_mariadb_container_labels, recursive=True) }}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+booklore_quadlet_options_depends:
+  - |
+    [Unit]
+    Requires={{ booklore_name }}-mariadb.service
+    After={{ booklore_name }}-mariadb.service
+booklore_quadlet_options_defaults: "{{ common_quadlet_options_defaults + booklore_quadlet_options_depends }}"
+
+booklore_mariadb_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+
+booklore_quadlet_options_combined: >-
+  {{ booklore_quadlet_options_defaults
+  + booklore_quadlet_options }}
+booklore_mariadb_quadlet_options_combined: >-
+  {{ booklore_mariadb_quadlet_options_defaults
+  + booklore_mariadb_quadlet_options }}

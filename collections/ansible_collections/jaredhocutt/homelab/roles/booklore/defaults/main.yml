@@ -1,0 +1,31 @@
+---
+# defaults file for jaredhocutt.homelab.booklore
+
+booklore_name: booklore
+
+booklore_image: ghcr.io/booklore-app/booklore
+booklore_image_tag: latest
+booklore_mariadb_image: lscr.io/linuxserver/mariadb
+booklore_mariadb_image_tag: "11"
+
+booklore_volume_data: "{{ booklore_name }}-data"
+booklore_volume_books: "{{ booklore_name }}-books"
+booklore_volume_bookdrop: "{{ booklore_name }}-bookdrop"
+booklore_mariadb_volume_config: "{{ booklore_name }}-mariadb-config"
+
+booklore_traefik_enable: true
+booklore_traefik_host: "{{ booklore_name }}.{{ common_traefik_domain }}"
+booklore_ports:
+  - 6060:6060
+
+booklore_secrets: {}
+
+booklore_container_env: {}
+booklore_container_secrets: []
+booklore_container_labels: {}
+booklore_quadlet_options: []
+
+booklore_mariadb_container_env: {}
+booklore_mariadb_container_secrets: []
+booklore_mariadb_container_labels: {}
+booklore_mariadb_quadlet_options: []

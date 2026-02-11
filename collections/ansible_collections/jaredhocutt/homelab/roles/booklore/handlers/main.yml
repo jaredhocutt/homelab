@@ -1,0 +1,18 @@
+---
+# handlers file for jaredhocutt.homelab.booklore
+
+- name: Restart {{ booklore_name }}
+  ansible.builtin.systemd:
+    name: "{{ booklore_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart mariadb for {{ booklore_name }}
+  ansible.builtin.systemd:
+    name: "{{ booklore_name }}-mariadb.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
