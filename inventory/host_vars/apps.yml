@@ -2,6 +2,8 @@
 
 common_traefik_domain: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.apps_common_traefik_domain) }}"
 
+shared_volume_download_books: download-books
+
 ###############################################################################
 # authentik
 ###############################################################################
@@ -55,6 +57,12 @@ booklore_mariadb_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.bookl
 ###############################################################################
 
 calibre_web_automated_image_tag: v4.0.6  # skopeo list-tags docker://ghcr.io/crocodilestick/calibre-web-automated | jq -r '.Tags[] | select(test("^v[0-9]"))'
+
+calibre_web_automated_volume_ingest: "{{ shared_volume_download_books }}"
+
+calibre_web_automated_container_env:
+  PUID: "{{ global_media_uid }}"
+  PGID: "{{ global_media_gid }}"
 
 calibre_web_automated_secrets:
   calibre_web_automated_hardcover_token: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.calibre_web_automated_hardcover_token) }}"
@@ -157,8 +165,11 @@ open_webui_image_tag: v0.7.2  # skopeo list-tags docker://ghcr.io/open-webui/ope
 
 shelfmark_image_tag: v1.0.4  # skopeo list-tags docker://ghcr.io/calibrain/shelfmark | jq -r '.Tags[] | select(test("^v[0-9]"))'
 
-# shelfmark_volume_books: "{{ global_volume_download }}"
-# shelfmark_volume_books_options: "{{ global_volume_download_options }}"
+shelfmark_volume_books: "{{ shared_volume_download_books }}"
+
+shelfmark_container_env:
+  PUID: "{{ global_media_uid }}"
+  PGID: "{{ global_media_gid }}"
 
 ###############################################################################
 # stirling_pdf
@@ -199,6 +210,12 @@ traefik_secrets:
 traefik_container_secrets:
   - traefik_letsencrypt_cloudflare_dns_api_key,type=env,target=CF_DNS_API_TOKEN
   - traefik_letsencrypt_cloudflare_zone_api_key,type=env,target=CF_ZONE_API_TOKEN
+
+###############################################################################
+# uptime_kuma
+###############################################################################
+
+uptime_kuma_image_tag: "2.1.1"  # skopeo list-tags docker://ghcr.io/louislam/uptime-kuma | jq -r '.Tags[] | select(test("^[0-9]"))'
 
 ###############################################################################
 # warracker
