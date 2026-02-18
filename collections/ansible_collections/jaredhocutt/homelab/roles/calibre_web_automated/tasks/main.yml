@@ -53,9 +53,11 @@
       - "{{ calibre_web_automated_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
     env: "{{ calibre_web_automated_container_env_combined }}"
     secrets: "{{ calibre_web_automated_container_secrets_combined }}"
+    security_opt:
+      - label=level:s0
     volumes:
       - "{{ calibre_web_automated_volume_config }}:/config"
-      - "{{ calibre_web_automated_volume_ingest }}:/cwa-book-ingest"
+      - "{{ calibre_web_automated_volume_ingest }}:/cwa-book-ingest:z"
       - "{{ calibre_web_automated_volume_library }}:/calibre-library"
     publish: "{{ calibre_web_automated_traefik_enable | ternary(omit, calibre_web_automated_ports) }}"
     labels: "{{ calibre_web_automated_container_labels_combined }}"

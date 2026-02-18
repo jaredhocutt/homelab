@@ -51,9 +51,11 @@
       - "{{ shelfmark_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
     env: "{{ shelfmark_container_env_combined }}"
     secrets: "{{ shelfmark_container_secrets_combined }}"
+    security_opt:
+      - label=level:s0
     volumes:
       - "{{ shelfmark_volume_config }}:/config"
-      - "{{ shelfmark_volume_books }}:/books"
+      - "{{ shelfmark_volume_books }}:/books:z"
     publish: "{{ shelfmark_traefik_enable | ternary(omit, shelfmark_ports) }}"
     labels: "{{ shelfmark_container_labels_combined }}"
     quadlet_file_mode: "0600"
