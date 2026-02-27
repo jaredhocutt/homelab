@@ -3,7 +3,7 @@
 
 bentopdf_name: bentopdf
 
-bentopdf_image: ghcr.io/alam00000/bentopdf
+bentopdf_image: ghcr.io/alam00000/bentopdf-simple
 bentopdf_image_tag: latest
 
 bentopdf_traefik_enable: true
