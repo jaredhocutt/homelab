@@ -1,0 +1,29 @@
+---
+# defaults file for jaredhocutt.homelab.snipe_it
+
+snipe_it_name: snipe-it
+
+snipe_it_image: docker.io/snipe/snipe-it
+snipe_it_image_tag: latest
+snipe_it_mariadb_image: docker.io/library/mariadb
+snipe_it_mariadb_image_tag: "11"
+
+snipe_it_volume_data: "{{ snipe_it_name }}-data"
+snipe_it_mariadb_volume_data: "{{ snipe_it_name }}-mariadb-data"
+
+snipe_it_traefik_enable: true
+snipe_it_traefik_host: "{{ snipe_it_name }}.{{ common_traefik_domain }}"
+snipe_it_ports:
+  - 8000:80
+
+snipe_it_secrets: {}
+
+snipe_it_container_env: {}
+snipe_it_container_secrets: []
+snipe_it_container_labels: {}
+snipe_it_quadlet_options: []
+
+snipe_it_mariadb_container_env: {}
+snipe_it_mariadb_container_secrets: []
+snipe_it_mariadb_container_labels: {}
+snipe_it_mariadb_quadlet_options: []

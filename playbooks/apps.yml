@@ -90,6 +90,11 @@
         name: jaredhocutt.homelab.shelfmark
       tags: [shelfmark]
 
+    - name: Install snipe_it
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.snipe_it
+      tags: [snipe_it]
+
     - name: Install stirling_pdf
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.stirling_pdf

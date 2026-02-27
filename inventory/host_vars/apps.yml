@@ -172,6 +172,32 @@ shelfmark_container_env:
   PGID: "{{ global_media_gid }}"
 
 ###############################################################################
+# snipe_it
+###############################################################################
+
+snipe_it_image_tag: v8.4.0  # skopeo list-tags docker://docker.io/snipe/snipe-it | jq -r '.Tags[] | select(test("^v[0-9]"))'
+
+snipe_it_app_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.snipe_it_app_key) }}"
+snipe_it_mariadb_root_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.snipe_it_mariadb_root_password) }}"
+snipe_it_mariadb_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.snipe_it_mariadb_password) }}"
+
+snipe_it_container_env:
+  MAIL_HOST: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.snipe_it_mail_host) }}"
+  MAIL_PORT: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.snipe_it_mail_port) }}"
+  MAIL_USERNAME: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.snipe_it_mail_username) }}"
+  MAIL_FROM_ADDR: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.snipe_it_mail_from) }}"
+  MAIL_FROM_NAME: Snipe-IT
+  MAIL_REPLYTO_ADDR: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.snipe_it_mail_from) }}"
+  MAIL_REPLYTO_NAME: Snipe-IT
+  MAIL_TLS_VERIFY_PEER: true
+  MAIL_AUTO_EMBED_METHOD: attachment
+
+snipe_it_secrets:
+  snipe_it_mail_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.snipe_it_mail_password) }}"
+snipe_it_container_secrets:
+  - snipe_it_mail_password,type=env,target=MAIL_PASSWORD
+
+###############################################################################
 # stirling_pdf
 ###############################################################################
 

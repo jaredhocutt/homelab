@@ -1,0 +1,18 @@
+---
+# handlers file for jaredhocutt.homelab.snipe_it
+
+- name: Restart {{ snipe_it_name }}
+  ansible.builtin.systemd:
+    name: "{{ snipe_it_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart mariadb for {{ snipe_it_name }}
+  ansible.builtin.systemd:
+    name: "{{ snipe_it_name }}-mariadb.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

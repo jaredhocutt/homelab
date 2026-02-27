@@ -1,0 +1,87 @@
+---
+# tasks file for jaredhocutt.homelab.snipe_it
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ snipe_it_image }}"
+      image_tag: "{{ snipe_it_image_tag }}"
+    - image: "{{ snipe_it_mariadb_image }}"
+      image_tag: "{{ snipe_it_mariadb_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ snipe_it_name }}"
+    driver: bridge
+    disable_dns: false
+    opt:
+      isolate: "true"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ snipe_it_volume_data }}"
+      options: "{{ snipe_it_volume_data_options | default(omit) }}"
+    - name: "{{ snipe_it_mariadb_volume_data }}"
+      options: "{{ snipe_it_mariadb_volume_data_options | default(omit) }}"
+
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ snipe_it_secrets_combined | dict2items }}"
+
+- name: Create mariadb container
+  containers.podman.podman_container:
+    name: "{{ snipe_it_name }}-mariadb"
+    image: "{{ snipe_it_mariadb_image }}:{{ snipe_it_mariadb_image_tag }}"
+    network: "{{ snipe_it_name }}.network"
+    env: "{{ snipe_it_mariadb_container_env_combined }}"
+    secrets: "{{ snipe_it_mariadb_container_secrets_combined }}"
+    volumes:
+      - "{{ snipe_it_mariadb_volume_data }}.volume:/var/lib/mysql"
+    healthcheck_interval: 5s
+    healthcheck_retries: 5
+    healthcheck_timeout: 1s
+    healthcheck: CMD healthcheck.sh --connect --innodb_initialized
+    labels: "{{ snipe_it_mariadb_container_labels_combined }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ snipe_it_mariadb_quadlet_options_combined }}"
+    state: quadlet
+  notify: Restart mariadb for {{ snipe_it_name }}
+  become: true
+
+- name: Create snipe_it container
+  containers.podman.podman_container:
+    name: "{{ snipe_it_name }}"
+    image: "{{ snipe_it_image }}:{{ snipe_it_image_tag }}"
+    network:
+      - "{{ snipe_it_name }}.network"
+      - "{{ snipe_it_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
+    env: "{{ snipe_it_container_env_combined }}"
+    secrets: "{{ snipe_it_container_secrets_combined }}"
+    volumes:
+      - "{{ snipe_it_volume_data }}.volume:/var/lib/snipeit"
+    publish: "{{ snipe_it_traefik_enable | ternary(omit, snipe_it_ports) }}"
+    labels: "{{ snipe_it_container_labels_combined }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ snipe_it_quadlet_options_combined }}"
+    state: quadlet
+  notify: Restart {{ snipe_it_name }}
+  become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

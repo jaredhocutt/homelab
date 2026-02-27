@@ -1,0 +1,107 @@
+---
+# vars file for jaredhocutt.homelab.snipe_it
+
+snipe_it_mariadb_db_name: snipe_it
+snipe_it_mariadb_user: snipe_it
+
+###############################################################################
+# Envrionment
+###############################################################################
+
+snipe_it_container_env_defaults:
+  APP_ENV: production
+  APP_DEBUG: "false"
+  APP_URL: "https://{{ snipe_it_traefik_host }}"
+  APP_TIMEZONE: "America/New_York"
+  APP_LOCALE: "en-US"
+  MAX_RESULTS: 500
+  PRIVATE_FILESYSTEM_DISK: local
+  PUBLIC_FILESYSTEM_DISK: local_public
+  DB_CONNECTION: mysql
+  DB_HOST: "{{ snipe_it_name }}-mariadb"
+  DB_PORT: "3306"
+  ALLOW_BACKUP_DELETE: "false"
+  ALLOW_DATA_PURGE: "false"
+  IMAGE_LIB: gd
+
+snipe_it_mariadb_container_env_defaults: {}
+
+snipe_it_container_env_combined: >-
+  {{ common_container_env_defaults
+  | combine(snipe_it_container_env_defaults, recursive=True)
+  | combine(snipe_it_container_env, recursive=True) }}
+snipe_it_mariadb_container_env_combined: >-
+  {{ common_container_env_defaults
+  | combine(snipe_it_mariadb_container_env_defaults, recursive=True)
+  | combine(snipe_it_mariadb_container_env, recursive=True) }}
+
+###############################################################################
+# Secrets
+###############################################################################
+
+snipe_it_secrets_defaults:
+  snipe_it_app_key: "{{ snipe_it_app_key }}"
+  snipe_it_mariadb_root_password: "{{ snipe_it_mariadb_root_password }}"
+  snipe_it_mariadb_db_name: "{{ snipe_it_mariadb_db_name }}"
+  snipe_it_mariadb_user: "{{ snipe_it_mariadb_user }}"
+  snipe_it_mariadb_password: "{{ snipe_it_mariadb_password }}"
+
+snipe_it_secrets_combined: >-
+  {{ snipe_it_secrets_defaults
+  | combine(snipe_it_secrets, recursive=True) }}
+
+snipe_it_container_secrets_defaults:
+  - snipe_it_app_key,type=env,target=APP_KEY
+  - snipe_it_mariadb_db_name,type=env,target=DB_DATABASE
+  - snipe_it_mariadb_user,type=env,target=DB_USERNAME
+  - snipe_it_mariadb_password,type=env,target=DB_PASSWORD
+
+snipe_it_mariadb_container_secrets_defaults:
+  - snipe_it_mariadb_root_password,type=env,target=MYSQL_ROOT_PASSWORD
+  - snipe_it_mariadb_db_name,type=env,target=MYSQL_DATABASE
+  - snipe_it_mariadb_user,type=env,target=MYSQL_USER
+  - snipe_it_mariadb_password,type=env,target=MYSQL_PASSWORD
+
+snipe_it_container_secrets_combined: >-
+  {{ snipe_it_container_secrets_defaults
+  + snipe_it_container_secrets }}
+snipe_it_mariadb_container_secrets_combined: >-
+  {{ snipe_it_mariadb_container_secrets_defaults
+  + snipe_it_mariadb_container_secrets }}
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+snipe_it_container_labels_defaults: >
+  {{ snipe_it_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', snipe_it_name, snipe_it_traefik_host, '80'), {}) }}
+
+snipe_it_mariadb_container_labels_defaults: {}
+
+snipe_it_container_labels_combined: >-
+  {{ snipe_it_container_labels_defaults
+  | combine(snipe_it_container_labels, recursive=True) }}
+snipe_it_mariadb_container_labels_combined: >-
+  {{ snipe_it_mariadb_container_labels_defaults
+  | combine(snipe_it_mariadb_container_labels, recursive=True) }}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+snipe_it_quadlet_options_depends:
+  - |
+    [Unit]
+    Requires={{ snipe_it_name }}-mariadb.service
+    After={{ snipe_it_name }}-mariadb.service
+snipe_it_quadlet_options_defaults: "{{ common_quadlet_options_defaults + snipe_it_quadlet_options_depends }}"
+
+snipe_it_mariadb_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+
+snipe_it_quadlet_options_combined: >-
+  {{ snipe_it_quadlet_options_defaults
+  + snipe_it_quadlet_options }}
+snipe_it_mariadb_quadlet_options_combined: >-
+  {{ snipe_it_mariadb_quadlet_options_defaults
+  + snipe_it_mariadb_quadlet_options }}
