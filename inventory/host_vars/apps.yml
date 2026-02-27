@@ -85,7 +85,7 @@ healthchecks_image_tag: version-v4.0  # skopeo list-tags docker://lscr.io/linuxs
 healthchecks_email: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email) }}"
 healthchecks_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_password) }}"
 healthchecks_secret_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_secret_key) }}"
-healthchecks_env:
+healthchecks_container_env:
   DEFAULT_FROM_EMAIL: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_from_email) }}"
   EMAIL_HOST: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email_host) }}"
   EMAIL_PORT: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email_port) }}"
@@ -141,7 +141,7 @@ n8n_postgres_image_tag: "16.11"  # skopeo list-tags docker://docker.io/library/p
 
 n8n_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.n8n_postgres_password) }}"
 
-n8n_env:
+n8n_container_env:
   N8N_LOG_LEVEL: debug
 
 ###############################################################################
@@ -203,7 +203,7 @@ snipe_it_container_secrets:
 
 stirling_pdf_image_tag: 2.4.2-fat  # skopeo list-tags docker://docker.stirlingpdf.com/stirlingtools/stirling-pdf | jq -r '.Tags[] | select(test("^[0-9\\.]+-fat$"))'
 
-stirling_pdf_env:
+stirling_pdf_container_env:
   DOCKER_ENABLE_SECURITY: "false"
 
 ###############################################################################
