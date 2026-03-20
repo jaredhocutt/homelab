@@ -77,6 +77,12 @@ changedetection_image_tag: "0.52.9"  # skopeo list-tags docker://ghcr.io/dgtlmoo
 changedetection_browser_image_tag: "0.0.3"  # skopeo list-tags docker://docker.io/dgtlmoon/sockpuppetbrowser | jq -r '.Tags[] | select(test("^[0-9]"))'
 
 ###############################################################################
+# go2rtc
+###############################################################################
+
+go2rtc_image_tag: "1.9.14"  # skopeo list-tags docker://ghcr.io/alexxit/go2rtc | jq -r '.Tags[] | select(test("^[0-9]"))'
+
+###############################################################################
 # healthchecks
 ###############################################################################
 

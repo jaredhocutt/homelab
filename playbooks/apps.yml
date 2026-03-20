@@ -55,6 +55,11 @@
         name: jaredhocutt.homelab.changedetection
       tags: [changedetection]
 
+    - name: Install go2rtc
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.go2rtc
+      tags: [go2rtc]
+
     - name: Install healthchecks
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.healthchecks
