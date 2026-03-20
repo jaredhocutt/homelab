@@ -62,8 +62,8 @@
     name: "{{ traefik_name }}"
     image: "{{ traefik_image }}:{{ traefik_image_tag }}"
     network: "{{ traefik_name }}.network"
-    env: "{{ traefik_container_env_combined }}"
-    secrets: "{{ traefik_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     security_opt:
       - label=disable
     volumes:
@@ -72,9 +72,9 @@
       - "{{ traefik_volume_dynamic }}:/dynamic"
     publish: "{{ traefik_ports }}"
     command: "{{ traefik_command_defaults + traefik_command }}"
-    labels: "{{ traefik_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ traefik_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
     state: quadlet
   notify: Restart {{ traefik_name }}
   become: true

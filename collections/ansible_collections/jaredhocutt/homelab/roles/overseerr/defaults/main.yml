@@ -18,4 +18,4 @@ overseerr_secrets: {}
 overseerr_container_env: {}
 overseerr_container_secrets: []
 overseerr_container_labels: {}
-overseerr_quadlet_options: []
+overseerr_container_quadlet_options: []

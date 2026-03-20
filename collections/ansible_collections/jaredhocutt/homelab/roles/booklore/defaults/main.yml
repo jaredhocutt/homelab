@@ -23,9 +23,9 @@ booklore_secrets: {}
 booklore_container_env: {}
 booklore_container_secrets: []
 booklore_container_labels: {}
-booklore_quadlet_options: []
+booklore_container_quadlet_options: []
 
 booklore_mariadb_container_env: {}
 booklore_mariadb_container_secrets: []
 booklore_mariadb_container_labels: {}
-booklore_mariadb_quadlet_options: []
+booklore_mariadb_container_quadlet_options: []

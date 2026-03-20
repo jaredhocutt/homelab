@@ -14,15 +14,6 @@ nocodb_container_env_defaults:
 
 nocodb_postgres_container_env_defaults: {}
 
-nocodb_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(nocodb_container_env_defaults, recursive=True)
-  | combine(nocodb_container_env, recursive=True) }}
-nocodb_postgres_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(nocodb_postgres_container_env_defaults, recursive=True)
-  | combine(nocodb_postgres_container_env, recursive=True) }}
-
 ###############################################################################
 # Secrets
 ###############################################################################
@@ -45,13 +36,6 @@ nocodb_postgres_container_secrets_defaults:
   - nocodb_postgres_user,type=env,target=POSTGRES_USER
   - nocodb_postgres_password,type=env,target=POSTGRES_PASSWORD
 
-nocodb_container_secrets_combined: >-
-  {{ nocodb_container_secrets_defaults
-  + nocodb_container_secrets }}
-nocodb_postgres_container_secrets_combined: >-
-  {{ nocodb_postgres_container_secrets_defaults
-  + nocodb_postgres_container_secrets }}
-
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -62,13 +46,6 @@ nocodb_container_labels_defaults: >
 
 nocodb_postgres_container_labels_defaults: {}
 
-nocodb_container_labels_combined: >-
-  {{ nocodb_container_labels_defaults
-  | combine(nocodb_container_labels, recursive=True) }}
-nocodb_postgres_container_labels_combined: >-
-  {{ nocodb_postgres_container_labels_defaults
-  | combine(nocodb_postgres_container_labels, recursive=True) }}
-
 ###############################################################################
 # Quadlet Options
 ###############################################################################
@@ -78,13 +55,6 @@ nocodb_quadlet_options_depends:
     [Unit]
     Requires={{ nocodb_name }}-postgres.service
     After={{ nocodb_name }}-postgres.service
-nocodb_quadlet_options_defaults: "{{ common_quadlet_options_defaults + nocodb_quadlet_options_depends }}"
+nocodb_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + nocodb_quadlet_options_depends }}"
 
-nocodb_postgres_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
-
-nocodb_quadlet_options_combined: >-
-  {{ nocodb_quadlet_options_defaults
-  + nocodb_quadlet_options }}
-nocodb_postgres_quadlet_options_combined: >-
-  {{ nocodb_postgres_quadlet_options_defaults
-  + nocodb_postgres_quadlet_options }}
+nocodb_postgres_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

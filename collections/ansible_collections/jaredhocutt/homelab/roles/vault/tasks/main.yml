@@ -129,19 +129,19 @@
     network:
       - "{{ vault_name }}.network"
       - "{{ vault_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
-    env: "{{ vault_container_env_combined }}"
-    secrets: "{{ vault_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
       - "{{ vault_volume_config }}:/vault/config"
       - "{{ vault_volume_data }}:/vault/file"
       - "{{ vault_volume_logs }}:/vault/logs"
     publish: "{{ vault_traefik_enable | ternary(omit, vault_ports) }}"
-    labels: "{{ vault_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     cap_add:
       - IPC_LOCK
     command: server
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ vault_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
     state: quadlet
   become: true
   notify: Restart {{ vault_name }}

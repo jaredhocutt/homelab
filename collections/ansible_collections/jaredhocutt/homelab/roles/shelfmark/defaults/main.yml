@@ -19,4 +19,4 @@ shelfmark_secrets: {}
 shelfmark_container_env: {}
 shelfmark_container_secrets: []
 shelfmark_container_labels: {}
-shelfmark_quadlet_options: []
+shelfmark_container_quadlet_options: []

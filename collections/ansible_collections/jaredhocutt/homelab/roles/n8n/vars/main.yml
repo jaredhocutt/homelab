@@ -25,23 +25,6 @@ n8n_postgres_container_env_defaults: {}
 
 n8n_redis_container_env_defaults: {}
 
-n8n_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(n8n_container_env_defaults, recursive=True)
-  | combine(n8n_container_env, recursive=True) }}
-n8n_worker_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(n8n_worker_container_env_defaults, recursive=True)
-  | combine(n8n_worker_container_env, recursive=True) }}
-n8n_postgres_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(n8n_postgres_container_env_defaults, recursive=True)
-  | combine(n8n_postgres_container_env, recursive=True) }}
-n8n_redis_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(n8n_redis_container_env_defaults, recursive=True)
-  | combine(n8n_redis_container_env, recursive=True) }}
-
 ###############################################################################
 # Secrets
 ###############################################################################
@@ -69,19 +52,6 @@ n8n_postgres_container_secrets_defaults:
 
 n8n_redis_container_secrets_defaults: []
 
-n8n_container_secrets_combined: >-
-  {{ n8n_container_secrets_defaults
-  + n8n_container_secrets }}
-n8n_worker_container_secrets_combined: >-
-  {{ n8n_worker_container_secrets_defaults
-  + n8n_worker_container_secrets }}
-n8n_postgres_container_secrets_combined: >-
-  {{ n8n_postgres_container_secrets_defaults
-  + n8n_postgres_container_secrets }}
-n8n_redis_container_secrets_combined: >-
-  {{ n8n_redis_container_secrets_defaults
-  + n8n_redis_container_secrets }}
-
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -96,19 +66,6 @@ n8n_postgres_container_labels_defaults: {}
 
 n8n_redis_container_labels_defaults: {}
 
-n8n_container_labels_combined: >-
-  {{ n8n_container_labels_defaults
-  | combine(n8n_container_labels, recursive=True) }}
-n8n_worker_container_labels_combined: >-
-  {{ n8n_worker_container_labels_defaults
-  | combine(n8n_worker_container_labels, recursive=True) }}
-n8n_postgres_container_labels_combined: >-
-  {{ n8n_postgres_container_labels_defaults
-  | combine(n8n_postgres_container_labels, recursive=True) }}
-n8n_redis_container_labels_combined: >-
-  {{ n8n_redis_container_labels_defaults
-  | combine(n8n_redis_container_labels, recursive=True) }}
-
 ###############################################################################
 # Quadlet Options
 ###############################################################################
@@ -120,7 +77,7 @@ n8n_quadlet_options_depends:
     Requires={{ n8n_name }}-redis.service
     After={{ n8n_name }}-postgres.service
     After={{ n8n_name }}-redis.service
-n8n_quadlet_options_defaults: "{{ common_quadlet_options_defaults + n8n_quadlet_options_depends }}"
+n8n_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + n8n_quadlet_options_depends }}"
 
 n8n_worker_quadlet_options_depends:
   - |
@@ -131,21 +88,8 @@ n8n_worker_quadlet_options_depends:
     After={{ n8n_name }}.service
     After={{ n8n_name }}-postgres.service
     After={{ n8n_name }}-redis.service
-n8n_worker_quadlet_options_defaults: "{{ common_quadlet_options_defaults + n8n_worker_quadlet_options_depends }}"
+n8n_worker_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + n8n_worker_quadlet_options_depends }}"
 
-n8n_postgres_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+n8n_postgres_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
 
-n8n_redis_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
-
-n8n_quadlet_options_combined: >-
-  {{ n8n_quadlet_options_defaults
-  + n8n_quadlet_options }}
-n8n_worker_quadlet_options_combined: >-
-  {{ n8n_worker_quadlet_options_defaults
-  + n8n_worker_quadlet_options }}
-n8n_postgres_quadlet_options_combined: >-
-  {{ n8n_postgres_quadlet_options_defaults
-  + n8n_postgres_quadlet_options }}
-n8n_redis_quadlet_options_combined: >-
-  {{ n8n_redis_quadlet_options_defaults
-  + n8n_redis_quadlet_options }}
+n8n_redis_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

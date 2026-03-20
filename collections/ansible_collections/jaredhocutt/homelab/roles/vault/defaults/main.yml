@@ -22,4 +22,4 @@ vault_container_secrets: []
 
 vault_container_labels: {}
 
-vault_quadlet_options: []
+vault_container_quadlet_options: []

@@ -67,8 +67,8 @@
     name: "{{ paperless_name }}-postgres"
     image: "{{ paperless_postgres_image }}:{{ paperless_postgres_image_tag }}"
     network: "{{ paperless_name }}.network"
-    env: "{{ paperless_postgres_container_env_combined }}"
-    secrets: "{{ paperless_postgres_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='postgres') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='postgres') }}"
     volumes:
       - "{{ paperless_postgres_volume_data }}.volume:/var/lib/postgresql/data"
     healthcheck_interval: 30s
@@ -76,9 +76,9 @@
     healthcheck_start_period: 20s
     healthcheck_timeout: 5s
     healthcheck: CMD-SHELL pg_isready -d {{ paperless_postgres_db_name }} -U {{ paperless_postgres_user }}
-    labels: "{{ paperless_postgres_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='postgres') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ paperless_postgres_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='postgres') }}"
     state: quadlet
   notify: Restart postgres for {{ paperless_name }}
   become: true
@@ -88,8 +88,8 @@
     name: "{{ paperless_name }}-redis"
     image: "{{ paperless_redis_image }}:{{ paperless_redis_image_tag }}"
     network: "{{ paperless_name }}.network"
-    env: "{{ paperless_redis_container_env_combined }}"
-    secrets: "{{ paperless_redis_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='redis') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='redis') }}"
     volumes:
       - "{{ paperless_redis_volume_data }}.volume:/data"
     healthcheck_interval: 30s
@@ -97,9 +97,9 @@
     healthcheck_start_period: 20s
     healthcheck_timeout: 3s
     healthcheck: CMD-SHELL redis-cli ping | grep PONG
-    labels: "{{ paperless_redis_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='redis') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ paperless_redis_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='redis') }}"
     state: quadlet
   notify: Restart redis for {{ paperless_name }}
   become: true
@@ -109,12 +109,12 @@
     name: "{{ paperless_name }}-gotenberg"
     image: "{{ paperless_gotenberg_image }}:{{ paperless_gotenberg_image_tag }}"
     network: "{{ paperless_name }}.network"
-    env: "{{ paperless_gotenberg_container_env_combined }}"
-    secrets: "{{ paperless_gotenberg_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='gotenberg') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='gotenberg') }}"
     command: gotenberg --chromium-disable-javascript=true --chromium-allow-list='file:///tmp/.*'
-    labels: "{{ paperless_gotenberg_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='gotenberg') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ paperless_gotenberg_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='gotenberg') }}"
     state: quadlet
   notify: Restart gotenberg for {{ paperless_name }}
   become: true
@@ -124,11 +124,11 @@
     name: "{{ paperless_name }}-tika"
     image: "{{ paperless_tika_image }}:{{ paperless_tika_image_tag }}"
     network: "{{ paperless_name }}.network"
-    env: "{{ paperless_tika_container_env_combined }}"
-    secrets: "{{ paperless_tika_container_secrets_combined }}"
-    labels: "{{ paperless_tika_container_labels_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='tika') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='tika') }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='tika') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ paperless_tika_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='tika') }}"
     state: quadlet
   notify: Restart tika for {{ paperless_name }}
   become: true
@@ -140,22 +140,22 @@
     network:
       - "{{ paperless_name }}.network"
       - "{{ paperless_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
-    env: "{{ paperless_container_env_combined }}"
-    secrets: "{{ paperless_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
       - "{{ paperless_volume_data }}.volume:/usr/src/paperless/data"
       - "{{ paperless_volume_media }}.volume:/usr/src/paperless/media"
       - "{{ paperless_volume_export }}.volume:/usr/src/paperless/export"
       - "{{ paperless_volume_consume }}.volume:/usr/src/paperless/consume"
     publish: "{{ paperless_traefik_enable | ternary(omit, paperless_ports) }}"
-    labels: "{{ paperless_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     healthcheck_interval: 30s
     healthcheck_retries: 5
     healthcheck_start_period: 20s
     healthcheck_timeout: 10s
     healthcheck: CMD-SHELL /usr/bin/curl -fs -S --max-time 2 http://localhost:8000
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ paperless_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
     state: quadlet
   notify: Restart {{ paperless_name }}
   become: true
@@ -167,14 +167,14 @@
     network:
       - "{{ paperless_name }}.network"
       - "{{ paperless_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
-    env: "{{ paperless_ai_container_env_combined }}"
-    secrets: "{{ paperless_ai_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='ai') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='ai') }}"
     volumes:
       - "{{ paperless_ai_volume_data }}.volume:/app/data"
     publish: "{{ paperless_traefik_enable | ternary(omit, paperless_ai_ports) }}"
-    labels: "{{ paperless_ai_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='ai') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ paperless_ai_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='ai') }}"
     state: quadlet
   notify: Restart ai for {{ paperless_name }}
   become: true

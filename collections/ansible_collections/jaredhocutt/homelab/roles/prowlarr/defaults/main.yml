@@ -18,4 +18,4 @@ prowlarr_secrets: {}
 prowlarr_container_env: {}
 prowlarr_container_secrets: []
 prowlarr_container_labels: {}
-prowlarr_quadlet_options: []
+prowlarr_container_quadlet_options: []

@@ -10,7 +10,3 @@ backrest_installed_version: ""
 
 backrest_container_env_defaults:
   BACKREST_PORT: 127.0.0.1:9898
-
-backrest_container_env_combined: >-
-  {{ backrest_container_env_defaults
-  | combine(backrest_container_env, recursive=True) }}

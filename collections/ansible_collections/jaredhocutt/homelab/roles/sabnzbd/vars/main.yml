@@ -7,11 +7,6 @@
 
 sabnzbd_container_env_defaults: {}
 
-sabnzbd_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(sabnzbd_container_env_defaults, recursive=True)
-  | combine(sabnzbd_container_env, recursive=True) }}
-
 ###############################################################################
 # Secrets
 ###############################################################################
@@ -24,10 +19,6 @@ sabnzbd_secrets_combined: >-
 
 sabnzbd_container_secrets_defaults: []
 
-sabnzbd_container_secrets_combined: >-
-  {{ sabnzbd_container_secrets_defaults
-  + sabnzbd_container_secrets }}
-
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -36,16 +27,8 @@ sabnzbd_container_labels_defaults: >
   {{ sabnzbd_traefik_enable
   | ternary(lookup('jaredhocutt.homelab.traefik_labels', sabnzbd_name, sabnzbd_traefik_host, '8080'), {}) }}
 
-sabnzbd_container_labels_combined: >-
-  {{ sabnzbd_container_labels_defaults
-  | combine(sabnzbd_container_labels, recursive=True) }}
-
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-sabnzbd_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
-
-sabnzbd_quadlet_options_combined: >-
-  {{ sabnzbd_quadlet_options_defaults
-  + sabnzbd_quadlet_options }}
+sabnzbd_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

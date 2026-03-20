@@ -51,16 +51,16 @@
     network:
       - "{{ radarr_name }}.network"
       - "{{ radarr_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
-    env: "{{ radarr_container_env_combined }}"
-    secrets: "{{ radarr_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
       - "{{ radarr_volume_config }}:/config"
       - "{{ radarr_volume_download }}:/mnt/download"
       - "{{ radarr_volume_media }}:/mnt/media"
     publish: "{{ radarr_traefik_enable | ternary(omit, radarr_ports) }}"
-    labels: "{{ radarr_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ radarr_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
     state: quadlet
   notify: Restart {{ radarr_name }}
   become: true

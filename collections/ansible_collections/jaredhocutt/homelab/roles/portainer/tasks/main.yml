@@ -47,16 +47,16 @@
     network:
       - "{{ portainer_name }}.network"
       - "{{ portainer_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
-    env: "{{ portainer_container_env_combined }}"
-    secrets: "{{ portainer_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
       - "{{ portainer_volume_config }}:/data"
       - /var/run/podman.sock:/var/run/docker.sock
     publish: "{{ portainer_traefik_enable | ternary(omit, portainer_ports) }}"
-    labels: "{{ portainer_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     privileged: true
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ portainer_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
     state: quadlet
   notify: Restart {{ portainer_name }}
   become: true

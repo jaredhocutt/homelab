@@ -7,11 +7,6 @@
 
 prowlarr_container_env_defaults: {}
 
-prowlarr_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(prowlarr_container_env_defaults, recursive=True)
-  | combine(prowlarr_container_env, recursive=True) }}
-
 ###############################################################################
 # Secrets
 ###############################################################################
@@ -24,10 +19,6 @@ prowlarr_secrets_combined: >-
 
 prowlarr_container_secrets_defaults: []
 
-prowlarr_container_secrets_combined: >-
-  {{ prowlarr_container_secrets_defaults
-  + prowlarr_container_secrets }}
-
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -36,16 +27,8 @@ prowlarr_container_labels_defaults: >
   {{ prowlarr_traefik_enable
   | ternary(lookup('jaredhocutt.homelab.traefik_labels', prowlarr_name, prowlarr_traefik_host, '9696'), {}) }}
 
-prowlarr_container_labels_combined: >-
-  {{ prowlarr_container_labels_defaults
-  | combine(prowlarr_container_labels, recursive=True) }}
-
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-prowlarr_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
-
-prowlarr_quadlet_options_combined: >-
-  {{ prowlarr_quadlet_options_defaults
-  + prowlarr_quadlet_options }}
+prowlarr_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

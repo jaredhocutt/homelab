@@ -26,11 +26,6 @@ traefik_command_defaults:
 
 traefik_container_env_defaults: {}
 
-traefik_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(traefik_container_env_defaults, recursive=True)
-  | combine(traefik_container_env, recursive=True) }}
-
 ###############################################################################
 # Secrets
 ###############################################################################
@@ -42,10 +37,6 @@ traefik_secrets_combined: >-
   | combine(traefik_secrets, recursive=True) }}
 
 traefik_container_secrets_defaults: []
-
-traefik_container_secrets_combined: >-
-  {{ traefik_container_secrets_defaults
-  + traefik_container_secrets }}
 
 ###############################################################################
 # Container Labels
@@ -63,16 +54,8 @@ traefik_container_labels_traefik:
     value: api@internal
 traefik_container_labels_defaults: "{{ traefik_traefik_enable | ternary((traefik_container_labels_traefik | items2dict), {}) }}"
 
-traefik_container_labels_combined: >-
-  {{ traefik_container_labels_defaults
-  | combine(traefik_container_labels, recursive=True) }}
-
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-traefik_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
-
-traefik_quadlet_options_combined: >-
-  {{ traefik_quadlet_options_defaults
-  + traefik_quadlet_options }}
+traefik_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

@@ -26,15 +26,6 @@ snipe_it_container_env_defaults:
 
 snipe_it_mariadb_container_env_defaults: {}
 
-snipe_it_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(snipe_it_container_env_defaults, recursive=True)
-  | combine(snipe_it_container_env, recursive=True) }}
-snipe_it_mariadb_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(snipe_it_mariadb_container_env_defaults, recursive=True)
-  | combine(snipe_it_mariadb_container_env, recursive=True) }}
-
 ###############################################################################
 # Secrets
 ###############################################################################
@@ -62,13 +53,6 @@ snipe_it_mariadb_container_secrets_defaults:
   - snipe_it_mariadb_user,type=env,target=MYSQL_USER
   - snipe_it_mariadb_password,type=env,target=MYSQL_PASSWORD
 
-snipe_it_container_secrets_combined: >-
-  {{ snipe_it_container_secrets_defaults
-  + snipe_it_container_secrets }}
-snipe_it_mariadb_container_secrets_combined: >-
-  {{ snipe_it_mariadb_container_secrets_defaults
-  + snipe_it_mariadb_container_secrets }}
-
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -79,13 +63,6 @@ snipe_it_container_labels_defaults: >
 
 snipe_it_mariadb_container_labels_defaults: {}
 
-snipe_it_container_labels_combined: >-
-  {{ snipe_it_container_labels_defaults
-  | combine(snipe_it_container_labels, recursive=True) }}
-snipe_it_mariadb_container_labels_combined: >-
-  {{ snipe_it_mariadb_container_labels_defaults
-  | combine(snipe_it_mariadb_container_labels, recursive=True) }}
-
 ###############################################################################
 # Quadlet Options
 ###############################################################################
@@ -95,13 +72,6 @@ snipe_it_quadlet_options_depends:
     [Unit]
     Requires={{ snipe_it_name }}-mariadb.service
     After={{ snipe_it_name }}-mariadb.service
-snipe_it_quadlet_options_defaults: "{{ common_quadlet_options_defaults + snipe_it_quadlet_options_depends }}"
+snipe_it_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + snipe_it_quadlet_options_depends }}"
 
-snipe_it_mariadb_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
-
-snipe_it_quadlet_options_combined: >-
-  {{ snipe_it_quadlet_options_defaults
-  + snipe_it_quadlet_options }}
-snipe_it_mariadb_quadlet_options_combined: >-
-  {{ snipe_it_mariadb_quadlet_options_defaults
-  + snipe_it_mariadb_quadlet_options }}
+snipe_it_mariadb_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

@@ -18,7 +18,7 @@ healthchecks_secrets: {}
 healthchecks_container_env: {}
 healthchecks_container_secrets: []
 healthchecks_container_labels: {}
-healthchecks_quadlet_options: []
+healthchecks_container_quadlet_options: []
 
 healthchecks_site_name: Healthchecks
 healthchecks_url: https://{{ healthchecks_traefik_host }}

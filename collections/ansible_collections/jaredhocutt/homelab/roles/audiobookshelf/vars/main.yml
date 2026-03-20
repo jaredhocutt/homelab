@@ -7,11 +7,6 @@
 
 audiobookshelf_container_env_defaults: {}
 
-audiobookshelf_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(audiobookshelf_container_env_defaults, recursive=True)
-  | combine(audiobookshelf_container_env, recursive=True) }}
-
 ###############################################################################
 # Secrets
 ###############################################################################
@@ -24,10 +19,6 @@ audiobookshelf_secrets_combined: >-
 
 audiobookshelf_container_secrets_defaults: []
 
-audiobookshelf_container_secrets_combined: >-
-  {{ audiobookshelf_container_secrets_defaults
-  + audiobookshelf_container_secrets }}
-
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -36,16 +27,8 @@ audiobookshelf_container_labels_defaults: >
   {{ audiobookshelf_traefik_enable
   | ternary(lookup('jaredhocutt.homelab.traefik_labels', audiobookshelf_name, audiobookshelf_traefik_host, '80'), {}) }}
 
-audiobookshelf_container_labels_combined: >-
-  {{ audiobookshelf_container_labels_defaults
-  | combine(audiobookshelf_container_labels, recursive=True) }}
-
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-audiobookshelf_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
-
-audiobookshelf_quadlet_options_combined: >-
-  {{ audiobookshelf_quadlet_options_defaults
-  + audiobookshelf_quadlet_options }}
+audiobookshelf_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

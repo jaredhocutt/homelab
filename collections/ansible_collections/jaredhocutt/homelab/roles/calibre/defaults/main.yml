@@ -20,4 +20,4 @@ calibre_secrets: {}
 calibre_container_env: {}
 calibre_container_secrets: []
 calibre_container_labels: {}
-calibre_quadlet_options: []
+calibre_container_quadlet_options: []

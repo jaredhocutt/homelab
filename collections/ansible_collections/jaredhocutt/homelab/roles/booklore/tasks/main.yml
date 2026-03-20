@@ -53,8 +53,8 @@
     name: "{{ booklore_name }}-mariadb"
     image: "{{ booklore_mariadb_image }}:{{ booklore_mariadb_image_tag }}"
     network: "{{ booklore_name }}.network"
-    env: "{{ booklore_mariadb_container_env_combined }}"
-    secrets: "{{ booklore_mariadb_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='mariadb') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='mariadb') }}"
     volumes:
       - "{{ booklore_mariadb_volume_config }}.volume:/config"
     healthcheck_interval: 5s
@@ -62,9 +62,9 @@
     healthcheck_start_period: 10s
     healthcheck_timeout: 5s
     healthcheck: CMD mariadb-admin ping -h localhost
-    labels: "{{ booklore_mariadb_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='mariadb') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ booklore_mariadb_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='mariadb') }}"
     state: quadlet
   notify: Restart mariadb for {{ booklore_name }}
   become: true
@@ -76,16 +76,16 @@
     network:
       - "{{ booklore_name }}.network"
       - "{{ booklore_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
-    env: "{{ booklore_container_env_combined }}"
-    secrets: "{{ booklore_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
       - "{{ booklore_volume_data }}.volume:/app/data"
       - "{{ booklore_volume_books }}.volume:/books"
       - "{{ booklore_volume_bookdrop }}.volume:/bookdrop"
     publish: "{{ booklore_traefik_enable | ternary(omit, booklore_ports) }}"
-    labels: "{{ booklore_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ booklore_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
     state: quadlet
   notify: Restart {{ booklore_name }}
   become: true

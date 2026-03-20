@@ -20,4 +20,4 @@ audiobookshelf_secrets: {}
 audiobookshelf_container_env: {}
 audiobookshelf_container_secrets: []
 audiobookshelf_container_labels: {}
-audiobookshelf_quadlet_options: []
+audiobookshelf_container_quadlet_options: []

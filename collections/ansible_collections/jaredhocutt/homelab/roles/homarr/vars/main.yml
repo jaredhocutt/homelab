@@ -7,11 +7,6 @@
 
 homarr_container_env_defaults: {}
 
-homarr_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(homarr_container_env_defaults, recursive=True)
-  | combine(homarr_container_env, recursive=True) }}
-
 ###############################################################################
 # Secrets
 ###############################################################################
@@ -26,10 +21,6 @@ homarr_secrets_combined: >-
 homarr_container_secrets_defaults:
   - homarr_secret_encryption_key,type=env,target=SECRET_ENCRYPTION_KEY
 
-homarr_container_secrets_combined: >-
-  {{ homarr_container_secrets_defaults
-  + homarr_container_secrets }}
-
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -38,16 +29,8 @@ homarr_container_labels_defaults: >
   {{ homarr_traefik_enable
   | ternary(lookup('jaredhocutt.homelab.traefik_labels', homarr_name, homarr_traefik_host, '7575'), {}) }}
 
-homarr_container_labels_combined: >-
-  {{ homarr_container_labels_defaults
-  | combine(homarr_container_labels, recursive=True) }}
-
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-homarr_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
-
-homarr_quadlet_options_combined: >-
-  {{ homarr_quadlet_options_defaults
-  + homarr_quadlet_options }}
+homarr_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

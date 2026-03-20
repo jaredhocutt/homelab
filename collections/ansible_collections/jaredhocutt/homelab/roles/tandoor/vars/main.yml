@@ -15,15 +15,6 @@ tandoor_container_env_defaults:
 
 tandoor_postgres_container_env_defaults: {}
 
-tandoor_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(tandoor_container_env_defaults, recursive=True)
-  | combine(tandoor_container_env, recursive=True) }}
-tandoor_postgres_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(tandoor_postgres_container_env_defaults, recursive=True)
-  | combine(tandoor_postgres_container_env, recursive=True) }}
-
 ###############################################################################
 # Secrets
 ###############################################################################
@@ -49,13 +40,6 @@ tandoor_postgres_container_secrets_defaults:
   - tandoor_postgres_user,type=env,target=POSTGRES_USER
   - tandoor_postgres_password,type=env,target=POSTGRES_PASSWORD
 
-tandoor_container_secrets_combined: >-
-  {{ tandoor_container_secrets_defaults
-  + tandoor_container_secrets }}
-tandoor_postgres_container_secrets_combined: >-
-  {{ tandoor_postgres_container_secrets_defaults
-  + tandoor_postgres_container_secrets }}
-
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -66,13 +50,6 @@ tandoor_container_labels_defaults: >
 
 tandoor_postgres_container_labels_defaults: {}
 
-tandoor_container_labels_combined: >-
-  {{ tandoor_container_labels_defaults
-  | combine(tandoor_container_labels, recursive=True) }}
-tandoor_postgres_container_labels_combined: >-
-  {{ tandoor_postgres_container_labels_defaults
-  | combine(tandoor_postgres_container_labels, recursive=True) }}
-
 ###############################################################################
 # Quadlet Options
 ###############################################################################
@@ -82,13 +59,6 @@ tandoor_quadlet_options_depends:
     [Unit]
     Requires={{ tandoor_name }}-postgres.service
     After={{ tandoor_name }}-postgres.service
-tandoor_quadlet_options_defaults: "{{ common_quadlet_options_defaults + tandoor_quadlet_options_depends }}"
+tandoor_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + tandoor_quadlet_options_depends }}"
 
-tandoor_postgres_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
-
-tandoor_quadlet_options_combined: >-
-  {{ tandoor_quadlet_options_defaults
-  + tandoor_quadlet_options }}
-tandoor_postgres_quadlet_options_combined: >-
-  {{ tandoor_postgres_quadlet_options_defaults
-  + tandoor_postgres_quadlet_options }}
+tandoor_postgres_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

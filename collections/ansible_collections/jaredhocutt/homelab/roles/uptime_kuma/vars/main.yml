@@ -7,11 +7,6 @@
 
 uptime_kuma_container_env_defaults: {}
 
-uptime_kuma_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(uptime_kuma_container_env_defaults, recursive=True)
-  | combine(uptime_kuma_container_env, recursive=True) }}
-
 ###############################################################################
 # Secrets
 ###############################################################################
@@ -24,10 +19,6 @@ uptime_kuma_secrets_combined: >-
 
 uptime_kuma_container_secrets_defaults: []
 
-uptime_kuma_container_secrets_combined: >-
-  {{ uptime_kuma_container_secrets_defaults
-  + uptime_kuma_container_secrets }}
-
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -36,16 +27,8 @@ uptime_kuma_container_labels_defaults: >
   {{ uptime_kuma_traefik_enable
   | ternary(lookup('jaredhocutt.homelab.traefik_labels', uptime_kuma_name, uptime_kuma_traefik_host, '3001'), {}) }}
 
-uptime_kuma_container_labels_combined: >-
-  {{ uptime_kuma_container_labels_defaults
-  | combine(uptime_kuma_container_labels, recursive=True) }}
-
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-uptime_kuma_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
-
-uptime_kuma_quadlet_options_combined: >-
-  {{ uptime_kuma_quadlet_options_defaults
-  + uptime_kuma_quadlet_options }}
+uptime_kuma_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

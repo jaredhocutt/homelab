@@ -53,8 +53,8 @@
     name: "{{ authentik_name }}-postgres"
     image: "{{ authentik_postgres_image }}:{{ authentik_postgres_image_tag }}"
     network: "{{ authentik_name }}.network"
-    env: "{{ authentik_postgres_container_env_combined }}"
-    secrets: "{{ authentik_postgres_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='postgres') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='postgres') }}"
     volumes:
       - "{{ authentik_postgres_volume_data }}.volume:/var/lib/postgresql/data"
     healthcheck_interval: 30s
@@ -62,9 +62,9 @@
     healthcheck_start_period: 20s
     healthcheck_timeout: 5s
     healthcheck: CMD-SHELL pg_isready -d {{ authentik_postgres_db_name }} -U {{ authentik_postgres_user }}
-    labels: "{{ authentik_postgres_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='postgres') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ authentik_postgres_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='postgres') }}"
     state: quadlet
   notify: Restart postgres for {{ authentik_name }}
   become: true
@@ -76,16 +76,16 @@
     network:
       - "{{ authentik_name }}.network"
       - "{{ authentik_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
-    env: "{{ authentik_container_env_combined }}"
-    secrets: "{{ authentik_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='server') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='server') }}"
     volumes:
       - "{{ authentik_volume_media }}.volume:/media"
       - "{{ authentik_volume_templates }}.volume:/templates"
     publish: "{{ authentik_traefik_enable | ternary(omit, authentik_ports) }}"
     command: server
-    labels: "{{ authentik_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='server') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ authentik_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='server') }}"
     state: quadlet
   notify: Restart server for {{ authentik_name }}
   become: true
@@ -95,16 +95,16 @@
     name: "{{ authentik_name }}-worker"
     image: "{{ authentik_image }}:{{ authentik_image_tag }}"
     network: "{{ authentik_name }}.network"
-    env: "{{ authentik_container_env_combined }}"
-    secrets: "{{ authentik_worker_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='worker') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='worker') }}"
     volumes:
       - "{{ authentik_volume_media }}.volume:/media"
       - "{{ authentik_volume_certs }}.volume:/certs"
       - "{{ authentik_volume_templates }}.volume:/templates"
     command: worker
-    labels: "{{ authentik_worker_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='worker') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ authentik_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='worker') }}"
     state: quadlet
   notify: Restart worker for {{ authentik_name }}
   become: true

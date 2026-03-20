@@ -24,7 +24,7 @@ authentik_secrets: {}
 authentik_container_env: {}
 authentik_container_secrets: []
 authentik_container_labels: {}
-authentik_quadlet_options: []
+authentik_container_quadlet_options: []
 
 authentik_worker_container_secrets: []
 authentik_worker_container_labels: {}
@@ -32,4 +32,4 @@ authentik_worker_container_labels: {}
 authentik_postgres_container_env: {}
 authentik_postgres_container_secrets: []
 authentik_postgres_container_labels: {}
-authentik_postgres_quadlet_options: []
+authentik_postgres_container_quadlet_options: []

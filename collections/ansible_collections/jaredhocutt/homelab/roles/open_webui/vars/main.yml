@@ -7,11 +7,6 @@
 
 open_webui_container_env_defaults: {}
 
-open_webui_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(open_webui_container_env_defaults, recursive=True)
-  | combine(open_webui_container_env, recursive=True) }}
-
 ###############################################################################
 # Secrets
 ###############################################################################
@@ -24,10 +19,6 @@ open_webui_secrets_combined: >-
 
 open_webui_container_secrets_defaults: []
 
-open_webui_container_secrets_combined: >-
-  {{ open_webui_container_secrets_defaults
-  + open_webui_container_secrets }}
-
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -36,16 +27,8 @@ open_webui_container_labels_defaults: >
   {{ open_webui_traefik_enable
   | ternary(lookup('jaredhocutt.homelab.traefik_labels', open_webui_name, open_webui_traefik_host, '8080'), {}) }}
 
-open_webui_container_labels_combined: >-
-  {{ open_webui_container_labels_defaults
-  | combine(open_webui_container_labels, recursive=True) }}
-
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-open_webui_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
-
-open_webui_quadlet_options_combined: >-
-  {{ open_webui_quadlet_options_defaults
-  + open_webui_quadlet_options }}
+open_webui_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

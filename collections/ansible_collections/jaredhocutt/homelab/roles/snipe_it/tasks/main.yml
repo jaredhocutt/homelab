@@ -49,17 +49,17 @@
     name: "{{ snipe_it_name }}-mariadb"
     image: "{{ snipe_it_mariadb_image }}:{{ snipe_it_mariadb_image_tag }}"
     network: "{{ snipe_it_name }}.network"
-    env: "{{ snipe_it_mariadb_container_env_combined }}"
-    secrets: "{{ snipe_it_mariadb_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='mariadb') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='mariadb') }}"
     volumes:
       - "{{ snipe_it_mariadb_volume_data }}.volume:/var/lib/mysql"
     healthcheck_interval: 5s
     healthcheck_retries: 5
     healthcheck_timeout: 1s
     healthcheck: CMD healthcheck.sh --connect --innodb_initialized
-    labels: "{{ snipe_it_mariadb_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='mariadb') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ snipe_it_mariadb_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='mariadb') }}"
     state: quadlet
   notify: Restart mariadb for {{ snipe_it_name }}
   become: true
@@ -71,14 +71,14 @@
     network:
       - "{{ snipe_it_name }}.network"
       - "{{ snipe_it_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
-    env: "{{ snipe_it_container_env_combined }}"
-    secrets: "{{ snipe_it_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
       - "{{ snipe_it_volume_data }}.volume:/var/lib/snipeit"
     publish: "{{ snipe_it_traefik_enable | ternary(omit, snipe_it_ports) }}"
-    labels: "{{ snipe_it_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ snipe_it_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
     state: quadlet
   notify: Restart {{ snipe_it_name }}
   become: true

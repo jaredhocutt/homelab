@@ -18,4 +18,4 @@ open_webui_secrets: {}
 open_webui_container_env: {}
 open_webui_container_secrets: []
 open_webui_container_labels: {}
-open_webui_quadlet_options: []
+open_webui_container_quadlet_options: []

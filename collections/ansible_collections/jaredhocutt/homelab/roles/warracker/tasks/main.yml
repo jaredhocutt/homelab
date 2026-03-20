@@ -49,8 +49,8 @@
     name: "{{ warracker_name }}-postgres"
     image: "{{ warracker_postgres_image }}:{{ warracker_postgres_image_tag }}"
     network: "{{ warracker_name }}.network"
-    env: "{{ warracker_postgres_container_env_combined }}"
-    secrets: "{{ warracker_postgres_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='postgres') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='postgres') }}"
     volumes:
       - "{{ warracker_postgres_volume_data }}.volume:/var/lib/postgresql/data"
     healthcheck_interval: 30s
@@ -58,9 +58,9 @@
     healthcheck_start_period: 20s
     healthcheck_timeout: 5s
     healthcheck: CMD-SHELL pg_isready -d {{ warracker_postgres_db_name }} -U {{ warracker_postgres_user }}
-    labels: "{{ warracker_postgres_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='postgres') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ warracker_postgres_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='postgres') }}"
     state: quadlet
   notify: Restart postgres for {{ warracker_name }}
   become: true
@@ -72,14 +72,14 @@
     network:
       - "{{ warracker_name }}.network"
       - "{{ warracker_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
-    env: "{{ warracker_container_env_combined }}"
-    secrets: "{{ warracker_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
       - "{{ warracker_volume_uploads }}.volume:/data/uploads"
     publish: "{{ warracker_traefik_enable | ternary(omit, warracker_ports) }}"
-    labels: "{{ warracker_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ warracker_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
     state: quadlet
   notify: Restart {{ warracker_name }}
   become: true

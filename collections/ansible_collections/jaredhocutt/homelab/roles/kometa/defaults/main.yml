@@ -13,4 +13,4 @@ kometa_secrets: {}
 kometa_container_env: {}
 kometa_container_secrets: []
 kometa_container_labels: {}
-kometa_quadlet_options: []
+kometa_container_quadlet_options: []

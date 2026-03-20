@@ -17,15 +17,6 @@ warracker_container_env_defaults:
 
 warracker_postgres_container_env_defaults: {}
 
-warracker_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(warracker_container_env_defaults, recursive=True)
-  | combine(warracker_container_env, recursive=True) }}
-warracker_postgres_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(warracker_postgres_container_env_defaults, recursive=True)
-  | combine(warracker_postgres_container_env, recursive=True) }}
-
 ###############################################################################
 # Secrets
 ###############################################################################
@@ -51,13 +42,6 @@ warracker_postgres_container_secrets_defaults:
   - warracker_postgres_user,type=env,target=POSTGRES_USER
   - warracker_postgres_password,type=env,target=POSTGRES_PASSWORD
 
-warracker_container_secrets_combined: >-
-  {{ warracker_container_secrets_defaults
-  + warracker_container_secrets }}
-warracker_postgres_container_secrets_combined: >-
-  {{ warracker_postgres_container_secrets_defaults
-  + warracker_postgres_container_secrets }}
-
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -68,13 +52,6 @@ warracker_container_labels_defaults: >
 
 warracker_postgres_container_labels_defaults: {}
 
-warracker_container_labels_combined: >-
-  {{ warracker_container_labels_defaults
-  | combine(warracker_container_labels, recursive=True) }}
-warracker_postgres_container_labels_combined: >-
-  {{ warracker_postgres_container_labels_defaults
-  | combine(warracker_postgres_container_labels, recursive=True) }}
-
 ###############################################################################
 # Quadlet Options
 ###############################################################################
@@ -84,13 +61,6 @@ warracker_quadlet_options_depends:
     [Unit]
     Requires={{ warracker_name }}-postgres.service
     After={{ warracker_name }}-postgres.service
-warracker_quadlet_options_defaults: "{{ common_quadlet_options_defaults + warracker_quadlet_options_depends }}"
+warracker_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + warracker_quadlet_options_depends }}"
 
-warracker_postgres_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
-
-warracker_quadlet_options_combined: >-
-  {{ warracker_quadlet_options_defaults
-  + warracker_quadlet_options }}
-warracker_postgres_quadlet_options_combined: >-
-  {{ warracker_postgres_quadlet_options_defaults
-  + warracker_postgres_quadlet_options }}
+warracker_postgres_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

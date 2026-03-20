@@ -49,15 +49,15 @@
     network:
       - "{{ calibre_name }}.network"
       - "{{ calibre_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
-    env: "{{ calibre_container_env_combined }}"
-    secrets: "{{ calibre_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
       - "{{ calibre_volume_config }}:/config"
       - "{{ calibre_volume_media }}:/mnt/media"
     publish: "{{ calibre_traefik_enable | ternary(omit, calibre_ports) }}"
-    labels: "{{ calibre_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ calibre_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
     state: quadlet
   notify: Restart {{ calibre_name }}
   become: true

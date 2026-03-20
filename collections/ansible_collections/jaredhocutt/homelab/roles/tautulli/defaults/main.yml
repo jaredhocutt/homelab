@@ -18,4 +18,4 @@ tautulli_secrets: {}
 tautulli_container_env: {}
 tautulli_container_secrets: []
 tautulli_container_labels: {}
-tautulli_quadlet_options: []
+tautulli_container_quadlet_options: []

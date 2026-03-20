@@ -14,15 +14,6 @@ changedetection_browser_container_env_defaults:
   SCREEN_DEPTH: "16"
   MAX_CONCURRENT_CHROME_PROCESSES: "10"
 
-changedetection_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(changedetection_container_env_defaults, recursive=True)
-  | combine(changedetection_container_env, recursive=True) }}
-changedetection_browser_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(changedetection_browser_container_env_defaults, recursive=True)
-  | combine(changedetection_browser_container_env, recursive=True) }}
-
 ###############################################################################
 # Secrets
 ###############################################################################
@@ -37,13 +28,6 @@ changedetection_container_secrets_defaults: []
 
 changedetection_browser_container_secrets_defaults: []
 
-changedetection_container_secrets_combined: >-
-  {{ changedetection_container_secrets_defaults
-  + changedetection_container_secrets }}
-changedetection_browser_container_secrets_combined: >-
-  {{ changedetection_browser_container_secrets_defaults
-  + changedetection_browser_container_secrets }}
-
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -54,13 +38,6 @@ changedetection_container_labels_defaults: >
 
 changedetection_browser_container_labels_defaults: {}
 
-changedetection_container_labels_combined: >-
-  {{ changedetection_container_labels_defaults
-  | combine(changedetection_container_labels, recursive=True) }}
-changedetection_browser_container_labels_combined: >-
-  {{ changedetection_browser_container_labels_defaults
-  | combine(changedetection_browser_container_labels, recursive=True) }}
-
 ###############################################################################
 # Quadlet Options
 ###############################################################################
@@ -70,13 +47,6 @@ changedetection_quadlet_options_depends:
     [Unit]
     Requires={{ changedetection_name }}-browser.service
     After={{ changedetection_name }}-browser.service
-changedetection_quadlet_options_defaults: "{{ common_quadlet_options_defaults + changedetection_quadlet_options_depends }}"
+changedetection_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + changedetection_quadlet_options_depends }}"
 
-changedetection_browser_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
-
-changedetection_quadlet_options_combined: >-
-  {{ changedetection_quadlet_options_defaults
-  + changedetection_quadlet_options }}
-changedetection_browser_quadlet_options_combined: >-
-  {{ changedetection_browser_quadlet_options_defaults
-  + changedetection_browser_quadlet_options }}
+changedetection_browser_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

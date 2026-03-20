@@ -7,11 +7,6 @@
 
 sonarr_container_env_defaults: {}
 
-sonarr_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(sonarr_container_env_defaults, recursive=True)
-  | combine(sonarr_container_env, recursive=True) }}
-
 ###############################################################################
 # Secrets
 ###############################################################################
@@ -24,10 +19,6 @@ sonarr_secrets_combined: >-
 
 sonarr_container_secrets_defaults: []
 
-sonarr_container_secrets_combined: >-
-  {{ sonarr_container_secrets_defaults
-  + sonarr_container_secrets }}
-
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -36,16 +27,8 @@ sonarr_container_labels_defaults: >
   {{ sonarr_traefik_enable
   | ternary(lookup('jaredhocutt.homelab.traefik_labels', sonarr_name, sonarr_traefik_host, '8989'), {}) }}
 
-sonarr_container_labels_combined: >-
-  {{ sonarr_container_labels_defaults
-  | combine(sonarr_container_labels, recursive=True) }}
-
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-sonarr_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
-
-sonarr_quadlet_options_combined: >-
-  {{ sonarr_quadlet_options_defaults
-  + sonarr_quadlet_options }}
+sonarr_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

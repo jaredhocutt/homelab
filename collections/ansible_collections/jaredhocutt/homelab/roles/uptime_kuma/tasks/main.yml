@@ -47,14 +47,14 @@
     network:
       - "{{ uptime_kuma_name }}.network"
       - "{{ uptime_kuma_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
-    env: "{{ uptime_kuma_container_env_combined }}"
-    secrets: "{{ uptime_kuma_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
       - "{{ uptime_kuma_volume_data }}:/app/data"
     publish: "{{ uptime_kuma_traefik_enable | ternary(omit, uptime_kuma_ports) }}"
-    labels: "{{ uptime_kuma_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ uptime_kuma_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
     state: quadlet
   notify: Restart {{ uptime_kuma_name }}
   become: true

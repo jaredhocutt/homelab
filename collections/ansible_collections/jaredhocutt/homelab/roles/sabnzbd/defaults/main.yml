@@ -19,4 +19,4 @@ sabnzbd_secrets: {}
 sabnzbd_container_env: {}
 sabnzbd_container_secrets: []
 sabnzbd_container_labels: {}
-sabnzbd_quadlet_options: []
+sabnzbd_container_quadlet_options: []

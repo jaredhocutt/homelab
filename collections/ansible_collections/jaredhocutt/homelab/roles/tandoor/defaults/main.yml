@@ -22,9 +22,9 @@ tandoor_secrets: {}
 tandoor_container_env: {}
 tandoor_container_secrets: []
 tandoor_container_labels: {}
-tandoor_quadlet_options: []
+tandoor_container_quadlet_options: []
 
 tandoor_postgres_container_env: {}
 tandoor_postgres_container_secrets: []
 tandoor_postgres_container_labels: {}
-tandoor_postgres_quadlet_options: []
+tandoor_postgres_container_quadlet_options: []

@@ -49,15 +49,15 @@
     network:
       - "{{ sabnzbd_name }}.network"
       - "{{ sabnzbd_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
-    env: "{{ sabnzbd_container_env_combined }}"
-    secrets: "{{ sabnzbd_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
       - "{{ sabnzbd_volume_config }}:/config"
       - "{{ sabnzbd_volume_download }}:/mnt/download"
     publish: "{{ sabnzbd_traefik_enable | ternary(omit, sabnzbd_ports) }}"
-    labels: "{{ sabnzbd_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ sabnzbd_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
     state: quadlet
   notify: Restart {{ sabnzbd_name }}
   become: true

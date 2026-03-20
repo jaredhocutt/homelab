@@ -55,13 +55,13 @@
     name: "{{ bar_assistant_name }}-redis"
     image: "{{ bar_assistant_redis_image }}:{{ bar_assistant_redis_image_tag }}"
     network: "{{ bar_assistant_name }}.network"
-    env: "{{ bar_assistant_redis_container_env_combined }}"
-    secrets: "{{ bar_assistant_redis_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='redis') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='redis') }}"
     volumes:
       - "{{ bar_assistant_redis_volume_data }}.volume:/data"
-    labels: "{{ bar_assistant_redis_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='redis') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ bar_assistant_redis_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='redis') }}"
     state: quadlet
   notify: Restart redis for {{ bar_assistant_name }}
   become: true
@@ -73,14 +73,14 @@
     network:
       - "{{ bar_assistant_name }}.network"
       - "{{ bar_assistant_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
-    env: "{{ bar_assistant_meilisearch_container_env_combined }}"
-    secrets: "{{ bar_assistant_meilisearch_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='meilisearch') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='meilisearch') }}"
     volumes:
       - "{{ bar_assistant_meilisearch_volume_data }}.volume:/meili_data"
     publish: "{{ bar_assistant_traefik_enable | ternary(omit, bar_assistant_meilisearch_ports) }}"
-    labels: "{{ bar_assistant_meilisearch_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='meilisearch') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ bar_assistant_meilisearch_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='meilisearch') }}"
     state: quadlet
   notify: Restart meilisearch for {{ bar_assistant_name }}
   become: true
@@ -92,14 +92,14 @@
     network:
       - "{{ bar_assistant_name }}.network"
       - "{{ bar_assistant_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
-    env: "{{ bar_assistant_container_env_combined }}"
-    secrets: "{{ bar_assistant_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
       - "{{ bar_assistant_volume_data }}.volume:/var/www/cocktails/storage/bar-assistant"
     publish: "{{ bar_assistant_traefik_enable | ternary(omit, bar_assistant_ports) }}"
-    labels: "{{ bar_assistant_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ bar_assistant_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
     state: quadlet
   notify: Restart {{ bar_assistant_name }}
   become: true
@@ -111,12 +111,12 @@
     network:
       - "{{ bar_assistant_name }}.network"
       - "{{ bar_assistant_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
-    env: "{{ bar_assistant_salt_rim_container_env_combined }}"
-    secrets: "{{ bar_assistant_salt_rim_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='salt_rim') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='salt_rim') }}"
     publish: "{{ bar_assistant_traefik_enable | ternary(omit, bar_assistant_salt_rim_ports) }}"
-    labels: "{{ bar_assistant_salt_rim_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='salt_rim') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ bar_assistant_salt_rim_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='salt_rim') }}"
     state: quadlet
   notify: Restart salt_rim for {{ bar_assistant_name }}
   become: true

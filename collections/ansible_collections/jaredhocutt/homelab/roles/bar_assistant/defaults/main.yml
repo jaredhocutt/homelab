@@ -32,22 +32,22 @@ bar_assistant_secrets: {}
 bar_assistant_container_env: {}
 bar_assistant_container_secrets: []
 bar_assistant_container_labels: {}
-bar_assistant_quadlet_options: []
+bar_assistant_container_quadlet_options: []
 
 bar_assistant_salt_rim_container_env: {}
 bar_assistant_salt_rim_container_secrets: []
 bar_assistant_salt_rim_container_labels: {}
-bar_assistant_salt_rim_quadlet_options: []
+bar_assistant_salt_rim_container_quadlet_options: []
 
 bar_assistant_redis_container_env: {}
 bar_assistant_redis_container_secrets: []
 bar_assistant_redis_container_labels: {}
-bar_assistant_redis_quadlet_options: []
+bar_assistant_redis_container_quadlet_options: []
 
 bar_assistant_meilisearch_container_env: {}
 bar_assistant_meilisearch_container_secrets: []
 bar_assistant_meilisearch_container_labels: {}
-bar_assistant_meilisearch_quadlet_options: []
+bar_assistant_meilisearch_container_quadlet_options: []
 
 bar_assistant_api_url: https://{{ bar_assistant_traefik_host }}
 bar_assistant_meilisearch_url: https://{{ bar_assistant_meilisearch_traefik_host }}

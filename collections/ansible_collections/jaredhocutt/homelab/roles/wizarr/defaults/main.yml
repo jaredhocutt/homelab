@@ -18,4 +18,4 @@ wizarr_secrets: {}
 wizarr_container_env: {}
 wizarr_container_secrets: []
 wizarr_container_labels: {}
-wizarr_quadlet_options: []
+wizarr_container_quadlet_options: []

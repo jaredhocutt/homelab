@@ -13,15 +13,6 @@ authentik_container_env_defaults:
 
 authentik_postgres_container_env_defaults: {}
 
-authentik_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(authentik_container_env_defaults, recursive=True)
-  | combine(authentik_container_env, recursive=True) }}
-authentik_postgres_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(authentik_postgres_container_env_defaults, recursive=True)
-  | combine(authentik_postgres_container_env, recursive=True) }}
-
 ###############################################################################
 # Secrets
 ###############################################################################
@@ -53,16 +44,6 @@ authentik_postgres_container_secrets_defaults:
   - authentik_postgres_user,type=env,target=POSTGRES_USER
   - authentik_postgres_password,type=env,target=POSTGRES_PASSWORD
 
-authentik_container_secrets_combined: >-
-  {{ authentik_container_secrets_defaults
-  + authentik_container_secrets }}
-authentik_worker_container_secrets_combined: >-
-  {{ authentik_worker_container_secrets_defaults
-  + authentik_worker_container_secrets }}
-authentik_postgres_container_secrets_combined: >-
-  {{ authentik_postgres_container_secrets_defaults
-  + authentik_postgres_container_secrets }}
-
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -75,16 +56,6 @@ authentik_worker_container_labels_defaults: {}
 
 authentik_postgres_container_labels_defaults: {}
 
-authentik_container_labels_combined: >-
-  {{ authentik_container_labels_defaults
-  | combine(authentik_container_labels, recursive=True) }}
-authentik_worker_container_labels_combined: >-
-  {{ authentik_worker_container_labels_defaults
-  | combine(authentik_worker_container_labels, recursive=True) }}
-authentik_postgres_container_labels_combined: >-
-  {{ authentik_postgres_container_labels_defaults
-  | combine(authentik_postgres_container_labels, recursive=True) }}
-
 ###############################################################################
 # Quadlet Options
 ###############################################################################
@@ -94,13 +65,6 @@ authentik_quadlet_options_depends:
     [Unit]
     Requires={{ authentik_name }}-postgres.service
     After={{ authentik_name }}-postgres.service
-authentik_quadlet_options_defaults: "{{ common_quadlet_options_defaults + authentik_quadlet_options_depends }}"
+authentik_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + authentik_quadlet_options_depends }}"
 
-authentik_postgres_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
-
-authentik_quadlet_options_combined: >-
-  {{ authentik_quadlet_options_defaults
-  + authentik_quadlet_options }}
-authentik_postgres_quadlet_options_combined: >-
-  {{ authentik_postgres_quadlet_options_defaults
-  + authentik_postgres_quadlet_options }}
+authentik_postgres_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

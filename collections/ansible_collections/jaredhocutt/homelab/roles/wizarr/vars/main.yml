@@ -7,11 +7,6 @@
 
 wizarr_container_env_defaults: {}
 
-wizarr_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(wizarr_container_env_defaults, recursive=True)
-  | combine(wizarr_container_env, recursive=True) }}
-
 ###############################################################################
 # Secrets
 ###############################################################################
@@ -24,10 +19,6 @@ wizarr_secrets_combined: >-
 
 wizarr_container_secrets_defaults: []
 
-wizarr_container_secrets_combined: >-
-  {{ wizarr_container_secrets_defaults
-  + wizarr_container_secrets }}
-
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -36,16 +27,8 @@ wizarr_container_labels_defaults: >
   {{ wizarr_traefik_enable
   | ternary(lookup('jaredhocutt.homelab.traefik_labels', wizarr_name, wizarr_traefik_host, '5690'), {}) }}
 
-wizarr_container_labels_combined: >-
-  {{ wizarr_container_labels_defaults
-  | combine(wizarr_container_labels, recursive=True) }}
-
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-wizarr_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
-
-wizarr_quadlet_options_combined: >-
-  {{ wizarr_quadlet_options_defaults
-  + wizarr_quadlet_options }}
+wizarr_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

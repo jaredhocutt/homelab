@@ -22,4 +22,4 @@ stirling_pdf_secrets: {}
 stirling_pdf_container_env: {}
 stirling_pdf_container_secrets: []
 stirling_pdf_container_labels: {}
-stirling_pdf_quadlet_options: []
+stirling_pdf_container_quadlet_options: []

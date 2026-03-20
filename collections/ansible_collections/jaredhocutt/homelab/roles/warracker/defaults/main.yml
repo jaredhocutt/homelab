@@ -21,11 +21,11 @@ warracker_secrets: {}
 warracker_container_env: {}
 warracker_container_secrets: []
 warracker_container_labels: {}
-warracker_quadlet_options: []
+warracker_container_quadlet_options: []
 
 warracker_postgres_container_env: {}
 warracker_postgres_container_secrets: []
 warracker_postgres_container_labels: {}
-warracker_postgres_quadlet_options: []
+warracker_postgres_container_quadlet_options: []
 
 warracker_url: https://{{ warracker_traefik_host }}

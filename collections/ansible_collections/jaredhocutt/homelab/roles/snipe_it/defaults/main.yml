@@ -21,9 +21,9 @@ snipe_it_secrets: {}
 snipe_it_container_env: {}
 snipe_it_container_secrets: []
 snipe_it_container_labels: {}
-snipe_it_quadlet_options: []
+snipe_it_container_quadlet_options: []
 
 snipe_it_mariadb_container_env: {}
 snipe_it_mariadb_container_secrets: []
 snipe_it_mariadb_container_labels: {}
-snipe_it_mariadb_quadlet_options: []
+snipe_it_mariadb_container_quadlet_options: []

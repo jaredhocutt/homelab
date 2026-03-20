@@ -49,17 +49,17 @@
     network:
       - "{{ shelfmark_name }}.network"
       - "{{ shelfmark_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
-    env: "{{ shelfmark_container_env_combined }}"
-    secrets: "{{ shelfmark_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     security_opt:
       - label=level:s0
     volumes:
       - "{{ shelfmark_volume_config }}:/config"
       - "{{ shelfmark_volume_books }}:/books:z"
     publish: "{{ shelfmark_traefik_enable | ternary(omit, shelfmark_ports) }}"
-    labels: "{{ shelfmark_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ shelfmark_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
     state: quadlet
   notify: Restart {{ shelfmark_name }}
   become: true

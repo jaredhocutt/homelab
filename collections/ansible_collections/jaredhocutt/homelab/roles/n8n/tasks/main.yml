@@ -53,8 +53,8 @@
     name: "{{ n8n_name }}-postgres"
     image: "{{ n8n_postgres_image }}:{{ n8n_postgres_image_tag }}"
     network: "{{ n8n_name }}.network"
-    env: "{{ n8n_postgres_container_env_combined }}"
-    secrets: "{{ n8n_postgres_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='postgres') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='postgres') }}"
     volumes:
       - "{{ n8n_postgres_volume_data }}.volume:/var/lib/postgresql/data"
     healthcheck_interval: 30s
@@ -62,9 +62,9 @@
     healthcheck_start_period: 20s
     healthcheck_timeout: 5s
     healthcheck: CMD-SHELL pg_isready -d {{ n8n_postgres_db_name }} -U {{ n8n_postgres_user }}
-    labels: "{{ n8n_postgres_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='postgres') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ n8n_postgres_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='postgres') }}"
     state: quadlet
   notify: Restart postgres for {{ n8n_name }}
   become: true
@@ -74,17 +74,17 @@
     name: "{{ n8n_name }}-redis"
     image: "{{ n8n_redis_image }}:{{ n8n_redis_image_tag }}"
     network: "{{ n8n_name }}.network"
-    env: "{{ n8n_redis_container_env_combined }}"
-    secrets: "{{ n8n_redis_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='redis') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='redis') }}"
     volumes:
       - "{{ n8n_redis_volume_data }}.volume:/data"
     healthcheck_interval: 5s
     healthcheck_retries: 10
     healthcheck_timeout: 5s
     healthcheck: CMD-SHELL redis-cli ping
-    labels: "{{ n8n_redis_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='redis') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ n8n_redis_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='redis') }}"
     state: quadlet
   notify: Restart redis for {{ n8n_name }}
   become: true
@@ -96,14 +96,14 @@
     network:
       - "{{ n8n_name }}.network"
       - "{{ n8n_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
-    env: "{{ n8n_container_env_combined }}"
-    secrets: "{{ n8n_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
       - "{{ n8n_volume_data }}.volume:/home/node/.n8n"
     publish: "{{ n8n_traefik_enable | ternary(omit, n8n_ports) }}"
-    labels: "{{ n8n_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ n8n_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
     state: quadlet
   notify: Restart {{ n8n_name }}
   become: true
@@ -113,14 +113,14 @@
     name: "{{ n8n_name }}-worker"
     image: "{{ n8n_image }}:{{ n8n_image_tag }}"
     network: "{{ n8n_name }}.network"
-    env: "{{ n8n_worker_container_env_combined }}"
-    secrets: "{{ n8n_worker_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='worker') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='worker') }}"
     volumes:
       - "{{ n8n_volume_data }}.volume:/home/node/.n8n"
     command: worker
-    labels: "{{ n8n_worker_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='worker') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ n8n_worker_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='worker') }}"
     state: quadlet
   notify: Restart worker for {{ n8n_name }}
   become: true

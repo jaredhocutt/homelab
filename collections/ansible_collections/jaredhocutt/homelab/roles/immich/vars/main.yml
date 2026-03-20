@@ -19,23 +19,6 @@ immich_postgres_container_env_defaults:
 
 immich_redis_container_env_defaults: {}
 
-immich_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(immich_container_env_defaults, recursive=True)
-  | combine(immich_container_env, recursive=True) }}
-immich_machine_learning_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(immich_machine_learning_container_env_defaults, recursive=True)
-  | combine(immich_machine_learning_container_env, recursive=True) }}
-immich_postgres_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(immich_postgres_container_env_defaults, recursive=True)
-  | combine(immich_postgres_container_env, recursive=True) }}
-immich_redis_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(immich_redis_container_env_defaults, recursive=True)
-  | combine(immich_redis_container_env, recursive=True) }}
-
 ###############################################################################
 # Secrets
 ###############################################################################
@@ -66,19 +49,6 @@ immich_postgres_container_secrets_defaults:
 
 immich_redis_container_secrets_defaults: []
 
-immich_container_secrets_combined: >-
-  {{ immich_container_secrets_defaults
-  + immich_container_secrets }}
-immich_machine_learning_container_secrets_combined: >-
-  {{ immich_machine_learning_container_secrets_defaults
-  + immich_machine_learning_container_secrets }}
-immich_postgres_container_secrets_combined: >-
-  {{ immich_postgres_container_secrets_defaults
-  + immich_postgres_container_secrets }}
-immich_redis_container_secrets_combined: >-
-  {{ immich_redis_container_secrets_defaults
-  + immich_redis_container_secrets }}
-
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -93,19 +63,6 @@ immich_postgres_container_labels_defaults: {}
 
 immich_redis_container_labels_defaults: {}
 
-immich_container_labels_combined: >-
-  {{ immich_container_labels_defaults
-  | combine(immich_container_labels, recursive=True) }}
-immich_machine_learning_container_labels_combined: >-
-  {{ immich_machine_learning_container_labels_defaults
-  | combine(immich_machine_learning_container_labels, recursive=True) }}
-immich_postgres_container_labels_combined: >-
-  {{ immich_postgres_container_labels_defaults
-  | combine(immich_postgres_container_labels, recursive=True) }}
-immich_redis_container_labels_combined: >-
-  {{ immich_redis_container_labels_defaults
-  | combine(immich_redis_container_labels, recursive=True) }}
-
 ###############################################################################
 # Quadlet Options
 ###############################################################################
@@ -117,23 +74,10 @@ immich_quadlet_options_depends:
     Requires={{ immich_name }}-redis.service
     After={{ immich_name }}-postgres.service
     After={{ immich_name }}-redis.service
-immich_quadlet_options_defaults: "{{ common_quadlet_options_defaults + immich_quadlet_options_depends }}"
+immich_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + immich_quadlet_options_depends }}"
 
-immich_machine_learning_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+immich_machine_learning_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
 
-immich_postgres_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+immich_postgres_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
 
-immich_redis_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
-
-immich_quadlet_options_combined: >-
-  {{ immich_quadlet_options_defaults
-  + immich_quadlet_options }}
-immich_machine_learning_quadlet_options_combined: >-
-  {{ immich_machine_learning_quadlet_options_defaults
-  + immich_machine_learning_quadlet_options }}
-immich_postgres_quadlet_options_combined: >-
-  {{ immich_postgres_quadlet_options_defaults
-  + immich_postgres_quadlet_options }}
-immich_redis_quadlet_options_combined: >-
-  {{ immich_redis_quadlet_options_defaults
-  + immich_redis_quadlet_options }}
+immich_redis_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

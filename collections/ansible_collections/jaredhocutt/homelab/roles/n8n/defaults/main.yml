@@ -24,21 +24,21 @@ n8n_secrets: {}
 n8n_container_env: {}
 n8n_container_secrets: []
 n8n_container_labels: {}
-n8n_quadlet_options: []
+n8n_container_quadlet_options: []
 
 n8n_worker_container_env: {}
 n8n_worker_container_secrets: []
 n8n_worker_container_labels: {}
-n8n_worker_quadlet_options: []
+n8n_worker_container_quadlet_options: []
 
 n8n_postgres_container_env: {}
 n8n_postgres_container_secrets: []
 n8n_postgres_container_labels: {}
-n8n_postgres_quadlet_options: []
+n8n_postgres_container_quadlet_options: []
 
 n8n_redis_container_env: {}
 n8n_redis_container_secrets: []
 n8n_redis_container_labels: {}
-n8n_redis_quadlet_options: []
+n8n_redis_container_quadlet_options: []
 
 n8n_url: https://{{ n8n_traefik_host }}

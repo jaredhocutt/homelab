@@ -16,4 +16,4 @@ bentopdf_secrets: {}
 bentopdf_container_env: {}
 bentopdf_container_secrets: []
 bentopdf_container_labels: {}
-bentopdf_quadlet_options: []
+bentopdf_container_quadlet_options: []

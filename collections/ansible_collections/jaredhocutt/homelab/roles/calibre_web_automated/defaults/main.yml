@@ -20,4 +20,4 @@ calibre_web_automated_secrets: {}
 calibre_web_automated_container_env: {}
 calibre_web_automated_container_secrets: []
 calibre_web_automated_container_labels: {}
-calibre_web_automated_quadlet_options: []
+calibre_web_automated_container_quadlet_options: []

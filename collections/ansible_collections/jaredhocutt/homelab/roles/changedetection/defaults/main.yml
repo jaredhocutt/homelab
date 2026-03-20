@@ -20,9 +20,9 @@ changedetection_secrets: {}
 changedetection_container_env: {}
 changedetection_container_secrets: []
 changedetection_container_labels: {}
-changedetection_quadlet_options: []
+changedetection_container_quadlet_options: []
 
 changedetection_browser_container_env: {}
 changedetection_browser_container_secrets: []
 changedetection_browser_container_labels: {}
-changedetection_browser_quadlet_options: []
+changedetection_browser_container_quadlet_options: []

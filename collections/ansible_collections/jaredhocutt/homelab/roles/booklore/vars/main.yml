@@ -13,15 +13,6 @@ booklore_container_env_defaults:
 
 booklore_mariadb_container_env_defaults: {}
 
-booklore_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(booklore_container_env_defaults, recursive=True)
-  | combine(booklore_container_env, recursive=True) }}
-booklore_mariadb_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(booklore_mariadb_container_env_defaults, recursive=True)
-  | combine(booklore_mariadb_container_env, recursive=True) }}
-
 ###############################################################################
 # Secrets
 ###############################################################################
@@ -48,13 +39,6 @@ booklore_mariadb_container_secrets_defaults:
   - booklore_mariadb_user,type=env,target=MYSQL_USER
   - booklore_mariadb_password,type=env,target=MYSQL_PASSWORD
 
-booklore_container_secrets_combined: >-
-  {{ booklore_container_secrets_defaults
-  + booklore_container_secrets }}
-booklore_mariadb_container_secrets_combined: >-
-  {{ booklore_mariadb_container_secrets_defaults
-  + booklore_mariadb_container_secrets }}
-
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -65,13 +49,6 @@ booklore_container_labels_defaults: >
 
 booklore_mariadb_container_labels_defaults: {}
 
-booklore_container_labels_combined: >-
-  {{ booklore_container_labels_defaults
-  | combine(booklore_container_labels, recursive=True) }}
-booklore_mariadb_container_labels_combined: >-
-  {{ booklore_mariadb_container_labels_defaults
-  | combine(booklore_mariadb_container_labels, recursive=True) }}
-
 ###############################################################################
 # Quadlet Options
 ###############################################################################
@@ -81,13 +58,6 @@ booklore_quadlet_options_depends:
     [Unit]
     Requires={{ booklore_name }}-mariadb.service
     After={{ booklore_name }}-mariadb.service
-booklore_quadlet_options_defaults: "{{ common_quadlet_options_defaults + booklore_quadlet_options_depends }}"
+booklore_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + booklore_quadlet_options_depends }}"
 
-booklore_mariadb_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
-
-booklore_quadlet_options_combined: >-
-  {{ booklore_quadlet_options_defaults
-  + booklore_quadlet_options }}
-booklore_mariadb_quadlet_options_combined: >-
-  {{ booklore_mariadb_quadlet_options_defaults
-  + booklore_mariadb_quadlet_options }}
+booklore_mariadb_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

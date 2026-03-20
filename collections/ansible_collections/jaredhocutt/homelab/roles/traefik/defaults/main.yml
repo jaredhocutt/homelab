@@ -22,4 +22,4 @@ traefik_secrets: {}
 traefik_container_env: {}
 traefik_container_secrets: []
 traefik_container_labels: {}
-traefik_quadlet_options: []
+traefik_container_quadlet_options: []

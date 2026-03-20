@@ -47,14 +47,14 @@
     network:
       - "{{ open_webui_name }}.network"
       - "{{ open_webui_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
-    env: "{{ open_webui_container_env_combined }}"
-    secrets: "{{ open_webui_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
       - "{{ open_webui_volume_data }}:/app/backend/data"
     publish: "{{ open_webui_traefik_enable | ternary(omit, open_webui_ports) }}"
-    labels: "{{ open_webui_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ open_webui_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
     state: quadlet
   notify: Restart {{ open_webui_name }}
   become: true

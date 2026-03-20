@@ -7,11 +7,6 @@
 
 radarr_container_env_defaults: {}
 
-radarr_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(radarr_container_env_defaults, recursive=True)
-  | combine(radarr_container_env, recursive=True) }}
-
 ###############################################################################
 # Secrets
 ###############################################################################
@@ -24,10 +19,6 @@ radarr_secrets_combined: >-
 
 radarr_container_secrets_defaults: []
 
-radarr_container_secrets_combined: >-
-  {{ radarr_container_secrets_defaults
-  + radarr_container_secrets }}
-
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -36,16 +27,8 @@ radarr_container_labels_defaults: >
   {{ radarr_traefik_enable
   | ternary(lookup('jaredhocutt.homelab.traefik_labels', radarr_name, radarr_traefik_host, '7878'), {}) }}
 
-radarr_container_labels_combined: >-
-  {{ radarr_container_labels_defaults
-  | combine(radarr_container_labels, recursive=True) }}
-
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-radarr_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
-
-radarr_quadlet_options_combined: >-
-  {{ radarr_quadlet_options_defaults
-  + radarr_quadlet_options }}
+radarr_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

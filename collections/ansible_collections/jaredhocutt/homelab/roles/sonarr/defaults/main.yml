@@ -20,4 +20,4 @@ sonarr_secrets: {}
 sonarr_container_env: {}
 sonarr_container_secrets: []
 sonarr_container_labels: {}
-sonarr_quadlet_options: []
+sonarr_container_quadlet_options: []

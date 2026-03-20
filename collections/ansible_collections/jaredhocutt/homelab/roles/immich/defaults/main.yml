@@ -27,19 +27,19 @@ immich_secrets: {}
 immich_container_env: {}
 immich_container_secrets: []
 immich_container_labels: {}
-immich_quadlet_options: []
+immich_container_quadlet_options: []
 
 immich_machine_learning_container_env: {}
 immich_machine_learning_container_secrets: []
 immich_machine_learning_container_labels: {}
-immich_machine_learning_quadlet_options: []
+immich_machine_learning_container_quadlet_options: []
 
 immich_postgres_container_env: {}
 immich_postgres_container_secrets: []
 immich_postgres_container_labels: {}
-immich_postgres_quadlet_options: []
+immich_postgres_container_quadlet_options: []
 
 immich_redis_container_env: {}
 immich_redis_container_secrets: []
 immich_redis_container_labels: {}
-immich_redis_quadlet_options: []
+immich_redis_container_quadlet_options: []

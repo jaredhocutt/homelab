@@ -7,11 +7,6 @@
 
 calibre_container_env_defaults: {}
 
-calibre_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(calibre_container_env_defaults, recursive=True)
-  | combine(calibre_container_env, recursive=True) }}
-
 ###############################################################################
 # Secrets
 ###############################################################################
@@ -24,10 +19,6 @@ calibre_secrets_combined: >-
 
 calibre_container_secrets_defaults: []
 
-calibre_container_secrets_combined: >-
-  {{ calibre_container_secrets_defaults
-  + calibre_container_secrets }}
-
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -36,16 +27,8 @@ calibre_container_labels_defaults: >
   {{ calibre_traefik_enable
   | ternary(lookup('jaredhocutt.homelab.traefik_labels', calibre_name, calibre_traefik_host, '8080'), {}) }}
 
-calibre_container_labels_combined: >-
-  {{ calibre_container_labels_defaults
-  | combine(calibre_container_labels, recursive=True) }}
-
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-calibre_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
-
-calibre_quadlet_options_combined: >-
-  {{ calibre_quadlet_options_defaults
-  + calibre_quadlet_options }}
+calibre_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

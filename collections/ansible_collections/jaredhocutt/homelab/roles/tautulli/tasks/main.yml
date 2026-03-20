@@ -47,14 +47,14 @@
     network:
       - "{{ tautulli_name }}.network"
       - "{{ tautulli_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
-    env: "{{ tautulli_container_env_combined }}"
-    secrets: "{{ tautulli_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
       - "{{ tautulli_volume_config }}:/config"
     publish: "{{ tautulli_traefik_enable | ternary(omit, tautulli_ports) }}"
-    labels: "{{ tautulli_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ tautulli_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
     state: quadlet
   notify: Restart {{ tautulli_name }}
   become: true

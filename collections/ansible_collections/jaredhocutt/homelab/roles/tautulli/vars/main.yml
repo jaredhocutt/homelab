@@ -7,11 +7,6 @@
 
 tautulli_container_env_defaults: {}
 
-tautulli_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(tautulli_container_env_defaults, recursive=True)
-  | combine(tautulli_container_env, recursive=True) }}
-
 ###############################################################################
 # Secrets
 ###############################################################################
@@ -24,10 +19,6 @@ tautulli_secrets_combined: >-
 
 tautulli_container_secrets_defaults: []
 
-tautulli_container_secrets_combined: >-
-  {{ tautulli_container_secrets_defaults
-  + tautulli_container_secrets }}
-
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -36,16 +27,8 @@ tautulli_container_labels_defaults: >
   {{ tautulli_traefik_enable
   | ternary(lookup('jaredhocutt.homelab.traefik_labels', tautulli_name, tautulli_traefik_host, '8181'), {}) }}
 
-tautulli_container_labels_combined: >-
-  {{ tautulli_container_labels_defaults
-  | combine(tautulli_container_labels, recursive=True) }}
-
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-tautulli_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
-
-tautulli_quadlet_options_combined: >-
-  {{ tautulli_quadlet_options_defaults
-  + tautulli_quadlet_options }}
+tautulli_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

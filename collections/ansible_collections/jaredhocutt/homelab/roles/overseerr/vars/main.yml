@@ -7,11 +7,6 @@
 
 overseerr_container_env_defaults: {}
 
-overseerr_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(overseerr_container_env_defaults, recursive=True)
-  | combine(overseerr_container_env, recursive=True) }}
-
 ###############################################################################
 # Secrets
 ###############################################################################
@@ -24,10 +19,6 @@ overseerr_secrets_combined: >-
 
 overseerr_container_secrets_defaults: []
 
-overseerr_container_secrets_combined: >-
-  {{ overseerr_container_secrets_defaults
-  + overseerr_container_secrets }}
-
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -36,16 +27,8 @@ overseerr_container_labels_defaults: >
   {{ overseerr_traefik_enable
   | ternary(lookup('jaredhocutt.homelab.traefik_labels', overseerr_name, overseerr_traefik_host, '5055'), {}) }}
 
-overseerr_container_labels_combined: >-
-  {{ overseerr_container_labels_defaults
-  | combine(overseerr_container_labels, recursive=True) }}
-
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-overseerr_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
-
-overseerr_quadlet_options_combined: >-
-  {{ overseerr_quadlet_options_defaults
-  + overseerr_quadlet_options }}
+overseerr_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

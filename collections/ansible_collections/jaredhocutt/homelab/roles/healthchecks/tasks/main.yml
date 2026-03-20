@@ -48,14 +48,14 @@
     network:
       - "{{ healthchecks_name }}.network"
       - "{{ healthchecks_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
-    env: "{{ healthchecks_container_env_combined }}"
-    secrets: "{{ healthchecks_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
       - "{{ healthchecks_volume_config }}:/config"
     publish: "{{ healthchecks_traefik_enable | ternary(omit, healthchecks_ports) }}"
-    labels: "{{ healthchecks_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ healthchecks_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
     state: quadlet
   notify: Restart {{ healthchecks_name }}
   become: true

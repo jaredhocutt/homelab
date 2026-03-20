@@ -7,11 +7,6 @@
 
 bentopdf_container_env_defaults: {}
 
-bentopdf_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(bentopdf_container_env_defaults, recursive=True)
-  | combine(bentopdf_container_env, recursive=True) }}
-
 ###############################################################################
 # Secrets
 ###############################################################################
@@ -24,10 +19,6 @@ bentopdf_secrets_combined: >-
 
 bentopdf_container_secrets_defaults: []
 
-bentopdf_container_secrets_combined: >-
-  {{ bentopdf_container_secrets_defaults
-  + bentopdf_container_secrets }}
-
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -36,16 +27,8 @@ bentopdf_container_labels_defaults: >-
   {{ bentopdf_traefik_enable
   | ternary(lookup('jaredhocutt.homelab.traefik_labels', bentopdf_name, bentopdf_traefik_host, '8080'), {}) }}
 
-bentopdf_container_labels_combined: >-
-  {{ bentopdf_container_labels_defaults
-  | combine(bentopdf_container_labels, recursive=True) }}
-
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-bentopdf_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
-
-bentopdf_quadlet_options_combined: >-
-  {{ bentopdf_quadlet_options_defaults
-  + bentopdf_quadlet_options }}
+bentopdf_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

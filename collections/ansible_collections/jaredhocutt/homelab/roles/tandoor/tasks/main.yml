@@ -51,8 +51,8 @@
     name: "{{ tandoor_name }}-postgres"
     image: "{{ tandoor_postgres_image }}:{{ tandoor_postgres_image_tag }}"
     network: "{{ tandoor_name }}.network"
-    env: "{{ tandoor_postgres_container_env_combined }}"
-    secrets: "{{ tandoor_postgres_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='postgres') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='postgres') }}"
     volumes:
       - "{{ tandoor_postgres_volume_data }}.volume:/var/lib/postgresql/data"
     healthcheck_interval: 30s
@@ -61,7 +61,7 @@
     healthcheck_timeout: 5s
     healthcheck: CMD-SHELL pg_isready -d {{ tandoor_postgres_db_name }} -U {{ tandoor_postgres_user }}
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ tandoor_postgres_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='postgres') }}"
     state: quadlet
   notify: Restart postgres for {{ tandoor_name }}
   become: true
@@ -73,15 +73,15 @@
     network:
       - "{{ tandoor_name }}.network"
       - "{{ tandoor_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
-    env: "{{ tandoor_container_env_combined }}"
-    secrets: "{{ tandoor_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
       - "{{ tandoor_volume_staticfiles }}.volume:/opt/recipes/staticfiles"
       - "{{ tandoor_volume_mediafiles }}.volume:/opt/recipes/mediafiles"
     publish: "{{ tandoor_traefik_enable | ternary(omit, tandoor_ports) }}"
-    labels: "{{ tandoor_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ tandoor_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
     state: quadlet
   notify: Restart {{ tandoor_name }}
   become: true

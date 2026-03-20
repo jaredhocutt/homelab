@@ -10,11 +10,6 @@ vault_gid: 1000
 
 vault_container_env_defaults: {}
 
-vault_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(vault_container_env_defaults, recursive=True)
-  | combine(vault_container_env, recursive=True) }}
-
 ###############################################################################
 # Secrets
 ###############################################################################
@@ -27,10 +22,6 @@ vault_secrets_combined: >-
 
 vault_container_secrets_defaults: []
 
-vault_container_secrets_combined: >-
-  {{ vault_container_secrets_defaults
-  + vault_container_secrets }}
-
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -39,16 +30,8 @@ vault_container_labels_defaults: >
   {{ vault_traefik_enable
   | ternary(lookup('jaredhocutt.homelab.traefik_labels', vault_name, vault_traefik_host, '8200'), {}) }}
 
-vault_container_labels_combined: >-
-  {{ vault_container_labels_defaults
-  | combine(vault_container_labels, recursive=True) }}
-
 ###############################################################################
 # Quadlet Options
 ###############################################################################
 
-vault_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
-
-vault_quadlet_options_combined: >-
-  {{ vault_quadlet_options_defaults
-  + vault_quadlet_options }}
+vault_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

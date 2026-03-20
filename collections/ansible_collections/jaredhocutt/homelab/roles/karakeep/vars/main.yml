@@ -16,19 +16,6 @@ karakeep_chrome_container_env_defaults: {}
 karakeep_meilisearch_container_env_defaults:
   MEILI_NO_ANALYTICS: "true"
 
-karakeep_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(karakeep_container_env_defaults, recursive=True)
-  | combine(karakeep_container_env, recursive=True) }}
-karakeep_chrome_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(karakeep_chrome_container_env_defaults, recursive=True)
-  | combine(karakeep_chrome_container_env, recursive=True) }}
-karakeep_meilisearch_container_env_combined: >-
-  {{ common_container_env_defaults
-  | combine(karakeep_meilisearch_container_env_defaults, recursive=True)
-  | combine(karakeep_meilisearch_container_env, recursive=True) }}
-
 ###############################################################################
 # Secrets
 ###############################################################################
@@ -51,16 +38,6 @@ karakeep_meilisearch_container_secrets_defaults:
   - karakeep_meilisearch_master_key,type=env,target=MEILI_MASTER_KEY
   - karakeep_nextauth_secret,type=env,target=NEXTAUTH_SECRET
 
-karakeep_container_secrets_combined: >-
-  {{ karakeep_container_secrets_defaults
-  + karakeep_container_secrets }}
-karakeep_chrome_container_secrets_combined: >-
-  {{ karakeep_chrome_container_secrets_defaults
-  + karakeep_chrome_container_secrets }}
-karakeep_meilisearch_container_secrets_combined: >-
-  {{ karakeep_meilisearch_container_secrets_defaults
-  + karakeep_meilisearch_container_secrets }}
-
 ###############################################################################
 # Container Labels
 ###############################################################################
@@ -73,16 +50,6 @@ karakeep_chrome_container_labels_defaults: {}
 
 karakeep_meilisearch_container_labels_defaults: {}
 
-karakeep_container_labels_combined: >-
-  {{ karakeep_container_labels_defaults
-  | combine(karakeep_container_labels, recursive=True) }}
-karakeep_chrome_container_labels_combined: >-
-  {{ karakeep_chrome_container_labels_defaults
-  | combine(karakeep_chrome_container_labels, recursive=True) }}
-karakeep_meilisearch_container_labels_combined: >-
-  {{ karakeep_meilisearch_container_labels_defaults
-  | combine(karakeep_meilisearch_container_labels, recursive=True) }}
-
 ###############################################################################
 # Quadlet Options
 ###############################################################################
@@ -94,18 +61,8 @@ karakeep_quadlet_options_depends:
     Requires={{ karakeep_name }}-meilisearch.service
     After={{ karakeep_name }}-chrome.service
     After={{ karakeep_name }}-meilisearch.service
-karakeep_quadlet_options_defaults: "{{ common_quadlet_options_defaults + karakeep_quadlet_options_depends }}"
+karakeep_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + karakeep_quadlet_options_depends }}"
 
-karakeep_chrome_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+karakeep_chrome_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
 
-karakeep_meilisearch_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
-
-karakeep_quadlet_options_combined: >-
-  {{ karakeep_quadlet_options_defaults
-  + karakeep_quadlet_options }}
-karakeep_chrome_quadlet_options_combined: >-
-  {{ karakeep_chrome_quadlet_options_defaults
-  + karakeep_chrome_quadlet_options }}
-karakeep_meilisearch_quadlet_options_combined: >-
-  {{ karakeep_meilisearch_quadlet_options_defaults
-  + karakeep_meilisearch_quadlet_options }}
+karakeep_meilisearch_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

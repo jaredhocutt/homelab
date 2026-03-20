@@ -51,8 +51,8 @@
     name: "{{ karakeep_name }}-chrome"
     image: "{{ karakeep_chrome_image }}:{{ karakeep_chrome_image_tag }}"
     network: "{{ karakeep_name }}.network"
-    env: "{{ karakeep_chrome_container_env_combined }}"
-    secrets: "{{ karakeep_chrome_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='chrome') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='chrome') }}"
     command:
       - --no-sandbox
       - --disable-gpu
@@ -60,9 +60,9 @@
       - --remote-debugging-address=0.0.0.0
       - --remote-debugging-port=9222
       - --hide-scrollbars
-    labels: "{{ karakeep_chrome_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='chrome') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ karakeep_chrome_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='chrome') }}"
     state: quadlet
   notify: Restart chrome for {{ karakeep_name }}
   become: true
@@ -72,13 +72,13 @@
     name: "{{ karakeep_name }}-meilisearch"
     image: "{{ karakeep_meilisearch_image }}:{{ karakeep_meilisearch_image_tag }}"
     network: "{{ karakeep_name }}.network"
-    env: "{{ karakeep_meilisearch_container_env_combined }}"
-    secrets: "{{ karakeep_meilisearch_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='meilisearch') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='meilisearch') }}"
     volumes:
       - "{{ karakeep_meilisearch_volume_data }}.volume:/meili_data"
-    labels: "{{ karakeep_meilisearch_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='meilisearch') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ karakeep_meilisearch_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='meilisearch') }}"
     state: quadlet
   notify: Restart meilisearch for {{ karakeep_name }}
   become: true
@@ -90,14 +90,14 @@
     network:
       - "{{ karakeep_name }}.network"
       - "{{ karakeep_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
-    env: "{{ karakeep_container_env_combined }}"
-    secrets: "{{ karakeep_container_secrets_combined }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
       - "{{ karakeep_volume_data }}.volume:/data"
     publish: "{{ karakeep_traefik_enable | ternary(omit, karakeep_ports) }}"
-    labels: "{{ karakeep_container_labels_combined }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ karakeep_quadlet_options_combined }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
     state: quadlet
   notify: Restart {{ karakeep_name }}
   become: true
