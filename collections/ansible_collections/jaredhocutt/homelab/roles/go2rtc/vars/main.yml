@@ -1,0 +1,34 @@
+---
+# vars file for jaredhocutt.homelab.go2rtc
+
+###############################################################################
+# Envrionment
+###############################################################################
+
+go2rtc_container_env_defaults: {}
+
+###############################################################################
+# Secrets
+###############################################################################
+
+go2rtc_secrets_defaults: {}
+
+go2rtc_secrets_combined: >-
+  {{ go2rtc_secrets_defaults
+  | combine(go2rtc_secrets, recursive=True) }}
+
+go2rtc_container_secrets_defaults: []
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+go2rtc_container_labels_defaults: >
+  {{ go2rtc_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', go2rtc_name, go2rtc_traefik_host, '1984'), {}) }}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+go2rtc_container_quadlet_options_defaults: []

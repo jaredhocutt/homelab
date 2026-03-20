@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.go2rtc
+
+- name: Restart {{ go2rtc_name }}
+  ansible.builtin.systemd:
+    name: "{{ go2rtc_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

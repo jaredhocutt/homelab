@@ -1,0 +1,21 @@
+---
+# defaults file for jaredhocutt.homelab.go2rtc
+
+go2rtc_name: go2rtc
+
+go2rtc_image: ghcr.io/alexxit/go2rtc
+go2rtc_image_tag: latest
+
+go2rtc_volume_config: "{{ go2rtc_name }}-config"
+
+go2rtc_traefik_enable: true
+go2rtc_traefik_host: "{{ go2rtc_name }}.{{ common_traefik_domain }}"
+go2rtc_ports:
+  - 1984:1984
+
+go2rtc_secrets: {}
+
+go2rtc_container_env: {}
+go2rtc_container_secrets: []
+go2rtc_container_labels: {}
+go2rtc_container_quadlet_options: []
