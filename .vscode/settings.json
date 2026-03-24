@@ -6,5 +6,12 @@
     "**/collections/ansible_collections/containers*": true,
     "**/collections/ansible_collections/digitalocean*": true,
     "**/collections/ansible_collections/pfsensible*": true,
-  }
+  },
+  "python-envs.pythonProjects": [
+    {
+      "path": ".",
+      "envManager": "ms-python.python:poetry",
+      "packageManager": "ms-python.python:poetry"
+    }
+  ]
 }
