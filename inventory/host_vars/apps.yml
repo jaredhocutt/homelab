@@ -15,6 +15,19 @@ authentik_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.aut
 authentik_secret_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.authentik_secret_key) }}"
 
 ###############################################################################
+# audiobookshelf
+###############################################################################
+
+audiobookshelf_image_tag: "2.30.0"  # skopeo list-tags docker://ghcr.io/advplyr/audiobookshelf | jq -r '.Tags[] | select(test("^[0-9]"))'
+
+newt_audiobookshelf_secrets:
+  newt_audiobookshelf_newt_id: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.newt_audiobookshelf_newt_id) }}"
+  newt_audiobookshelf_newt_secret: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.newt_audiobookshelf_newt_secret) }}"
+newt_audiobookshelf_container_secrets:
+  - newt_audiobookshelf_newt_id,type=env,target=NEWT_ID
+  - newt_audiobookshelf_newt_secret,type=env,target=NEWT_SECRET
+
+###############################################################################
 # backrest
 ###############################################################################
 
@@ -137,6 +150,14 @@ karakeep_secrets:
   karakeep_openai_api_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.karakeep_openai_api_key) }}"
 karakeep_container_secrets:
   - karakeep_openai_api_key,type=env,target=OPENAI_API_KEY
+
+###############################################################################
+# newt
+###############################################################################
+
+newt_image_tag: "1.10"  # skopeo list-tags docker://docker.io/fosrl/newt | jq -r '.Tags[] | select(test("^[0-9]"))'
+
+newt_endpoint: https://pangolin.{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin_base_domain) }}
 
 ###############################################################################
 # n8n

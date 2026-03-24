@@ -25,6 +25,21 @@
 - name: Deploy and configure apps
   hosts: apps
   tasks:
+    - name: Install audiobookshelf
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.audiobookshelf
+      tags: [audiobookshelf]
+
+    - name: Install newt for audiobookshelf
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.newt
+      vars:
+        newt_name: newt-audiobookshelf
+        newt_attach_to: audiobookshelf
+        newt_secrets: "{{ newt_audiobookshelf_secrets }}"
+        newt_container_secrets: "{{ newt_audiobookshelf_container_secrets }}"
+      tags: [newt, audiobookshelf]
+
     - name: Install backrest
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.backrest
@@ -39,11 +54,6 @@
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.bentopdf
       tags: [bentopdf]
-
-    - name: Install booklore
-      ansible.builtin.import_role:
-        name: jaredhocutt.homelab.booklore
-      tags: [booklore]
 
     - name: Install calibre_web_automated
       ansible.builtin.import_role:
