@@ -8,7 +8,8 @@ audiobookshelf_image_tag: latest
 
 audiobookshelf_volume_config: "{{ audiobookshelf_name }}-config"
 audiobookshelf_volume_metadata: "{{ audiobookshelf_name }}-metadata"
-audiobookshelf_volume_media: "{{ audiobookshelf_name }}-media"
+audiobookshelf_volume_audiobooks: "{{ audiobookshelf_name }}-audiobooks"
+audiobookshelf_volume_podcasts: "{{ audiobookshelf_name }}-podcasts"
 
 audiobookshelf_traefik_enable: true
 audiobookshelf_traefik_host: "{{ audiobookshelf_name }}.{{ common_traefik_domain }}"

@@ -33,8 +33,10 @@
       options: "{{ audiobookshelf_volume_config_options | default(omit) }}"
     - name: "{{ audiobookshelf_volume_metadata }}"
       options: "{{ audiobookshelf_volume_metadata_options | default(omit) }}"
-    - name: "{{ audiobookshelf_volume_media }}"
-      options: "{{ audiobookshelf_volume_media_options | default(omit) }}"
+    - name: "{{ audiobookshelf_volume_audiobooks }}"
+      options: "{{ audiobookshelf_volume_audiobooks_options | default(omit) }}"
+    - name: "{{ audiobookshelf_volume_podcasts }}"
+      options: "{{ audiobookshelf_volume_podcasts_options | default(omit) }}"
 
 - name: Create secrets
   containers.podman.podman_secret:
@@ -56,7 +58,8 @@
     volumes:
       - "{{ audiobookshelf_volume_config }}:/config"
       - "{{ audiobookshelf_volume_metadata }}:/metadata"
-      - "{{ audiobookshelf_volume_media }}:/mnt/media"
+      - "{{ audiobookshelf_volume_audiobooks }}:/audiobooks"
+      - "{{ audiobookshelf_volume_podcasts }}:/podcasts"
     publish: "{{ audiobookshelf_traefik_enable | ternary(omit, audiobookshelf_ports) }}"
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
