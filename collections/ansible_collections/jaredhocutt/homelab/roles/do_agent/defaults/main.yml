@@ -1,0 +1,14 @@
+---
+# defaults file for jaredhocutt.homelab.do_agent
+
+do_agent_name: do-agent
+
+do_agent_image: docker.io/digitalocean/do-agent
+do_agent_image_tag: stable
+
+do_agent_secrets: {}
+
+do_agent_container_env: {}
+do_agent_container_secrets: []
+do_agent_container_labels: {}
+do_agent_container_quadlet_options: []

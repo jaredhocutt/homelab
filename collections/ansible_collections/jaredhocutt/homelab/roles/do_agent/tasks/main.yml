@@ -1,0 +1,51 @@
+---
+# tasks file for jaredhocutt.homelab.do_agent
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ do_agent_image }}"
+      image_tag: "{{ do_agent_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ do_agent_name }}"
+    driver: bridge
+    disable_dns: false
+    opt:
+      isolate: "true"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  no_log: true
+  loop: "{{ do_agent_secrets_combined | dict2items }}"
+
+- name: Create do_agent container
+  containers.podman.podman_container:
+    name: "{{ do_agent_name }}"
+    image: "{{ do_agent_image }}:{{ do_agent_image_tag }}"
+    network: "{{ do_agent_name }}.network"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
+    state: quadlet
+  notify: Restart {{ do_agent_name }}
+  become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

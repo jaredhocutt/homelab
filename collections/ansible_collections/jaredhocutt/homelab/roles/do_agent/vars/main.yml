@@ -1,0 +1,32 @@
+---
+# vars file for jaredhocutt.homelab.do_agent
+
+###############################################################################
+# Envrionment
+###############################################################################
+
+do_agent_container_env_defaults: {}
+
+###############################################################################
+# Secrets
+###############################################################################
+
+do_agent_secrets_defaults: {}
+
+do_agent_secrets_combined: >-
+  {{ do_agent_secrets_defaults
+  | combine(do_agent_secrets, recursive=True) }}
+
+do_agent_container_secrets_defaults: []
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+do_agent_container_labels_defaults: {}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+do_agent_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

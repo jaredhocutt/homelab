@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.do_agent
+
+- name: Restart {{ do_agent_name }}
+  ansible.builtin.systemd:
+    name: "{{ do_agent_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
