@@ -1,0 +1,95 @@
+---
+# tasks file for jaredhocutt.homelab.palworld
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ palworld_image }}"
+      image_tag: "{{ palworld_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ palworld_name }}"
+    driver: bridge
+    disable_dns: false
+    opt:
+      isolate: "true"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ palworld_volume_saved }}"
+      options: "{{ palworld_volume_saved_options | default(omit) }}"
+    - name: "{{ palworld_volume_scripts }}"
+  register: _palworld_created_volumes
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
+  when: _palworld_created_volumes.changed  # noqa: no-handler
+
+- name: Start scripts volume service to create it
+  ansible.builtin.systemd:
+    name: "{{ palworld_volume_scripts }}-volume.service"
+    state: started
+  become: true
+
+- name: Get scripts volume info
+  containers.podman.podman_volume_info:
+    name: "{{ palworld_volume_scripts }}"
+  become: true
+  register: _palworld_scripts_volume_info
+
+- name: Copy helper script
+  ansible.builtin.copy:
+    src: helper.sh
+    dest: "{{ _palworld_scripts_volume_info.volumes[0].Mountpoint }}/helper.sh"
+    mode: "0755"
+  become: true
+  notify: Restart {{ palworld_name }}
+
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ palworld_secrets_combined | dict2items }}"
+
+- name: Create palworld container
+  containers.podman.podman_container:
+    name: "{{ palworld_name }}"
+    image: "{{ palworld_image }}:{{ palworld_image_tag }}"
+    network: "{{ palworld_name }}.network"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
+    volumes:
+      - "{{ palworld_volume_saved }}:/pal/Package/Pal/Saved"
+      - "{{ palworld_volume_scripts }}:/pal/scripts:ro"
+    entrypoint: /pal/scripts/helper.sh
+    command:
+      - -port=8211
+      - -useperfthreads
+      - -NoAsyncLoadingThread
+      - -UseMultithreadForDS
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
+    state: quadlet
+  notify: Restart {{ palworld_name }}
+  become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

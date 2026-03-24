@@ -16,11 +16,8 @@ pangolin_traefik_volume_config: "{{ pangolin_name }}-traefik-config"
 pangolin_traefik_volume_letsencrypt: "{{ pangolin_name }}-traefik-letsencrypt"
 pangolin_traefik_volume_logs: "{{ pangolin_name }}-traefik-logs"
 
-pangolin_gerbil_ports:
-  - 80:80
-  - 443:443
-  - 51820:51820/udp
-  - 21820:21820/udp
+pangolin_gerbil_ports_extra: []
+pangolin_gerbil_ports: "{{ pangolin_gerbil_ports_defaults + pangolin_gerbil_ports_extra }}"
 
 pangolin_secrets: {}
 

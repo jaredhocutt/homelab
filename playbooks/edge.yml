@@ -15,6 +15,7 @@
         state: present
       loop: "{{ droplet_ssh_keys }}"
       register: _edge_create_ssh_keys
+      tags: [always]
 
     - name: Create droplet
       digitalocean.cloud.droplet:
@@ -29,48 +30,20 @@
         user_data: "{{ droplet_user_data }}"
         state: present
       register: _edge_create_droplet
+      tags: [always]
 
     - name: Create reserved IP and assign to droplet
       digitalocean.cloud.reserved_ip:
         droplet_id: "{{ _edge_create_droplet.droplet.id }}"
         state: present
       register: _edge_create_reserved_ip
+      tags: [always]
 
     - name: Create default firewall and attach to droplet
       digitalocean.cloud.firewall:
         name: default
-        inbound_rules:
-          - protocol: tcp
-            ports: "22"
-            sources:
-              addresses:
-                - "0.0.0.0/0"
-                - "::/0"
-          - protocol: icmp
-            ports: "0"
-            destinations:
-              addresses:
-                - "0.0.0.0/0"
-                - "::/0"
-        outbound_rules:
-          - protocol: tcp
-            ports: "0"
-            destinations:
-              addresses:
-                - "0.0.0.0/0"
-                - "::/0"
-          - protocol: udp
-            ports: "0"
-            destinations:
-              addresses:
-                - "0.0.0.0/0"
-                - "::/0"
-          - protocol: icmp
-            ports: "0"
-            destinations:
-              addresses:
-                - "0.0.0.0/0"
-                - "::/0"
+        inbound_rules: "{{ digitalocean_firewall_default_inbound_rules }}"
+        outbound_rules: "{{ digitalocean_firewall_default_outbound_rules }}"
         droplet_ids:
           - "{{ _edge_create_droplet.droplet.id }}"
         state: present
@@ -78,34 +51,61 @@
     - name: Create pangolin firewall and attach to droplet
       digitalocean.cloud.firewall:
         name: pangolin
-        inbound_rules:
-          - protocol: tcp
-            ports: "80"
-            sources:
-              addresses:
-                - "0.0.0.0/0"
-                - "::/0"
-          - protocol: tcp
-            ports: "443"
-            sources:
-              addresses:
-                - "0.0.0.0/0"
-                - "::/0"
-          - protocol: udp
-            ports: "21820"
-            sources:
-              addresses:
-                - "0.0.0.0/0"
-                - "::/0"
-          - protocol: udp
-            ports: "51820"
-            sources:
-              addresses:
-                - "0.0.0.0/0"
-                - "::/0"
+        inbound_rules: "{{ digitalocean_firewall_pangolin_inbound_rules }}"
         droplet_ids:
           - "{{ _edge_create_droplet.droplet.id }}"
         state: present
+
+    # The digitalocean.cloud.firewall module does not support updating existing firewalls,
+    # so we have to use the API directly ¯\_(ツ)_/¯
+
+    - name: Get firewalls
+      digitalocean.cloud.firewalls_info: {}
+      register: _edge_firewalls_info
+
+    - name: Set firewall ID facts
+      ansible.builtin.set_fact:
+        digitalocean_firewall_default_id: >-
+          {{ _edge_firewalls_info.firewalls
+            | selectattr('name', 'equalto', 'default')
+            | map(attribute='id')
+            | first }}
+        digitalocean_firewall_pangolin_id: >-
+          {{ _edge_firewalls_info.firewalls
+            | selectattr('name', 'equalto', 'pangolin')
+            | map(attribute='id')
+            | first }}
+
+    - name: Update default firewall rules via API
+      ansible.builtin.uri:
+        url: "https://api.digitalocean.com/v2/firewalls/{{ digitalocean_firewall_default_id }}"
+        method: PUT
+        headers:
+          Authorization: Bearer {{ lookup('bitwarden.secrets.lookup', bws_uuid.digitalocean_token) }}
+          Content-Type: application/json
+        body_format: json
+        body:
+          name: default
+          inbound_rules: "{{ digitalocean_firewall_default_inbound_rules }}"
+          outbound_rules: "{{ digitalocean_firewall_default_outbound_rules }}"
+          droplet_ids:
+            - "{{ _edge_create_droplet.droplet.id }}"
+        status_code: 200
+
+    - name: Update pangolin firewall rules via API
+      ansible.builtin.uri:
+        url: "https://api.digitalocean.com/v2/firewalls/{{ digitalocean_firewall_pangolin_id }}"
+        method: PUT
+        headers:
+          Authorization: Bearer {{ lookup('bitwarden.secrets.lookup', bws_uuid.digitalocean_token) }}
+          Content-Type: application/json
+        body_format: json
+        body:
+          name: pangolin
+          inbound_rules: "{{ digitalocean_firewall_pangolin_inbound_rules }}"
+          droplet_ids:
+            - "{{ _edge_create_droplet.droplet.id }}"
+        status_code: 200
 
     - name: Create wildcard DNS record for pangolin
       community.general.cloudflare_dns:
@@ -130,6 +130,7 @@
         ansible_host: "{{ _edge_create_reserved_ip.reserved_ip.ip }}"
         ansible_ssh_common_args: "-o StrictHostKeyChecking=accept-new"
       changed_when: false
+      tags: [always]
 
 - name: Perform initial server setup
   hosts: edge

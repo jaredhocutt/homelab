@@ -10,6 +10,9 @@ pangolin_image_tag: "1.16.2"  # skopeo list-tags docker://docker.io/fosrl/pangol
 pangolin_gerbil_image_tag: "1.3.0"  # skopeo list-tags docker://docker.io/fosrl/gerbil | jq -r '.Tags[] | select(test("^[0-9]\\."))'
 pangolin_traefik_image_tag: v3.6  # The project hard codes this tag, so let's keep it
 
+pangolin_gerbil_ports_extra:
+  - 8211:8211/udp  # pangolin
+
 pangolin_base_domain: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin_base_domain) }}"
 pangolin_server_secret: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin_server_secret) }}"
 pangolin_traefik_letsencrypt_email: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin_no_reply) }}"
@@ -48,7 +51,7 @@ server_setup_enabled_services: []
 cloudflare_zone: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.cloudflare_zone) }}"
 
 ###############################################################################
-# droplet
+# digitalocean_droplet
 ###############################################################################
 
 droplet_region: nyc3
@@ -99,3 +102,73 @@ droplet_user_data: |
         fi
       done
       systemctl restart systemd-journald
+
+###############################################################################
+# digitalocean_firewall
+###############################################################################
+
+digitalocean_firewall_default_inbound_rules:
+  - protocol: tcp
+    ports: "22"
+    sources:
+      addresses:
+        - "0.0.0.0/0"
+        - "::/0"
+  - protocol: icmp
+    ports: "0"
+    sources:
+      addresses:
+        - "0.0.0.0/0"
+        - "::/0"
+
+digitalocean_firewall_default_outbound_rules:
+  - protocol: tcp
+    ports: "0"
+    destinations:
+      addresses:
+        - "0.0.0.0/0"
+        - "::/0"
+  - protocol: udp
+    ports: "0"
+    destinations:
+      addresses:
+        - "0.0.0.0/0"
+        - "::/0"
+  - protocol: icmp
+    ports: "0"
+    destinations:
+      addresses:
+        - "0.0.0.0/0"
+        - "::/0"
+
+digitalocean_firewall_pangolin_inbound_rules:
+  - protocol: tcp
+    ports: "80"
+    sources:
+      addresses:
+        - "0.0.0.0/0"
+        - "::/0"
+  - protocol: tcp
+    ports: "443"
+    sources:
+      addresses:
+        - "0.0.0.0/0"
+        - "::/0"
+  - protocol: udp
+    ports: "21820"
+    sources:
+      addresses:
+        - "0.0.0.0/0"
+        - "::/0"
+  - protocol: udp
+    ports: "51820"
+    sources:
+      addresses:
+        - "0.0.0.0/0"
+        - "::/0"
+  - protocol: udp
+    ports: "8211"
+    sources:
+      addresses:
+        - "0.0.0.0/0"
+        - "::/0"

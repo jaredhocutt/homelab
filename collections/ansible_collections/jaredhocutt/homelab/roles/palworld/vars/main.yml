@@ -1,0 +1,32 @@
+---
+# vars file for jaredhocutt.homelab.palworld
+
+###############################################################################
+# Envrionment
+###############################################################################
+
+palworld_container_env_defaults: {}
+
+###############################################################################
+# Secrets
+###############################################################################
+
+palworld_secrets_defaults: {}
+
+palworld_secrets_combined: >-
+  {{ palworld_secrets_defaults
+  | combine(palworld_secrets, recursive=True) }}
+
+palworld_container_secrets_defaults: []
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+palworld_container_labels_defaults: {}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+palworld_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

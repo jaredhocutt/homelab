@@ -1,0 +1,17 @@
+---
+# defaults file for jaredhocutt.homelab.palworld
+
+palworld_name: palworld
+
+palworld_image: ghcr.io/pocketpairjp/palserver
+palworld_image_tag: latest
+
+palworld_volume_saved: "{{ palworld_name }}-saved"
+palworld_volume_scripts: "{{ palworld_name }}-scripts"
+
+palworld_secrets: {}
+
+palworld_container_env: {}
+palworld_container_secrets: []
+palworld_container_labels: {}
+palworld_container_quadlet_options: []

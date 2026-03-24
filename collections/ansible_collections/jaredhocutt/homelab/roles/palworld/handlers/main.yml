@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.palworld
+
+- name: Restart {{ palworld_name }}
+  ansible.builtin.systemd:
+    name: "{{ palworld_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

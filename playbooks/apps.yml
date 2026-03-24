@@ -100,6 +100,21 @@
         name: jaredhocutt.homelab.open_webui
       tags: [open_webui]
 
+    - name: Install palworld
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.palworld
+      tags: [palworld]
+
+    - name: Install newt for palworld
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.newt
+      vars:
+        newt_name: newt-palworld
+        newt_attach_to: palworld
+        newt_secrets: "{{ newt_palworld_secrets }}"
+        newt_container_secrets: "{{ newt_palworld_container_secrets }}"
+      tags: [newt, palworld]
+
     - name: Install shelfmark
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.shelfmark

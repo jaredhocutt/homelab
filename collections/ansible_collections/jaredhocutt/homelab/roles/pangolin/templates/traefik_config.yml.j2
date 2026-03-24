@@ -48,6 +48,13 @@ entryPoints:
       encodedCharacters:
         allowEncodedSlash: true
         allowEncodedQuestionMark: true
+{% for port in pangolin_gerbil_ports_extra %}
+{% set listen_port = port.split(':')[0].split('/')[0] %}
+{% set protocol = (port.split('/')[-1] | lower) if ('/' in port) else 'tcp' %}
+  {{ protocol }}-{{ listen_port }}:
+    address: ":{{ listen_port }}/{{ protocol }}"
+{% endfor %}
+
 
 serversTransport:
   insecureSkipVerify: true

@@ -187,6 +187,19 @@ nocodb_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.nocodb
 open_webui_image_tag: v0.7.2  # skopeo list-tags docker://ghcr.io/open-webui/open-webui | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
 
 ###############################################################################
+# palworld
+###############################################################################
+
+palworld_image_tag: v0.7.2.87654  # skypeo list-tags docker://ghcr.io/pocketpairjp/palserver | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+
+newt_palworld_secrets:
+  newt_palworld_newt_id: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.newt_palworld_newt_id) }}"
+  newt_palworld_newt_secret: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.newt_palworld_newt_secret) }}"
+newt_palworld_container_secrets:
+  - newt_palworld_newt_id,type=env,target=NEWT_ID
+  - newt_palworld_newt_secret,type=env,target=NEWT_SECRET
+
+###############################################################################
 # shelfmark
 ###############################################################################
 
