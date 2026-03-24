@@ -13,6 +13,9 @@ dependencies = [
     "bitwarden-sdk~=1.0.0",
     "jmespath~=1.0.0",
     "netaddr~=1.3.0",
+    "azure-core (==1.26.1)",  # digitalocean.cloud collection dependency
+    "boto3 (==1.28.53)",  # digitalocean.cloud collection dependency
+    "pydo (==0.1.7)",  # digitalocean.cloud collection dependency
 ]
 
 [tool.poetry]

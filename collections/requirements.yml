@@ -23,6 +23,9 @@ collections:
   - name: containers.podman
     version: ">=1.17,<1.18"
 
+  - name: digitalocean.cloud
+    version: ">=1.9,<1.10"
+
   - name: pfsensible.core
     version: ">=0.7,<0.8"
 
