@@ -37,6 +37,8 @@ poetry-plugin-export = "~=1.9"
 
 [tool.taskipy.tasks]
 build-ee = "ansible-navigator builder build --tag localhost/homelab-ee:latest --verbosity 3 --context .ansible/context --prune-images"
+open-role-files = { cmd = "./hack/open_role_files.sh", cwd = "." }
+vault-edit = "EDITOR='code --wait' ansible-vault edit"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
