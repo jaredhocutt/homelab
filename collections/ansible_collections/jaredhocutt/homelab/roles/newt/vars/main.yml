@@ -1,0 +1,38 @@
+---
+# vars file for jaredhocutt.homelab.newt
+
+###############################################################################
+# Envrionment
+###############################################################################
+
+newt_container_env_defaults:
+  PANGOLIN_ENDPOINT: "{{ newt_endpoint }}"
+
+###############################################################################
+# Secrets
+###############################################################################
+
+newt_secrets_defaults: {}
+
+newt_secrets_combined: >-
+  {{ newt_secrets_defaults
+  | combine(newt_secrets, recursive=True) }}
+
+newt_container_secrets_defaults: []
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+newt_container_labels_defaults: {}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+newt_quadlet_options_depends:
+  - |
+    [Unit]
+    Requires={{ newt_attach_to }}.service
+    After={{ newt_attach_to }}.service
+newt_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + newt_quadlet_options_depends }}"

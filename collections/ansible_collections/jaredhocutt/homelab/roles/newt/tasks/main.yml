@@ -1,0 +1,37 @@
+---
+# tasks file for jaredhocutt.homelab.newt
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ newt_image }}"
+      image_tag: "{{ newt_image_tag }}"
+
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  no_log: true
+  loop: "{{ newt_secrets_combined | dict2items }}"
+
+- name: Create newt container
+  containers.podman.podman_container:
+    name: "{{ newt_name }}"
+    image: "{{ newt_image }}:{{ newt_image_tag }}"
+    network: "container:{{ newt_attach_to }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
+    state: quadlet
+  notify: Restart {{ newt_name }}
+  become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

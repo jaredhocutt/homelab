@@ -1,0 +1,14 @@
+---
+# defaults file for jaredhocutt.homelab.newt
+
+newt_name: newt
+
+newt_image: docker.io/fosrl/newt
+newt_image_tag: latest
+
+newt_secrets: {}
+
+newt_container_env: {}
+newt_container_secrets: []
+newt_container_labels: {}
+newt_container_quadlet_options: []

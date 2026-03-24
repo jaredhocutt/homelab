@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.newt
+
+- name: Restart {{ newt_name }}
+  ansible.builtin.systemd:
+    name: "{{ newt_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
