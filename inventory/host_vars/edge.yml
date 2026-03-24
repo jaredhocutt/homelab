@@ -1,0 +1,101 @@
+---
+
+ansible_python_interpreter: python3
+
+###############################################################################
+# pangolin
+###############################################################################
+
+pangolin_image_tag: "1.16.2"  # skopeo list-tags docker://docker.io/fosrl/pangolin | jq -r '.Tags[] | select(test("^[0-9]\\."))'
+pangolin_gerbil_image_tag: "1.3.0"  # skopeo list-tags docker://docker.io/fosrl/gerbil | jq -r '.Tags[] | select(test("^[0-9]\\."))'
+pangolin_traefik_image_tag: v3.6  # The project hard codes this tag, so let's keep it
+
+pangolin_base_domain: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin_base_domain) }}"
+pangolin_server_secret: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin_server_secret) }}"
+pangolin_traefik_letsencrypt_email: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin_no_reply) }}"
+
+pangolin_smtp_host: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin_smtp_host) }}"
+pangolin_smtp_port: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin_smtp_port) }}"
+pangolin_smtp_user: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin_smtp_user) }}"
+pangolin_smtp_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin_smtp_password) }}"
+pangolin_no_reply: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin_no_reply) }}"
+
+###############################################################################
+# server_setup
+###############################################################################
+
+server_setup_packages:
+  - chezmoi
+  - curl
+  - dnf5-plugin-automatic
+  - git
+  - gnupg2
+  - htop
+  - net-tools
+  - rsync
+  - tmux
+  - unzip
+  - vim
+  - wget
+  - zsh
+
+server_setup_enabled_services: []
+
+###############################################################################
+# cloudflare
+###############################################################################
+
+cloudflare_zone: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.cloudflare_zone) }}"
+
+###############################################################################
+# droplet
+###############################################################################
+
+droplet_region: nyc3
+droplet_image: fedora-43-x64
+droplet_size: s-2vcpu-2gb-90gb-intel
+
+droplet_ssh_keys:
+  - "{{ lookup('bitwarden.secrets.lookup', bws_uuid.ssh_authorized_key_1) }}"
+  - "{{ lookup('bitwarden.secrets.lookup', bws_uuid.ssh_authorized_key_2) }}"
+
+droplet_user_data: |
+  #cloud-config
+  write_files:
+    - path: /etc/sudoers.d/99-custom-defaults
+      owner: root:root
+      permissions: '0440'
+      content: |
+        Defaults:{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_username) }} !requiretty
+
+  users:
+    - name: {{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_username) }}
+      gecos: {{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_fullname) }}
+      uid: {{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_uid) }}
+      groups: {{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_groups) }}
+      passwd: {{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_password_crypted) }}
+      lock_passwd: false
+      ssh_authorized_keys:
+        - {{ lookup('bitwarden.secrets.lookup', bws_uuid.ssh_authorized_key_1) }}
+        - {{ lookup('bitwarden.secrets.lookup', bws_uuid.ssh_authorized_key_2) }}
+    - name: {{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_username) }}
+      gecos: {{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_fullname) }}
+      uid: {{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_uid) }}
+      groups: {{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_groups) }}
+      sudo:
+        - "ALL=(ALL) NOPASSWD:ALL"
+      lock_passwd: true
+      ssh_authorized_keys:
+        - {{ lookup('bitwarden.secrets.lookup', bws_uuid.ssh_authorized_key_4) }}
+
+  # The Fedora image in Digital Ocean is broken for journald
+  runcmd:
+    - |
+      machine_id=$(cat /etc/machine-id)
+      for dir in /var/log/journal/*/; do
+        dirname=$(basename "$dir")
+        if [ "$dirname" != "$machine_id" ]; then
+          mv "$dir" "/var/log/journal/$machine_id"
+        fi
+      done
+      systemctl restart systemd-journald

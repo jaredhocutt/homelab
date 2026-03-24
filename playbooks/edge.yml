@@ -1,0 +1,164 @@
+---
+
+- name: Create infrastructure
+  hosts: edge
+  connection: local
+  gather_facts: false
+  environment:
+    CLOUDFLARE_TOKEN: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.cloudflare_token) }}"
+    DIGITALOCEAN_TOKEN: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.digitalocean_token) }}"
+  tasks:
+    - name: Create SSH keys
+      digitalocean.cloud.ssh_key:
+        name: "{{ item.split(' ')[-1] }}"
+        public_key: "{{ item }}"
+        state: present
+      loop: "{{ droplet_ssh_keys }}"
+      register: _edge_create_ssh_keys
+
+    - name: Create droplet
+      digitalocean.cloud.droplet:
+        name: "edge"
+        unique_name: true
+        region: "{{ droplet_region }}"
+        size: "{{ droplet_size }}"
+        image: "{{ droplet_image }}"
+        # Disabling due to error in Digotal Ocean install script for do-agent
+        # monitoring: true
+        ssh_keys: "{{ _edge_create_ssh_keys.results | map(attribute='ssh_key.id') | list }}"
+        user_data: "{{ droplet_user_data }}"
+        state: present
+      register: _edge_create_droplet
+
+    - name: Create reserved IP and assign to droplet
+      digitalocean.cloud.reserved_ip:
+        droplet_id: "{{ _edge_create_droplet.droplet.id }}"
+        state: present
+      register: _edge_create_reserved_ip
+
+    - name: Create default firewall and attach to droplet
+      digitalocean.cloud.firewall:
+        name: default
+        inbound_rules:
+          - protocol: tcp
+            ports: "22"
+            sources:
+              addresses:
+                - "0.0.0.0/0"
+                - "::/0"
+          - protocol: icmp
+            ports: "0"
+            destinations:
+              addresses:
+                - "0.0.0.0/0"
+                - "::/0"
+        outbound_rules:
+          - protocol: tcp
+            ports: "0"
+            destinations:
+              addresses:
+                - "0.0.0.0/0"
+                - "::/0"
+          - protocol: udp
+            ports: "0"
+            destinations:
+              addresses:
+                - "0.0.0.0/0"
+                - "::/0"
+          - protocol: icmp
+            ports: "0"
+            destinations:
+              addresses:
+                - "0.0.0.0/0"
+                - "::/0"
+        droplet_ids:
+          - "{{ _edge_create_droplet.droplet.id }}"
+        state: present
+
+    - name: Create pangolin firewall and attach to droplet
+      digitalocean.cloud.firewall:
+        name: pangolin
+        inbound_rules:
+          - protocol: tcp
+            ports: "80"
+            sources:
+              addresses:
+                - "0.0.0.0/0"
+                - "::/0"
+          - protocol: tcp
+            ports: "443"
+            sources:
+              addresses:
+                - "0.0.0.0/0"
+                - "::/0"
+          - protocol: udp
+            ports: "21820"
+            sources:
+              addresses:
+                - "0.0.0.0/0"
+                - "::/0"
+          - protocol: udp
+            ports: "51820"
+            sources:
+              addresses:
+                - "0.0.0.0/0"
+                - "::/0"
+        droplet_ids:
+          - "{{ _edge_create_droplet.droplet.id }}"
+        state: present
+
+    - name: Create wildcard DNS record for pangolin
+      community.general.cloudflare_dns:
+        zone: "{{ pangolin_base_domain.split('.')[-2:] | join('.') }}"
+        record: "*.{{ pangolin_base_domain.split('.')[:-2] | join('.') }}"
+        type: A
+        value: "{{ _edge_create_reserved_ip.reserved_ip.ip }}"
+        ttl: 300
+        solo: true
+        proxied: false
+        state: present
+
+    - name: Wait for SSH to be available
+      ansible.builtin.wait_for:
+        host: "{{ _edge_create_reserved_ip.reserved_ip.ip }}"
+        port: 22
+        timeout: 300
+
+    - name: Add new droplet to inventory group
+      ansible.builtin.add_host:
+        name: edge
+        ansible_host: "{{ _edge_create_reserved_ip.reserved_ip.ip }}"
+        ansible_ssh_common_args: "-o StrictHostKeyChecking=accept-new"
+      changed_when: false
+
+- name: Perform initial server setup
+  hosts: edge
+  tasks:
+    - name: Perform initial server setup
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.server_setup
+      tags: [server_setup]
+
+    - name: Install do_agent
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.do_agent
+      tags: [do_agent]
+
+- name: Deploy and configure apps
+  hosts: edge
+  tasks:
+    - name: Wait for wildcard DNS record to propagate
+      ansible.builtin.command:
+        cmd: dig +short A test.{{ pangolin_base_domain }} @8.8.8.8
+      delegate_to: localhost
+      register: _edge_wildcard_dns_result
+      until: _edge_wildcard_dns_result.stdout.strip() == _edge_create_reserved_ip.reserved_ip.ip
+      retries: 30
+      delay: 30  # 30 retries every 30 seconds = up to 15 minutes
+      changed_when: false
+      failed_when: _edge_wildcard_dns_result.rc != 0
+
+    - name: Install pangolin
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.pangolin
+      tags: [pangolin]
