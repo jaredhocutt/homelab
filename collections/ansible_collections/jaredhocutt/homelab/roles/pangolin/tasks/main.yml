@@ -1,0 +1,176 @@
+---
+# tasks file for jaredhocutt.homelab.pangolin
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ pangolin_image }}"
+      image_tag: "{{ pangolin_image_tag }}"
+    - image: "{{ pangolin_gerbil_image }}"
+      image_tag: "{{ pangolin_gerbil_image_tag }}"
+    - image: "{{ pangolin_traefik_image }}"
+      image_tag: "{{ pangolin_traefik_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ pangolin_name }}"
+    driver: bridge
+    disable_dns: false
+    opt:
+      isolate: "true"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ pangolin_volume_config }}"
+      options: "{{ pangolin_volume_config_options | default(omit) }}"
+    - name: "{{ pangolin_gerbil_volume_config }}"
+      options: "{{ pangolin_gerbil_volume_config_options | default(omit) }}"
+    - name: "{{ pangolin_traefik_volume_config }}"
+      options: "{{ pangolin_traefik_volume_config_options | default(omit) }}"
+    - name: "{{ pangolin_traefik_volume_letsencrypt }}"
+      options: "{{ pangolin_traefik_volume_letsencrypt_options | default(omit) }}"
+    - name: "{{ pangolin_traefik_volume_logs }}"
+      options: "{{ pangolin_traefik_volume_logs_options | default(omit) }}"
+  register: _pangolin_created_volumes
+
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ pangolin_secrets_combined | dict2items }}"
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
+  when: _pangolin_created_volumes.changed  # noqa: no-handler
+
+- name: Start config volume service to create it
+  ansible.builtin.systemd:
+    name: "{{ pangolin_volume_config }}-volume.service"
+    state: started
+  become: true
+
+- name: Get config volume info
+  containers.podman.podman_volume_info:
+    name: "{{ pangolin_volume_config }}"
+  become: true
+  register: _pangolin_config_volume_info
+
+- name: Create pangolin config file
+  ansible.builtin.template:
+    src: pangolin_config.yml.j2
+    dest: "{{ _pangolin_config_volume_info.volumes[0].Mountpoint }}/config.yml"
+    owner: root
+    group: root
+    mode: "0600"
+  become: true
+  notify: Restart {{ pangolin_name }}
+
+- name: Start traefik config volume service to create it
+  ansible.builtin.systemd:
+    name: "{{ pangolin_traefik_volume_config }}-volume.service"
+    state: started
+  become: true
+
+- name: Get traefik config volume info
+  containers.podman.podman_volume_info:
+    name: "{{ pangolin_traefik_volume_config }}"
+  become: true
+  register: _pangolin_traefik_config_volume_info
+
+- name: Create traefik config files
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ _pangolin_traefik_config_volume_info.volumes[0].Mountpoint }}/{{ item.dest }}"
+    owner: root
+    group: root
+    mode: "0600"
+  become: true
+  loop:
+    - src: traefik_config.yml.j2
+      dest: traefik_config.yml
+    - src: traefik_dynamic_config.yml.j2
+      dest: dynamic_config.yml
+  notify: Restart traefik for {{ pangolin_name }}
+
+- name: Create pangolin container
+  containers.podman.podman_container:
+    name: "{{ pangolin_name }}"
+    image: "{{ pangolin_image }}:{{ pangolin_image_tag }}"
+    network: "{{ pangolin_name }}.network"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
+    volumes:
+      - "{{ pangolin_volume_config }}.volume:/app/config"
+    healthcheck_interval: 10s
+    healthcheck_retries: 15
+    healthcheck_timeout: 10s
+    healthcheck: CMD curl -f http://localhost:3001/api/v1/
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
+    state: quadlet
+  notify: Restart {{ pangolin_name }}
+  become: true
+
+- name: Create gerbil container
+  containers.podman.podman_container:
+    name: "{{ pangolin_name }}-gerbil"
+    image: "{{ pangolin_gerbil_image }}:{{ pangolin_gerbil_image_tag }}"
+    network: "{{ pangolin_name }}.network"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='gerbil') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='gerbil') }}"
+    volumes:
+      - "{{ pangolin_gerbil_volume_config }}.volume:/var/config"
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    publish: "{{ pangolin_gerbil_ports }}"
+    command:
+      - --reachableAt=http://{{ pangolin_name }}-gerbil:3004
+      - --generateAndSaveKeyTo=/var/config/key
+      - --remoteConfig=http://{{ pangolin_name }}:3001/api/v1/
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='gerbil') }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='gerbil') }}"
+    state: quadlet
+  notify: Restart gerbil for {{ pangolin_name }}
+  become: true
+
+- name: Create traefik container
+  containers.podman.podman_container:
+    name: "{{ pangolin_name }}-traefik"
+    image: "{{ pangolin_traefik_image }}:{{ pangolin_traefik_image_tag }}"
+    network: "container:{{ pangolin_name }}-gerbil"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='traefik') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='traefik') }}"
+    volumes:
+      - "{{ pangolin_traefik_volume_config }}.volume:/etc/traefik:ro"
+      - "{{ pangolin_traefik_volume_letsencrypt }}.volume:/letsencrypt"
+      - "{{ pangolin_traefik_volume_logs }}.volume:/var/log/traefik"
+    command:
+      - --configFile=/etc/traefik/traefik_config.yml
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='traefik') }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='traefik') }}"
+    state: quadlet
+  notify: Restart traefik for {{ pangolin_name }}
+  become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

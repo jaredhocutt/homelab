@@ -1,0 +1,60 @@
+---
+# vars file for jaredhocutt.homelab.pangolin
+
+###############################################################################
+# Envrionment
+###############################################################################
+
+pangolin_container_env_defaults: {}
+
+pangolin_gerbil_container_env_defaults: {}
+
+pangolin_traefik_container_env_defaults: {}
+
+###############################################################################
+# Secrets
+###############################################################################
+
+pangolin_secrets_defaults: {}
+
+pangolin_secrets_combined: >-
+  {{ pangolin_secrets_defaults
+  | combine(pangolin_secrets, recursive=True) }}
+
+pangolin_container_secrets_defaults: []
+
+pangolin_gerbil_container_secrets_defaults: []
+
+pangolin_traefik_container_secrets_defaults: []
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+pangolin_container_labels_defaults: {}
+
+pangolin_gerbil_container_labels_defaults: {}
+
+pangolin_traefik_container_labels_defaults: {}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+pangolin_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+
+pangolin_gerbil_quadlet_options_depends:
+  - |
+    [Unit]
+    Requires={{ pangolin_name }}.service
+    After={{ pangolin_name }}.service
+
+pangolin_gerbil_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + pangolin_gerbil_quadlet_options_depends }}"
+
+pangolin_traefik_quadlet_options_depends:
+  - |
+    [Unit]
+    Requires={{ pangolin_name }}-gerbil.service
+    After={{ pangolin_name }}-gerbil.service
+
+pangolin_traefik_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + pangolin_traefik_quadlet_options_depends }}"

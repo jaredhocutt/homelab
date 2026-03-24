@@ -1,0 +1,46 @@
+---
+# defaults file for jaredhocutt.homelab.pangolin
+
+pangolin_name: pangolin
+
+pangolin_image: docker.io/fosrl/pangolin
+pangolin_image_tag: latest
+pangolin_gerbil_image: docker.io/fosrl/gerbil
+pangolin_gerbil_image_tag: latest
+pangolin_traefik_image: docker.io/library/traefik
+pangolin_traefik_image_tag: v3.6
+
+pangolin_volume_config: "{{ pangolin_name }}-config"
+pangolin_gerbil_volume_config: "{{ pangolin_name }}-gerbil-config"
+pangolin_traefik_volume_config: "{{ pangolin_name }}-traefik-config"
+pangolin_traefik_volume_letsencrypt: "{{ pangolin_name }}-traefik-letsencrypt"
+pangolin_traefik_volume_logs: "{{ pangolin_name }}-traefik-logs"
+
+pangolin_gerbil_ports:
+  - 80:80
+  - 443:443
+  - 51820:51820/udp
+  - 21820:21820/udp
+
+pangolin_secrets: {}
+
+pangolin_container_env: {}
+pangolin_container_secrets: []
+pangolin_container_labels: {}
+pangolin_container_quadlet_options: []
+
+pangolin_gerbil_container_env: {}
+pangolin_gerbil_container_secrets: []
+pangolin_gerbil_container_labels: {}
+pangolin_gerbil_container_quadlet_options: []
+
+pangolin_traefik_container_env: {}
+pangolin_traefik_container_secrets: []
+pangolin_traefik_container_labels: {}
+pangolin_traefik_container_quadlet_options: []
+
+pangolin_log_level: info
+pangolin_traefik_log_level: "{{ pangolin_log_level }}"
+
+pangolin_host: "{{ pangolin_name }}.{{ pangolin_base_domain }}"
+pangolin_url: https://{{ pangolin_host }}

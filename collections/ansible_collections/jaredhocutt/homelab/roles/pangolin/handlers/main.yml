@@ -1,0 +1,26 @@
+---
+# handlers file for jaredhocutt.homelab.pangolin
+
+- name: Restart {{ pangolin_name }}
+  ansible.builtin.systemd:
+    name: "{{ pangolin_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart gerbil for {{ pangolin_name }}
+  ansible.builtin.systemd:
+    name: "{{ pangolin_name }}-gerbil.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart traefik for {{ pangolin_name }}
+  ansible.builtin.systemd:
+    name: "{{ pangolin_name }}-traefik.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

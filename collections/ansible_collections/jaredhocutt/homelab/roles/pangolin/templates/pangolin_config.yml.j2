@@ -1,0 +1,45 @@
+{{ ansible_managed | comment }}
+
+gerbil:
+  start_port: 51820
+  base_endpoint: "{{ pangolin_host }}"
+
+app:
+  dashboard_url: "{{ pangolin_url }}"
+  log_level: "{{ pangolin_log_level }}"
+  telemetry:
+    anonymous_usage: false
+
+domains:
+  domain1:
+    base_domain: "{{ pangolin_base_domain }}"
+    cert_resolver: "letsencrypt"
+
+server:
+  secret: "{{ pangolin_server_secret }}"
+  cors:
+    origins:
+      - "{{ pangolin_url }}"
+    methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - PATCH
+    allowed_headers:
+      - X-CSRF-Token
+      - Content-Type
+    credentials: false
+
+email:
+  smtp_host: {{ pangolin_smtp_host }}
+  smtp_port: {{ pangolin_smtp_port }}
+  smtp_user: {{ pangolin_smtp_user }}
+  smtp_pass: {{ pangolin_smtp_password }}
+  no_reply: {{ pangolin_no_reply }}
+
+flags:
+  require_email_verification: false
+  disable_signup_without_invite: true
+  disable_user_create_org: false
+  allow_raw_resources: true
