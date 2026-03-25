@@ -8,7 +8,10 @@ authentik_postgres_user: authentik
 # Envrionment
 ###############################################################################
 
-authentik_container_env_defaults:
+authentik_server_container_env_defaults:
+  AUTHENTIK_POSTGRESQL__HOST: "{{ authentik_name }}-postgres"
+
+authentik_worker_container_env_defaults:
   AUTHENTIK_POSTGRESQL__HOST: "{{ authentik_name }}-postgres"
 
 authentik_postgres_container_env_defaults: {}
@@ -27,7 +30,7 @@ authentik_secrets_combined: >-
   {{ authentik_secrets_defaults
   | combine(authentik_secrets, recursive=True) }}
 
-authentik_container_secrets_defaults:
+authentik_server_container_secrets_defaults:
   - authentik_postgres_db_name,type=env,target=AUTHENTIK_POSTGRESQL__NAME
   - authentik_postgres_user,type=env,target=AUTHENTIK_POSTGRESQL__USER
   - authentik_postgres_password,type=env,target=AUTHENTIK_POSTGRESQL__PASSWORD
@@ -48,7 +51,7 @@ authentik_postgres_container_secrets_defaults:
 # Container Labels
 ###############################################################################
 
-authentik_container_labels_defaults: >
+authentik_server_container_labels_defaults: >
   {{ authentik_traefik_enable
   | ternary(lookup('jaredhocutt.homelab.traefik_labels', authentik_name, authentik_traefik_host, '9000'), {}) }}
 
@@ -60,11 +63,18 @@ authentik_postgres_container_labels_defaults: {}
 # Quadlet Options
 ###############################################################################
 
-authentik_quadlet_options_depends:
+authentik_server_quadlet_options_depends:
   - |
     [Unit]
     Requires={{ authentik_name }}-postgres.service
     After={{ authentik_name }}-postgres.service
-authentik_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + authentik_quadlet_options_depends }}"
+authentik_server_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + authentik_server_quadlet_options_depends }}"
+
+authentik_worker_quadlet_options_depends:
+  - |
+    [Unit]
+    Requires={{ authentik_name }}-postgres.service
+    After={{ authentik_name }}-postgres.service
+authentik_worker_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + authentik_worker_quadlet_options_depends }}"
 
 authentik_postgres_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

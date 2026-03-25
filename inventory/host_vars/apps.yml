@@ -8,11 +8,33 @@ shared_volume_download_books: download-books
 # authentik
 ###############################################################################
 
-authentik_image_tag: "2025.12.2"  # skopeo list-tags docker://ghcr.io/goauthentik/server | jq -r '.Tags[] | select(test("^[0-9]"))'
+authentik_image_tag: "2026.2.1"  # skopeo list-tags docker://ghcr.io/goauthentik/server | jq -r '.Tags[] | select(test("^[0-9]"))'
 authentik_postgres_image_tag: "16.11"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
 
 authentik_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.authentik_postgres_password) }}"
 authentik_secret_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.authentik_secret_key) }}"
+
+authentik_server_container_env:
+  AUTHENTIK_EMAIL__HOST: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.authentik_email_host) }}"
+  AUTHENTIK_EMAIL__PORT: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.authentik_email_port) }}"
+  AUTHENTIK_EMAIL__USERNAME: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.authentik_email_username) }}"
+  AUTHENTIK_EMAIL__FROM: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.authentik_email_from) }}"
+  AUTHENTIK_EMAIL__USE_SSL: "true"
+authentik_worker_container_env: "{{ authentik_server_container_env }}"
+
+authentik_secrets:
+  authentik_email_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.authentik_email_password) }}"
+authentik_server_container_secrets:
+  - authentik_email_password,type=env,target=AUTHENTIK_EMAIL__PASSWORD
+authentik_worker_container_secrets: "{{ authentik_server_container_secrets }}"
+
+newt_authentik_secrets:
+  newt_authentik_newt_id: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.newt_authentik_newt_id) }}"
+  newt_authentik_newt_secret: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.newt_authentik_newt_secret) }}"
+newt_authentik_container_secrets:
+  - newt_authentik_newt_id,type=env,target=NEWT_ID
+  - newt_authentik_newt_secret,type=env,target=NEWT_SECRET
+
 
 ###############################################################################
 # audiobookshelf
@@ -198,6 +220,12 @@ newt_palworld_secrets:
 newt_palworld_container_secrets:
   - newt_palworld_newt_id,type=env,target=NEWT_ID
   - newt_palworld_newt_secret,type=env,target=NEWT_SECRET
+
+###############################################################################
+# prowlarr
+###############################################################################
+
+prowlarr_image_tag: version-2.3.0.5236  # skopeo list-tags docker://lscr.io/linuxserver/prowlarr | jq -r '.Tags[] | select(test("^[0-9]"))'
 
 ###############################################################################
 # shelfmark

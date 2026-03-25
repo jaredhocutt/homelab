@@ -20,6 +20,16 @@
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.authentik
       tags: [authentik]
+
+    - name: Install authentik newt
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.newt
+      vars:
+        newt_name: newt-authentik
+        newt_attach_to: authentik-server
+        newt_secrets: "{{ newt_authentik_secrets }}"
+        newt_container_secrets: "{{ newt_authentik_container_secrets }}"
+      tags: [newt, authentik]
   tags: [foundation_apps]
 
 - name: Deploy and configure apps
@@ -30,7 +40,7 @@
         name: jaredhocutt.homelab.audiobookshelf
       tags: [audiobookshelf]
 
-    - name: Install newt for audiobookshelf
+    - name: Install audiobookshelf newt
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.newt
       vars:
@@ -105,7 +115,7 @@
         name: jaredhocutt.homelab.palworld
       tags: [palworld]
 
-    - name: Install newt for palworld
+    - name: Install palworld newt
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.newt
       vars:
@@ -114,6 +124,11 @@
         newt_secrets: "{{ newt_palworld_secrets }}"
         newt_container_secrets: "{{ newt_palworld_container_secrets }}"
       tags: [newt, palworld]
+
+    - name: Install prowlarr
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.prowlarr
+      tags: [prowlarr]
 
     - name: Install shelfmark
       ansible.builtin.import_role:
