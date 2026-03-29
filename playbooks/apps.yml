@@ -150,6 +150,11 @@
         name: jaredhocutt.homelab.tandoor
       tags: [tandoor]
 
+    - name: Install tautulli
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.tautulli
+      tags: [tautulli]
+
     - name: Install transfer_sh
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.transfer_sh

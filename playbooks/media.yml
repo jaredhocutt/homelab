@@ -19,11 +19,6 @@
 - name: Deploy and configure apps
   hosts: media
   tasks:
-    - name: Install audiobookshelf
-      ansible.builtin.import_role:
-        name: jaredhocutt.homelab.audiobookshelf
-      tags: [audiobookshelf]
-
     - name: Install kometa
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.kometa
@@ -33,11 +28,6 @@
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.overseerr
       tags: [overseerr]
-
-    - name: Install prowlarr
-      ansible.builtin.import_role:
-        name: jaredhocutt.homelab.prowlarr
-      tags: [prowlarr]
 
     - name: Install radarr
       ansible.builtin.import_role:
@@ -53,11 +43,6 @@
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.sonarr
       tags: [sonarr]
-
-    - name: Install tautulli
-      ansible.builtin.import_role:
-        name: jaredhocutt.homelab.tautulli
-      tags: [tautulli]
 
     - name: Install wizarr
       ansible.builtin.import_role:
