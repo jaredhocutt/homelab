@@ -100,7 +100,7 @@ def parse_version(tag: str) -> tuple:
     """
     # Remove common prefixes
     cleaned = tag
-    for prefix in ("v", "version-v", "version-"):
+    for prefix in ("version-v", "version-", "v"):
         if cleaned.lower().startswith(prefix):
             cleaned = cleaned[len(prefix):]
             break
