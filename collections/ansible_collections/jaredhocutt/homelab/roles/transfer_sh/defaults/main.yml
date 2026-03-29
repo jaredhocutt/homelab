@@ -1,0 +1,21 @@
+---
+# defaults file for jaredhocutt.homelab.transfer_sh
+
+transfer_sh_name: transfer-sh
+
+transfer_sh_image: docker.io/dutchcoders/transfer.sh
+transfer_sh_image_tag: latest-noroot
+
+transfer_sh_volume_transfers: "{{ transfer_sh_name }}-transfers"
+
+transfer_sh_traefik_enable: true
+transfer_sh_traefik_host: "{{ transfer_sh_name }}.{{ common_traefik_domain }}"
+transfer_sh_ports:
+  - 8080:8080
+
+transfer_sh_secrets: {}
+
+transfer_sh_container_env: {}
+transfer_sh_container_secrets: []
+transfer_sh_container_labels: {}
+transfer_sh_container_quadlet_options: []

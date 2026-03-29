@@ -150,6 +150,11 @@
         name: jaredhocutt.homelab.tandoor
       tags: [tandoor]
 
+    - name: Install transfer_sh
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.transfer_sh
+      tags: [transfer_sh]
+
     - name: Install uptime_kuma
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.uptime_kuma

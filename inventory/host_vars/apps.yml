@@ -306,6 +306,12 @@ traefik_container_secrets:
   - traefik_letsencrypt_cloudflare_zone_api_key,type=env,target=CF_ZONE_API_TOKEN
 
 ###############################################################################
+# transfer_sh
+###############################################################################
+
+transfer_sh_image_tag: v1.6.1-noroot  # skopeo list-tags docker://docker.io/dutchcoders/transfer.sh | jq -r '.Tags[] | select(test("^v[0-9\\.]+\\-noroot$"))'
+
+###############################################################################
 # uptime_kuma
 ###############################################################################
 

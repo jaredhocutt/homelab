@@ -1,0 +1,67 @@
+---
+# tasks file for jaredhocutt.homelab.transfer_sh
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ transfer_sh_image }}"
+      image_tag: "{{ transfer_sh_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ transfer_sh_name }}"
+    driver: bridge
+    disable_dns: false
+    opt:
+      isolate: "true"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ transfer_sh_volume_transfers }}"
+      options: "{{ transfer_sh_volume_transfers_options | default(omit) }}"
+
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  no_log: true
+  loop: "{{ transfer_sh_secrets_combined | dict2items }}"
+
+- name: Create transfer_sh container
+  containers.podman.podman_container:
+    name: "{{ transfer_sh_name }}"
+    image: "{{ transfer_sh_image }}:{{ transfer_sh_image_tag }}"
+    network:
+      - "{{ transfer_sh_name }}.network"
+      - "{{ transfer_sh_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
+    volumes:
+      - "{{ transfer_sh_volume_transfers }}:/transfers"
+    publish: "{{ transfer_sh_traefik_enable | ternary(omit, transfer_sh_ports) }}"
+    command:
+      - --provider local
+      - --basedir /transfers
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
+    state: quadlet
+  notify: Restart {{ transfer_sh_name }}
+  become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

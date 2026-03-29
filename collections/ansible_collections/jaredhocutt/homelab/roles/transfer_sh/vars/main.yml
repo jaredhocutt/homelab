@@ -1,0 +1,34 @@
+---
+# vars file for jaredhocutt.homelab.transfer_sh
+
+###############################################################################
+# Envrionment
+###############################################################################
+
+transfer_sh_container_env_defaults: {}
+
+###############################################################################
+# Secrets
+###############################################################################
+
+transfer_sh_secrets_defaults: {}
+
+transfer_sh_secrets_combined: >-
+  {{ transfer_sh_secrets_defaults
+  | combine(transfer_sh_secrets, recursive=True) }}
+
+transfer_sh_container_secrets_defaults: []
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+transfer_sh_container_labels_defaults: >
+  {{ transfer_sh_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', transfer_sh_name, transfer_sh_traefik_host, '8080'), {}) }}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+transfer_sh_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

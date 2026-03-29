@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.transfer_sh
+
+- name: Restart {{ transfer_sh_name }}
+  ansible.builtin.systemd:
+    name: "{{ transfer_sh_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
