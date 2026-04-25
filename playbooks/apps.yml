@@ -90,6 +90,16 @@
         name: jaredhocutt.homelab.homarr
       tags: [homarr]
 
+    - name: Install homarr newt
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.newt
+      vars:
+        newt_name: newt-homarr
+        newt_attach_to: homarr
+        newt_secrets: "{{ newt_homarr_secrets }}"
+        newt_container_secrets: "{{ newt_homarr_container_secrets }}"
+      tags: [newt, homarr]
+
     - name: Install karakeep
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.karakeep
