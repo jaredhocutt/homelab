@@ -247,6 +247,19 @@ newt_palworld_container_secrets:
 prowlarr_image_tag: version-2.3.0.5236  # skopeo list-tags docker://lscr.io/linuxserver/prowlarr | jq -r '.Tags[] | select(test("^version-[0-9]"))'
 
 ###############################################################################
+# seerr
+###############################################################################
+
+seerr_image_tag: v3.2.0  # skopeo list-tags docker://ghcr.io/seerr-team/seerr | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+
+newt_seerr_secrets:
+  newt_seerr_newt_id: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.newt_seerr_newt_id) }}"
+  newt_seerr_newt_secret: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.newt_seerr_newt_secret) }}"
+newt_seerr_container_secrets:
+  - newt_seerr_newt_id,type=env,target=NEWT_ID
+  - newt_seerr_newt_secret,type=env,target=NEWT_SECRET
+
+###############################################################################
 # shelfmark
 ###############################################################################
 
