@@ -155,6 +155,26 @@ homarr_image_tag: v1.59.2  # skopeo list-tags docker://ghcr.io/homarr-labs/homar
 homarr_api_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.homarr_api_key) }}"
 homarr_secret_encryption_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.homarr_secret_encryption_key) }}"
 
+homarr_container_env:
+  AUTH_PROVIDERS: oidc,credentials
+  AUTH_OIDC_CLIENT_ID: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.homarr_auth_oidc_client_id) }}"
+  AUTH_OIDC_ISSUER: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.homarr_auth_oidc_issuer) }}"
+  AUTH_OIDC_URI: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.homarr_auth_oidc_uri) }}"
+  AUTH_OIDC_CLIENT_NAME: Hocutt Authentication
+  AUTH_OIDC_NAME_ATTRIBUTE_OVERWRITE: email
+
+homarr_secrets:
+  homarr_auth_oidc_client_secret: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.homarr_auth_oidc_client_secret) }}"
+homarr_container_secrets:
+  - homarr_auth_oidc_client_secret,type=env,target=AUTH_OIDC_CLIENT_SECRET
+
+newt_homarr_secrets:
+  newt_homarr_newt_id: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.newt_homarr_newt_id) }}"
+  newt_homarr_newt_secret: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.newt_homarr_newt_secret) }}"
+newt_homarr_container_secrets:
+  - newt_homarr_newt_id,type=env,target=NEWT_ID
+  - newt_homarr_newt_secret,type=env,target=NEWT_SECRET
+
 ###############################################################################
 # karakeep
 ###############################################################################
