@@ -8,7 +8,7 @@ shared_volume_download_books: download-books
 # authentik
 ###############################################################################
 
-authentik_image_tag: "2026.2.1"  # skopeo list-tags docker://ghcr.io/goauthentik/server | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
+authentik_image_tag: "2026.2.2"  # skopeo list-tags docker://ghcr.io/goauthentik/server | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
 authentik_postgres_image_tag: "16.13"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
 
 authentik_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.authentik_postgres_password) }}"
