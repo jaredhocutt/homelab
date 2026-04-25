@@ -45,7 +45,6 @@ newt_authentik_container_secrets:
   - newt_authentik_newt_id,type=env,target=NEWT_ID
   - newt_authentik_newt_secret,type=env,target=NEWT_SECRET
 
-
 ###############################################################################
 # audiobookshelf
 ###############################################################################
