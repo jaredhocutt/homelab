@@ -196,7 +196,7 @@ karakeep_container_secrets:
 # newt
 ###############################################################################
 
-newt_image_tag: "1.10.3"  # skopeo list-tags docker://docker.io/fosrl/newt | jq -r '.Tags[] | select(test("^[0-9]"))'
+newt_image_tag: "1.11.0"  # skopeo list-tags docker://docker.io/fosrl/newt | jq -r '.Tags[] | select(test("^[0-9]"))'
 
 newt_endpoint: https://pangolin.{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin_base_domain) }}
 
