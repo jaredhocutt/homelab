@@ -39,7 +39,7 @@ newt_authentik_container_secrets:
 # audiobookshelf
 ###############################################################################
 
-audiobookshelf_image_tag: "2.33.1"  # skopeo list-tags docker://ghcr.io/advplyr/audiobookshelf | jq -r '.Tags[] | select(test("^[0-9]"))'
+audiobookshelf_image_tag: "2.33.2"  # skopeo list-tags docker://ghcr.io/advplyr/audiobookshelf | jq -r '.Tags[] | select(test("^[0-9]"))'
 
 newt_audiobookshelf_secrets:
   newt_audiobookshelf_newt_id: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.newt_audiobookshelf_newt_id) }}"
@@ -63,7 +63,7 @@ backrest_container_env:
 # bar_assistant
 ###############################################################################
 
-bar_assistant_image_tag: "5.13.2"  # skopeo list-tags docker://docker.io/barassistant/server | jq -r '.Tags[] | select(test("^5\\.[0-9]"))'
+bar_assistant_image_tag: "5.14.0"  # skopeo list-tags docker://docker.io/barassistant/server | jq -r '.Tags[] | select(test("^5\\.[0-9]"))'
 bar_assistant_salt_rim_image_tag: "4.14.1"  # skopeo list-tags docker://docker.io/barassistant/salt-rim | jq -r '.Tags[] | select(test("^4\\.[0-9]"))'
 bar_assistant_redis_image_tag: "8.6.2"  # skopeo list-tags docker://docker.io/library/redis | jq -r '.Tags[] | select(test("^[0-9]\\.[0-9\\.]*$"))'
 bar_assistant_meilisearch_image_tag: v1.15.2  # skopeo list-tags docker://docker.io/getmeili/meilisearch | jq -r '.Tags[] | select(test("^v1.15"))'
@@ -74,7 +74,7 @@ bar_assistant_meilisearch_master_key: "{{ lookup('bitwarden.secrets.lookup', bws
 # bentopdf
 ###############################################################################
 
-bentopdf_image_tag: v2.8.2  # skopeo list-tags docker://ghcr.io/alam00000/bentopdf-simple | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+bentopdf_image_tag: v2.8.4  # skopeo list-tags docker://ghcr.io/alam00000/bentopdf-simple | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
 
 ###############################################################################
 # calibre_web_automated
@@ -97,7 +97,7 @@ calibre_web_automated_container_secrets:
 # changedetection
 ###############################################################################
 
-changedetection_image_tag: "0.54.9"  # skopeo list-tags docker://ghcr.io/dgtlmoon/changedetection.io | jq -r '.Tags[] | select(test("^[0-9]"))'
+changedetection_image_tag: "0.54.10"  # skopeo list-tags docker://ghcr.io/dgtlmoon/changedetection.io | jq -r '.Tags[] | select(test("^[0-9]"))'
 changedetection_browser_image_tag: "0.0.3"  # skopeo list-tags docker://docker.io/dgtlmoon/sockpuppetbrowser | jq -r '.Tags[] | select(test("^[0-9]"))'
 
 ###############################################################################
@@ -140,7 +140,7 @@ healthchecks_container_secrets:
 # homarr
 ###############################################################################
 
-homarr_image_tag: v1.59.2  # skopeo list-tags docker://ghcr.io/homarr-labs/homarr | jq -r '.Tags[] | select(test("^v[0-9]"))'
+homarr_image_tag: v1.59.3  # skopeo list-tags docker://ghcr.io/homarr-labs/homarr | jq -r '.Tags[] | select(test("^v[0-9]"))'
 
 homarr_api_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.homarr_api_key) }}"
 homarr_secret_encryption_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.homarr_secret_encryption_key) }}"
@@ -186,7 +186,7 @@ karakeep_container_secrets:
 # newt
 ###############################################################################
 
-newt_image_tag: "1.11.0"  # skopeo list-tags docker://docker.io/fosrl/newt | jq -r '.Tags[] | select(test("^[0-9]"))'
+newt_image_tag: "1.11.0"  # skopeo list-tags docker://docker.io/fosrl/newt | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
 
 newt_endpoint: https://pangolin.{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin_base_domain) }}
 
@@ -194,7 +194,7 @@ newt_endpoint: https://pangolin.{{ lookup('bitwarden.secrets.lookup', bws_uuid.p
 # n8n
 ###############################################################################
 
-n8n_image_tag: "2.17.2"  # skopeo list-tags docker://docker.n8n.io/n8nio/n8n | jq -r '.Tags[] | select(test("^2\\.[0-9\\.]+$"))'
+n8n_image_tag: "2.18.3"  # skopeo list-tags docker://docker.n8n.io/n8nio/n8n | jq -r '.Tags[] | select(test("^2\\.[0-9\\.]+$"))'
 n8n_postgres_image_tag: "16.13"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
 
 n8n_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.n8n_postgres_password) }}"
@@ -206,7 +206,7 @@ n8n_container_env:
 # nocodb
 ###############################################################################
 
-nocodb_image_tag: "2026.04.1"  # skopeo list-tags docker://docker.io/nocodb/nocodb | jq -r '.Tags[] | select(test("^[0-9]"))'
+nocodb_image_tag: "2026.04.3"  # skopeo list-tags docker://docker.io/nocodb/nocodb | jq -r '.Tags[] | select(test("^[0-9]"))'
 nocodb_postgres_image_tag: "16.13"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
 
 nocodb_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.nocodb_postgres_password) }}"
@@ -215,7 +215,7 @@ nocodb_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.nocodb
 # open_webui
 ###############################################################################
 
-open_webui_image_tag: v0.8.12  # skopeo list-tags docker://ghcr.io/open-webui/open-webui | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+open_webui_image_tag: v0.9.2  # skopeo list-tags docker://ghcr.io/open-webui/open-webui | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
 
 ###############################################################################
 # palworld
@@ -291,7 +291,7 @@ snipe_it_container_secrets:
 # stirling_pdf
 ###############################################################################
 
-stirling_pdf_image_tag: 2.9.2-fat  # skopeo list-tags docker://docker.stirlingpdf.com/stirlingtools/stirling-pdf | jq -r '.Tags[] | select(test("^[0-9\\.]+-fat$"))'
+stirling_pdf_image_tag: 2.10.0-fat  # skopeo list-tags docker://docker.stirlingpdf.com/stirlingtools/stirling-pdf | jq -r '.Tags[] | select(test("^[0-9\\.]+-fat$"))'
 
 stirling_pdf_container_env:
   DOCKER_ENABLE_SECURITY: "false"
@@ -316,7 +316,7 @@ tautulli_image_tag: version-v2.17.0  # skopeo list-tags docker://lscr.io/linuxse
 # traefik
 ###############################################################################
 
-traefik_image_tag: v3.6.13  # skopeo list-tags docker://docker.io/library/traefik | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+traefik_image_tag: v3.6.14  # skopeo list-tags docker://docker.io/library/traefik | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
 
 traefik_traefik_host: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.traefik_traefik_host) }}"
 
