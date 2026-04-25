@@ -12,6 +12,7 @@ tandoor_container_env_defaults:
   DB_ENGINE: django.db.backends.postgresql
   POSTGRES_HOST: "{{ tandoor_name }}-postgres"
   POSTGRES_PORT: "5432"
+  ALLOWED_HOSTS: "{{ tandoor_allowed_hosts }}"
 
 tandoor_postgres_container_env_defaults: {}
 

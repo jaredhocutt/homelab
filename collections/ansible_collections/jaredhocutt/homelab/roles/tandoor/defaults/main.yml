@@ -28,3 +28,5 @@ tandoor_postgres_container_env: {}
 tandoor_postgres_container_secrets: []
 tandoor_postgres_container_labels: {}
 tandoor_postgres_container_quadlet_options: []
+
+tandoor_allowed_hosts: "{{ tandoor_traefik_host }}"
