@@ -77,6 +77,11 @@
     volumes:
       - "{{ nocodb_volume_data }}.volume:/usr/app/data"
     publish: "{{ nocodb_traefik_enable | ternary(omit, nocodb_ports) }}"
+    healthcheck_interval: 30s
+    healthcheck_retries: 5
+    healthcheck_start_period: 30s
+    healthcheck_timeout: 10s
+    healthcheck: CMD-SHELL wget -q --spider http://localhost:8080/api/v1/health || exit 1
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"

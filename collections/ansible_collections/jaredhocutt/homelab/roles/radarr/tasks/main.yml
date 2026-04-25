@@ -58,6 +58,11 @@
       - "{{ radarr_volume_download }}:/mnt/download"
       - "{{ radarr_volume_media }}:/mnt/media"
     publish: "{{ radarr_traefik_enable | ternary(omit, radarr_ports) }}"
+    healthcheck_interval: 30s
+    healthcheck_retries: 5
+    healthcheck_start_period: 20s
+    healthcheck_timeout: 10s
+    healthcheck: CMD-SHELL curl -f http://localhost:7878/ping || exit 1
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"

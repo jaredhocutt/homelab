@@ -124,6 +124,11 @@
       - "{{ immich_volume_data }}.volume:/data"
       - /etc/localtime:/etc/localtime:ro
     publish: "{{ immich_traefik_enable | ternary(omit, immich_ports) }}"
+    healthcheck_interval: 30s
+    healthcheck_retries: 5
+    healthcheck_start_period: 30s
+    healthcheck_timeout: 10s
+    healthcheck: CMD-SHELL curl -f http://localhost:2283/api/server/ping || exit 1
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"

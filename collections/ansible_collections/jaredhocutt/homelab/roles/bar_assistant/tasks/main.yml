@@ -59,6 +59,11 @@
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='redis') }}"
     volumes:
       - "{{ bar_assistant_redis_volume_data }}.volume:/data"
+    healthcheck_interval: 30s
+    healthcheck_retries: 5
+    healthcheck_start_period: 20s
+    healthcheck_timeout: 3s
+    healthcheck: CMD-SHELL redis-cli ping | grep PONG
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='redis') }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='redis') }}"
@@ -78,6 +83,11 @@
     volumes:
       - "{{ bar_assistant_meilisearch_volume_data }}.volume:/meili_data"
     publish: "{{ bar_assistant_traefik_enable | ternary(omit, bar_assistant_meilisearch_ports) }}"
+    healthcheck_interval: 30s
+    healthcheck_retries: 5
+    healthcheck_start_period: 20s
+    healthcheck_timeout: 5s
+    healthcheck: CMD-SHELL curl -f http://localhost:7700/health
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='meilisearch') }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='meilisearch') }}"

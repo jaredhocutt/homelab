@@ -53,6 +53,11 @@
       - "{{ portainer_volume_config }}:/data"
       - /var/run/podman.sock:/var/run/docker.sock
     publish: "{{ portainer_traefik_enable | ternary(omit, portainer_ports) }}"
+    healthcheck_interval: 30s
+    healthcheck_retries: 5
+    healthcheck_start_period: 20s
+    healthcheck_timeout: 5s
+    healthcheck: CMD-SHELL wget -q --spider http://localhost:9000 || exit 1
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     privileged: true
     quadlet_file_mode: "0600"
