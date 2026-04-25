@@ -301,7 +301,7 @@ snipe_it_container_secrets:
 # stirling_pdf
 ###############################################################################
 
-stirling_pdf_image_tag: 2.8.0-fat  # skopeo list-tags docker://docker.stirlingpdf.com/stirlingtools/stirling-pdf | jq -r '.Tags[] | select(test("^[0-9\\.]+-fat$"))'
+stirling_pdf_image_tag: 2.9.2-fat  # skopeo list-tags docker://docker.stirlingpdf.com/stirlingtools/stirling-pdf | jq -r '.Tags[] | select(test("^[0-9\\.]+-fat$"))'
 
 stirling_pdf_container_env:
   DOCKER_ENABLE_SECURITY: "false"
