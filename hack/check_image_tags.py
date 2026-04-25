@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """
-Check for updated container image tags in apps.yml.
+Check for updated container image tags in a vars file.
 
-Parses the apps.yml file, finds variables ending in _image_tag that have
+Parses a YAML vars file, finds variables ending in _image_tag that have
 skopeo commands in their comments, runs those commands to get the latest
 available tags, and compares them to the current values.
+
+If no file is specified, presents an interactive list of inventory files.
 """
 
 import argparse
@@ -146,13 +148,12 @@ def compare_versions(current: str, latest: str) -> str:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Check for updated container image tags in apps.yml"
+        description="Check for updated container image tags in a vars file"
     )
     parser.add_argument(
         "file",
         nargs="?",
-        default="inventory/host_vars/apps.yml",
-        help="Path to the YAML file to check (default: inventory/host_vars/apps.yml)",
+        help="Path to the YAML file to check (if omitted, presents a list of inventory files)",
     )
     parser.add_argument(
         "--timeout",
@@ -184,19 +185,47 @@ def main():
         GREEN = YELLOW = RED = CYAN = RESET = BOLD = ""
 
     # Resolve file path
-    file_path = Path(args.file)
-    if not file_path.is_absolute():
-        # Try relative to script location first, then current directory
-        script_dir = Path(__file__).parent.parent
-        if (script_dir / file_path).exists():
-            file_path = script_dir / file_path
-        elif not file_path.exists():
-            print(f"{RED}Error: File not found: {file_path}{RESET}", file=sys.stderr)
+    script_dir = Path(__file__).parent.parent
+
+    if args.file is None:
+        # Discover inventory vars files and let the user pick
+        inventory_dir = script_dir / "inventory"
+        candidates = sorted(
+            p
+            for p in inventory_dir.rglob("*.yml")
+            if p.name != "hosts.yml"
+        )
+        if not candidates:
+            print(f"{RED}Error: No YAML files found in {inventory_dir}{RESET}", file=sys.stderr)
             sys.exit(1)
 
-    if not file_path.exists():
-        print(f"{RED}Error: File not found: {file_path}{RESET}", file=sys.stderr)
-        sys.exit(1)
+        print(f"{BOLD}Select a vars file to check:{RESET}\n")
+        for i, candidate in enumerate(candidates, 1):
+            print(f"  {CYAN}{i}{RESET}) {candidate.relative_to(script_dir)}")
+        print()
+
+        try:
+            choice = input(f"{BOLD}Enter number [1-{len(candidates)}]: {RESET}")
+            idx = int(choice) - 1
+            if idx < 0 or idx >= len(candidates):
+                raise ValueError
+            file_path = candidates[idx]
+        except (ValueError, EOFError, KeyboardInterrupt):
+            print(f"\n{RED}Invalid selection.{RESET}", file=sys.stderr)
+            sys.exit(1)
+    else:
+        file_path = Path(args.file)
+        if not file_path.is_absolute():
+            # Try relative to script location first, then current directory
+            if (script_dir / file_path).exists():
+                file_path = script_dir / file_path
+            elif not file_path.exists():
+                print(f"{RED}Error: File not found: {file_path}{RESET}", file=sys.stderr)
+                sys.exit(1)
+
+        if not file_path.exists():
+            print(f"{RED}Error: File not found: {file_path}{RESET}", file=sys.stderr)
+            sys.exit(1)
 
     # Parse the file
     image_tags = parse_image_tag_lines(file_path)
