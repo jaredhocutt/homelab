@@ -7,6 +7,7 @@
 
 newt_container_env_defaults:
   PANGOLIN_ENDPOINT: "{{ newt_endpoint }}"
+  HEALTH_FILE: /tmp/healthy
 
 ###############################################################################
 # Secrets
