@@ -326,7 +326,7 @@ tautulli_image_tag: version-v2.17.0  # skopeo list-tags docker://lscr.io/linuxse
 # traefik
 ###############################################################################
 
-traefik_image_tag: v3.6.12  # skopeo list-tags docker://docker.io/library/traefik | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+traefik_image_tag: v3.6.13  # skopeo list-tags docker://docker.io/library/traefik | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
 
 traefik_traefik_host: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.traefik_traefik_host) }}"
 
