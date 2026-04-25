@@ -140,6 +140,21 @@
         name: jaredhocutt.homelab.prowlarr
       tags: [prowlarr]
 
+    - name: Install seerr
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.seerr
+      tags: [seerr]
+
+    - name: Install seerr newt
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.newt
+      vars:
+        newt_name: newt-seerr
+        newt_attach_to: seerr
+        newt_secrets: "{{ newt_seerr_secrets }}"
+        newt_container_secrets: "{{ newt_seerr_container_secrets }}"
+      tags: [newt, seerr]
+
     - name: Install shelfmark
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.shelfmark
