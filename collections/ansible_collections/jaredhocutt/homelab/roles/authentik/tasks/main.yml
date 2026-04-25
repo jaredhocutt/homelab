@@ -31,8 +31,8 @@
     state: quadlet
   become: true
   loop:
-    - name: "{{ authentik_volume_media }}"
-      options: "{{ authentik_volume_media_options | default(omit) }}"
+    - name: "{{ authentik_volume_data }}"
+      options: "{{ authentik_volume_data_options | default(omit) }}"
     - name: "{{ authentik_volume_certs }}"
       options: "{{ authentik_volume_certs_options | default(omit) }}"
     - name: "{{ authentik_volume_templates }}"
@@ -79,10 +79,15 @@
     env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='server') }}"
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='server') }}"
     volumes:
-      - "{{ authentik_volume_media }}.volume:/media"
+      - "{{ authentik_volume_data }}.volume:/data"
       - "{{ authentik_volume_templates }}.volume:/templates"
     publish: "{{ authentik_traefik_enable | ternary(omit, authentik_ports) }}"
     command: server
+    healthcheck_interval: 30s
+    healthcheck_retries: 5
+    healthcheck_start_period: 30s
+    healthcheck_timeout: 10s
+    healthcheck: CMD-SHELL ak healthcheck
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='server') }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='server') }}"
@@ -98,10 +103,15 @@
     env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='worker') }}"
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='worker') }}"
     volumes:
-      - "{{ authentik_volume_media }}.volume:/media"
+      - "{{ authentik_volume_data }}.volume:/data"
       - "{{ authentik_volume_certs }}.volume:/certs"
       - "{{ authentik_volume_templates }}.volume:/templates"
     command: worker
+    healthcheck_interval: 30s
+    healthcheck_retries: 5
+    healthcheck_start_period: 30s
+    healthcheck_timeout: 10s
+    healthcheck: CMD-SHELL ak healthcheck
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='worker') }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='worker') }}"
