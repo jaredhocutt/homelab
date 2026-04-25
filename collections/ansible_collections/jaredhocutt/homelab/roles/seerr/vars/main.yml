@@ -1,0 +1,34 @@
+---
+# vars file for jaredhocutt.homelab.seerr
+
+###############################################################################
+# Envrionment
+###############################################################################
+
+seerr_container_env_defaults: {}
+
+###############################################################################
+# Secrets
+###############################################################################
+
+seerr_secrets_defaults: {}
+
+seerr_secrets_combined: >-
+  {{ seerr_secrets_defaults
+  | combine(seerr_secrets, recursive=True) }}
+
+seerr_container_secrets_defaults: []
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+seerr_container_labels_defaults: >
+  {{ seerr_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', seerr_name, seerr_traefik_host, '5055'), {}) }}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+seerr_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

@@ -1,0 +1,21 @@
+---
+# defaults file for jaredhocutt.homelab.seerr
+
+seerr_name: seerr
+
+seerr_image: ghcr.io/seerr-team/seerr
+seerr_image_tag: latest
+
+seerr_volume_config: "{{ seerr_name }}-config"
+
+seerr_traefik_enable: true
+seerr_traefik_host: "{{ seerr_name }}.{{ common_traefik_domain }}"
+seerr_ports:
+  - 5055:5055
+
+seerr_secrets: {}
+
+seerr_container_env: {}
+seerr_container_secrets: []
+seerr_container_labels: {}
+seerr_container_quadlet_options: []

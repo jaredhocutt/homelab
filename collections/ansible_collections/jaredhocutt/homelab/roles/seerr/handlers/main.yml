@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.seerr
+
+- name: Restart {{ seerr_name }}
+  ansible.builtin.systemd:
+    name: "{{ seerr_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
