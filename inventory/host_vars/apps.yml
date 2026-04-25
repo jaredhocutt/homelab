@@ -310,7 +310,7 @@ stirling_pdf_container_env:
 # tandoor
 ###############################################################################
 
-tandoor_image_tag: "2.6.1"  # skopeo list-tags docker://docker.io/vabene1111/recipes | jq -r '.Tags[] | select(test("^[0-9]\\."))'
+tandoor_image_tag: "2.6.9"  # skopeo list-tags docker://docker.io/vabene1111/recipes | jq -r '.Tags[] | select(test("^[0-9]\\."))'
 tandoor_postgres_image_tag: "16.13"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
 
 tandoor_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.tandoor_postgres_password) }}"
