@@ -275,7 +275,7 @@ shelfmark_container_env:
 # snipe_it
 ###############################################################################
 
-snipe_it_image_tag: v8.4.0  # skopeo list-tags docker://docker.io/snipe/snipe-it | jq -r '.Tags[] | select(test("^v[0-9]"))'
+snipe_it_image_tag: v8.4.1  # skopeo list-tags docker://docker.io/snipe/snipe-it | jq -r '.Tags[] | select(test("^v[0-9]"))'
 
 snipe_it_app_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.snipe_it_app_key) }}"
 snipe_it_mariadb_root_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.snipe_it_mariadb_root_password) }}"
