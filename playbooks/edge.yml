@@ -159,6 +159,11 @@
       changed_when: false
       failed_when: _edge_wildcard_dns_result.rc != 0
 
+    - name: Install backrest
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.backrest
+      tags: [backrest]
+
     - name: Install pangolin
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.pangolin
