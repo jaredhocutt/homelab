@@ -8,5 +8,5 @@ backrest_installed_version: ""
 # Envrionment
 ###############################################################################
 
-backrest_container_env_defaults:
+backrest_env_defaults:
   BACKREST_PORT: 127.0.0.1:9898
