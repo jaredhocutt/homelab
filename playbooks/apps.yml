@@ -135,6 +135,11 @@
         newt_container_secrets: "{{ newt_palworld_container_secrets }}"
       tags: [newt, palworld]
 
+    - name: Install pangolin_cli
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.pangolin_cli
+      tags: [pangolin_cli]
+
     - name: Install prowlarr
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.prowlarr
