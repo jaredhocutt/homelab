@@ -56,7 +56,7 @@ backrest_version: v1.11.2
 
 backrest_traefik_host: "backrest-apps.{{ common_traefik_domain }}"
 
-backrest_container_env:
+backrest_env:
   BACKREST_PORT: 0.0.0.0:9898
 
 ###############################################################################
