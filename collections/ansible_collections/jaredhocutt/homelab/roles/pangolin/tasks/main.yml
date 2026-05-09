@@ -117,6 +117,7 @@
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
       - "{{ pangolin_volume_config }}.volume:/app/config"
+      - "{{ pangolin_traefik_volume_letsencrypt }}.volume:/app/config/letsencrypt"
     healthcheck_interval: 10s
     healthcheck_retries: 15
     healthcheck_timeout: 10s
