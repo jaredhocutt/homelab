@@ -10,6 +10,7 @@ server_setup_packages:
   - cockpit-system
   - curl
   - dnf5-plugin-automatic
+  - firewalld
   - git
   - gnupg2
   - htop
@@ -17,7 +18,6 @@ server_setup_packages:
   - pcp
   - python3-pcp
   - rsync
-  - stow
   - tmux
   - unzip
   - vim
@@ -26,4 +26,5 @@ server_setup_packages:
 
 server_setup_enabled_services:
   - cockpit.socket
+  - firewalld.service
   - pmlogger.service
