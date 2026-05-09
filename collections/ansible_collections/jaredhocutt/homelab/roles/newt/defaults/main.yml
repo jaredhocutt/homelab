@@ -6,6 +6,8 @@ newt_name: newt
 newt_image: docker.io/fosrl/newt
 newt_image_tag: latest
 
+newt_network_mode: container
+
 newt_secrets: {}
 
 newt_container_env: {}

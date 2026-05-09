@@ -36,4 +36,6 @@ newt_quadlet_options_depends:
     [Unit]
     Requires={{ newt_attach_to }}.service
     After={{ newt_attach_to }}.service
-newt_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + newt_quadlet_options_depends }}"
+newt_container_quadlet_options_defaults: >-
+  {{ common_quadlet_options_defaults
+  + (newt_quadlet_options_depends if newt_network_mode == 'container' else []) }}
