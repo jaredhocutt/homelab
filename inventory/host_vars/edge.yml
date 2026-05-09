@@ -35,25 +35,25 @@ pangolin_smtp_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin
 pangolin_no_reply: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin_no_reply) }}"
 
 ###############################################################################
+# pangolin_cli
+###############################################################################
+
+pangolin_cli_image_tag: "0.5.2"  # skopeo list-tags docker://docker.io/fosrl/pangolin-cli | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
+
+pangolin_cli_endpoint: https://pangolin.{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin_base_domain) }}
+
+pangolin_cli_secrets:
+  pangolin_cli_client_id: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_cli_edge_client_id') }}"
+  pangolin_cli_client_secret: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_cli_edge_client_secret') }}"
+pangolin_cli_container_secrets:
+  - pangolin_cli_client_id,type=env,target=CLIENT_ID
+  - pangolin_cli_client_secret,type=env,target=CLIENT_SECRET
+
+###############################################################################
 # server_setup
 ###############################################################################
 
-server_setup_packages:
-  - chezmoi
-  - curl
-  - dnf5-plugin-automatic
-  - git
-  - gnupg2
-  - htop
-  - net-tools
-  - rsync
-  - tmux
-  - unzip
-  - vim
-  - wget
-  - zsh
-
-server_setup_enabled_services: []
+server_setup_dnf_automatic: true
 
 ###############################################################################
 # cloudflare
