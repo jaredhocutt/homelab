@@ -17,7 +17,7 @@ backrest_env:
 # pangolin
 ###############################################################################
 
-pangolin_image_tag: "1.17.1"  # skopeo list-tags docker://docker.io/fosrl/pangolin | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
+pangolin_image_tag: "ee-1.18.1"  # skopeo list-tags docker://docker.io/fosrl/pangolin | jq -r '.Tags[] | select(test("^ee-[0-9\\.]+$"))'
 pangolin_gerbil_image_tag: "1.3.1"  # skopeo list-tags docker://docker.io/fosrl/gerbil | jq -r '.Tags[] | select(test("^[0-9]\\."))'
 pangolin_traefik_image_tag: v3.6  # The project hard codes this tag, so let's keep it
 
