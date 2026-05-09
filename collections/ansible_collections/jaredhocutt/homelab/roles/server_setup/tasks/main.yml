@@ -15,5 +15,9 @@
   become: true
   loop: "{{ server_setup_enabled_services }}"
 
+- name: Install and configure dnf-automatic
+  ansible.builtin.include_tasks: dnf_automatic.yml
+  when: server_setup_dnf_automatic
+
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers
