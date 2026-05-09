@@ -1,0 +1,14 @@
+---
+# defaults file for jaredhocutt.homelab.pangolin_cli
+
+pangolin_cli_name: pangolin-cli
+
+pangolin_cli_image: docker.io/fosrl/pangolin-cli
+pangolin_cli_image_tag: latest
+
+pangolin_cli_secrets: {}
+
+pangolin_cli_container_env: {}
+pangolin_cli_container_secrets: []
+pangolin_cli_container_labels: {}
+pangolin_cli_container_quadlet_options: []

@@ -1,0 +1,33 @@
+---
+# vars file for jaredhocutt.homelab.pangolin_cli
+
+###############################################################################
+# Envrionment
+###############################################################################
+
+pangolin_cli_container_env_defaults:
+  PANGOLIN_ENDPOINT: "{{ pangolin_cli_endpoint }}"
+
+###############################################################################
+# Secrets
+###############################################################################
+
+pangolin_cli_secrets_defaults: {}
+
+pangolin_cli_secrets_combined: >-
+  {{ pangolin_cli_secrets_defaults
+  | combine(pangolin_cli_secrets, recursive=True) }}
+
+pangolin_cli_container_secrets_defaults: []
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+pangolin_cli_container_labels_defaults: {}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+pangolin_cli_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

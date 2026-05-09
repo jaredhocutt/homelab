@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.pangolin_cli
+
+- name: Restart {{ pangolin_cli_name }}
+  ansible.builtin.systemd:
+    name: "{{ pangolin_cli_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
