@@ -1,6 +1,6 @@
 ---
 
-common_traefik_domain: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.apps_common_traefik_domain) }}"
+common_traefik_domain: "{{ lookup('jaredhocutt.homelab.bws', 'apps_common_traefik_domain') }}"
 
 shared_volume_download_books: download-books
 
@@ -11,26 +11,26 @@ shared_volume_download_books: download-books
 authentik_image_tag: "2026.2.2"  # skopeo list-tags docker://ghcr.io/goauthentik/server | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
 authentik_postgres_image_tag: "16.13"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
 
-authentik_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.authentik_postgres_password) }}"
-authentik_secret_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.authentik_secret_key) }}"
+authentik_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'authentik_postgres_password') }}"
+authentik_secret_key: "{{ lookup('jaredhocutt.homelab.bws', 'authentik_secret_key') }}"
 
 authentik_server_container_env:
-  AUTHENTIK_EMAIL__HOST: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.authentik_email_host) }}"
-  AUTHENTIK_EMAIL__PORT: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.authentik_email_port) }}"
-  AUTHENTIK_EMAIL__USERNAME: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.authentik_email_username) }}"
-  AUTHENTIK_EMAIL__FROM: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.authentik_email_from) }}"
+  AUTHENTIK_EMAIL__HOST: "{{ lookup('jaredhocutt.homelab.bws', 'authentik_email_host') }}"
+  AUTHENTIK_EMAIL__PORT: "{{ lookup('jaredhocutt.homelab.bws', 'authentik_email_port') }}"
+  AUTHENTIK_EMAIL__USERNAME: "{{ lookup('jaredhocutt.homelab.bws', 'authentik_email_username') }}"
+  AUTHENTIK_EMAIL__FROM: "{{ lookup('jaredhocutt.homelab.bws', 'authentik_email_from') }}"
   AUTHENTIK_EMAIL__USE_SSL: "true"
 authentik_worker_container_env: "{{ authentik_server_container_env }}"
 
 authentik_secrets:
-  authentik_email_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.authentik_email_password) }}"
+  authentik_email_password: "{{ lookup('jaredhocutt.homelab.bws', 'authentik_email_password') }}"
 authentik_server_container_secrets:
   - authentik_email_password,type=env,target=AUTHENTIK_EMAIL__PASSWORD
 authentik_worker_container_secrets: "{{ authentik_server_container_secrets }}"
 
 newt_authentik_secrets:
-  newt_authentik_newt_id: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.newt_authentik_newt_id) }}"
-  newt_authentik_newt_secret: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.newt_authentik_newt_secret) }}"
+  newt_authentik_newt_id: "{{ lookup('jaredhocutt.homelab.bws', 'newt_authentik_newt_id') }}"
+  newt_authentik_newt_secret: "{{ lookup('jaredhocutt.homelab.bws', 'newt_authentik_newt_secret') }}"
 newt_authentik_container_secrets:
   - newt_authentik_newt_id,type=env,target=NEWT_ID
   - newt_authentik_newt_secret,type=env,target=NEWT_SECRET
@@ -42,8 +42,8 @@ newt_authentik_container_secrets:
 audiobookshelf_image_tag: "2.33.2"  # skopeo list-tags docker://ghcr.io/advplyr/audiobookshelf | jq -r '.Tags[] | select(test("^[0-9]"))'
 
 newt_audiobookshelf_secrets:
-  newt_audiobookshelf_newt_id: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.newt_audiobookshelf_newt_id) }}"
-  newt_audiobookshelf_newt_secret: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.newt_audiobookshelf_newt_secret) }}"
+  newt_audiobookshelf_newt_id: "{{ lookup('jaredhocutt.homelab.bws', 'newt_audiobookshelf_newt_id') }}"
+  newt_audiobookshelf_newt_secret: "{{ lookup('jaredhocutt.homelab.bws', 'newt_audiobookshelf_newt_secret') }}"
 newt_audiobookshelf_container_secrets:
   - newt_audiobookshelf_newt_id,type=env,target=NEWT_ID
   - newt_audiobookshelf_newt_secret,type=env,target=NEWT_SECRET
@@ -68,7 +68,7 @@ bar_assistant_salt_rim_image_tag: "4.14.1"  # skopeo list-tags docker://docker.i
 bar_assistant_redis_image_tag: "8.6.2"  # skopeo list-tags docker://docker.io/library/redis | jq -r '.Tags[] | select(test("^[0-9]\\.[0-9\\.]*$"))'
 bar_assistant_meilisearch_image_tag: v1.15.2  # skopeo list-tags docker://docker.io/getmeili/meilisearch | jq -r '.Tags[] | select(test("^v1.15"))'
 
-bar_assistant_meilisearch_master_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.bar_assistant_meilisearch_master_key) }}"
+bar_assistant_meilisearch_master_key: "{{ lookup('jaredhocutt.homelab.bws', 'bar_assistant_meilisearch_master_key') }}"
 
 ###############################################################################
 # bentopdf
@@ -89,7 +89,7 @@ calibre_web_automated_container_env:
   PGID: "{{ global_media_gid }}"
 
 calibre_web_automated_secrets:
-  calibre_web_automated_hardcover_token: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.calibre_web_automated_hardcover_token) }}"
+  calibre_web_automated_hardcover_token: "{{ lookup('jaredhocutt.homelab.bws', 'calibre_web_automated_hardcover_token') }}"
 calibre_web_automated_container_secrets:
   - calibre_web_automated_hardcover_token,type=env,target=HARDCOVER_TOKEN
 
@@ -112,23 +112,23 @@ go2rtc_image_tag: "1.9.14"  # skopeo list-tags docker://ghcr.io/alexxit/go2rtc |
 
 healthchecks_image_tag: version-v4.1.1  # skopeo list-tags docker://lscr.io/linuxserver/healthchecks | jq -r '.Tags[] | select(test("^version-v[0-9]"))'
 
-healthchecks_email: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email) }}"
-healthchecks_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_password) }}"
-healthchecks_secret_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_secret_key) }}"
+healthchecks_email: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_email') }}"
+healthchecks_password: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_password') }}"
+healthchecks_secret_key: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_secret_key') }}"
 healthchecks_container_env:
-  DEFAULT_FROM_EMAIL: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_from_email) }}"
-  EMAIL_HOST: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email_host) }}"
-  EMAIL_PORT: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email_port) }}"
-  EMAIL_HOST_USER: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email_user) }}"
+  DEFAULT_FROM_EMAIL: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_from_email') }}"
+  EMAIL_HOST: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_email_host') }}"
+  EMAIL_PORT: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_email_port') }}"
+  EMAIL_HOST_USER: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_email_user') }}"
   EMAIL_USE_TLS: "True"
   REGISTRATION_OPEN: "False"
 
 healthchecks_secrets:
-  healthchecks_discord_client_id: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_discord_client_id) }}"
-  healthchecks_discord_client_secret: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_discord_client_secret) }}"
-  healthchecks_email_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_email_password) }}"
-  healthchecks_pushover_api_token: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_pushover_api_token) }}"
-  healthchecks_pushover_subscription_url: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.healthchecks_pushover_subscription_url) }}"
+  healthchecks_discord_client_id: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_discord_client_id') }}"
+  healthchecks_discord_client_secret: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_discord_client_secret') }}"
+  healthchecks_email_password: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_email_password') }}"
+  healthchecks_pushover_api_token: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_pushover_api_token') }}"
+  healthchecks_pushover_subscription_url: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_pushover_subscription_url') }}"
 healthchecks_container_secrets:
   - healthchecks_discord_client_id,type=env,target=DISCORD_CLIENT_ID
   - healthchecks_discord_client_secret,type=env,target=DISCORD_CLIENT_SECRET
@@ -142,25 +142,25 @@ healthchecks_container_secrets:
 
 homarr_image_tag: v1.59.3  # skopeo list-tags docker://ghcr.io/homarr-labs/homarr | jq -r '.Tags[] | select(test("^v[0-9]"))'
 
-homarr_api_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.homarr_api_key) }}"
-homarr_secret_encryption_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.homarr_secret_encryption_key) }}"
+homarr_api_key: "{{ lookup('jaredhocutt.homelab.bws', 'homarr_api_key') }}"
+homarr_secret_encryption_key: "{{ lookup('jaredhocutt.homelab.bws', 'homarr_secret_encryption_key') }}"
 
 homarr_container_env:
   AUTH_PROVIDERS: oidc,credentials
-  AUTH_OIDC_CLIENT_ID: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.homarr_auth_oidc_client_id) }}"
-  AUTH_OIDC_ISSUER: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.homarr_auth_oidc_issuer) }}"
-  AUTH_OIDC_URI: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.homarr_auth_oidc_uri) }}"
+  AUTH_OIDC_CLIENT_ID: "{{ lookup('jaredhocutt.homelab.bws', 'homarr_auth_oidc_client_id') }}"
+  AUTH_OIDC_ISSUER: "{{ lookup('jaredhocutt.homelab.bws', 'homarr_auth_oidc_issuer') }}"
+  AUTH_OIDC_URI: "{{ lookup('jaredhocutt.homelab.bws', 'homarr_auth_oidc_uri') }}"
   AUTH_OIDC_CLIENT_NAME: Hocutt Authentication
   AUTH_OIDC_NAME_ATTRIBUTE_OVERWRITE: email
 
 homarr_secrets:
-  homarr_auth_oidc_client_secret: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.homarr_auth_oidc_client_secret) }}"
+  homarr_auth_oidc_client_secret: "{{ lookup('jaredhocutt.homelab.bws', 'homarr_auth_oidc_client_secret') }}"
 homarr_container_secrets:
   - homarr_auth_oidc_client_secret,type=env,target=AUTH_OIDC_CLIENT_SECRET
 
 newt_homarr_secrets:
-  newt_homarr_newt_id: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.newt_homarr_newt_id) }}"
-  newt_homarr_newt_secret: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.newt_homarr_newt_secret) }}"
+  newt_homarr_newt_id: "{{ lookup('jaredhocutt.homelab.bws', 'newt_homarr_newt_id') }}"
+  newt_homarr_newt_secret: "{{ lookup('jaredhocutt.homelab.bws', 'newt_homarr_newt_secret') }}"
 newt_homarr_container_secrets:
   - newt_homarr_newt_id,type=env,target=NEWT_ID
   - newt_homarr_newt_secret,type=env,target=NEWT_SECRET
@@ -173,12 +173,12 @@ karakeep_image_tag: "0.31.0"  # skopeo list-tags docker://ghcr.io/karakeep-app/k
 karakeep_chrome_image_tag: "124"  # The project hard codes this tag, so let's keep it
 karakeep_meilisearch_image_tag: v1.13.3  # The project hard codes this tag, so let's keep it
 
-karakeep_nextauth_secret: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.karakeep_nextauth_secret) }}"
-karakeep_meilisearch_master_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.karakeep_meilisearch_master_key) }}"
+karakeep_nextauth_secret: "{{ lookup('jaredhocutt.homelab.bws', 'karakeep_nextauth_secret') }}"
+karakeep_meilisearch_master_key: "{{ lookup('jaredhocutt.homelab.bws', 'karakeep_meilisearch_master_key') }}"
 
 
 karakeep_secrets:
-  karakeep_openai_api_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.karakeep_openai_api_key) }}"
+  karakeep_openai_api_key: "{{ lookup('jaredhocutt.homelab.bws', 'karakeep_openai_api_key') }}"
 karakeep_container_secrets:
   - karakeep_openai_api_key,type=env,target=OPENAI_API_KEY
 
@@ -188,7 +188,7 @@ karakeep_container_secrets:
 
 newt_image_tag: "1.12.2"  # skopeo list-tags docker://docker.io/fosrl/newt | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
 
-newt_endpoint: https://pangolin.{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin_base_domain) }}
+newt_endpoint: https://pangolin.{{ lookup('jaredhocutt.homelab.bws', 'pangolin_base_domain') }}
 
 ###############################################################################
 # n8n
@@ -197,7 +197,7 @@ newt_endpoint: https://pangolin.{{ lookup('bitwarden.secrets.lookup', bws_uuid.p
 n8n_image_tag: "2.18.3"  # skopeo list-tags docker://docker.n8n.io/n8nio/n8n | jq -r '.Tags[] | select(test("^2\\.[0-9\\.]+$"))'
 n8n_postgres_image_tag: "16.13"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
 
-n8n_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.n8n_postgres_password) }}"
+n8n_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'n8n_postgres_password') }}"
 
 n8n_container_env:
   N8N_LOG_LEVEL: debug
@@ -209,7 +209,7 @@ n8n_container_env:
 nocodb_image_tag: "2026.04.3"  # skopeo list-tags docker://docker.io/nocodb/nocodb | jq -r '.Tags[] | select(test("^[0-9]"))'
 nocodb_postgres_image_tag: "16.13"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
 
-nocodb_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.nocodb_postgres_password) }}"
+nocodb_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'nocodb_postgres_password') }}"
 
 ###############################################################################
 # open_webui
@@ -224,8 +224,8 @@ open_webui_image_tag: v0.9.2  # skopeo list-tags docker://ghcr.io/open-webui/ope
 palworld_image_tag: v0.7.2.87654  # skypeo list-tags docker://ghcr.io/pocketpairjp/palserver | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
 
 newt_palworld_secrets:
-  newt_palworld_newt_id: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.newt_palworld_newt_id) }}"
-  newt_palworld_newt_secret: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.newt_palworld_newt_secret) }}"
+  newt_palworld_newt_id: "{{ lookup('jaredhocutt.homelab.bws', 'newt_palworld_newt_id') }}"
+  newt_palworld_newt_secret: "{{ lookup('jaredhocutt.homelab.bws', 'newt_palworld_newt_secret') }}"
 newt_palworld_container_secrets:
   - newt_palworld_newt_id,type=env,target=NEWT_ID
   - newt_palworld_newt_secret,type=env,target=NEWT_SECRET
@@ -236,7 +236,7 @@ newt_palworld_container_secrets:
 
 pangolin_cli_image_tag: "0.5.2"  # skopeo list-tags docker://docker.io/fosrl/pangolin-cli | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
 
-pangolin_cli_endpoint: https://pangolin.{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin_base_domain) }}
+pangolin_cli_endpoint: https://pangolin.{{ lookup('jaredhocutt.homelab.bws', 'pangolin_base_domain') }}
 
 pangolin_cli_secrets:
   pangolin_cli_client_id: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_cli_apps_client_id') }}"
@@ -258,8 +258,8 @@ prowlarr_image_tag: version-2.3.0.5236  # skopeo list-tags docker://lscr.io/linu
 seerr_image_tag: v3.2.0  # skopeo list-tags docker://ghcr.io/seerr-team/seerr | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
 
 newt_seerr_secrets:
-  newt_seerr_newt_id: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.newt_seerr_newt_id) }}"
-  newt_seerr_newt_secret: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.newt_seerr_newt_secret) }}"
+  newt_seerr_newt_id: "{{ lookup('jaredhocutt.homelab.bws', 'newt_seerr_newt_id') }}"
+  newt_seerr_newt_secret: "{{ lookup('jaredhocutt.homelab.bws', 'newt_seerr_newt_secret') }}"
 newt_seerr_container_secrets:
   - newt_seerr_newt_id,type=env,target=NEWT_ID
   - newt_seerr_newt_secret,type=env,target=NEWT_SECRET
@@ -282,23 +282,23 @@ shelfmark_container_env:
 
 snipe_it_image_tag: v8.4.1  # skopeo list-tags docker://docker.io/snipe/snipe-it | jq -r '.Tags[] | select(test("^v[0-9]"))'
 
-snipe_it_app_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.snipe_it_app_key) }}"
-snipe_it_mariadb_root_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.snipe_it_mariadb_root_password) }}"
-snipe_it_mariadb_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.snipe_it_mariadb_password) }}"
+snipe_it_app_key: "{{ lookup('jaredhocutt.homelab.bws', 'snipe_it_app_key') }}"
+snipe_it_mariadb_root_password: "{{ lookup('jaredhocutt.homelab.bws', 'snipe_it_mariadb_root_password') }}"
+snipe_it_mariadb_password: "{{ lookup('jaredhocutt.homelab.bws', 'snipe_it_mariadb_password') }}"
 
 snipe_it_container_env:
-  MAIL_HOST: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.snipe_it_mail_host) }}"
-  MAIL_PORT: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.snipe_it_mail_port) }}"
-  MAIL_USERNAME: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.snipe_it_mail_username) }}"
-  MAIL_FROM_ADDR: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.snipe_it_mail_from) }}"
+  MAIL_HOST: "{{ lookup('jaredhocutt.homelab.bws', 'snipe_it_mail_host') }}"
+  MAIL_PORT: "{{ lookup('jaredhocutt.homelab.bws', 'snipe_it_mail_port') }}"
+  MAIL_USERNAME: "{{ lookup('jaredhocutt.homelab.bws', 'snipe_it_mail_username') }}"
+  MAIL_FROM_ADDR: "{{ lookup('jaredhocutt.homelab.bws', 'snipe_it_mail_from') }}"
   MAIL_FROM_NAME: Snipe-IT
-  MAIL_REPLYTO_ADDR: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.snipe_it_mail_from) }}"
+  MAIL_REPLYTO_ADDR: "{{ lookup('jaredhocutt.homelab.bws', 'snipe_it_mail_from') }}"
   MAIL_REPLYTO_NAME: Snipe-IT
   MAIL_TLS_VERIFY_PEER: true
   MAIL_AUTO_EMBED_METHOD: attachment
 
 snipe_it_secrets:
-  snipe_it_mail_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.snipe_it_mail_password) }}"
+  snipe_it_mail_password: "{{ lookup('jaredhocutt.homelab.bws', 'snipe_it_mail_password') }}"
 snipe_it_container_secrets:
   - snipe_it_mail_password,type=env,target=MAIL_PASSWORD
 
@@ -318,8 +318,8 @@ stirling_pdf_container_env:
 tandoor_image_tag: "2.6.9"  # skopeo list-tags docker://docker.io/vabene1111/recipes | jq -r '.Tags[] | select(test("^[0-9]\\."))'
 tandoor_postgres_image_tag: "16.13"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
 
-tandoor_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.tandoor_postgres_password) }}"
-tandoor_secret_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.tandoor_secret_key) }}"
+tandoor_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'tandoor_postgres_password') }}"
+tandoor_secret_key: "{{ lookup('jaredhocutt.homelab.bws', 'tandoor_secret_key') }}"
 
 ###############################################################################
 # tautulli
@@ -333,17 +333,17 @@ tautulli_image_tag: version-v2.17.0  # skopeo list-tags docker://lscr.io/linuxse
 
 traefik_image_tag: v3.6.14  # skopeo list-tags docker://docker.io/library/traefik | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
 
-traefik_traefik_host: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.traefik_traefik_host) }}"
+traefik_traefik_host: "{{ lookup('jaredhocutt.homelab.bws', 'traefik_traefik_host') }}"
 
 traefik_command:
-  - --certificatesresolvers.letsencrypt.acme.email={{ lookup('bitwarden.secrets.lookup', bws_uuid.traefik_letsencrypt_email) }}
+  - --certificatesresolvers.letsencrypt.acme.email={{ lookup('jaredhocutt.homelab.bws', 'traefik_letsencrypt_email') }}
   - --certificatesresolvers.letsencrypt.acme.storage=/certs/acme.json
   - --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare
   - --entrypoints.websecure.http.tls.certresolver=letsencrypt
 
 traefik_secrets:
-  traefik_letsencrypt_cloudflare_dns_api_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.traefik_letsencrypt_cloudflare_dns_api_key) }}"
-  traefik_letsencrypt_cloudflare_zone_api_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.traefik_letsencrypt_cloudflare_zone_api_key) }}"
+  traefik_letsencrypt_cloudflare_dns_api_key: "{{ lookup('jaredhocutt.homelab.bws', 'traefik_letsencrypt_cloudflare_dns_api_key') }}"
+  traefik_letsencrypt_cloudflare_zone_api_key: "{{ lookup('jaredhocutt.homelab.bws', 'traefik_letsencrypt_cloudflare_zone_api_key') }}"
 traefik_container_secrets:
   - traefik_letsencrypt_cloudflare_dns_api_key,type=env,target=CF_DNS_API_TOKEN
   - traefik_letsencrypt_cloudflare_zone_api_key,type=env,target=CF_ZONE_API_TOKEN
@@ -367,8 +367,8 @@ uptime_kuma_image_tag: "2.2.1"  # skopeo list-tags docker://ghcr.io/louislam/upt
 warracker_image_tag: "1.0.2"  # skopeo list-tags docker://ghcr.io/sassanix/warracker/main | jq -r '.Tags[] | select(test("^[0-9]"))'
 warracker_postgres_image_tag: "15.17"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^15\\.[0-9]"))'
 
-warracker_postgres_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.warracker_postgres_password) }}"
-warracker_secret_key: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.warracker_secret_key) }}"
+warracker_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'warracker_postgres_password') }}"
+warracker_secret_key: "{{ lookup('jaredhocutt.homelab.bws', 'warracker_secret_key') }}"
 
 ###############################################################################
 # kickstart
@@ -433,23 +433,23 @@ kickstart_storage_volume_groups:
         percent: 100
 
 kickstart_users:
-  - fullname: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_fullname) }}"
-    username: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_username) }}"
-    groups: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_groups) }}"
-    uid: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_uid) }}"
-    gid: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_gid) }}"
-    password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_password_crypted) }}"
+  - fullname: "{{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_1_fullname') }}"
+    username: "{{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_1_username') }}"
+    groups: "{{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_1_groups') }}"
+    uid: "{{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_1_uid') }}"
+    gid: "{{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_1_gid') }}"
+    password: "{{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_1_password_crypted') }}"
     authorized_keys:
-      - "{{ lookup('bitwarden.secrets.lookup', bws_uuid.ssh_authorized_key_1) }}"
-      - "{{ lookup('bitwarden.secrets.lookup', bws_uuid.ssh_authorized_key_2) }}"
-      - "{{ lookup('bitwarden.secrets.lookup', bws_uuid.ssh_authorized_key_3) }}"
-  - fullname: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_fullname) }}"
-    username: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_username) }}"
-    groups: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_groups) }}"
-    uid: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_uid) }}"
-    gid: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_gid) }}"
+      - "{{ lookup('jaredhocutt.homelab.bws', 'ssh_authorized_key_1') }}"
+      - "{{ lookup('jaredhocutt.homelab.bws', 'ssh_authorized_key_2') }}"
+      - "{{ lookup('jaredhocutt.homelab.bws', 'ssh_authorized_key_3') }}"
+  - fullname: "{{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_2_fullname') }}"
+    username: "{{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_2_username') }}"
+    groups: "{{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_2_groups') }}"
+    uid: "{{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_2_uid') }}"
+    gid: "{{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_2_gid') }}"
     sudoers: |
-      {{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_username) }} ALL=(ALL) NOPASSWD: ALL
-      Defaults:{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_username) }} !requiretty
+      {{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_2_username') }} ALL=(ALL) NOPASSWD: ALL
+      Defaults:{{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_2_username') }} !requiretty
     authorized_keys:
-      - "{{ lookup('bitwarden.secrets.lookup', bws_uuid.ssh_authorized_key_4) }}"
+      - "{{ lookup('jaredhocutt.homelab.bws', 'ssh_authorized_key_4') }}"

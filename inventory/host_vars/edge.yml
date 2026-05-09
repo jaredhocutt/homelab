@@ -24,15 +24,15 @@ pangolin_traefik_image_tag: v3.6  # The project hard codes this tag, so let's ke
 pangolin_gerbil_ports_extra:
   - 8211:8211/udp  # pangolin
 
-pangolin_base_domain: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin_base_domain) }}"
-pangolin_server_secret: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin_server_secret) }}"
-pangolin_traefik_letsencrypt_email: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin_no_reply) }}"
+pangolin_base_domain: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_base_domain') }}"
+pangolin_server_secret: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_server_secret') }}"
+pangolin_traefik_letsencrypt_email: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_no_reply') }}"
 
-pangolin_smtp_host: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin_smtp_host) }}"
-pangolin_smtp_port: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin_smtp_port) }}"
-pangolin_smtp_user: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin_smtp_user) }}"
-pangolin_smtp_password: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin_smtp_password) }}"
-pangolin_no_reply: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin_no_reply) }}"
+pangolin_smtp_host: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_smtp_host') }}"
+pangolin_smtp_port: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_smtp_port') }}"
+pangolin_smtp_user: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_smtp_user') }}"
+pangolin_smtp_password: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_smtp_password') }}"
+pangolin_no_reply: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_no_reply') }}"
 
 ###############################################################################
 # pangolin_cli
@@ -40,7 +40,7 @@ pangolin_no_reply: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin_no_r
 
 pangolin_cli_image_tag: "0.5.2"  # skopeo list-tags docker://docker.io/fosrl/pangolin-cli | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
 
-pangolin_cli_endpoint: https://pangolin.{{ lookup('bitwarden.secrets.lookup', bws_uuid.pangolin_base_domain) }}
+pangolin_cli_endpoint: https://pangolin.{{ lookup('jaredhocutt.homelab.bws', 'pangolin_base_domain') }}
 
 pangolin_cli_secrets:
   pangolin_cli_client_id: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_cli_edge_client_id') }}"
@@ -59,7 +59,7 @@ server_setup_dnf_automatic: true
 # cloudflare
 ###############################################################################
 
-cloudflare_zone: "{{ lookup('bitwarden.secrets.lookup', bws_uuid.cloudflare_zone) }}"
+cloudflare_zone: "{{ lookup('jaredhocutt.homelab.bws', 'cloudflare_zone') }}"
 
 ###############################################################################
 # digitalocean_droplet
@@ -70,8 +70,8 @@ droplet_image: fedora-43-x64
 droplet_size: s-2vcpu-2gb-90gb-intel
 
 droplet_ssh_keys:
-  - "{{ lookup('bitwarden.secrets.lookup', bws_uuid.ssh_authorized_key_1) }}"
-  - "{{ lookup('bitwarden.secrets.lookup', bws_uuid.ssh_authorized_key_2) }}"
+  - "{{ lookup('jaredhocutt.homelab.bws', 'ssh_authorized_key_1') }}"
+  - "{{ lookup('jaredhocutt.homelab.bws', 'ssh_authorized_key_2') }}"
 
 droplet_user_data: |
   #cloud-config
@@ -80,27 +80,27 @@ droplet_user_data: |
       owner: root:root
       permissions: '0440'
       content: |
-        Defaults:{{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_username) }} !requiretty
+        Defaults:{{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_2_username') }} !requiretty
 
   users:
-    - name: {{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_username) }}
-      gecos: {{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_fullname) }}
-      uid: {{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_uid) }}
-      groups: {{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_groups) }}
-      passwd: {{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_1_password_crypted) }}
+    - name: {{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_1_username') }}
+      gecos: {{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_1_fullname') }}
+      uid: {{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_1_uid') }}
+      groups: {{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_1_groups') }}
+      passwd: {{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_1_password_crypted') }}
       lock_passwd: false
       ssh_authorized_keys:
-        - {{ lookup('bitwarden.secrets.lookup', bws_uuid.ssh_authorized_key_1) }}
-        - {{ lookup('bitwarden.secrets.lookup', bws_uuid.ssh_authorized_key_2) }}
-    - name: {{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_username) }}
-      gecos: {{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_fullname) }}
-      uid: {{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_uid) }}
-      groups: {{ lookup('bitwarden.secrets.lookup', bws_uuid.kickstart_user_2_groups) }}
+        - {{ lookup('jaredhocutt.homelab.bws', 'ssh_authorized_key_1') }}
+        - {{ lookup('jaredhocutt.homelab.bws', 'ssh_authorized_key_2') }}
+    - name: {{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_2_username') }}
+      gecos: {{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_2_fullname') }}
+      uid: {{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_2_uid') }}
+      groups: {{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_2_groups') }}
       sudo:
         - "ALL=(ALL) NOPASSWD:ALL"
       lock_passwd: true
       ssh_authorized_keys:
-        - {{ lookup('bitwarden.secrets.lookup', bws_uuid.ssh_authorized_key_4) }}
+        - {{ lookup('jaredhocutt.homelab.bws', 'ssh_authorized_key_4') }}
 
   # The Fedora image in Digital Ocean is broken for journald
   runcmd:
