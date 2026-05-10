@@ -1,2 +1,10 @@
 ---
 # handlers file for jaredhocutt.homelab.server_setup
+
+- name: Restart fail2ban
+  ansible.builtin.systemd:
+    name: "fail2ban.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
