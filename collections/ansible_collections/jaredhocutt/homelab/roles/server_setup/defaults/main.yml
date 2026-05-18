@@ -4,5 +4,7 @@
 server_setup_packages: []
 server_setup_enabled_services: []
 
+server_setup_users: []
+
 server_setup_dnf_automatic: false
 server_setup_fail2ban: false

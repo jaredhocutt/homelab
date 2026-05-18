@@ -1,0 +1,41 @@
+---
+
+- name: Create groups for users
+  ansible.builtin.group:
+    name: "{{ item.username }}"
+    gid: "{{ item.gid | default(omit) }}"
+    state: present
+  become: true
+  loop: "{{ server_setup_users }}"
+  when: item.gid is defined
+
+- name: Create users
+  ansible.builtin.user:
+    name: "{{ item.username }}"
+    comment: "{{ item.fullname | default(omit) }}"
+    group: "{{ item.username }}"
+    groups: "{{ item.groups | default(omit) }}"
+    uid: "{{ item.uid | default(omit) }}"
+    password: "{{ item.password | default(omit) }}"
+    state: present
+  become: true
+  loop: "{{ server_setup_users }}"
+
+- name: Add authorized keys for users
+  ansible.posix.authorized_key:
+    user: "{{ item.0.username }}"
+    key: "{{ item.1 }}"
+    state: present
+  become: true
+  loop: "{{ server_setup_users | subelements('authorized_keys', skip_missing=True) }}"
+
+- name: Add sudoers for users
+  ansible.builtin.copy:
+    dest: "/etc/sudoers.d/{{ item.username }}"
+    content: "{{ item.sudoers }}"
+    owner: root
+    group: root
+    mode: "0440"
+  become: true
+  loop: "{{ server_setup_users }}"
+  when: item.sudoers is defined

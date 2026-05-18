@@ -81,22 +81,22 @@ droplet_user_data: |
       owner: root:root
       permissions: '0440'
       content: |
-        Defaults:{{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_2_username') }} !requiretty
+        Defaults:{{ lookup('jaredhocutt.homelab.bws', 'server_user_2_username') }} !requiretty
 
   users:
-    - name: {{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_1_username') }}
-      gecos: {{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_1_fullname') }}
-      uid: {{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_1_uid') }}
-      groups: {{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_1_groups') }}
-      passwd: {{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_1_password_crypted') }}
+    - name: {{ lookup('jaredhocutt.homelab.bws', 'server_user_1_username') }}
+      gecos: {{ lookup('jaredhocutt.homelab.bws', 'server_user_1_fullname') }}
+      uid: {{ lookup('jaredhocutt.homelab.bws', 'server_user_1_uid') }}
+      groups: {{ lookup('jaredhocutt.homelab.bws', 'server_user_1_groups') }}
+      passwd: {{ lookup('jaredhocutt.homelab.bws', 'server_user_1_password_crypted') }}
       lock_passwd: false
       ssh_authorized_keys:
         - {{ lookup('jaredhocutt.homelab.bws', 'ssh_authorized_key_1') }}
         - {{ lookup('jaredhocutt.homelab.bws', 'ssh_authorized_key_2') }}
-    - name: {{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_2_username') }}
-      gecos: {{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_2_fullname') }}
-      uid: {{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_2_uid') }}
-      groups: {{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_2_groups') }}
+    - name: {{ lookup('jaredhocutt.homelab.bws', 'server_user_2_username') }}
+      gecos: {{ lookup('jaredhocutt.homelab.bws', 'server_user_2_fullname') }}
+      uid: {{ lookup('jaredhocutt.homelab.bws', 'server_user_2_uid') }}
+      groups: {{ lookup('jaredhocutt.homelab.bws', 'server_user_2_groups') }}
       sudo:
         - "ALL=(ALL) NOPASSWD:ALL"
       lock_passwd: true

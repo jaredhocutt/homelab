@@ -153,23 +153,23 @@ kickstart_storage_volume_groups:
         percent: 100
 
 kickstart_users:
-  - fullname: "{{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_1_fullname') }}"
-    username: "{{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_1_username') }}"
-    groups: "{{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_1_groups') }}"
-    uid: "{{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_1_uid') }}"
-    gid: "{{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_1_gid') }}"
-    password: "{{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_1_password_crypted') }}"
+  - fullname: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_1_fullname') }}"
+    username: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_1_username') }}"
+    groups: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_1_groups') }}"
+    uid: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_1_uid') }}"
+    gid: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_1_gid') }}"
+    password: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_1_password_crypted') }}"
     authorized_keys:
       - "{{ lookup('jaredhocutt.homelab.bws', 'ssh_authorized_key_1') }}"
       - "{{ lookup('jaredhocutt.homelab.bws', 'ssh_authorized_key_2') }}"
       - "{{ lookup('jaredhocutt.homelab.bws', 'ssh_authorized_key_3') }}"
-  - fullname: "{{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_2_fullname') }}"
-    username: "{{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_2_username') }}"
-    groups: "{{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_2_groups') }}"
-    uid: "{{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_2_uid') }}"
-    gid: "{{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_2_gid') }}"
+  - fullname: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_2_fullname') }}"
+    username: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_2_username') }}"
+    groups: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_2_groups') }}"
+    uid: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_2_uid') }}"
+    gid: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_2_gid') }}"
     sudoers: |
-      {{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_2_username') }} ALL=(ALL) NOPASSWD: ALL
-      Defaults:{{ lookup('jaredhocutt.homelab.bws', 'kickstart_user_2_username') }} !requiretty
+      {{ lookup('jaredhocutt.homelab.bws', 'server_user_2_username') }} ALL=(ALL) NOPASSWD: ALL
+      Defaults:{{ lookup('jaredhocutt.homelab.bws', 'server_user_2_username') }} !requiretty
     authorized_keys:
       - "{{ lookup('jaredhocutt.homelab.bws', 'ssh_authorized_key_4') }}"
