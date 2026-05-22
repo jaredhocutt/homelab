@@ -2,10 +2,8 @@
 name = "homelab"
 version = "0.1.0"
 description = "A project for managing my home lab."
-authors = [
-    {name = "Jared Hocutt",email = "jaredhocutt@gmail.com"}
-]
-license = {text = "MIT"}
+authors = [{ name = "Jared Hocutt", email = "jaredhocutt@gmail.com" }]
+license = { text = "MIT" }
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
 dependencies = [
@@ -13,34 +11,25 @@ dependencies = [
     "bitwarden-sdk~=1.0.0",
     "jmespath~=1.0.0",
     "netaddr~=1.3.0",
-    "azure-core (==1.26.1)",  # digitalocean.cloud collection dependency
-    "boto3 (==1.28.53)",  # digitalocean.cloud collection dependency
-    "pydo (==0.1.7)",  # digitalocean.cloud collection dependency
+    "azure-core==1.26.1",  # digitalocean.cloud collection dependency
+    "boto3==1.28.53",      # digitalocean.cloud collection dependency
+    "pydo==0.1.7",         # digitalocean.cloud collection dependency
 ]
 
-[tool.poetry]
-package-mode = false
+[dependency-groups]
+dev = [
+    "ansible-lint~=25.11.0",
+    "flake8~=7.3",
+    "molecule~=25.11.0",
+    "molecule-plugins[podman]~=25.8",
+    "pylint~=4.0",
+    "taskipy~=1.14",
+]
 
-[tool.poetry.group.dev.dependencies]
-ansible-builder = "~=3.1.0"
-ansible-creator = "~=25.11.0"
-ansible-lint = "~=25.11.0"
-ansible-navigator = "~=25.11.0"
-flake8 = "~=7.3"
-molecule = "~=25.11.0"
-molecule-plugins = {version = "~=25.8", extras = ["podman"]}
-pylint = "~=4.0"
-taskipy = "~=1.14"
-
-[tool.poetry.requires-plugins]
-poetry-plugin-export = "~=1.9"
+[tool.uv]
+package = false
 
 [tool.taskipy.tasks]
-build-ee = "ansible-navigator builder build --tag localhost/homelab-ee:latest --verbosity 3 --context .ansible/context --prune-images"
 check-image-tags = { cmd = "./scripts/check_image_tags.py", cwd = "." }
 open-role-files = { cmd = "./scripts/open_role_files.sh", cwd = "." }
 vault-edit = "EDITOR='code --wait' ansible-vault edit"
-
-[build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
