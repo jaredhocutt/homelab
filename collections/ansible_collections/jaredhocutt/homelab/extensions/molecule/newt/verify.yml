@@ -1,0 +1,27 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Stat the newt quadlet file
+      ansible.builtin.stat:
+        path: /etc/containers/systemd/newt.container
+      register: quadlet
+
+    - name: Assert quadlet file was written
+      ansible.builtin.assert:
+        that:
+          - quadlet.stat.exists
+          - quadlet.stat.size > 0
+          - quadlet.stat.mode == "0600"
+
+    - name: Read quadlet contents
+      ansible.builtin.slurp:
+        src: /etc/containers/systemd/newt.container
+      register: quadlet_contents
+
+    - name: Assert quadlet has the expected image and test endpoint
+      ansible.builtin.assert:
+        that:
+          - "'docker.io/fosrl/newt' in (quadlet_contents.content | b64decode)"
+          - "'test-endpoint.example' in (quadlet_contents.content | b64decode)"

@@ -1,0 +1,12 @@
+---
+- name: Prepare
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: Run common role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.common
+
+    - name: Run podman role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.podman

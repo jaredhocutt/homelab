@@ -31,5 +31,6 @@ package = false
 
 [tool.taskipy.tasks]
 check-image-tags = { cmd = "./scripts/check_image_tags.py", cwd = "." }
+molecule = { cmd = "uv run molecule", cwd = "collections/ansible_collections/jaredhocutt/homelab" }
 open-role-files = { cmd = "./scripts/open_role_files.sh", cwd = "." }
 vault-edit = "EDITOR='code --wait' ansible-vault edit"

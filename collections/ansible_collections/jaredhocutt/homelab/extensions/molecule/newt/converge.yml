@@ -1,0 +1,12 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    newt_endpoint: "http://test-endpoint.example:8080"
+    newt_attach_to: "unused-in-bridge-mode"
+    newt_network_mode: bridge
+  tasks:
+    - name: Include newt role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.newt

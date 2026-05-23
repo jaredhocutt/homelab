@@ -1,0 +1,4 @@
+---
+
+# Placeholder default scenario so molecule's shared-state lookup succeeds.
+# All real scenarios live in sibling directories and inherit from ../config.yml.
