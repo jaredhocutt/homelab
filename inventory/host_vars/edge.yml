@@ -38,7 +38,7 @@ pangolin_no_reply: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_smtp_no_reply
 # pangolin_cli
 ###############################################################################
 
-pangolin_cli_image_tag: "0.8.2"  # skopeo list-tags docker://docker.io/fosrl/pangolin-cli | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
+pangolin_cli_image_tag: "0.8.3"  # skopeo list-tags docker://docker.io/fosrl/pangolin-cli | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
 
 pangolin_cli_endpoint: https://pangolin.{{ lookup('jaredhocutt.homelab.bws', 'pangolin_base_domain') }}
 
