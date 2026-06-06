@@ -1,0 +1,12 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    tandoor_traefik_enable: false
+    tandoor_secret_key: test-secret-key
+    tandoor_postgres_password: test-postgres-password
+  tasks:
+    - name: Include tandoor role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.tandoor

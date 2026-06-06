@@ -1,0 +1,66 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  vars:
+    quadlet_dir: /etc/containers/systemd
+    expected_quadlets:
+      - immich.network
+      - immich-data.volume
+      - immich-machine-learning-cache.volume
+      - immich-postgres-data.volume
+      - immich-redis-data.volume
+      - immich-postgres.container
+      - immich-redis.container
+      - immich-machine-learning.container
+      - immich.container
+  tasks:
+    - name: Stat each expected quadlet file
+      ansible.builtin.stat:
+        path: "{{ quadlet_dir }}/{{ item }}"
+      register: quadlet_stats
+      loop: "{{ expected_quadlets }}"
+
+    - name: Assert each quadlet file exists with the expected mode
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.size > 0
+          - item.stat.mode == "0600"
+        fail_msg: "Quadlet {{ item.item }} missing or has wrong mode/size"
+      loop: "{{ quadlet_stats.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Read immich container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/immich.container"
+      register: container_quadlet
+
+    - name: Assert immich container quadlet has the expected image, volumes, and ports
+      ansible.builtin.assert:
+        that:
+          - "'ghcr.io/immich-app/immich-server' in (container_quadlet.content | b64decode)"
+          - "'immich-data.volume:/data' in (container_quadlet.content | b64decode)"
+          - "'/etc/localtime:/etc/localtime:ro' in (container_quadlet.content | b64decode)"
+          - "'2283:2283' in (container_quadlet.content | b64decode)"
+
+    - name: Read postgres container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/immich-postgres.container"
+      register: postgres_quadlet
+
+    - name: Assert postgres container quadlet has the expected image
+      ansible.builtin.assert:
+        that:
+          - "'ghcr.io/immich-app/postgres' in (postgres_quadlet.content | b64decode)"
+
+    - name: Read redis container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/immich-redis.container"
+      register: redis_quadlet
+
+    - name: Assert redis container quadlet has the expected image
+      ansible.builtin.assert:
+        that:
+          - "'docker.io/valkey/valkey' in (redis_quadlet.content | b64decode)"

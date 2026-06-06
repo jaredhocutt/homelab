@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    tautulli_traefik_enable: false
+  tasks:
+    - name: Include tautulli role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.tautulli

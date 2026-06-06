@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    transfer_sh_traefik_enable: false
+  tasks:
+    - name: Include transfer_sh role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.transfer_sh

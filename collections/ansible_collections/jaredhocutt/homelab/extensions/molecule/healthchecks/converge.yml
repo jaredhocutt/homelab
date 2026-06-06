@@ -1,0 +1,13 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    healthchecks_traefik_enable: false
+    healthchecks_email: admin@example.com
+    healthchecks_password: test-password
+    healthchecks_secret_key: test-secret-key
+  tasks:
+    - name: Include healthchecks role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.healthchecks

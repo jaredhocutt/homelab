@@ -1,0 +1,12 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    karakeep_traefik_enable: false
+    karakeep_nextauth_secret: test-nextauth-secret
+    karakeep_meilisearch_master_key: test-meilisearch-master-key
+  tasks:
+    - name: Include karakeep role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.karakeep

@@ -1,20 +1,16 @@
 # Molecule managed
 FROM {{ item.image }}
 
-RUN dnf makecache \
-  && dnf --assumeyes install \
-       /usr/bin/python3 /usr/bin/python3-config /usr/bin/dnf-3 \
-       sudo bash iproute systemd procps-ng \
-  && dnf clean all \
-  && (cd /lib/systemd/system/sysinit.target.wants/ \
-        && for i in *; do [ "$i" = systemd-tmpfiles-setup.service ] || rm -f "$i"; done) \
-  && rm -f /lib/systemd/system/multi-user.target.wants/* \
-           /etc/systemd/system/*.wants/* \
-           /lib/systemd/system/local-fs.target.wants/* \
-           /lib/systemd/system/sockets.target.wants/*udev* \
-           /lib/systemd/system/sockets.target.wants/*initctl* \
-           /lib/systemd/system/basic.target.wants/* \
-           /lib/systemd/system/anaconda.target.wants/*
+# Keep systemd host-like, but skip units that expect a real booted machine.
+RUN dnf --assumeyes install /usr/bin/python3-config systemd \
+  && systemctl --root=/ set-default multi-user.target \
+  && systemctl --root=/ disable \
+       getty.target \
+       systemd-logind.service \
+       systemd-user-sessions.service \
+       systemd-udevd.service \
+       systemd-udev-trigger.service \
+  && dnf clean all
 
 VOLUME [ "/sys/fs/cgroup" ]
 

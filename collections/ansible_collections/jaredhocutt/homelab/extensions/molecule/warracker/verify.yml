@@ -1,0 +1,41 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  vars:
+    quadlet_dir: /etc/containers/systemd
+    expected_quadlets:
+      - warracker.network
+      - warracker-uploads.volume
+      - warracker-postgres-data.volume
+      - warracker-postgres.container
+      - warracker.container
+  tasks:
+    - name: Stat each expected quadlet file
+      ansible.builtin.stat:
+        path: "{{ quadlet_dir }}/{{ item }}"
+      register: quadlet_stats
+      loop: "{{ expected_quadlets }}"
+
+    - name: Assert each quadlet file exists with the expected mode
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.size > 0
+          - item.stat.mode == "0600"
+        fail_msg: "Quadlet {{ item.item }} missing or has wrong mode/size"
+      loop: "{{ quadlet_stats.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Read warracker container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/warracker.container"
+      register: container_quadlet
+
+    - name: Assert warracker container quadlet has the expected image, volume, and ports
+      ansible.builtin.assert:
+        that:
+          - "'ghcr.io/sassanix/warracker/main' in (container_quadlet.content | b64decode)"
+          - "'warracker-uploads.volume:/data/uploads' in (container_quadlet.content | b64decode)"
+          - "'8005:80' in (container_quadlet.content | b64decode)"

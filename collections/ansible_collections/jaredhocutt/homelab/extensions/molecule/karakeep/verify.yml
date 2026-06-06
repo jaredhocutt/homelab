@@ -1,0 +1,54 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  vars:
+    quadlet_dir: /etc/containers/systemd
+    expected_quadlets:
+      - karakeep.network
+      - karakeep-data.volume
+      - karakeep-meilisearch-data.volume
+      - karakeep-chrome.container
+      - karakeep-meilisearch.container
+      - karakeep.container
+  tasks:
+    - name: Stat each expected quadlet file
+      ansible.builtin.stat:
+        path: "{{ quadlet_dir }}/{{ item }}"
+      register: quadlet_stats
+      loop: "{{ expected_quadlets }}"
+
+    - name: Assert each quadlet file exists with the expected mode
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.size > 0
+          - item.stat.mode == "0600"
+        fail_msg: "Quadlet {{ item.item }} missing or has wrong mode/size"
+      loop: "{{ quadlet_stats.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Read karakeep container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/karakeep.container"
+      register: container_quadlet
+
+    - name: Assert karakeep container quadlet has the expected image, volume, and ports
+      ansible.builtin.assert:
+        that:
+          - "'ghcr.io/karakeep-app/karakeep' in (container_quadlet.content | b64decode)"
+          - "'karakeep-data.volume:/data' in (container_quadlet.content | b64decode)"
+          - "'3000:3000' in (container_quadlet.content | b64decode)"
+
+    - name: Read chrome container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/karakeep-chrome.container"
+      register: chrome_quadlet
+
+    - name: Assert chrome container quadlet has the expected image and command flags
+      ansible.builtin.assert:
+        that:
+          - "'gcr.io/zenika-hub/alpine-chrome' in (chrome_quadlet.content | b64decode)"
+          - "'--no-sandbox' in (chrome_quadlet.content | b64decode)"
+          - "'--remote-debugging-port=9222' in (chrome_quadlet.content | b64decode)"

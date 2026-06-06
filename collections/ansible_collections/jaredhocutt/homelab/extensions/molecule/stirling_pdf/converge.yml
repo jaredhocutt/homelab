@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    stirling_pdf_traefik_enable: false
+  tasks:
+    - name: Include stirling_pdf role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.stirling_pdf

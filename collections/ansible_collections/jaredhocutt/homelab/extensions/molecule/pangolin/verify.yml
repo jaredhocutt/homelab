@@ -1,0 +1,84 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  vars:
+    quadlet_dir: /etc/containers/systemd
+    expected_quadlets:
+      - pangolin.network
+      - pangolin-config.volume
+      - pangolin-gerbil-config.volume
+      - pangolin-traefik-config.volume
+      - pangolin-traefik-letsencrypt.volume
+      - pangolin-traefik-logs.volume
+      - pangolin.container
+      - pangolin-gerbil.container
+      - pangolin-traefik.container
+  tasks:
+    - name: Stat each expected quadlet file
+      ansible.builtin.stat:
+        path: "{{ quadlet_dir }}/{{ item }}"
+      register: quadlet_stats
+      loop: "{{ expected_quadlets }}"
+
+    - name: Assert each quadlet file exists with the expected mode
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.size > 0
+          - item.stat.mode == "0600"
+        fail_msg: "Quadlet {{ item.item }} missing or has wrong mode/size"
+      loop: "{{ quadlet_stats.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Read pangolin container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/pangolin.container"
+      register: pangolin_quadlet
+
+    - name: Assert pangolin container quadlet has the expected image
+      ansible.builtin.assert:
+        that:
+          - "'docker.io/fosrl/pangolin' in (pangolin_quadlet.content | b64decode)"
+
+    - name: Read gerbil container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/pangolin-gerbil.container"
+      register: gerbil_quadlet
+
+    - name: Assert gerbil container quadlet has the expected image, caps, and ports
+      ansible.builtin.assert:
+        that:
+          - "'docker.io/fosrl/gerbil' in (gerbil_quadlet.content | b64decode)"
+          - "'AddCapability=NET_ADMIN' in (gerbil_quadlet.content | b64decode)"
+          - "'AddCapability=SYS_MODULE' in (gerbil_quadlet.content | b64decode)"
+          - "'80:80' in (gerbil_quadlet.content | b64decode)"
+          - "'51820:51820/udp' in (gerbil_quadlet.content | b64decode)"
+
+    - name: Read traefik container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/pangolin-traefik.container"
+      register: traefik_quadlet
+
+    - name: Assert traefik container quadlet shares the gerbil network namespace
+      ansible.builtin.assert:
+        that:
+          - "'docker.io/library/traefik' in (traefik_quadlet.content | b64decode)"
+          - "'container:pangolin-gerbil' in (traefik_quadlet.content | b64decode)"
+
+    - name: Get config volume info
+      containers.podman.podman_volume_info:
+        name: pangolin-config
+      register: config_volume_info
+
+    - name: Stat pangolin config.yml in the config volume
+      ansible.builtin.stat:
+        path: "{{ config_volume_info.volumes[0].Mountpoint }}/config.yml"
+      register: pangolin_config
+
+    - name: Assert pangolin config.yml was templated with the expected mode
+      ansible.builtin.assert:
+        that:
+          - pangolin_config.stat.exists
+          - pangolin_config.stat.mode == "0600"

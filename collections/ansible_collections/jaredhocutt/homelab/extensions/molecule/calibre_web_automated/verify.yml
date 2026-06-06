@@ -1,0 +1,43 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  vars:
+    quadlet_dir: /etc/containers/systemd
+    expected_quadlets:
+      - calibre-web-automated.network
+      - calibre-web-automated-config.volume
+      - calibre-web-automated-ingest.volume
+      - calibre-web-automated-library.volume
+      - calibre-web-automated.container
+  tasks:
+    - name: Stat each expected quadlet file
+      ansible.builtin.stat:
+        path: "{{ quadlet_dir }}/{{ item }}"
+      register: quadlet_stats
+      loop: "{{ expected_quadlets }}"
+
+    - name: Assert each quadlet file exists with the expected mode
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.size > 0
+          - item.stat.mode == "0600"
+        fail_msg: "Quadlet {{ item.item }} missing or has wrong mode/size"
+      loop: "{{ quadlet_stats.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Read calibre-web-automated container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/calibre-web-automated.container"
+      register: container_quadlet
+
+    - name: Assert calibre-web-automated container quadlet has the expected image, volumes, and ports
+      ansible.builtin.assert:
+        that:
+          - "'ghcr.io/crocodilestick/calibre-web-automated' in (container_quadlet.content | b64decode)"
+          - "'calibre-web-automated-config:/config' in (container_quadlet.content | b64decode)"
+          - "'calibre-web-automated-ingest:/cwa-book-ingest:z' in (container_quadlet.content | b64decode)"
+          - "'calibre-web-automated-library:/calibre-library' in (container_quadlet.content | b64decode)"
+          - "'8083:8083' in (container_quadlet.content | b64decode)"

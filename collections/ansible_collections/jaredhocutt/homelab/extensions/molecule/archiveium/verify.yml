@@ -1,0 +1,57 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  vars:
+    quadlet_dir: /etc/containers/systemd
+    expected_quadlets:
+      - archiveium.network
+      - archiveium-config.volume
+      - archiveium-postgres-data.volume
+      - archiveium-minio-data.volume
+      - archiveium-redis-data.volume
+      - archiveium-meilisearch-data.volume
+      - archiveium-postgres.container
+      - archiveium-minio.container
+      - archiveium-redis.container
+      - archiveium-meilisearch.container
+      - archiveium-cron.container
+      - archiveium.container
+  tasks:
+    - name: Stat each expected quadlet file
+      ansible.builtin.stat:
+        path: "{{ quadlet_dir }}/{{ item }}"
+      register: quadlet_stats
+      loop: "{{ expected_quadlets }}"
+
+    - name: Assert each quadlet file exists with the expected mode
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.size > 0
+          - item.stat.mode == "0600"
+        fail_msg: "Quadlet {{ item.item }} missing or has wrong mode/size"
+      loop: "{{ quadlet_stats.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Read archiveium container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/archiveium.container"
+      register: container_quadlet
+
+    - name: Assert archiveium container quadlet has the expected image and ports
+      ansible.builtin.assert:
+        that:
+          - "'docker.io/archiveium/archiveium' in (container_quadlet.content | b64decode)"
+          - "'5292:3000' in (container_quadlet.content | b64decode)"
+
+    - name: Read postgres container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/archiveium-postgres.container"
+      register: postgres_quadlet
+
+    - name: Assert postgres container quadlet uses the expected image
+      ansible.builtin.assert:
+        that:
+          - "'docker.io/library/postgres:13' in (postgres_quadlet.content | b64decode)"

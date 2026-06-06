@@ -1,0 +1,39 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  vars:
+    quadlet_dir: /etc/containers/systemd
+    expected_quadlets:
+      - open-webui.network
+      - open-webui-data.volume
+      - open-webui.container
+  tasks:
+    - name: Stat each expected quadlet file
+      ansible.builtin.stat:
+        path: "{{ quadlet_dir }}/{{ item }}"
+      register: quadlet_stats
+      loop: "{{ expected_quadlets }}"
+
+    - name: Assert each quadlet file exists with the expected mode
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.size > 0
+          - item.stat.mode == "0600"
+        fail_msg: "Quadlet {{ item.item }} missing or has wrong mode/size"
+      loop: "{{ quadlet_stats.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Read open-webui container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/open-webui.container"
+      register: container_quadlet
+
+    - name: Assert open-webui container quadlet has the expected image, volume, and ports
+      ansible.builtin.assert:
+        that:
+          - "'ghcr.io/open-webui/open-webui' in (container_quadlet.content | b64decode)"
+          - "'open-webui-data:/app/backend/data' in (container_quadlet.content | b64decode)"
+          - "'3000:8080' in (container_quadlet.content | b64decode)"

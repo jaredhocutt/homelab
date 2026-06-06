@@ -1,0 +1,81 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  vars:
+    quadlet_dir: /etc/containers/systemd
+    expected_quadlets:
+      - traefik.network
+      - traefik-certs.volume
+      - traefik-dynamic.volume
+      - traefik.container
+  tasks:
+    - name: Stat each expected quadlet file
+      ansible.builtin.stat:
+        path: "{{ quadlet_dir }}/{{ item }}"
+      register: quadlet_stats
+      loop: "{{ expected_quadlets }}"
+
+    - name: Assert each quadlet file exists with the expected mode
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.size > 0
+          - item.stat.mode == "0600"
+        fail_msg: "Quadlet {{ item.item }} missing or has wrong mode/size"
+      loop: "{{ quadlet_stats.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Read traefik container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/traefik.container"
+      register: container_quadlet
+
+    - name: Assert traefik container quadlet has the expected image, socket, and ports
+      ansible.builtin.assert:
+        that:
+          - "'docker.io/library/traefik' in (container_quadlet.content | b64decode)"
+          - "'/run/podman/podman.sock:/var/run/docker.sock' in (container_quadlet.content | b64decode)"
+          - "'80:80' in (container_quadlet.content | b64decode)"
+          - "'443:443' in (container_quadlet.content | b64decode)"
+
+    - name: Get certs volume info
+      containers.podman.podman_volume_info:
+        name: traefik-certs
+      register: certs_volume_info
+
+    - name: Stat the generated certificate files
+      ansible.builtin.stat:
+        path: "{{ certs_volume_info.volumes[0].Mountpoint }}/{{ item }}"
+      register: cert_files
+      loop:
+        - local.key
+        - local.csr
+        - local.crt
+
+    - name: Assert the certificate files were generated with the expected mode
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.mode == "0600"
+        fail_msg: "Cert file {{ item.item }} missing or has wrong mode"
+      loop: "{{ cert_files.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Get dynamic volume info
+      containers.podman.podman_volume_info:
+        name: "{{ common_traefik_volume_dynamic | default('traefik-dynamic') }}"
+      register: dynamic_volume_info
+
+    - name: Stat tls.yaml in the dynamic volume
+      ansible.builtin.stat:
+        path: "{{ dynamic_volume_info.volumes[0].Mountpoint }}/tls.yaml"
+      register: tls_yaml
+
+    - name: Assert tls.yaml was copied with the expected mode
+      ansible.builtin.assert:
+        that:
+          - tls_yaml.stat.exists
+          - tls_yaml.stat.mode == "0600"

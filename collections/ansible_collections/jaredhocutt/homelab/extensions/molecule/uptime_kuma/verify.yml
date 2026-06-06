@@ -1,0 +1,39 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  vars:
+    quadlet_dir: /etc/containers/systemd
+    expected_quadlets:
+      - uptime-kuma.network
+      - uptime-kuma-data.volume
+      - uptime-kuma.container
+  tasks:
+    - name: Stat each expected quadlet file
+      ansible.builtin.stat:
+        path: "{{ quadlet_dir }}/{{ item }}"
+      register: quadlet_stats
+      loop: "{{ expected_quadlets }}"
+
+    - name: Assert each quadlet file exists with the expected mode
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.size > 0
+          - item.stat.mode == "0600"
+        fail_msg: "Quadlet {{ item.item }} missing or has wrong mode/size"
+      loop: "{{ quadlet_stats.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Read uptime-kuma container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/uptime-kuma.container"
+      register: container_quadlet
+
+    - name: Assert uptime-kuma container quadlet has the expected image, volume, and ports
+      ansible.builtin.assert:
+        that:
+          - "'ghcr.io/louislam/uptime-kuma' in (container_quadlet.content | b64decode)"
+          - "'uptime-kuma-data:/app/data' in (container_quadlet.content | b64decode)"
+          - "'3001:3001' in (container_quadlet.content | b64decode)"

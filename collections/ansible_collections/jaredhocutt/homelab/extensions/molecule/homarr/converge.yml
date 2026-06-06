@@ -1,0 +1,11 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    homarr_traefik_enable: false
+    homarr_secret_encryption_key: test-secret-encryption-key
+  tasks:
+    - name: Include homarr role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.homarr

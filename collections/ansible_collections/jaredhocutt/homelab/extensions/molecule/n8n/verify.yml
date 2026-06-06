@@ -1,0 +1,55 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  vars:
+    quadlet_dir: /etc/containers/systemd
+    expected_quadlets:
+      - n8n.network
+      - n8n-data.volume
+      - n8n-postgres-data.volume
+      - n8n-redis-data.volume
+      - n8n-postgres.container
+      - n8n-redis.container
+      - n8n.container
+      - n8n-worker.container
+  tasks:
+    - name: Stat each expected quadlet file
+      ansible.builtin.stat:
+        path: "{{ quadlet_dir }}/{{ item }}"
+      register: quadlet_stats
+      loop: "{{ expected_quadlets }}"
+
+    - name: Assert each quadlet file exists with the expected mode
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.size > 0
+          - item.stat.mode == "0600"
+        fail_msg: "Quadlet {{ item.item }} missing or has wrong mode/size"
+      loop: "{{ quadlet_stats.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Read n8n container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/n8n.container"
+      register: container_quadlet
+
+    - name: Assert n8n container quadlet has the expected image, volume, and ports
+      ansible.builtin.assert:
+        that:
+          - "'docker.n8n.io/n8nio/n8n' in (container_quadlet.content | b64decode)"
+          - "'n8n-data.volume:/home/node/.n8n' in (container_quadlet.content | b64decode)"
+          - "'5678:5678' in (container_quadlet.content | b64decode)"
+
+    - name: Read worker container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/n8n-worker.container"
+      register: worker_quadlet
+
+    - name: Assert worker container quadlet uses the same image and runs worker command
+      ansible.builtin.assert:
+        that:
+          - "'docker.n8n.io/n8nio/n8n' in (worker_quadlet.content | b64decode)"
+          - "'worker' in (worker_quadlet.content | b64decode)"

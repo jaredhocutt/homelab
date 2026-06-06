@@ -1,0 +1,11 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    n8n_traefik_enable: false
+    n8n_postgres_password: test-postgres-password
+  tasks:
+    - name: Include n8n role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.n8n

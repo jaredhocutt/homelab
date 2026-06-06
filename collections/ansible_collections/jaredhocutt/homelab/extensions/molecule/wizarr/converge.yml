@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    wizarr_traefik_enable: false
+  tasks:
+    - name: Include wizarr role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.wizarr

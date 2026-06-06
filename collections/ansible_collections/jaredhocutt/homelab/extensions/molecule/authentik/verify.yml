@@ -1,0 +1,54 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  vars:
+    quadlet_dir: /etc/containers/systemd
+    expected_quadlets:
+      - authentik.network
+      - authentik-data.volume
+      - authentik-certs.volume
+      - authentik-templates.volume
+      - authentik-postgres-data.volume
+      - authentik-postgres.container
+      - authentik-server.container
+      - authentik-worker.container
+  tasks:
+    - name: Stat each expected quadlet file
+      ansible.builtin.stat:
+        path: "{{ quadlet_dir }}/{{ item }}"
+      register: quadlet_stats
+      loop: "{{ expected_quadlets }}"
+
+    - name: Assert each quadlet file exists with the expected mode
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.size > 0
+          - item.stat.mode == "0600"
+        fail_msg: "Quadlet {{ item.item }} missing or has wrong mode/size"
+      loop: "{{ quadlet_stats.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Read server container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/authentik-server.container"
+      register: server_quadlet
+
+    - name: Assert server container quadlet has the expected image, command, and ports
+      ansible.builtin.assert:
+        that:
+          - "'ghcr.io/goauthentik/server' in (server_quadlet.content | b64decode)"
+          - "'9000:9000' in (server_quadlet.content | b64decode)"
+          - "'9443:9443' in (server_quadlet.content | b64decode)"
+
+    - name: Read worker container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/authentik-worker.container"
+      register: worker_quadlet
+
+    - name: Assert worker container quadlet uses the same image
+      ansible.builtin.assert:
+        that:
+          - "'ghcr.io/goauthentik/server' in (worker_quadlet.content | b64decode)"

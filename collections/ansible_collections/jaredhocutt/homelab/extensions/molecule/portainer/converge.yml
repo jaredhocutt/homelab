@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    portainer_traefik_enable: false
+  tasks:
+    - name: Include portainer role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.portainer

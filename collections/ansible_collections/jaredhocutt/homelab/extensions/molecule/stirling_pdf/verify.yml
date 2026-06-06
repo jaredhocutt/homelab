@@ -1,0 +1,44 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  vars:
+    quadlet_dir: /etc/containers/systemd
+    expected_quadlets:
+      - stirling-pdf.network
+      - stirling-pdf-configs.volume
+      - stirling-pdf-training-data.volume
+      - stirling-pdf-custom-files.volume
+      - stirling-pdf-logs.volume
+      - stirling-pdf-pipeline.volume
+      - stirling-pdf.container
+  tasks:
+    - name: Stat each expected quadlet file
+      ansible.builtin.stat:
+        path: "{{ quadlet_dir }}/{{ item }}"
+      register: quadlet_stats
+      loop: "{{ expected_quadlets }}"
+
+    - name: Assert each quadlet file exists with the expected mode
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.size > 0
+          - item.stat.mode == "0600"
+        fail_msg: "Quadlet {{ item.item }} missing or has wrong mode/size"
+      loop: "{{ quadlet_stats.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Read stirling-pdf container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/stirling-pdf.container"
+      register: container_quadlet
+
+    - name: Assert stirling-pdf container quadlet has the expected image and ports
+      ansible.builtin.assert:
+        that:
+          - "'docker.stirlingpdf.com/stirlingtools/stirling-pdf' in (container_quadlet.content | b64decode)"
+          - "'stirling-pdf-configs:/configs' in (container_quadlet.content | b64decode)"
+          - "'stirling-pdf-logs:/logs' in (container_quadlet.content | b64decode)"
+          - "'8080:8080' in (container_quadlet.content | b64decode)"

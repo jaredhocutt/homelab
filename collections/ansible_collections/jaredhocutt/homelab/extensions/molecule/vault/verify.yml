@@ -1,0 +1,67 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  vars:
+    quadlet_dir: /etc/containers/systemd
+    expected_quadlets:
+      - vault.network
+      - vault-config.volume
+      - vault-data.volume
+      - vault-logs.volume
+      - vault.container
+  tasks:
+    - name: Stat each expected quadlet file
+      ansible.builtin.stat:
+        path: "{{ quadlet_dir }}/{{ item }}"
+      register: quadlet_stats
+      loop: "{{ expected_quadlets }}"
+
+    - name: Assert each quadlet file exists with the expected mode
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.size > 0
+          - item.stat.mode == "0600"
+        fail_msg: "Quadlet {{ item.item }} missing or has wrong mode/size"
+      loop: "{{ quadlet_stats.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Read vault container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/vault.container"
+      register: container_quadlet
+
+    - name: Assert vault container quadlet has the expected image, caps, command, and ports
+      ansible.builtin.assert:
+        that:
+          - "'docker.io/hashicorp/vault' in (container_quadlet.content | b64decode)"
+          - "'AddCapability=IPC_LOCK' in (container_quadlet.content | b64decode)"
+          - "'server' in (container_quadlet.content | b64decode)"
+          - "'8200:8200' in (container_quadlet.content | b64decode)"
+
+    - name: Get config volume info
+      containers.podman.podman_volume_info:
+        name: vault-config
+      register: config_volume_info
+
+    - name: Stat generated cert and config files in vault config volume
+      ansible.builtin.stat:
+        path: "{{ config_volume_info.volumes[0].Mountpoint }}/{{ item }}"
+      register: vault_files
+      loop:
+        - certs/vault.key
+        - certs/vault.csr
+        - certs/vault.crt
+        - config.json
+
+    - name: Assert vault config files were created with the expected mode
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.mode == "0600"
+        fail_msg: "Vault file {{ item.item }} missing or has wrong mode"
+      loop: "{{ vault_files.results }}"
+      loop_control:
+        label: "{{ item.item }}"

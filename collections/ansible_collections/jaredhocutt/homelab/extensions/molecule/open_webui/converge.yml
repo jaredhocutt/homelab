@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    open_webui_traefik_enable: false
+  tasks:
+    - name: Include open_webui role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.open_webui

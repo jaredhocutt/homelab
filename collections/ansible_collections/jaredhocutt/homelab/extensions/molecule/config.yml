@@ -3,7 +3,7 @@ driver:
   name: podman
 platforms:
   - name: instance
-    image: quay.io/fedora/fedora:latest
+    image: registry.fedoraproject.org/fedora-toolbox:43
     dockerfile: ../Dockerfile.j2
     systemd: always
     command: /usr/sbin/init
@@ -16,6 +16,10 @@ provisioner:
     prepare: ../prepare.yml
     converge: converge.yml
     verify: verify.yml
+ansible:
+  cfg:
+    defaults:
+      remote_tmp: /tmp/.ansible/tmp
 scenario:
   test_sequence:
     - destroy

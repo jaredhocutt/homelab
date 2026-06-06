@@ -1,0 +1,39 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  vars:
+    quadlet_dir: /etc/containers/systemd
+    expected_quadlets:
+      - portainer.network
+      - portainer-data.volume
+      - portainer.container
+  tasks:
+    - name: Stat each expected quadlet file
+      ansible.builtin.stat:
+        path: "{{ quadlet_dir }}/{{ item }}"
+      register: quadlet_stats
+      loop: "{{ expected_quadlets }}"
+
+    - name: Assert each quadlet file exists with the expected mode
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.size > 0
+          - item.stat.mode == "0600"
+        fail_msg: "Quadlet {{ item.item }} missing or has wrong mode/size"
+      loop: "{{ quadlet_stats.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Read portainer container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/portainer.container"
+      register: container_quadlet
+
+    - name: Assert portainer container quadlet has the expected image, socket, and ports
+      ansible.builtin.assert:
+        that:
+          - "'docker.io/portainer/portainer-ee' in (container_quadlet.content | b64decode)"
+          - "'/var/run/podman.sock:/var/run/docker.sock' in (container_quadlet.content | b64decode)"
+          - "'9443:9443' in (container_quadlet.content | b64decode)"

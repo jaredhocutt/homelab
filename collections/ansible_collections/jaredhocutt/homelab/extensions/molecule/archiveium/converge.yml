@@ -1,0 +1,16 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    archiveium_traefik_enable: false
+    archiveium_admin_email: admin@example.com
+    archiveium_admin_password: test-admin-password
+    archiveium_encryption_key: test-encryption-key
+    archiveium_meilisearch_master_key: test-meilisearch-master-key
+    archiveium_postgres_password: test-postgres-password
+    archiveium_minio_password: test-minio-password
+  tasks:
+    - name: Include archiveium role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.archiveium

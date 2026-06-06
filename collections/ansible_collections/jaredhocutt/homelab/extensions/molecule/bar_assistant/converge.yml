@@ -1,0 +1,11 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    bar_assistant_traefik_enable: false
+    bar_assistant_meilisearch_master_key: test-meilisearch-master-key
+  tasks:
+    - name: Include bar_assistant role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.bar_assistant

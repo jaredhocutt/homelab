@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    pangolin_cli_endpoint: http://test-endpoint.example:8080
+  tasks:
+    - name: Include pangolin_cli role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.pangolin_cli

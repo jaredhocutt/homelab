@@ -1,0 +1,12 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    warracker_traefik_enable: false
+    warracker_postgres_password: test-postgres-password
+    warracker_secret_key: test-secret-key
+  tasks:
+    - name: Include warracker role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.warracker

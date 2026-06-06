@@ -1,0 +1,13 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    snipe_it_traefik_enable: false
+    snipe_it_app_key: base64:dGVzdC1zbmlwZS1pdC1hcHAta2V5LWZvci1tb2xlY3VsZQ==
+    snipe_it_mariadb_root_password: test-mariadb-root-password
+    snipe_it_mariadb_password: test-mariadb-password
+  tasks:
+    - name: Include snipe_it role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.snipe_it

@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    seerr_traefik_enable: false
+  tasks:
+    - name: Include seerr role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.seerr

@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    vault_traefik_enable: false
+  tasks:
+    - name: Include vault role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.vault

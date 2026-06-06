@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    sonarr_traefik_enable: false
+  tasks:
+    - name: Include sonarr role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.sonarr

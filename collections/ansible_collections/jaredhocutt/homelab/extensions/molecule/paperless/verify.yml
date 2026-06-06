@@ -1,0 +1,49 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  vars:
+    quadlet_dir: /etc/containers/systemd
+    expected_quadlets:
+      - paperless.network
+      - paperless-data.volume
+      - paperless-media.volume
+      - paperless-export.volume
+      - paperless-consume.volume
+      - paperless-postgres-data.volume
+      - paperless-redis-data.volume
+      - paperless-ai-data.volume
+      - paperless-postgres.container
+      - paperless-redis.container
+      - paperless-gotenberg.container
+      - paperless-tika.container
+      - paperless.container
+      - paperless-ai.container
+  tasks:
+    - name: Stat each expected quadlet file
+      ansible.builtin.stat:
+        path: "{{ quadlet_dir }}/{{ item }}"
+      register: quadlet_stats
+      loop: "{{ expected_quadlets }}"
+
+    - name: Assert each quadlet file exists with the expected mode
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.size > 0
+          - item.stat.mode == "0600"
+        fail_msg: "Quadlet {{ item.item }} missing or has wrong mode/size"
+      loop: "{{ quadlet_stats.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Read paperless container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/paperless.container"
+      register: container_quadlet
+
+    - name: Assert paperless container quadlet has the expected image and ports
+      ansible.builtin.assert:
+        that:
+          - "'ghcr.io/paperless-ngx/paperless-ngx' in (container_quadlet.content | b64decode)"
+          - "'8000:8000' in (container_quadlet.content | b64decode)"

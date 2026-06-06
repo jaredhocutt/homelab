@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    go2rtc_traefik_enable: false
+  tasks:
+    - name: Include go2rtc role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.go2rtc

@@ -1,0 +1,12 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    authentik_traefik_enable: false
+    authentik_postgres_password: test-postgres-password
+    authentik_secret_key: test-secret-key
+  tasks:
+    - name: Include authentik role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.authentik

@@ -1,0 +1,30 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Stat the pangolin-cli container quadlet file
+      ansible.builtin.stat:
+        path: /etc/containers/systemd/pangolin-cli.container
+      register: quadlet
+
+    - name: Assert quadlet file was written
+      ansible.builtin.assert:
+        that:
+          - quadlet.stat.exists
+          - quadlet.stat.size > 0
+          - quadlet.stat.mode == "0600"
+
+    - name: Read quadlet contents
+      ansible.builtin.slurp:
+        src: /etc/containers/systemd/pangolin-cli.container
+      register: quadlet_contents
+
+    - name: Assert quadlet has the expected image, host network, cap and tun device
+      ansible.builtin.assert:
+        that:
+          - "'docker.io/fosrl/pangolin-cli' in (quadlet_contents.content | b64decode)"
+          - "'Network=host' in (quadlet_contents.content | b64decode)"
+          - "'AddCapability=NET_ADMIN' in (quadlet_contents.content | b64decode)"
+          - "'/dev/net/tun' in (quadlet_contents.content | b64decode)"
+          - "'test-endpoint.example' in (quadlet_contents.content | b64decode)"
