@@ -39,5 +39,15 @@
   notify: Restart podman-firewalld-reload
   become: true
 
+- name: Login to podman registries
+  containers.podman.podman_login:
+    registry: "{{ item.registry }}"
+    username: "{{ item.username }}"
+    password: "{{ item.password }}"
+  loop: "{{ podman_registries }}"
+  become: true
+  no_log: true
+  changed_when: false
+
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers

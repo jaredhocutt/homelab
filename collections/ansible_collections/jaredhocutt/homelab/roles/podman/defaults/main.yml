@@ -2,3 +2,5 @@
 # defaults file for jaredhocutt.homelab.podman
 
 podman_enable_socket: false
+
+podman_registries: []
