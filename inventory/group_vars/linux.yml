@@ -1,6 +1,15 @@
 ---
 
 ###############################################################################
+# podman
+###############################################################################
+
+podman_registries:
+  - registry: docker.io
+    username: "{{ lookup('jaredhocutt.homelab.bws', 'podman_registry_docker_username') }}"
+    password: "{{ lookup('jaredhocutt.homelab.bws', 'podman_registry_docker_password') }}"
+
+###############################################################################
 # server_setup
 ###############################################################################
 
