@@ -1,0 +1,102 @@
+---
+# tasks file for jaredhocutt.homelab.glance
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ glance_image }}"
+      image_tag: "{{ glance_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ glance_name }}"
+    driver: bridge
+    disable_dns: false
+    opt:
+      isolate: "true"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ glance_volume_config }}"
+      options: "{{ glance_volume_config_options | default(omit) }}"
+  register: _glance_created_volumes
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
+  when: _glance_created_volumes.changed  # noqa: no-handler
+
+- name: Start config volume service to create it
+  ansible.builtin.systemd:
+    name: "{{ glance_volume_config }}-volume.service"
+    state: started
+  become: true
+
+- name: Get config volume info
+  containers.podman.podman_volume_info:
+    name: "{{ glance_volume_config }}"
+  become: true
+  register: _glance_config_volume_info
+
+- name: Check if glance config file exists
+  ansible.builtin.stat:
+    path: "{{ _glance_config_volume_info.volumes[0].Mountpoint }}/glance.yml"
+  become: true
+  register: _glance_config_file
+
+- name: Download default glance config
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/glanceapp/glance/refs/heads/main/docs/glance.yml
+    dest: "{{ _glance_config_volume_info.volumes[0].Mountpoint }}/glance.yml"
+    owner: root
+    group: root
+    mode: "0600"
+  become: true
+  when: not _glance_config_file.stat.exists
+  notify: Restart {{ glance_name }}
+
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ glance_secrets_combined | dict2items }}"
+
+- name: Create glance container
+  containers.podman.podman_container:
+    name: "{{ glance_name }}"
+    image: "{{ glance_image }}:{{ glance_image_tag }}"
+    security_opt:
+      - label=disable
+    network:
+      - "{{ glance_name }}.network"
+      - "{{ glance_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
+    volumes:
+      - "{{ glance_volume_config }}:/app/config"
+      - /run/podman/podman.sock:/var/run/docker.sock:z
+    publish: "{{ glance_traefik_enable | ternary(omit, glance_ports) }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
+    state: quadlet
+  notify: Restart {{ glance_name }}
+  become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

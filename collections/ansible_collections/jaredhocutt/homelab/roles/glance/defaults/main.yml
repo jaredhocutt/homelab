@@ -1,0 +1,21 @@
+---
+# defaults file for jaredhocutt.homelab.glance
+
+glance_name: glance
+
+glance_image: docker.io/glanceapp/glance
+glance_image_tag: latest
+
+glance_volume_config: "{{ glance_name }}-config"
+
+glance_traefik_enable: true
+glance_traefik_host: "{{ glance_name }}.{{ common_traefik_domain }}"
+glance_ports:
+  - 8080:8080
+
+glance_secrets: {}
+
+glance_container_env: {}
+glance_container_secrets: []
+glance_container_labels: {}
+glance_container_quadlet_options: []

@@ -1,0 +1,34 @@
+---
+# vars file for jaredhocutt.homelab.glance
+
+###############################################################################
+# Envrionment
+###############################################################################
+
+glance_container_env_defaults: {}
+
+###############################################################################
+# Secrets
+###############################################################################
+
+glance_secrets_defaults: {}
+
+glance_secrets_combined: >-
+  {{ glance_secrets_defaults
+  | combine(glance_secrets, recursive=True) }}
+
+glance_container_secrets_defaults: []
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+glance_container_labels_defaults: >
+  {{ glance_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', glance_name, glance_traefik_host, '8080'), {}) }}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+glance_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

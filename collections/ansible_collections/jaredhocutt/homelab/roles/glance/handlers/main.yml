@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.glance
+
+- name: Restart {{ glance_name }}
+  ansible.builtin.systemd:
+    name: "{{ glance_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
