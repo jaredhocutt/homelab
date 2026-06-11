@@ -50,7 +50,7 @@
     env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
-      - "{{ portainer_volume_config }}:/data"
+      - "{{ portainer_volume_data }}:/data"
       - /var/run/podman.sock:/var/run/docker.sock
     publish: "{{ portainer_traefik_enable | ternary(omit, portainer_ports) }}"
     healthcheck_interval: 30s
