@@ -101,6 +101,14 @@ changedetection_image_tag: "0.55.7"  # skopeo list-tags docker://ghcr.io/dgtlmoo
 changedetection_browser_image_tag: "0.0.3"  # skopeo list-tags docker://docker.io/dgtlmoon/sockpuppetbrowser | jq -r '.Tags[] | select(test("^[0-9]"))'
 
 ###############################################################################
+# glance
+###############################################################################
+
+glance_image_tag: v0.8.5  # skopeo list-tags docker://docker.io/glanceapp/glance | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+
+glance_traefik_host: "dashboard.{{ common_traefik_domain }}"
+
+###############################################################################
 # go2rtc
 ###############################################################################
 
