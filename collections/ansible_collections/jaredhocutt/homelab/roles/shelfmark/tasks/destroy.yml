@@ -8,6 +8,9 @@
   failed_when: false
   loop:
     - "{{ shelfmark_name }}.service"
+    - "{{ shelfmark_volume_config }}-volume.service"
+    - "{{ shelfmark_volume_books }}-volume.service"
+    - "{{ shelfmark_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:

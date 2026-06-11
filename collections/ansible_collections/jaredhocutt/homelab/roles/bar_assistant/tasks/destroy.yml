@@ -11,6 +11,10 @@
     - "{{ bar_assistant_name }}-salt-rim.service"
     - "{{ bar_assistant_name }}-meilisearch.service"
     - "{{ bar_assistant_name }}-redis.service"
+    - "{{ bar_assistant_volume_data }}-volume.service"
+    - "{{ bar_assistant_redis_volume_data }}-volume.service"
+    - "{{ bar_assistant_meilisearch_volume_data }}-volume.service"
+    - "{{ bar_assistant_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:

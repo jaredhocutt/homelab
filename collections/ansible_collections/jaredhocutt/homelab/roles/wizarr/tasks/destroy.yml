@@ -8,6 +8,8 @@
   failed_when: false
   loop:
     - "{{ wizarr_name }}.service"
+    - "{{ wizarr_volume_data }}-volume.service"
+    - "{{ wizarr_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:

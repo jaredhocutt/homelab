@@ -7,9 +7,9 @@
   become: true
   failed_when: false
   loop:
-    - "{{ homarr_name }}.service"
-    - "{{ homarr_volume_data }}-volume.service"
-    - "{{ homarr_name }}-network.service"
+    - "{{ beszel_name }}.service"
+    - "{{ beszel_volume_data }}-volume.service"
+    - "{{ beszel_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:
@@ -17,7 +17,7 @@
     state: absent
   become: true
   loop:
-    - "{{ homarr_name }}"
+    - "{{ beszel_name }}"
 
 - name: Destroy secrets
   containers.podman.podman_secret:
@@ -25,7 +25,7 @@
     state: absent
   become: true
   no_log: true
-  loop: "{{ homarr_secrets_combined | dict2items }}"
+  loop: "{{ beszel_secrets_combined | dict2items }}"
 
 - name: Destroy volumes
   containers.podman.podman_volume:
@@ -33,11 +33,11 @@
     state: absent
   become: true
   loop:
-    - "{{ homarr_volume_data }}"
+    - "{{ beszel_volume_data }}"
 
 - name: Destroy network
   containers.podman.podman_network:
-    name: "{{ homarr_name }}"
+    name: "{{ beszel_name }}"
     state: absent
   become: true
 
@@ -47,9 +47,9 @@
     state: absent
   become: true
   loop:
-    - "{{ homarr_name }}.container"
-    - "{{ homarr_volume_data }}.volume"
-    - "{{ homarr_name }}.network"
+    - "{{ beszel_name }}.container"
+    - "{{ beszel_volume_data }}.volume"
+    - "{{ beszel_name }}.network"
 
 - name: Reload systemd daemon
   ansible.builtin.systemd:

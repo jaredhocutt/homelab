@@ -8,6 +8,7 @@
   failed_when: false
   loop:
     - "{{ bentopdf_name }}.service"
+    - "{{ bentopdf_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:

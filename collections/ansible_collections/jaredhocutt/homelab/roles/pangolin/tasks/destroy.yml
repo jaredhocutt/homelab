@@ -1,0 +1,75 @@
+---
+
+- name: Stop services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: stopped
+  become: true
+  failed_when: false
+  loop:
+    - "{{ pangolin_name }}.service"
+    - "{{ pangolin_name }}-gerbil.service"
+    - "{{ pangolin_name }}-traefik.service"
+    - "{{ pangolin_volume_config }}-volume.service"
+    - "{{ pangolin_gerbil_volume_config }}-volume.service"
+    - "{{ pangolin_traefik_volume_config }}-volume.service"
+    - "{{ pangolin_traefik_volume_letsencrypt }}-volume.service"
+    - "{{ pangolin_traefik_volume_logs }}-volume.service"
+    - "{{ pangolin_name }}-network.service"
+
+- name: Destroy containers
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ pangolin_name }}"
+    - "{{ pangolin_name }}-gerbil"
+    - "{{ pangolin_name }}-traefik"
+
+- name: Destroy secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    state: absent
+  become: true
+  no_log: true
+  loop: "{{ pangolin_secrets_combined | dict2items }}"
+
+- name: Destroy volumes
+  containers.podman.podman_volume:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ pangolin_volume_config }}"
+    - "{{ pangolin_gerbil_volume_config }}"
+    - "{{ pangolin_traefik_volume_config }}"
+    - "{{ pangolin_traefik_volume_letsencrypt }}"
+    - "{{ pangolin_traefik_volume_logs }}"
+
+- name: Destroy network
+  containers.podman.podman_network:
+    name: "{{ pangolin_name }}"
+    state: absent
+  become: true
+
+- name: Cleanup quadlet files
+  ansible.builtin.file:
+    path: /etc/containers/systemd/{{ item }}
+    state: absent
+  become: true
+  loop:
+    - "{{ pangolin_name }}.container"
+    - "{{ pangolin_name }}-gerbil.container"
+    - "{{ pangolin_name }}-traefik.container"
+    - "{{ pangolin_volume_config }}.volume"
+    - "{{ pangolin_gerbil_volume_config }}.volume"
+    - "{{ pangolin_traefik_volume_config }}.volume"
+    - "{{ pangolin_traefik_volume_letsencrypt }}.volume"
+    - "{{ pangolin_traefik_volume_logs }}.volume"
+    - "{{ pangolin_name }}.network"
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true

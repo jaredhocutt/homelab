@@ -10,6 +10,9 @@
     - "{{ karakeep_name }}.service"
     - "{{ karakeep_name }}-meilisearch.service"
     - "{{ karakeep_name }}-chrome.service"
+    - "{{ karakeep_volume_data }}-volume.service"
+    - "{{ karakeep_meilisearch_volume_data }}-volume.service"
+    - "{{ karakeep_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:

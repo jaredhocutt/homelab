@@ -8,6 +8,8 @@
   failed_when: false
   loop:
     - "{{ open_webui_name }}.service"
+    - "{{ open_webui_volume_data }}-volume.service"
+    - "{{ open_webui_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:

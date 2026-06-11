@@ -7,9 +7,11 @@
   become: true
   failed_when: false
   loop:
-    - "{{ homarr_name }}.service"
-    - "{{ homarr_volume_data }}-volume.service"
-    - "{{ homarr_name }}-network.service"
+    - "{{ vault_name }}.service"
+    - "{{ vault_volume_config }}-volume.service"
+    - "{{ vault_volume_data }}-volume.service"
+    - "{{ vault_volume_logs }}-volume.service"
+    - "{{ vault_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:
@@ -17,7 +19,7 @@
     state: absent
   become: true
   loop:
-    - "{{ homarr_name }}"
+    - "{{ vault_name }}"
 
 - name: Destroy secrets
   containers.podman.podman_secret:
@@ -25,7 +27,7 @@
     state: absent
   become: true
   no_log: true
-  loop: "{{ homarr_secrets_combined | dict2items }}"
+  loop: "{{ vault_secrets_combined | dict2items }}"
 
 - name: Destroy volumes
   containers.podman.podman_volume:
@@ -33,11 +35,13 @@
     state: absent
   become: true
   loop:
-    - "{{ homarr_volume_data }}"
+    - "{{ vault_volume_config }}"
+    - "{{ vault_volume_data }}"
+    - "{{ vault_volume_logs }}"
 
 - name: Destroy network
   containers.podman.podman_network:
-    name: "{{ homarr_name }}"
+    name: "{{ vault_name }}"
     state: absent
   become: true
 
@@ -47,9 +51,11 @@
     state: absent
   become: true
   loop:
-    - "{{ homarr_name }}.container"
-    - "{{ homarr_volume_data }}.volume"
-    - "{{ homarr_name }}.network"
+    - "{{ vault_name }}.container"
+    - "{{ vault_volume_config }}.volume"
+    - "{{ vault_volume_data }}.volume"
+    - "{{ vault_volume_logs }}.volume"
+    - "{{ vault_name }}.network"
 
 - name: Reload systemd daemon
   ansible.builtin.systemd:

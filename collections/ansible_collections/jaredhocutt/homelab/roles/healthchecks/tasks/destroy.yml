@@ -8,6 +8,8 @@
   failed_when: false
   loop:
     - "{{ healthchecks_name }}.service"
+    - "{{ healthchecks_volume_config }}-volume.service"
+    - "{{ healthchecks_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:

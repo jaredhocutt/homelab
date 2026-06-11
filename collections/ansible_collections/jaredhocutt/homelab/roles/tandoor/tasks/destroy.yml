@@ -9,6 +9,10 @@
   loop:
     - "{{ tandoor_name }}.service"
     - "{{ tandoor_name }}-postgres.service"
+    - "{{ tandoor_volume_staticfiles }}-volume.service"
+    - "{{ tandoor_volume_mediafiles }}-volume.service"
+    - "{{ tandoor_postgres_volume_data }}-volume.service"
+    - "{{ tandoor_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:

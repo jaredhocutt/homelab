@@ -8,6 +8,10 @@
   failed_when: false
   loop:
     - "{{ sonarr_name }}.service"
+    - "{{ sonarr_volume_config }}-volume.service"
+    - "{{ sonarr_volume_download }}-volume.service"
+    - "{{ sonarr_volume_media }}-volume.service"
+    - "{{ sonarr_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:

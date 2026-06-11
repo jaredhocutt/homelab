@@ -9,6 +9,9 @@
   loop:
     - "{{ nocodb_name }}.service"
     - "{{ nocodb_name }}-postgres.service"
+    - "{{ nocodb_volume_data }}-volume.service"
+    - "{{ nocodb_postgres_volume_data }}-volume.service"
+    - "{{ nocodb_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:

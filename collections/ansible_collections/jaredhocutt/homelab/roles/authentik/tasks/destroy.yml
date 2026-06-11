@@ -10,6 +10,11 @@
     - "{{ authentik_name }}-server.service"
     - "{{ authentik_name }}-worker.service"
     - "{{ authentik_name }}-postgres.service"
+    - "{{ authentik_volume_data }}-volume.service"
+    - "{{ authentik_volume_certs }}-volume.service"
+    - "{{ authentik_volume_templates }}-volume.service"
+    - "{{ authentik_postgres_volume_data }}-volume.service"
+    - "{{ authentik_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:
@@ -35,7 +40,7 @@
     state: absent
   become: true
   loop:
-    - "{{ authentik_volume_media }}"
+    - "{{ authentik_volume_data }}"
     - "{{ authentik_volume_certs }}"
     - "{{ authentik_volume_templates }}"
     - "{{ authentik_postgres_volume_data }}"
@@ -55,7 +60,7 @@
     - "{{ authentik_name }}-server.container"
     - "{{ authentik_name }}-worker.container"
     - "{{ authentik_name }}-postgres.container"
-    - "{{ authentik_volume_media }}.volume"
+    - "{{ authentik_volume_data }}.volume"
     - "{{ authentik_volume_certs }}.volume"
     - "{{ authentik_volume_templates }}.volume"
     - "{{ authentik_postgres_volume_data }}.volume"

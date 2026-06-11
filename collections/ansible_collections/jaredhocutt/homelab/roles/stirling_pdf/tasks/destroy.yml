@@ -8,6 +8,12 @@
   failed_when: false
   loop:
     - "{{ stirling_pdf_name }}.service"
+    - "{{ stirling_pdf_volume_configs }}-volume.service"
+    - "{{ stirling_pdf_volume_training_data }}-volume.service"
+    - "{{ stirling_pdf_volume_custom_files }}-volume.service"
+    - "{{ stirling_pdf_volume_logs }}-volume.service"
+    - "{{ stirling_pdf_volume_pipeline }}-volume.service"
+    - "{{ stirling_pdf_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:

@@ -8,6 +8,8 @@
   failed_when: false
   loop:
     - "{{ portainer_name }}.service"
+    - "{{ portainer_volume_data }}-volume.service"
+    - "{{ portainer_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:

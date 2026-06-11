@@ -11,6 +11,11 @@
     - "{{ immich_name }}-machine-learning.service"
     - "{{ immich_name }}-redis.service"
     - "{{ immich_name }}-postgres.service"
+    - "{{ immich_volume_data }}-volume.service"
+    - "{{ immich_machine_learning_volume_cache }}-volume.service"
+    - "{{ immich_postgres_volume_data }}-volume.service"
+    - "{{ immich_redis_volume_data }}-volume.service"
+    - "{{ immich_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:

@@ -8,6 +8,8 @@
   failed_when: false
   loop:
     - "{{ prowlarr_name }}.service"
+    - "{{ prowlarr_volume_config }}-volume.service"
+    - "{{ prowlarr_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:

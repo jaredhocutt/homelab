@@ -13,6 +13,14 @@
     - "{{ paperless_name }}-gotenberg.service"
     - "{{ paperless_name }}-redis.service"
     - "{{ paperless_name }}-postgres.service"
+    - "{{ paperless_volume_data }}-volume.service"
+    - "{{ paperless_volume_media }}-volume.service"
+    - "{{ paperless_volume_export }}-volume.service"
+    - "{{ paperless_volume_consume }}-volume.service"
+    - "{{ paperless_postgres_volume_data }}-volume.service"
+    - "{{ paperless_redis_volume_data }}-volume.service"
+    - "{{ paperless_ai_volume_data }}-volume.service"
+    - "{{ paperless_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:

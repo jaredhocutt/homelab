@@ -13,6 +13,12 @@
     - "{{ archiveium_name }}-redis.service"
     - "{{ archiveium_name }}-minio.service"
     - "{{ archiveium_name }}-postgres.service"
+    - "{{ archiveium_volume_config }}-volume.service"
+    - "{{ archiveium_postgres_volume_data }}-volume.service"
+    - "{{ archiveium_minio_volume_data }}-volume.service"
+    - "{{ archiveium_redis_volume_data }}-volume.service"
+    - "{{ archiveium_meilisearch_volume_data }}-volume.service"
+    - "{{ archiveium_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:

@@ -9,6 +9,9 @@
   loop:
     - "{{ snipe_it_name }}.service"
     - "{{ snipe_it_name }}-mariadb.service"
+    - "{{ snipe_it_volume_data }}-volume.service"
+    - "{{ snipe_it_mariadb_volume_data }}-volume.service"
+    - "{{ snipe_it_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:

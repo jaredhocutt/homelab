@@ -8,6 +8,8 @@
   failed_when: false
   loop:
     - "{{ go2rtc_name }}.service"
+    - "{{ go2rtc_volume_config }}-volume.service"
+    - "{{ go2rtc_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:

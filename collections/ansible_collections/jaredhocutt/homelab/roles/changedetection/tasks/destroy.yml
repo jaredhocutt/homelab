@@ -9,6 +9,8 @@
   loop:
     - "{{ changedetection_name }}.service"
     - "{{ changedetection_name }}-browser.service"
+    - "{{ changedetection_volume_data }}-volume.service"
+    - "{{ changedetection_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:

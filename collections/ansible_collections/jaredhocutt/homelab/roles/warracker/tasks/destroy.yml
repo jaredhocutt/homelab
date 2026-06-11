@@ -9,6 +9,9 @@
   loop:
     - "{{ warracker_name }}.service"
     - "{{ warracker_name }}-postgres.service"
+    - "{{ warracker_volume_uploads }}-volume.service"
+    - "{{ warracker_postgres_volume_data }}-volume.service"
+    - "{{ warracker_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:

@@ -8,6 +8,8 @@
   failed_when: false
   loop:
     - "{{ overseerr_name }}.service"
+    - "{{ overseerr_volume_config }}-volume.service"
+    - "{{ overseerr_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:

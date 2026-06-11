@@ -8,6 +8,8 @@
   failed_when: false
   loop:
     - "{{ transfer_sh_name }}.service"
+    - "{{ transfer_sh_volume_transfers }}-volume.service"
+    - "{{ transfer_sh_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:

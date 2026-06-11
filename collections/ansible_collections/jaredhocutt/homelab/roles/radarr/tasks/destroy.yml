@@ -8,6 +8,10 @@
   failed_when: false
   loop:
     - "{{ radarr_name }}.service"
+    - "{{ radarr_volume_config }}-volume.service"
+    - "{{ radarr_volume_download }}-volume.service"
+    - "{{ radarr_volume_media }}-volume.service"
+    - "{{ radarr_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:

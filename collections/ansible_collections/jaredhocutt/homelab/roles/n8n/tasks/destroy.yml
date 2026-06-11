@@ -11,6 +11,10 @@
     - "{{ n8n_name }}-worker.service"
     - "{{ n8n_name }}-redis.service"
     - "{{ n8n_name }}-postgres.service"
+    - "{{ n8n_volume_data }}-volume.service"
+    - "{{ n8n_postgres_volume_data }}-volume.service"
+    - "{{ n8n_redis_volume_data }}-volume.service"
+    - "{{ n8n_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:

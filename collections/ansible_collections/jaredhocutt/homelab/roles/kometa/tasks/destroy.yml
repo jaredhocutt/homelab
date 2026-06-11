@@ -8,6 +8,8 @@
   failed_when: false
   loop:
     - "{{ kometa_name }}.service"
+    - "{{ kometa_volume_config }}-volume.service"
+    - "{{ kometa_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:

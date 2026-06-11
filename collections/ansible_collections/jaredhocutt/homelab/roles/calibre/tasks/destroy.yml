@@ -8,6 +8,9 @@
   failed_when: false
   loop:
     - "{{ calibre_name }}.service"
+    - "{{ calibre_volume_config }}-volume.service"
+    - "{{ calibre_volume_media }}-volume.service"
+    - "{{ calibre_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:

@@ -8,6 +8,7 @@
   failed_when: false
   loop:
     - "{{ do_agent_name }}.service"
+    - "{{ do_agent_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:

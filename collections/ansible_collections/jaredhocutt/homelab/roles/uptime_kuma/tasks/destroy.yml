@@ -8,6 +8,8 @@
   failed_when: false
   loop:
     - "{{ uptime_kuma_name }}.service"
+    - "{{ uptime_kuma_volume_data }}-volume.service"
+    - "{{ uptime_kuma_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:

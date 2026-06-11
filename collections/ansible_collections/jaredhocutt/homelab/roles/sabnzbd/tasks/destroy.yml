@@ -8,6 +8,9 @@
   failed_when: false
   loop:
     - "{{ sabnzbd_name }}.service"
+    - "{{ sabnzbd_volume_config }}-volume.service"
+    - "{{ sabnzbd_volume_download }}-volume.service"
+    - "{{ sabnzbd_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:
