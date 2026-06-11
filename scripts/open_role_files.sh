@@ -16,4 +16,5 @@ code \
     "$ROLES_DIR/$ROLE/defaults/main.yml" \
     "$ROLES_DIR/$ROLE/vars/main.yml" \
     "$ROLES_DIR/$ROLE/tasks/main.yml" \
+    "$ROLES_DIR/$ROLE/tasks/destroy.yml" \
     "$ROLES_DIR/$ROLE/handlers/main.yml"
