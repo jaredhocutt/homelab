@@ -17,8 +17,8 @@ backrest_env:
 # pangolin
 ###############################################################################
 
-pangolin_image_tag: "ee-1.18.4"  # skopeo list-tags docker://docker.io/fosrl/pangolin | jq -r '.Tags[] | select(test("^ee-[0-9\\.]+$"))'
-pangolin_gerbil_image_tag: "1.4.1"  # skopeo list-tags docker://docker.io/fosrl/gerbil | jq -r '.Tags[] | select(test("^[0-9]\\."))'
+pangolin_image_tag: "ee-1.19.2"  # skopeo list-tags docker://docker.io/fosrl/pangolin | jq -r '.Tags[] | select(test("^ee-[0-9\\.]+$"))'
+pangolin_gerbil_image_tag: "1.4.2"  # skopeo list-tags docker://docker.io/fosrl/gerbil | jq -r '.Tags[] | select(test("^[0-9]\\."))'
 pangolin_traefik_image_tag: v3.7.5  # skopeo list-tags docker://docker.io/library/traefik | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
 
 pangolin_gerbil_ports_extra:
@@ -38,7 +38,7 @@ pangolin_no_reply: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_smtp_no_reply
 # pangolin_cli
 ###############################################################################
 
-pangolin_cli_image_tag: "1.10.0"  # skopeo list-tags docker://docker.io/fosrl/pangolin-cli | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
+pangolin_cli_image_tag: "0.10.1"  # skopeo list-tags docker://ghcr.io/fosrl/cli | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
 
 pangolin_cli_endpoint: https://pangolin.{{ lookup('jaredhocutt.homelab.bws', 'pangolin_base_domain') }}
 
