@@ -63,7 +63,7 @@ backrest_env:
 # bar_assistant
 ###############################################################################
 
-bar_assistant_image_tag: "5.15.0"  # skopeo list-tags docker://docker.io/barassistant/server | jq -r '.Tags[] | select(test("^5\\.[0-9]"))'
+bar_assistant_image_tag: "5.15.2"  # skopeo list-tags docker://docker.io/barassistant/server | jq -r '.Tags[] | select(test("^5\\.[0-9]"))'
 bar_assistant_salt_rim_image_tag: "4.15.0"  # skopeo list-tags docker://docker.io/barassistant/salt-rim | jq -r '.Tags[] | select(test("^4\\.[0-9]"))'
 bar_assistant_redis_image_tag: "8.8.0"  # skopeo list-tags docker://docker.io/library/redis | jq -r '.Tags[] | select(test("^[0-9]\\.[0-9\\.]*$"))'
 bar_assistant_meilisearch_image_tag: v1.15.2  # skopeo list-tags docker://docker.io/getmeili/meilisearch | jq -r '.Tags[] | select(test("^v1.15"))'
@@ -148,7 +148,7 @@ healthchecks_container_secrets:
 # homarr
 ###############################################################################
 
-homarr_image_tag: v1.64.0  # skopeo list-tags docker://ghcr.io/homarr-labs/homarr | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+homarr_image_tag: v1.65.0  # skopeo list-tags docker://ghcr.io/homarr-labs/homarr | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
 
 homarr_api_key: "{{ lookup('jaredhocutt.homelab.bws', 'homarr_api_key') }}"
 homarr_secret_encryption_key: "{{ lookup('jaredhocutt.homelab.bws', 'homarr_secret_encryption_key') }}"
@@ -201,7 +201,7 @@ newt_endpoint: https://pangolin.{{ lookup('jaredhocutt.homelab.bws', 'pangolin_b
 # n8n
 ###############################################################################
 
-n8n_image_tag: "2.26.2"  # skopeo list-tags docker://docker.n8n.io/n8nio/n8n | jq -r '.Tags[] | select(test("^2\\.[0-9\\.]+$"))'
+n8n_image_tag: "2.26.4"  # skopeo list-tags docker://docker.n8n.io/n8nio/n8n | jq -r '.Tags[] | select(test("^2\\.[0-9\\.]+$"))'
 n8n_postgres_image_tag: "16.14"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
 
 n8n_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'n8n_postgres_password') }}"
@@ -213,7 +213,7 @@ n8n_container_env:
 # nocodb
 ###############################################################################
 
-nocodb_image_tag: "2026.06.0"  # skopeo list-tags docker://docker.io/nocodb/nocodb | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
+nocodb_image_tag: "2026.06.1"  # skopeo list-tags docker://docker.io/nocodb/nocodb | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
 nocodb_postgres_image_tag: "16.14"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
 
 nocodb_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'nocodb_postgres_password') }}"
@@ -257,7 +257,7 @@ newt_palworld_container_secrets:
 # pangolin_cli
 ###############################################################################
 
-pangolin_cli_image_tag: "1.10.0"  # skopeo list-tags docker://docker.io/fosrl/pangolin-cli | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
+pangolin_cli_image_tag: "0.10.1"  # skopeo list-tags docker://ghcr.io/fosrl/cli | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
 
 pangolin_cli_endpoint: https://pangolin.{{ lookup('jaredhocutt.homelab.bws', 'pangolin_base_domain') }}
 
@@ -306,7 +306,7 @@ server_setup_users: "{{ kickstart_users + _additional_users }}"  # Include kicks
 # shelfmark
 ###############################################################################
 
-shelfmark_image_tag: v1.3.0  # skopeo list-tags docker://ghcr.io/calibrain/shelfmark | jq -r '.Tags[] | select(test("^v[0-9]"))'
+shelfmark_image_tag: v1.3.1  # skopeo list-tags docker://ghcr.io/calibrain/shelfmark | jq -r '.Tags[] | select(test("^v[0-9]"))'
 
 shelfmark_volume_books: "{{ shared_volume_download_books }}"
 
@@ -318,7 +318,7 @@ shelfmark_container_env:
 # snipe_it
 ###############################################################################
 
-snipe_it_image_tag: v8.6.1  # skopeo list-tags docker://docker.io/snipe/snipe-it | jq -r '.Tags[] | select(test("^v[0-9]"))'
+snipe_it_image_tag: v8.6.3  # skopeo list-tags docker://docker.io/snipe/snipe-it | jq -r '.Tags[] | select(test("^v[0-9]"))'
 
 snipe_it_app_key: "{{ lookup('jaredhocutt.homelab.bws', 'snipe_it_app_key') }}"
 snipe_it_mariadb_root_password: "{{ lookup('jaredhocutt.homelab.bws', 'snipe_it_mariadb_root_password') }}"
