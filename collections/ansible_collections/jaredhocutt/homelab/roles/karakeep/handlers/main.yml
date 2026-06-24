@@ -9,9 +9,9 @@
     daemon_reload: true
   become: true
 
-- name: Restart chrome for {{ karakeep_name }}
+- name: Restart browserless for {{ karakeep_name }}
   ansible.builtin.systemd:
-    name: "{{ karakeep_name }}-chrome.service"
+    name: "{{ karakeep_name }}-browserless.service"
     state: restarted
     enabled: true
     daemon_reload: true

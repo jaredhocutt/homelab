@@ -1,17 +1,23 @@
 ---
 # vars file for jaredhocutt.homelab.karakeep
 
+# Karakeep connects to browserless with Playwright, so the websocket URL must
+# include the /chromium/playwright path. The token is embedded in the URL, so it
+# is routed through a Podman secret rather than the plaintext quadlet env.
+karakeep_browser_websocket_url: "ws://{{ karakeep_name }}-browserless:3000/chromium/playwright?token={{ karakeep_browserless_token }}"
+
 ###############################################################################
 # Envrionment
 ###############################################################################
 
 karakeep_container_env_defaults:
   MEILI_ADDR: http://{{ karakeep_name }}-meilisearch:7700
-  BROWSER_WEB_URL: http://{{ karakeep_name }}-chrome:9222
+  BROWSER_CONNECT_ONDEMAND: "true"
   DATA_DIR: /data
   NEXTAUTH_URL: "{{ karakeep_nextauth_url }}"
 
-karakeep_chrome_container_env_defaults: {}
+karakeep_browserless_container_env_defaults:
+  TIMEOUT: "120000"
 
 karakeep_meilisearch_container_env_defaults:
   MEILI_NO_ANALYTICS: "true"
@@ -23,6 +29,8 @@ karakeep_meilisearch_container_env_defaults:
 karakeep_secrets_defaults:
   karakeep_nextauth_secret: "{{ karakeep_nextauth_secret }}"
   karakeep_meilisearch_master_key: "{{ karakeep_meilisearch_master_key }}"
+  karakeep_browserless_token: "{{ karakeep_browserless_token }}"
+  karakeep_browser_websocket_url: "{{ karakeep_browser_websocket_url }}"
 
 karakeep_secrets_combined: >-
   {{ karakeep_secrets_defaults
@@ -31,8 +39,10 @@ karakeep_secrets_combined: >-
 karakeep_container_secrets_defaults:
   - karakeep_meilisearch_master_key,type=env,target=MEILI_MASTER_KEY
   - karakeep_nextauth_secret,type=env,target=NEXTAUTH_SECRET
+  - karakeep_browser_websocket_url,type=env,target=BROWSER_WEBSOCKET_URL
 
-karakeep_chrome_container_secrets_defaults: []
+karakeep_browserless_container_secrets_defaults:
+  - karakeep_browserless_token,type=env,target=TOKEN
 
 karakeep_meilisearch_container_secrets_defaults:
   - karakeep_meilisearch_master_key,type=env,target=MEILI_MASTER_KEY
@@ -46,7 +56,7 @@ karakeep_container_labels_defaults: >
   {{ karakeep_traefik_enable
   | ternary(lookup('jaredhocutt.homelab.traefik_labels', karakeep_name, karakeep_traefik_host, '3000'), {}) }}
 
-karakeep_chrome_container_labels_defaults: {}
+karakeep_browserless_container_labels_defaults: {}
 
 karakeep_meilisearch_container_labels_defaults: {}
 
@@ -57,12 +67,12 @@ karakeep_meilisearch_container_labels_defaults: {}
 karakeep_quadlet_options_depends:
   - |
     [Unit]
-    Requires={{ karakeep_name }}-chrome.service
+    Requires={{ karakeep_name }}-browserless.service
     Requires={{ karakeep_name }}-meilisearch.service
-    After={{ karakeep_name }}-chrome.service
+    After={{ karakeep_name }}-browserless.service
     After={{ karakeep_name }}-meilisearch.service
 karakeep_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + karakeep_quadlet_options_depends }}"
 
-karakeep_chrome_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+karakeep_browserless_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
 
 karakeep_meilisearch_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

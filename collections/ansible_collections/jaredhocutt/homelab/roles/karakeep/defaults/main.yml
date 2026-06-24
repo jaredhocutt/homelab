@@ -5,8 +5,8 @@ karakeep_name: karakeep
 
 karakeep_image: ghcr.io/karakeep-app/karakeep
 karakeep_image_tag: release
-karakeep_chrome_image: gcr.io/zenika-hub/alpine-chrome
-karakeep_chrome_image_tag: latest
+karakeep_browserless_image: ghcr.io/browserless/chromium
+karakeep_browserless_image_tag: latest
 karakeep_meilisearch_image: docker.io/getmeili/meilisearch
 karakeep_meilisearch_image_tag: latest
 
@@ -25,10 +25,10 @@ karakeep_container_secrets: []
 karakeep_container_labels: {}
 karakeep_container_quadlet_options: []
 
-karakeep_chrome_container_env: {}
-karakeep_chrome_container_secrets: []
-karakeep_chrome_container_labels: {}
-karakeep_chrome_container_quadlet_options: []
+karakeep_browserless_container_env: {}
+karakeep_browserless_container_secrets: []
+karakeep_browserless_container_labels: {}
+karakeep_browserless_container_quadlet_options: []
 
 karakeep_meilisearch_container_env: {}
 karakeep_meilisearch_container_secrets: []

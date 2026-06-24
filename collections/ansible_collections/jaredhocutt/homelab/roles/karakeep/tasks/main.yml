@@ -9,8 +9,8 @@
   loop:
     - image: "{{ karakeep_image }}"
       image_tag: "{{ karakeep_image_tag }}"
-    - image: "{{ karakeep_chrome_image }}"
-      image_tag: "{{ karakeep_chrome_image_tag }}"
+    - image: "{{ karakeep_browserless_image }}"
+      image_tag: "{{ karakeep_browserless_image_tag }}"
     - image: "{{ karakeep_meilisearch_image }}"
       image_tag: "{{ karakeep_meilisearch_image_tag }}"
 
@@ -46,25 +46,18 @@
   become: true
   loop: "{{ karakeep_secrets_combined | dict2items }}"
 
-- name: Create chrome container
+- name: Create browserless container
   containers.podman.podman_container:
-    name: "{{ karakeep_name }}-chrome"
-    image: "{{ karakeep_chrome_image }}:{{ karakeep_chrome_image_tag }}"
+    name: "{{ karakeep_name }}-browserless"
+    image: "{{ karakeep_browserless_image }}:{{ karakeep_browserless_image_tag }}"
     network: "{{ karakeep_name }}.network"
-    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='chrome') }}"
-    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='chrome') }}"
-    command:
-      - --no-sandbox
-      - --disable-gpu
-      - --disable-dev-shm-usage
-      - --remote-debugging-address=0.0.0.0
-      - --remote-debugging-port=9222
-      - --hide-scrollbars
-    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='chrome') }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='browserless') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='browserless') }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='browserless') }}"
     quadlet_file_mode: "0600"
-    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='chrome') }}"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='browserless') }}"
     state: quadlet
-  notify: Restart chrome for {{ karakeep_name }}
+  notify: Restart browserless for {{ karakeep_name }}
   become: true
 
 - name: Create meilisearch container
