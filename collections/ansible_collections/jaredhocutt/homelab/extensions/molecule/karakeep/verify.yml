@@ -8,7 +8,7 @@
       - karakeep.network
       - karakeep-data.volume
       - karakeep-meilisearch-data.volume
-      - karakeep-chrome.container
+      - karakeep-browserless.container
       - karakeep-meilisearch.container
       - karakeep.container
   tasks:
@@ -41,14 +41,12 @@
           - "'karakeep-data.volume:/data' in (container_quadlet.content | b64decode)"
           - "'3000:3000' in (container_quadlet.content | b64decode)"
 
-    - name: Read chrome container quadlet contents
+    - name: Read browserless container quadlet contents
       ansible.builtin.slurp:
-        src: "{{ quadlet_dir }}/karakeep-chrome.container"
-      register: chrome_quadlet
+        src: "{{ quadlet_dir }}/karakeep-browserless.container"
+      register: browserless_quadlet
 
-    - name: Assert chrome container quadlet has the expected image and command flags
+    - name: Assert browserless container quadlet has the expected image
       ansible.builtin.assert:
         that:
-          - "'gcr.io/zenika-hub/alpine-chrome' in (chrome_quadlet.content | b64decode)"
-          - "'--no-sandbox' in (chrome_quadlet.content | b64decode)"
-          - "'--remote-debugging-port=9222' in (chrome_quadlet.content | b64decode)"
+          - "'ghcr.io/browserless/chromium' in (browserless_quadlet.content | b64decode)"

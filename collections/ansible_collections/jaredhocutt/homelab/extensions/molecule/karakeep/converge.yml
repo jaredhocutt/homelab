@@ -6,6 +6,7 @@
     karakeep_traefik_enable: false
     karakeep_nextauth_secret: test-nextauth-secret
     karakeep_meilisearch_master_key: test-meilisearch-master-key
+    karakeep_browserless_token: test-browserless-token
   tasks:
     - name: Include karakeep role
       ansible.builtin.include_role:
