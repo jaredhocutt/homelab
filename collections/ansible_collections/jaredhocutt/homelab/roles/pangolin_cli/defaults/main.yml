@@ -3,7 +3,7 @@
 
 pangolin_cli_name: pangolin-cli
 
-pangolin_cli_image: docker.io/fosrl/pangolin-cli
+pangolin_cli_image: ghcr.io/fosrl/cli
 pangolin_cli_image_tag: latest
 
 pangolin_cli_secrets: {}
