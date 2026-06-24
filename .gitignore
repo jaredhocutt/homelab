@@ -2,6 +2,9 @@
 .poetry/
 *.retry
 *.vault
+
+.claude/settings.local.json
+
 collections/*
 !collections/ansible_collections
 !collections/requirements.yml
