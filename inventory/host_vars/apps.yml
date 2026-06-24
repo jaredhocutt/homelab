@@ -178,11 +178,18 @@ newt_homarr_container_secrets:
 ###############################################################################
 
 karakeep_image_tag: "0.32.0"  # skopeo list-tags docker://ghcr.io/karakeep-app/karakeep | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
-karakeep_chrome_image_tag: "124"  # The project hard codes this tag, so let's keep it
+karakeep_browserless_image_tag: v2.54.0  # skopeo list-tags docker://ghcr.io/browserless/chromium | jq -r '.Tags[] | select(test("^v?[0-9.]+$"))'
 karakeep_meilisearch_image_tag: v1.13.3  # The project hard codes this tag, so let's keep it
 
 karakeep_nextauth_secret: "{{ lookup('jaredhocutt.homelab.bws', 'karakeep_nextauth_secret') }}"
 karakeep_meilisearch_master_key: "{{ lookup('jaredhocutt.homelab.bws', 'karakeep_meilisearch_master_key') }}"
+karakeep_browserless_token: "{{ lookup('jaredhocutt.homelab.bws', 'karakeep_browserless_token') }}"
+
+karakeep_container_env:
+  CRAWLER_STORE_SCREENSHOT: "true"
+  CRAWLER_FULL_PAGE_SCREENSHOT: "true"
+  CRAWLER_SCREENSHOT_TIMEOUT_SEC: 30
+  CRAWLER_FULL_PAGE_ARCHIVE: "true"
 
 karakeep_secrets:
   karakeep_openai_api_key: "{{ lookup('jaredhocutt.homelab.bws', 'karakeep_openai_api_key') }}"
