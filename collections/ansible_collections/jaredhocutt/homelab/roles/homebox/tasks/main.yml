@@ -1,0 +1,89 @@
+---
+# tasks file for jaredhocutt.homelab.homebox
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ homebox_image }}"
+      image_tag: "{{ homebox_image_tag }}"
+    - image: "{{ homebox_postgres_image }}"
+      image_tag: "{{ homebox_postgres_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ homebox_name }}"
+    driver: bridge
+    disable_dns: false
+    opt:
+      isolate: "true"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ homebox_volume_data }}"
+      options: "{{ homebox_volume_data_options | default(omit) }}"
+    - name: "{{ homebox_postgres_volume_data }}"
+      options: "{{ homebox_postgres_volume_data_options | default(omit) }}"
+  register: _homebox_created_volumes
+
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  loop: "{{ homebox_secrets_combined | dict2items }}"
+
+- name: Create postgres container
+  containers.podman.podman_container:
+    name: "{{ homebox_name }}-postgres"
+    image: "{{ homebox_postgres_image }}:{{ homebox_postgres_image_tag }}"
+    network: "{{ homebox_name }}.network"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='postgres') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='postgres') }}"
+    volumes:
+      - "{{ homebox_postgres_volume_data }}.volume:/var/lib/postgresql/data"
+    healthcheck_interval: 30s
+    healthcheck_retries: 5
+    healthcheck_start_period: 20s
+    healthcheck_timeout: 5s
+    healthcheck: CMD-SHELL pg_isready -d {{ homebox_postgres_db_name }} -U {{ homebox_postgres_user }}
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='postgres') }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='postgres') }}"
+    state: quadlet
+  notify: Restart postgres for {{ homebox_name }}
+  become: true
+
+- name: Create homebox container
+  containers.podman.podman_container:
+    name: "{{ homebox_name }}"
+    image: "{{ homebox_image }}:{{ homebox_image_tag }}"
+    network:
+      - "{{ homebox_name }}.network"
+      - "{{ homebox_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
+    volumes:
+      - "{{ homebox_volume_data }}.volume:/data"
+    publish: "{{ homebox_traefik_enable | ternary(omit, homebox_ports) }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
+    state: quadlet
+  notify: Restart {{ homebox_name }}
+  become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

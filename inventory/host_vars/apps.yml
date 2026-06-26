@@ -174,6 +174,38 @@ newt_homarr_container_secrets:
   - newt_homarr_newt_secret,type=env,target=NEWT_SECRET
 
 ###############################################################################
+# homebox
+###############################################################################
+
+homebox_image_tag: "0.26.2"  # skopeo list-tags docker://ghcr.io/sysadminsmedia/homebox | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
+homebox_postgres_image_tag: "17.9"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^17\\.[0-9]$"))'
+
+homebox_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'homebox_postgres_password') }}"
+homebox_auth_api_key_pepper: "{{ lookup('jaredhocutt.homelab.bws', 'homebox_auth_api_key_pepper') }}"
+
+homebox_container_env:
+  HBOX_WEB_MAX_UPLOAD_SIZE: 100
+  HBOX_MAILER_HOST: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_host') }}"
+  HBOX_MAILER_PORT: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_port') }}"
+  HBOX_MAILER_USERNAME: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_username') }}"
+  HBOX_MAILER_FROM: "{{ lookup('jaredhocutt.homelab.bws', 'homebox_mailer_from') }}"
+  HBOX_OPTIONS_ALLOW_REGISTRATION: "false"
+  HBOX_OPTIONS_ALLOW_ANALYTICS: "false"
+  HBOX_OIDC_ENABLED: "true"
+  HBOX_OIDC_BUTTON_TEXT: "Sign in with Hocutt SSO"
+  HBOX_OIDC_ISSUER_URL: "{{ lookup('jaredhocutt.homelab.bws', 'homebox_oidc_issuer_url') }}"
+  HBOX_OIDC_AUTO_REDIRECT: "true"
+
+homebox_secrets:
+  homebox_mailer_password: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_password') }}"
+  homebox_oidc_client_id: "{{ lookup('jaredhocutt.homelab.bws', 'homebox_oidc_client_id') }}"
+  homebox_oidc_client_secret: "{{ lookup('jaredhocutt.homelab.bws', 'homebox_oidc_client_secret') }}"
+homebox_container_secrets:
+  - homebox_mailer_password,type=env,target=HBOX_MAILER_PASSWORD
+  - homebox_oidc_client_id,type=env,target=HBOX_OIDC_CLIENT_ID
+  - homebox_oidc_client_secret,type=env,target=HBOX_OIDC_CLIENT_SECRET
+
+###############################################################################
 # karakeep
 ###############################################################################
 

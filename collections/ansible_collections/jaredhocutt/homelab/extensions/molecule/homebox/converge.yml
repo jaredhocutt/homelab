@@ -1,0 +1,12 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    homebox_traefik_enable: false
+    homebox_postgres_password: test-postgres-password
+    homebox_auth_api_key_pepper: test-api-key-pepper
+  tasks:
+    - name: Include homebox role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.homebox

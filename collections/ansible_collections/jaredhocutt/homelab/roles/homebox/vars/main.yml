@@ -1,0 +1,66 @@
+---
+# vars file for jaredhocutt.homelab.homebox
+
+homebox_postgres_db_name: homebox
+homebox_postgres_user: homebox
+
+###############################################################################
+# Envrionment
+###############################################################################
+
+homebox_container_env_defaults:
+  HBOX_DATABASE_DRIVER: postgres
+  HBOX_DATABASE_HOST: "{{ homebox_name }}-postgres"
+  HBOX_DATABASE_PORT: "5432"
+  HBOX_DATABASE_SSL_MODE: disable
+  HBOX_OPTIONS_TRUST_PROXY: "true"
+
+homebox_postgres_container_env_defaults: {}
+
+###############################################################################
+# Secrets
+###############################################################################
+
+homebox_secrets_defaults:
+  homebox_postgres_db_name: "{{ homebox_postgres_db_name }}"
+  homebox_postgres_user: "{{ homebox_postgres_user }}"
+  homebox_postgres_password: "{{ homebox_postgres_password }}"
+  homebox_auth_api_key_pepper: "{{ homebox_auth_api_key_pepper }}"
+
+homebox_secrets_combined: >-
+  {{ homebox_secrets_defaults
+  | combine(homebox_secrets, recursive=True) }}
+
+homebox_container_secrets_defaults:
+  - homebox_postgres_db_name,type=env,target=HBOX_DATABASE_DATABASE
+  - homebox_postgres_user,type=env,target=HBOX_DATABASE_USERNAME
+  - homebox_postgres_password,type=env,target=HBOX_DATABASE_PASSWORD
+  - homebox_auth_api_key_pepper,type=env,target=HBOX_AUTH_API_KEY_PEPPER
+
+homebox_postgres_container_secrets_defaults:
+  - homebox_postgres_db_name,type=env,target=POSTGRES_DB
+  - homebox_postgres_user,type=env,target=POSTGRES_USER
+  - homebox_postgres_password,type=env,target=POSTGRES_PASSWORD
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+homebox_container_labels_defaults: >
+  {{ homebox_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', homebox_name, homebox_traefik_host, '7745'), {}) }}
+
+homebox_postgres_container_labels_defaults: {}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+homebox_quadlet_options_depends:
+  - |
+    [Unit]
+    Requires={{ homebox_name }}-postgres.service
+    After={{ homebox_name }}-postgres.service
+homebox_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + homebox_quadlet_options_depends }}"
+
+homebox_postgres_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

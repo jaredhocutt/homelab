@@ -105,6 +105,11 @@
         newt_container_secrets: "{{ newt_homarr_container_secrets }}"
       tags: [newt, homarr]
 
+    - name: Install homebox
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.homebox
+      tags: [homebox]
+
     - name: Install karakeep
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.karakeep

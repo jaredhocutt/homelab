@@ -1,0 +1,29 @@
+---
+# defaults file for jaredhocutt.homelab.homebox
+
+homebox_name: homebox
+
+homebox_image: ghcr.io/sysadminsmedia/homebox
+homebox_image_tag: latest
+homebox_postgres_image: docker.io/library/postgres
+homebox_postgres_image_tag: "17"
+
+homebox_volume_data: "{{ homebox_name }}-data"
+homebox_postgres_volume_data: "{{ homebox_name }}-postgres-data"
+
+homebox_traefik_enable: true
+homebox_traefik_host: "{{ homebox_name }}.{{ common_traefik_domain }}"
+homebox_ports:
+  - 3100:7745
+
+homebox_secrets: {}
+
+homebox_container_env: {}
+homebox_container_secrets: []
+homebox_container_labels: {}
+homebox_container_quadlet_options: []
+
+homebox_postgres_container_env: {}
+homebox_postgres_container_secrets: []
+homebox_postgres_container_labels: {}
+homebox_postgres_container_quadlet_options: []

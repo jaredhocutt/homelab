@@ -1,0 +1,62 @@
+---
+
+- name: Stop services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: stopped
+  become: true
+  failed_when: false
+  loop:
+    - "{{ homebox_name }}.service"
+    - "{{ homebox_name }}-postgres.service"
+    - "{{ homebox_volume_data }}-volume.service"
+    - "{{ homebox_postgres_volume_data }}-volume.service"
+    - "{{ homebox_name }}-network.service"
+
+- name: Destroy containers
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ homebox_name }}"
+    - "{{ homebox_name }}-postgres"
+
+- name: Destroy secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    state: absent
+  become: true
+  no_log: true
+  loop: "{{ homebox_secrets_combined | dict2items }}"
+
+- name: Destroy volumes
+  containers.podman.podman_volume:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ homebox_volume_data }}"
+    - "{{ homebox_postgres_volume_data }}"
+
+- name: Destroy network
+  containers.podman.podman_network:
+    name: "{{ homebox_name }}"
+    state: absent
+  become: true
+
+- name: Cleanup quadlet files
+  ansible.builtin.file:
+    path: /etc/containers/systemd/{{ item }}
+    state: absent
+  become: true
+  loop:
+    - "{{ homebox_name }}.container"
+    - "{{ homebox_volume_data }}.volume"
+    - "{{ homebox_postgres_volume_data }}.volume"
+    - "{{ homebox_name }}.network"
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true

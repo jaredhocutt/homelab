@@ -1,0 +1,18 @@
+---
+# handlers file for jaredhocutt.homelab.homebox
+
+- name: Restart {{ homebox_name }}
+  ansible.builtin.systemd:
+    name: "{{ homebox_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart postgres for {{ homebox_name }}
+  ansible.builtin.systemd:
+    name: "{{ homebox_name }}-postgres.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
