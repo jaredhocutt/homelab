@@ -236,7 +236,7 @@ open_webui_image_tag: v0.9.6  # skopeo list-tags docker://ghcr.io/open-webui/ope
 
 open_webui_container_env:
   WEBUI_URL: https://open-webui.{{ common_traefik_domain }}
-  OAUTH_PROVIDER_NAME: Hocutt Authentication
+  OAUTH_PROVIDER_NAME: Hocutt SSO
   OPENID_PROVIDER_URL: "{{ lookup('jaredhocutt.homelab.bws', 'open_webui_openid_provider_url') }}"
   OPENID_REDIRECT_URI: https://open-webui.{{ common_traefik_domain }}/oauth/oidc/callback
   ENABLE_OAUTH_SIGNUP: true
