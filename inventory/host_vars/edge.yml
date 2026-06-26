@@ -28,10 +28,10 @@ pangolin_base_domain: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_base_domai
 pangolin_server_secret: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_server_secret') }}"
 pangolin_traefik_letsencrypt_email: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_smtp_no_reply') }}"
 
-pangolin_smtp_host: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_smtp_host') }}"
-pangolin_smtp_port: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_smtp_port') }}"
-pangolin_smtp_user: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_smtp_user') }}"
-pangolin_smtp_password: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_smtp_password') }}"
+pangolin_smtp_host: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_host') }}"
+pangolin_smtp_port: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_port') }}"
+pangolin_smtp_user: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_username') }}"
+pangolin_smtp_password: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_password') }}"
 pangolin_no_reply: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_smtp_no_reply') }}"
 
 ###############################################################################

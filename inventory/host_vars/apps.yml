@@ -15,15 +15,15 @@ authentik_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'authentik_po
 authentik_secret_key: "{{ lookup('jaredhocutt.homelab.bws', 'authentik_secret_key') }}"
 
 authentik_server_container_env:
-  AUTHENTIK_EMAIL__HOST: "{{ lookup('jaredhocutt.homelab.bws', 'authentik_email_host') }}"
-  AUTHENTIK_EMAIL__PORT: "{{ lookup('jaredhocutt.homelab.bws', 'authentik_email_port') }}"
-  AUTHENTIK_EMAIL__USERNAME: "{{ lookup('jaredhocutt.homelab.bws', 'authentik_email_username') }}"
+  AUTHENTIK_EMAIL__HOST: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_host') }}"
+  AUTHENTIK_EMAIL__PORT: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_port') }}"
+  AUTHENTIK_EMAIL__USERNAME: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_username') }}"
   AUTHENTIK_EMAIL__FROM: "{{ lookup('jaredhocutt.homelab.bws', 'authentik_email_from') }}"
   AUTHENTIK_EMAIL__USE_SSL: "true"
 authentik_worker_container_env: "{{ authentik_server_container_env }}"
 
 authentik_secrets:
-  authentik_email_password: "{{ lookup('jaredhocutt.homelab.bws', 'authentik_email_password') }}"
+  authentik_email_password: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_password') }}"
 authentik_server_container_secrets:
   - authentik_email_password,type=env,target=AUTHENTIK_EMAIL__PASSWORD
 authentik_worker_container_secrets: "{{ authentik_server_container_secrets }}"
@@ -125,16 +125,16 @@ healthchecks_password: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_passw
 healthchecks_secret_key: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_secret_key') }}"
 healthchecks_container_env:
   DEFAULT_FROM_EMAIL: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_from_email') }}"
-  EMAIL_HOST: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_email_host') }}"
-  EMAIL_PORT: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_email_port') }}"
-  EMAIL_HOST_USER: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_email_user') }}"
+  EMAIL_HOST: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_host') }}"
+  EMAIL_PORT: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_port') }}"
+  EMAIL_HOST_USER: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_username') }}"
   EMAIL_USE_TLS: "True"
   REGISTRATION_OPEN: "False"
 
 healthchecks_secrets:
   healthchecks_discord_client_id: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_discord_client_id') }}"
   healthchecks_discord_client_secret: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_discord_client_secret') }}"
-  healthchecks_email_password: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_email_password') }}"
+  healthchecks_email_password: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_password') }}"
   healthchecks_pushover_api_token: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_pushover_api_token') }}"
   healthchecks_pushover_subscription_url: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_pushover_subscription_url') }}"
 healthchecks_container_secrets:
@@ -364,9 +364,9 @@ snipe_it_mariadb_root_password: "{{ lookup('jaredhocutt.homelab.bws', 'snipe_it_
 snipe_it_mariadb_password: "{{ lookup('jaredhocutt.homelab.bws', 'snipe_it_mariadb_password') }}"
 
 snipe_it_container_env:
-  MAIL_HOST: "{{ lookup('jaredhocutt.homelab.bws', 'snipe_it_mail_host') }}"
-  MAIL_PORT: "{{ lookup('jaredhocutt.homelab.bws', 'snipe_it_mail_port') }}"
-  MAIL_USERNAME: "{{ lookup('jaredhocutt.homelab.bws', 'snipe_it_mail_username') }}"
+  MAIL_HOST: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_host') }}"
+  MAIL_PORT: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_port') }}"
+  MAIL_USERNAME: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_username') }}"
   MAIL_FROM_ADDR: "{{ lookup('jaredhocutt.homelab.bws', 'snipe_it_mail_from') }}"
   MAIL_FROM_NAME: Snipe-IT
   MAIL_REPLYTO_ADDR: "{{ lookup('jaredhocutt.homelab.bws', 'snipe_it_mail_from') }}"
@@ -375,7 +375,7 @@ snipe_it_container_env:
   MAIL_AUTO_EMBED_METHOD: attachment
 
 snipe_it_secrets:
-  snipe_it_mail_password: "{{ lookup('jaredhocutt.homelab.bws', 'snipe_it_mail_password') }}"
+  snipe_it_mail_password: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_password') }}"
 snipe_it_container_secrets:
   - snipe_it_mail_password,type=env,target=MAIL_PASSWORD
 
