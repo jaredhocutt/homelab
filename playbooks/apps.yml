@@ -90,11 +90,6 @@
         name: jaredhocutt.homelab.healthchecks
       tags: [healthchecks]
 
-    - name: Install homarr
-      ansible.builtin.import_role:
-        name: jaredhocutt.homelab.homarr
-      tags: [homarr]
-
     - name: Install homebox
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.homebox

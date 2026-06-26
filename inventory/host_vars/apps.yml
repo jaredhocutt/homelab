@@ -145,35 +145,6 @@ healthchecks_container_secrets:
   - healthchecks_pushover_subscription_url,type=env,target=PUSHOVER_SUBSCRIPTION_URL
 
 ###############################################################################
-# homarr
-###############################################################################
-
-homarr_image_tag: v1.65.0  # skopeo list-tags docker://ghcr.io/homarr-labs/homarr | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
-
-homarr_api_key: "{{ lookup('jaredhocutt.homelab.bws', 'homarr_api_key') }}"
-homarr_secret_encryption_key: "{{ lookup('jaredhocutt.homelab.bws', 'homarr_secret_encryption_key') }}"
-
-homarr_container_env:
-  AUTH_PROVIDERS: oidc,credentials
-  AUTH_OIDC_CLIENT_ID: "{{ lookup('jaredhocutt.homelab.bws', 'homarr_auth_oidc_client_id') }}"
-  AUTH_OIDC_ISSUER: "{{ lookup('jaredhocutt.homelab.bws', 'homarr_auth_oidc_issuer') }}"
-  AUTH_OIDC_URI: "{{ lookup('jaredhocutt.homelab.bws', 'homarr_auth_oidc_uri') }}"
-  AUTH_OIDC_CLIENT_NAME: Hocutt Authentication
-  AUTH_OIDC_NAME_ATTRIBUTE_OVERWRITE: email
-
-homarr_secrets:
-  homarr_auth_oidc_client_secret: "{{ lookup('jaredhocutt.homelab.bws', 'homarr_auth_oidc_client_secret') }}"
-homarr_container_secrets:
-  - homarr_auth_oidc_client_secret,type=env,target=AUTH_OIDC_CLIENT_SECRET
-
-newt_homarr_secrets:
-  newt_homarr_newt_id: "{{ lookup('jaredhocutt.homelab.bws', 'newt_homarr_newt_id') }}"
-  newt_homarr_newt_secret: "{{ lookup('jaredhocutt.homelab.bws', 'newt_homarr_newt_secret') }}"
-newt_homarr_container_secrets:
-  - newt_homarr_newt_id,type=env,target=NEWT_ID
-  - newt_homarr_newt_secret,type=env,target=NEWT_SECRET
-
-###############################################################################
 # homebox
 ###############################################################################
 
