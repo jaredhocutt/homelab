@@ -72,6 +72,17 @@ bar_assistant_meilisearch_image_tag: v1.15.2  # skopeo list-tags docker://docker
 
 bar_assistant_meilisearch_master_key: "{{ lookup('jaredhocutt.homelab.bws', 'bar_assistant_meilisearch_master_key') }}"
 
+bar_assistant_container_env:
+  AUTHENTIK_BASE_URL: "{{ lookup('jaredhocutt.homelab.bws', 'bar_assistant_authentik_base_url') }}"
+  AUTHENTIK_REDIRECT_URI: https://bar-assistant.{{ common_traefik_domain }}/oauth/callback
+
+bar_assistant_secrets:
+  bar_assistant_authentik_client_id: "{{ lookup('jaredhocutt.homelab.bws', 'bar_assistant_authentik_client_id') }}"
+  bar_assistant_authentik_client_secret: "{{ lookup('jaredhocutt.homelab.bws', 'bar_assistant_authentik_client_secret') }}"
+bar_assistant_container_secrets:
+  - bar_assistant_authentik_client_id,type=env,target=AUTHENTIK_CLIENT_ID
+  - bar_assistant_authentik_client_secret,type=env,target=AUTHENTIK_CLIENT_SECRET
+
 ###############################################################################
 # bentopdf
 ###############################################################################
