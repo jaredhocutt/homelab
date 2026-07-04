@@ -214,6 +214,7 @@ karakeep_image_tag: "0.32.0"  # skopeo list-tags docker://ghcr.io/karakeep-app/k
 karakeep_browserless_image_tag: v2.54.2  # skopeo list-tags docker://ghcr.io/browserless/chromium | jq -r '.Tags[] | select(test("^v?[0-9.]+$"))'
 karakeep_meilisearch_image_tag: v1.13.3  # The project hard codes this tag, so let's keep it
 
+karakeep_nextauth_url: "{{ lookup('jaredhocutt.homelab.bws', 'karakeep_nextauth_url') }}"
 karakeep_nextauth_secret: "{{ lookup('jaredhocutt.homelab.bws', 'karakeep_nextauth_secret') }}"
 karakeep_meilisearch_master_key: "{{ lookup('jaredhocutt.homelab.bws', 'karakeep_meilisearch_master_key') }}"
 karakeep_browserless_token: "{{ lookup('jaredhocutt.homelab.bws', 'karakeep_browserless_token') }}"
@@ -223,11 +224,27 @@ karakeep_container_env:
   CRAWLER_FULL_PAGE_SCREENSHOT: "true"
   CRAWLER_SCREENSHOT_TIMEOUT_SEC: 30
   CRAWLER_FULL_PAGE_ARCHIVE: "true"
+  DISABLE_SIGNUPS: "true"
+  DISABLE_PASSWORD_AUTH: "true"
+  OAUTH_PROVIDER_NAME: "Hocutt SSO"
+  OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING: "true"
+  OAUTH_WELLKNOWN_URL: "{{ lookup('jaredhocutt.homelab.bws', 'karakeep_oauth_wellknown_url') }}"
 
 karakeep_secrets:
   karakeep_openai_api_key: "{{ lookup('jaredhocutt.homelab.bws', 'karakeep_openai_api_key') }}"
+  karakeep_oauth_client_id: "{{ lookup('jaredhocutt.homelab.bws', 'karakeep_oauth_client_id') }}"
+  karakeep_oauth_client_secret: "{{ lookup('jaredhocutt.homelab.bws', 'karakeep_oauth_client_secret') }}"
 karakeep_container_secrets:
   - karakeep_openai_api_key,type=env,target=OPENAI_API_KEY
+  - karakeep_oauth_client_id,type=env,target=OAUTH_CLIENT_ID
+  - karakeep_oauth_client_secret,type=env,target=OAUTH_CLIENT_SECRET
+
+newt_karakeep_secrets:
+  newt_karakeep_newt_id: "{{ lookup('jaredhocutt.homelab.bws', 'newt_karakeep_newt_id') }}"
+  newt_karakeep_newt_secret: "{{ lookup('jaredhocutt.homelab.bws', 'newt_karakeep_newt_secret') }}"
+newt_karakeep_container_secrets:
+  - newt_karakeep_newt_id,type=env,target=NEWT_ID
+  - newt_karakeep_newt_secret,type=env,target=NEWT_SECRET
 
 ###############################################################################
 # newt
