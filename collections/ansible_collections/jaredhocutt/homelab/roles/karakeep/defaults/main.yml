@@ -35,4 +35,4 @@ karakeep_meilisearch_container_secrets: []
 karakeep_meilisearch_container_labels: {}
 karakeep_meilisearch_container_quadlet_options: []
 
-karakeep_nextauth_url: http://localhost:3000
+karakeep_nextauth_url: "{{ karakeep_traefik_enable | ternary('https://' ~ karakeep_traefik_host, 'http://localhost:3000') }}"
