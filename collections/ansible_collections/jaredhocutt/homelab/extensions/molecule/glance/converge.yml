@@ -1,0 +1,10 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    glance_traefik_enable: false
+  tasks:
+    - name: Include glance role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.glance

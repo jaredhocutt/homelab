@@ -42,6 +42,7 @@
     data: "{{ item.value }}"
     state: present
   become: true
+  no_log: true
   loop: "{{ warracker_secrets_combined | dict2items }}"
 
 - name: Create postgres container

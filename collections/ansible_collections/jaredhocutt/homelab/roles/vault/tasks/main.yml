@@ -120,6 +120,7 @@
     data: "{{ item.value }}"
     state: present
   become: true
+  no_log: true
   loop: "{{ vault_secrets_combined | dict2items }}"
 
 - name: Create vault container
@@ -132,9 +133,9 @@
     env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
-      - "{{ vault_volume_config }}:/vault/config"
-      - "{{ vault_volume_data }}:/vault/file"
-      - "{{ vault_volume_logs }}:/vault/logs"
+      - "{{ vault_volume_config }}.volume:/vault/config"
+      - "{{ vault_volume_data }}.volume:/vault/file"
+      - "{{ vault_volume_logs }}.volume:/vault/logs"
     publish: "{{ vault_traefik_enable | ternary(omit, vault_ports) }}"
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     cap_add:
@@ -143,8 +144,8 @@
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
     state: quadlet
-  become: true
   notify: Restart {{ vault_name }}
+  become: true
 
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers

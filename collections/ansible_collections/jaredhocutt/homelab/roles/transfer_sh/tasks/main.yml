@@ -51,7 +51,7 @@
     env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
-      - "{{ transfer_sh_volume_transfers }}:/transfers"
+      - "{{ transfer_sh_volume_transfers }}.volume:/transfers"
     publish: "{{ transfer_sh_traefik_enable | ternary(omit, transfer_sh_ports) }}"
     command:
       - --provider local

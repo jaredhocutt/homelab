@@ -35,5 +35,5 @@
       ansible.builtin.assert:
         that:
           - "'docker.io/portainer/portainer-ee' in (container_quadlet.content | b64decode)"
-          - "'/var/run/podman.sock:/var/run/docker.sock' in (container_quadlet.content | b64decode)"
+          - "'/run/podman/podman.sock:/var/run/docker.sock:z' in (container_quadlet.content | b64decode)"
           - "'9443:9443' in (container_quadlet.content | b64decode)"

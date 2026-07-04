@@ -51,7 +51,7 @@
     env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
-      - "{{ homarr_volume_data }}:/appdata"
+      - "{{ homarr_volume_data }}.volume:/appdata"
     publish: "{{ homarr_traefik_enable | ternary(omit, homarr_ports) }}"
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"

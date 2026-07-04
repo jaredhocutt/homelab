@@ -35,5 +35,5 @@
       ansible.builtin.assert:
         that:
           - "'ghcr.io/homarr-labs/homarr' in (container_quadlet.content | b64decode)"
-          - "'homarr-data:/appdata' in (container_quadlet.content | b64decode)"
+          - "'homarr-data.volume:/appdata' in (container_quadlet.content | b64decode)"
           - "'7575:7575' in (container_quadlet.content | b64decode)"

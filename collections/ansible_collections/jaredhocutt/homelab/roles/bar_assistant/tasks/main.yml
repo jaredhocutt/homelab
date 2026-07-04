@@ -48,6 +48,7 @@
     data: "{{ item.value }}"
     state: present
   become: true
+  no_log: true
   loop: "{{ bar_assistant_secrets_combined | dict2items }}"
 
 - name: Create redis container

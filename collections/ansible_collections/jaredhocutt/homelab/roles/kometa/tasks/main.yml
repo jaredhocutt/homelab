@@ -38,6 +38,7 @@
     data: "{{ item.value }}"
     state: present
   become: true
+  no_log: true
   loop: "{{ kometa_secrets_combined | dict2items }}"
 
 - name: Create kometa container
@@ -48,7 +49,7 @@
     env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
-      - "{{ kometa_volume_config }}:/config"
+      - "{{ kometa_volume_config }}.volume:/config"
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"

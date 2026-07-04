@@ -37,7 +37,7 @@
       ansible.builtin.assert:
         that:
           - "'lscr.io/linuxserver/radarr' in (container_quadlet.content | b64decode)"
-          - "'radarr-config:/config' in (container_quadlet.content | b64decode)"
-          - "'radarr-download:/mnt/download' in (container_quadlet.content | b64decode)"
-          - "'radarr-media:/mnt/media' in (container_quadlet.content | b64decode)"
+          - "'radarr-config.volume:/config' in (container_quadlet.content | b64decode)"
+          - "'radarr-download.volume:/mnt/download' in (container_quadlet.content | b64decode)"
+          - "'radarr-media.volume:/mnt/media' in (container_quadlet.content | b64decode)"
           - "'7878:7878' in (container_quadlet.content | b64decode)"

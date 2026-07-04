@@ -35,5 +35,5 @@
       ansible.builtin.assert:
         that:
           - "'ghcr.io/seerr-team/seerr' in (container_quadlet.content | b64decode)"
-          - "'seerr-config:/app/config' in (container_quadlet.content | b64decode)"
+          - "'seerr-config.volume:/app/config' in (container_quadlet.content | b64decode)"
           - "'5055:5055' in (container_quadlet.content | b64decode)"

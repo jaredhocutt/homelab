@@ -55,6 +55,7 @@
     data: "{{ item.value }}"
     state: present
   become: true
+  no_log: true
   loop: "{{ traefik_secrets_combined | dict2items }}"
 
 - name: Create traefik container
@@ -68,8 +69,8 @@
       - label=disable
     volumes:
       - /run/podman/podman.sock:/var/run/docker.sock:Z
-      - "{{ traefik_volume_certs }}:/certs"
-      - "{{ traefik_volume_dynamic }}:/dynamic"
+      - "{{ traefik_volume_certs }}.volume:/certs"
+      - "{{ traefik_volume_dynamic }}.volume:/dynamic"
     publish: "{{ traefik_ports }}"
     command: "{{ traefik_command_defaults + traefik_command }}"
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"

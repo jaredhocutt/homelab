@@ -43,6 +43,7 @@
     data: "{{ item.value }}"
     state: present
   become: true
+  no_log: true
   loop: "{{ homebox_secrets_combined | dict2items }}"
 
 - name: Create postgres container

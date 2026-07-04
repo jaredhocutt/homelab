@@ -8,3 +8,5 @@ galaxy_info:
 dependencies:
   - role: jaredhocutt.homelab.common
   - role: jaredhocutt.homelab.podman
+    vars:
+      podman_enable_socket: true

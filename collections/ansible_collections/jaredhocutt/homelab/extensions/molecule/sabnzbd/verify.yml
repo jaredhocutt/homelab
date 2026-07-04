@@ -36,6 +36,6 @@
       ansible.builtin.assert:
         that:
           - "'lscr.io/linuxserver/sabnzbd' in (container_quadlet.content | b64decode)"
-          - "'sabnzbd-config:/config' in (container_quadlet.content | b64decode)"
-          - "'sabnzbd-download:/mnt/download' in (container_quadlet.content | b64decode)"
+          - "'sabnzbd-config.volume:/config' in (container_quadlet.content | b64decode)"
+          - "'sabnzbd-download.volume:/mnt/download' in (container_quadlet.content | b64decode)"
           - "'8080:8080' in (container_quadlet.content | b64decode)"

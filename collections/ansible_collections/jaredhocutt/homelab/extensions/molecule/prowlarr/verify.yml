@@ -35,5 +35,5 @@
       ansible.builtin.assert:
         that:
           - "'lscr.io/linuxserver/prowlarr' in (container_quadlet.content | b64decode)"
-          - "'prowlarr-config:/config' in (container_quadlet.content | b64decode)"
+          - "'prowlarr-config.volume:/config' in (container_quadlet.content | b64decode)"
           - "'9696:9696' in (container_quadlet.content | b64decode)"

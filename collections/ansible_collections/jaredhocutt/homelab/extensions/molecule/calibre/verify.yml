@@ -36,7 +36,7 @@
       ansible.builtin.assert:
         that:
           - "'lscr.io/linuxserver/calibre' in (container_quadlet.content | b64decode)"
-          - "'calibre-config:/config' in (container_quadlet.content | b64decode)"
-          - "'calibre-media:/mnt/media' in (container_quadlet.content | b64decode)"
+          - "'calibre-config.volume:/config' in (container_quadlet.content | b64decode)"
+          - "'calibre-media.volume:/mnt/media' in (container_quadlet.content | b64decode)"
           - "'8080:8080' in (container_quadlet.content | b64decode)"
           - "'8081:8081' in (container_quadlet.content | b64decode)"

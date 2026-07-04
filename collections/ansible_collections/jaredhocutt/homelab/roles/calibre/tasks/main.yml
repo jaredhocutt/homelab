@@ -40,6 +40,7 @@
     data: "{{ item.value }}"
     state: present
   become: true
+  no_log: true
   loop: "{{ calibre_secrets_combined | dict2items }}"
 
 - name: Create calibre container
@@ -52,8 +53,8 @@
     env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
-      - "{{ calibre_volume_config }}:/config"
-      - "{{ calibre_volume_media }}:/mnt/media"
+      - "{{ calibre_volume_config }}.volume:/config"
+      - "{{ calibre_volume_media }}.volume:/mnt/media"
     publish: "{{ calibre_traefik_enable | ternary(omit, calibre_ports) }}"
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"

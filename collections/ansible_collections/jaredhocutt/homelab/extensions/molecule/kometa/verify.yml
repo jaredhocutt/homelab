@@ -35,4 +35,4 @@
       ansible.builtin.assert:
         that:
           - "'docker.io/kometateam/kometa' in (container_quadlet.content | b64decode)"
-          - "'kometa-config:/config' in (container_quadlet.content | b64decode)"
+          - "'kometa-config.volume:/config' in (container_quadlet.content | b64decode)"

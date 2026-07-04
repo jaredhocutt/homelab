@@ -38,6 +38,7 @@
     data: "{{ item.value }}"
     state: present
   become: true
+  no_log: true
   loop: "{{ portainer_secrets_combined | dict2items }}"
 
 - name: Create portainer container
@@ -50,8 +51,8 @@
     env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
-      - "{{ portainer_volume_data }}:/data"
-      - /var/run/podman.sock:/var/run/docker.sock
+      - "{{ portainer_volume_data }}.volume:/data"
+      - /run/podman/podman.sock:/var/run/docker.sock:z
     publish: "{{ portainer_traefik_enable | ternary(omit, portainer_ports) }}"
     healthcheck_interval: 30s
     healthcheck_retries: 5

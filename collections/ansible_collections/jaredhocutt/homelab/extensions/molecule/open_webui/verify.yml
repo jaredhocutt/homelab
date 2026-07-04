@@ -35,5 +35,5 @@
       ansible.builtin.assert:
         that:
           - "'ghcr.io/open-webui/open-webui' in (container_quadlet.content | b64decode)"
-          - "'open-webui-data:/app/backend/data' in (container_quadlet.content | b64decode)"
+          - "'open-webui-data.volume:/app/backend/data' in (container_quadlet.content | b64decode)"
           - "'3000:8080' in (container_quadlet.content | b64decode)"

@@ -36,6 +36,6 @@
       ansible.builtin.assert:
         that:
           - "'ghcr.io/calibrain/shelfmark' in (container_quadlet.content | b64decode)"
-          - "'shelfmark-config:/config' in (container_quadlet.content | b64decode)"
-          - "'shelfmark-books:/books:z' in (container_quadlet.content | b64decode)"
+          - "'shelfmark-config.volume:/config' in (container_quadlet.content | b64decode)"
+          - "'shelfmark-books.volume:/books:z' in (container_quadlet.content | b64decode)"
           - "'8084:8084' in (container_quadlet.content | b64decode)"

@@ -46,6 +46,7 @@
     data: "{{ item.value }}"
     state: present
   become: true
+  no_log: true
   loop: "{{ stirling_pdf_secrets_combined | dict2items }}"
 
 - name: Create stirling_pdf container
@@ -58,11 +59,11 @@
     env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
-      - "{{ stirling_pdf_volume_configs }}:/configs"
-      - "{{ stirling_pdf_volume_training_data }}:/usr/share/tessdata"
-      - "{{ stirling_pdf_volume_custom_files }}:/customFiles"
-      - "{{ stirling_pdf_volume_logs }}:/logs"
-      - "{{ stirling_pdf_volume_pipeline }}:/pipeline"
+      - "{{ stirling_pdf_volume_configs }}.volume:/configs"
+      - "{{ stirling_pdf_volume_training_data }}.volume:/usr/share/tessdata"
+      - "{{ stirling_pdf_volume_custom_files }}.volume:/customFiles"
+      - "{{ stirling_pdf_volume_logs }}.volume:/logs"
+      - "{{ stirling_pdf_volume_pipeline }}.volume:/pipeline"
     publish: "{{ stirling_pdf_traefik_enable | ternary(omit, stirling_pdf_ports) }}"
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"

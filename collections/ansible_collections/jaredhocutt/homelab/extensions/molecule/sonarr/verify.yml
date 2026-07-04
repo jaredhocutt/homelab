@@ -37,7 +37,7 @@
       ansible.builtin.assert:
         that:
           - "'lscr.io/linuxserver/sonarr' in (container_quadlet.content | b64decode)"
-          - "'sonarr-config:/config' in (container_quadlet.content | b64decode)"
-          - "'sonarr-download:/mnt/download' in (container_quadlet.content | b64decode)"
-          - "'sonarr-media:/mnt/media' in (container_quadlet.content | b64decode)"
+          - "'sonarr-config.volume:/config' in (container_quadlet.content | b64decode)"
+          - "'sonarr-download.volume:/mnt/download' in (container_quadlet.content | b64decode)"
+          - "'sonarr-media.volume:/mnt/media' in (container_quadlet.content | b64decode)"
           - "'8989:8989' in (container_quadlet.content | b64decode)"

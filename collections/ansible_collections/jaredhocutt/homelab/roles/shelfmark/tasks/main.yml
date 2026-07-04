@@ -40,6 +40,7 @@
     data: "{{ item.value }}"
     state: present
   become: true
+  no_log: true
   loop: "{{ shelfmark_secrets_combined | dict2items }}"
 
 - name: Create shelfmark container
@@ -54,8 +55,8 @@
     security_opt:
       - label=level:s0
     volumes:
-      - "{{ shelfmark_volume_config }}:/config"
-      - "{{ shelfmark_volume_books }}:/books:z"
+      - "{{ shelfmark_volume_config }}.volume:/config"
+      - "{{ shelfmark_volume_books }}.volume:/books:z"
     publish: "{{ shelfmark_traefik_enable | ternary(omit, shelfmark_ports) }}"
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"

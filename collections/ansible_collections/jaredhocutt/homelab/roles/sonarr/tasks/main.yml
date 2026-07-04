@@ -42,6 +42,7 @@
     data: "{{ item.value }}"
     state: present
   become: true
+  no_log: true
   loop: "{{ sonarr_secrets_combined | dict2items }}"
 
 - name: Create sonarr container
@@ -54,9 +55,9 @@
     env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
-      - "{{ sonarr_volume_config }}:/config"
-      - "{{ sonarr_volume_download }}:/mnt/download"
-      - "{{ sonarr_volume_media }}:/mnt/media"
+      - "{{ sonarr_volume_config }}.volume:/config"
+      - "{{ sonarr_volume_download }}.volume:/mnt/download"
+      - "{{ sonarr_volume_media }}.volume:/mnt/media"
     publish: "{{ sonarr_traefik_enable | ternary(omit, sonarr_ports) }}"
     healthcheck_interval: 30s
     healthcheck_retries: 5

@@ -38,6 +38,7 @@
     data: "{{ item.value }}"
     state: present
   become: true
+  no_log: true
   loop: "{{ open_webui_secrets_combined | dict2items }}"
 
 - name: Create open_webui container
@@ -50,7 +51,7 @@
     env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
-      - "{{ open_webui_volume_data }}:/app/backend/data"
+      - "{{ open_webui_volume_data }}.volume:/app/backend/data"
     publish: "{{ open_webui_traefik_enable | ternary(omit, open_webui_ports) }}"
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"

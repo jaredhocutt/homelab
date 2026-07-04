@@ -20,6 +20,7 @@ ansible:
   cfg:
     defaults:
       remote_tmp: /tmp/.ansible/tmp
+      collections_path: ${MOLECULE_PROJECT_DIRECTORY}/../../..
 scenario:
   test_sequence:
     - destroy

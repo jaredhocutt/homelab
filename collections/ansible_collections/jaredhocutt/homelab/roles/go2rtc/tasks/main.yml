@@ -38,6 +38,7 @@
     data: "{{ item.value }}"
     state: present
   become: true
+  no_log: true
   loop: "{{ go2rtc_secrets_combined | dict2items }}"
 
 - name: Create go2rtc container

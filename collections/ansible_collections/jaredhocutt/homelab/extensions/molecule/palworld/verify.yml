@@ -36,8 +36,8 @@
       ansible.builtin.assert:
         that:
           - "'ghcr.io/pocketpairjp/palserver' in (container_quadlet.content | b64decode)"
-          - "'palworld-saved:/pal/Package/Pal/Saved' in (container_quadlet.content | b64decode)"
-          - "'palworld-scripts:/pal/scripts:ro' in (container_quadlet.content | b64decode)"
+          - "'palworld-saved.volume:/pal/Package/Pal/Saved' in (container_quadlet.content | b64decode)"
+          - "'palworld-scripts.volume:/pal/scripts:ro' in (container_quadlet.content | b64decode)"
           - "'/pal/scripts/helper.sh' in (container_quadlet.content | b64decode)"
 
     - name: Get scripts volume info

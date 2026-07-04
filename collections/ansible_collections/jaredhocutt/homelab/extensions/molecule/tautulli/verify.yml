@@ -35,5 +35,5 @@
       ansible.builtin.assert:
         that:
           - "'lscr.io/linuxserver/tautulli' in (container_quadlet.content | b64decode)"
-          - "'tautulli-config:/config' in (container_quadlet.content | b64decode)"
+          - "'tautulli-config.volume:/config' in (container_quadlet.content | b64decode)"
           - "'8181:8181' in (container_quadlet.content | b64decode)"

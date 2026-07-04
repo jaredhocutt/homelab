@@ -1,0 +1,55 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  vars:
+    quadlet_dir: /etc/containers/systemd
+    expected_quadlets:
+      - glance.network
+      - glance-config.volume
+      - glance.container
+  tasks:
+    - name: Stat each expected quadlet file
+      ansible.builtin.stat:
+        path: "{{ quadlet_dir }}/{{ item }}"
+      register: quadlet_stats
+      loop: "{{ expected_quadlets }}"
+
+    - name: Assert each quadlet file exists with the expected mode
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.size > 0
+          - item.stat.mode == "0600"
+        fail_msg: "Quadlet {{ item.item }} missing or has wrong mode/size"
+      loop: "{{ quadlet_stats.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Read glance container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/glance.container"
+      register: container_quadlet
+
+    - name: Assert glance container quadlet has the expected image, volume, and ports
+      ansible.builtin.assert:
+        that:
+          - "'docker.io/glanceapp/glance' in (container_quadlet.content | b64decode)"
+          - "'glance-config.volume:/app/config' in (container_quadlet.content | b64decode)"
+          - "'8080:8080' in (container_quadlet.content | b64decode)"
+
+    - name: Get config volume info
+      containers.podman.podman_volume_info:
+        name: glance-config
+      register: config_volume_info
+
+    - name: Stat the downloaded default glance config
+      ansible.builtin.stat:
+        path: "{{ config_volume_info.volumes[0].Mountpoint }}/glance.yml"
+      register: glance_config
+
+    - name: Assert the default glance config was downloaded
+      ansible.builtin.assert:
+        that:
+          - glance_config.stat.exists
+          - glance_config.stat.size > 0

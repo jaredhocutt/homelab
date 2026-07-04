@@ -35,5 +35,5 @@
       ansible.builtin.assert:
         that:
           - "'ghcr.io/louislam/uptime-kuma' in (container_quadlet.content | b64decode)"
-          - "'uptime-kuma-data:/app/data' in (container_quadlet.content | b64decode)"
+          - "'uptime-kuma-data.volume:/app/data' in (container_quadlet.content | b64decode)"
           - "'3001:3001' in (container_quadlet.content | b64decode)"

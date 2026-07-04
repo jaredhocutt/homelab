@@ -39,6 +39,6 @@
       ansible.builtin.assert:
         that:
           - "'docker.stirlingpdf.com/stirlingtools/stirling-pdf' in (container_quadlet.content | b64decode)"
-          - "'stirling-pdf-configs:/configs' in (container_quadlet.content | b64decode)"
-          - "'stirling-pdf-logs:/logs' in (container_quadlet.content | b64decode)"
+          - "'stirling-pdf-configs.volume:/configs' in (container_quadlet.content | b64decode)"
+          - "'stirling-pdf-logs.volume:/logs' in (container_quadlet.content | b64decode)"
           - "'8080:8080' in (container_quadlet.content | b64decode)"

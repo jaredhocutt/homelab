@@ -38,10 +38,10 @@
       ansible.builtin.assert:
         that:
           - "'ghcr.io/advplyr/audiobookshelf' in (container_quadlet.content | b64decode)"
-          - "'audiobookshelf-config:/config' in (container_quadlet.content | b64decode)"
-          - "'audiobookshelf-metadata:/metadata' in (container_quadlet.content | b64decode)"
-          - "'audiobookshelf-audiobooks:/audiobooks' in (container_quadlet.content | b64decode)"
-          - "'audiobookshelf-podcasts:/podcasts' in (container_quadlet.content | b64decode)"
+          - "'audiobookshelf-config.volume:/config' in (container_quadlet.content | b64decode)"
+          - "'audiobookshelf-metadata.volume:/metadata' in (container_quadlet.content | b64decode)"
+          - "'audiobookshelf-audiobooks.volume:/audiobooks' in (container_quadlet.content | b64decode)"
+          - "'audiobookshelf-podcasts.volume:/podcasts' in (container_quadlet.content | b64decode)"
           - "'13378:80' in (container_quadlet.content | b64decode)"
 
     - name: Read network quadlet contents

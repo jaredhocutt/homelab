@@ -35,7 +35,7 @@
       ansible.builtin.assert:
         that:
           - "'docker.io/dutchcoders/transfer.sh' in (container_quadlet.content | b64decode)"
-          - "'transfer-sh-transfers:/transfers' in (container_quadlet.content | b64decode)"
+          - "'transfer-sh-transfers.volume:/transfers' in (container_quadlet.content | b64decode)"
           - "'8080:8080' in (container_quadlet.content | b64decode)"
           - "'--provider local' in (container_quadlet.content | b64decode)"
           - "'--basedir /transfers' in (container_quadlet.content | b64decode)"

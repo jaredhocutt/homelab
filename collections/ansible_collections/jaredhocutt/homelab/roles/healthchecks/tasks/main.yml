@@ -51,7 +51,7 @@
     env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
-      - "{{ healthchecks_volume_config }}:/config"
+      - "{{ healthchecks_volume_config }}.volume:/config"
     publish: "{{ healthchecks_traefik_enable | ternary(omit, healthchecks_ports) }}"
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"

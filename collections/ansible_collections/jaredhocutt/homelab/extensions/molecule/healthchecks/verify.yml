@@ -35,5 +35,5 @@
       ansible.builtin.assert:
         that:
           - "'lscr.io/linuxserver/healthchecks' in (container_quadlet.content | b64decode)"
-          - "'healthchecks-config:/config' in (container_quadlet.content | b64decode)"
+          - "'healthchecks-config.volume:/config' in (container_quadlet.content | b64decode)"
           - "'8000:8000' in (container_quadlet.content | b64decode)"

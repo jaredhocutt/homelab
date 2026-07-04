@@ -38,6 +38,7 @@
     data: "{{ item.value }}"
     state: present
   become: true
+  no_log: true
   loop: "{{ uptime_kuma_secrets_combined | dict2items }}"
 
 - name: Create uptime_kuma container
@@ -50,7 +51,7 @@
     env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
-      - "{{ uptime_kuma_volume_data }}:/app/data"
+      - "{{ uptime_kuma_volume_data }}.volume:/app/data"
     publish: "{{ uptime_kuma_traefik_enable | ternary(omit, uptime_kuma_ports) }}"
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"

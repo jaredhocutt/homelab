@@ -46,9 +46,17 @@ The collection at `collections/ansible_collections/jaredhocutt/homelab/` is wher
 Roles deploy services as **Podman Quadlet** units (not docker-compose, not raw systemd). The recurring pattern in a role's `tasks/main.yml`:
 
 1. `containers.podman.podman_image` — pull `{{ <role>_image }}:{{ <role>_image_tag }}`.
-2. `containers.podman.podman_secret` — register secrets from `<role>_secrets_combined`.
-3. `containers.podman.podman_container` with `state: quadlet` — uses the `container_config` lookup to assemble env/secrets/labels/quadlet_options from role vars, and notifies a `Restart <name>` handler.
+2. `containers.podman.podman_secret` — register secrets from `<role>_secrets_combined`; this task must have `no_log: true` (right after `become: true`, before `loop:`) so secret values never hit the log.
+3. `containers.podman.podman_container` with `state: quadlet` and `quadlet_file_mode: "0600"` — uses the `container_config` lookup to assemble env/secrets/labels/quadlet_options from role vars, and `notify`s a `Restart <name>` handler (`notify:` line before `become: true`).
 4. `meta: flush_handlers` to apply changes immediately.
+
+For roles with sidecar containers (postgres, redis, etc.), each sidecar gets its own `Create <container> container` task using `container=<container>` on the `container_config` lookup calls, its own `Restart <container> for <name>` handler, and its own `<role>_<container>_container_{env,secrets,labels,quadlet_options}[_defaults]` variable set in `defaults/main.yml` / `vars/main.yml` — mirroring the unsuffixed set used for the main container.
+
+A container's `volumes:` entries must reference quadlet-managed volumes as `<volume_name>.volume:/path` (with the `.volume` suffix), not `<volume_name>:/path`. The suffix tells Quadlet this is another Quadlet unit, so it generates a `Requires=`/`After=` dependency on that volume's systemd service; without it, the container has no guaranteed startup ordering against its volume (it can appear to work today only because the volume already exists on disk, but it's fragile across a reboot or `daemon-reload`).
+
+Every role also gets a `tasks/destroy.yml` that reverses `main.yml` exactly: stop each service (main + per-volume + per-network), destroy containers, destroy secrets (also `no_log: true`), destroy volumes, destroy network, remove quadlet files, reload systemd. Keep it in sync whenever `main.yml` gains or loses a container/volume.
+
+If a role needs a host-level capability that only its `podman` dependency can provide (e.g. `traefik`, `portainer`, and `glance` all bind-mount the podman API socket into their container, which requires `podman_enable_socket: true` on the `podman` role), declare it as `vars:` on that dependency entry in the role's own `meta/main.yml` — not in the role's `defaults/main.yml` and not by requiring it in inventory. A role's own `defaults/main.yml` does **not** override a dependency's defaults for the dependency's own tasks (verified empirically); only `vars:` on the `dependencies:` entry does. This keeps the requirement self-contained in the role that needs it, rather than pushing configuration onto every consumer's inventory.
 
 When adding a new role, follow this pattern (or run `uv run task duplicate-role <new_role>` to interactively pick the closest existing role as a source).
 

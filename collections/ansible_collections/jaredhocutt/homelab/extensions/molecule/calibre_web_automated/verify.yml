@@ -37,7 +37,7 @@
       ansible.builtin.assert:
         that:
           - "'ghcr.io/crocodilestick/calibre-web-automated' in (container_quadlet.content | b64decode)"
-          - "'calibre-web-automated-config:/config' in (container_quadlet.content | b64decode)"
-          - "'calibre-web-automated-ingest:/cwa-book-ingest:z' in (container_quadlet.content | b64decode)"
-          - "'calibre-web-automated-library:/calibre-library' in (container_quadlet.content | b64decode)"
+          - "'calibre-web-automated-config.volume:/config' in (container_quadlet.content | b64decode)"
+          - "'calibre-web-automated-ingest.volume:/cwa-book-ingest:z' in (container_quadlet.content | b64decode)"
+          - "'calibre-web-automated-library.volume:/calibre-library' in (container_quadlet.content | b64decode)"
           - "'8083:8083' in (container_quadlet.content | b64decode)"
