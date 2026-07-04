@@ -416,6 +416,34 @@ tandoor_postgres_image_tag: "16.14"  # skopeo list-tags docker://docker.io/libra
 tandoor_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'tandoor_postgres_password') }}"
 tandoor_secret_key: "{{ lookup('jaredhocutt.homelab.bws', 'tandoor_secret_key') }}"
 
+tandoor_socialaccount_providers:
+  openid_connect:
+    APPS:
+      - provider_id: authentik
+        name: Hocutt SSO
+        client_id: "{{ lookup('jaredhocutt.homelab.bws', 'tandoor_authentik_client_id') }}"
+        secret: "{{ lookup('jaredhocutt.homelab.bws', 'tandoor_authentik_client_secret') }}"
+        settings:
+          server_url: "{{ lookup('jaredhocutt.homelab.bws', 'tandoor_authentik_server_wellknown_url') }}"
+
+tandoor_container_env:
+  EMAIL_HOST: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_host') }}"
+  EMAIL_PORT: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_port') }}"
+  EMAIL_HOST_USER: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_username') }}"
+  EMAIL_USE_TLS: 1
+  DEFAULT_FROM_EMAIL: "{{ lookup('jaredhocutt.homelab.bws', 'tandoor_email_from') }}"
+  SOCIAL_PROVIDERS: allauth.socialaccount.providers.openid_connect
+  SOCIALACCOUNT_LOGIN_ON_GET: 1
+  SOCIALACCOUNT_EMAIL_AUTHENTICATION: 1
+  SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT: 1
+
+tandoor_secrets:
+  tandoor_email_password: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_password') }}"
+  tandoor_socialaccount_providers: "{{ tandoor_socialaccount_providers | to_json }}"
+tandoor_container_secrets:
+  - tandoor_email_password,type=env,target=EMAIL_HOST_PASSWORD
+  - tandoor_socialaccount_providers,type=env,target=SOCIALACCOUNT_PROVIDERS
+
 ###############################################################################
 # tautulli
 ###############################################################################
