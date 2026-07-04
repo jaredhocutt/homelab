@@ -46,8 +46,8 @@
   become: true
   when: _traefik_created_volumes.changed  # noqa: no-handler
 
-- name: Generate certificates
-  ansible.builtin.import_tasks: certs.yml
+- name: Generate certificates and configuration
+  ansible.builtin.import_tasks: config.yml
 
 - name: Create secrets
   containers.podman.podman_secret:

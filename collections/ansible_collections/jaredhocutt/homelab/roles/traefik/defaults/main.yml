@@ -15,6 +15,15 @@ traefik_ports:
   - 80:80
   - 443:443
 
+# Authentik forward-auth middleware (consumed by apps that set <role>_traefik_auth: true)
+traefik_authentik_enable: true
+# Internal, server-to-server backend address for the embedded outpost.
+# authentik-server joins the traefik network (authentik tasks/main.yml), so this
+# name resolves from Traefik. NOT the public Pangolin/Traefik hostname: the
+# browser-facing login redirect is built by Authentik itself, not from this URL.
+traefik_authentik_outpost_url: "http://authentik-server:9000"
+traefik_authentik_forward_auth_address: "{{ traefik_authentik_outpost_url }}/outpost.goauthentik.io/auth/traefik"
+
 traefik_command: []
 
 traefik_secrets: {}

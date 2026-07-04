@@ -1,0 +1,24 @@
+{{ ansible_managed | comment }}
+http:
+  middlewares:
+    authentik:
+      forwardAuth:
+        address: "{{ traefik_authentik_forward_auth_address }}"
+        trustForwardHeader: true
+        authResponseHeaders:
+          - X-authentik-username
+          - X-authentik-groups
+          - X-authentik-email
+          - X-authentik-name
+          - X-authentik-uid
+          - X-authentik-jwt
+          - X-authentik-meta-jwks
+          - X-authentik-meta-outpost
+          - X-authentik-meta-provider
+          - X-authentik-meta-app
+          - X-authentik-meta-version
+  services:
+    authentik:
+      loadBalancer:
+        servers:
+          - url: "{{ traefik_authentik_outpost_url }}"

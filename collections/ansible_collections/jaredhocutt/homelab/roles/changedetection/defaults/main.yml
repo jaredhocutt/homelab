@@ -12,6 +12,7 @@ changedetection_volume_data: "{{ changedetection_name }}-data"
 
 changedetection_traefik_enable: true
 changedetection_traefik_host: "{{ changedetection_name }}.{{ common_traefik_domain }}"
+changedetection_traefik_auth: false
 changedetection_ports:
   - 5000:5000
 

@@ -10,6 +10,7 @@ glance_volume_config: "{{ glance_name }}-config"
 
 glance_traefik_enable: true
 glance_traefik_host: "{{ glance_name }}.{{ common_traefik_domain }}"
+glance_traefik_auth: false
 glance_ports:
   - 8080:8080
 

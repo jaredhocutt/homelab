@@ -34,7 +34,7 @@ changedetection_browser_container_secrets_defaults: []
 
 changedetection_container_labels_defaults: >
   {{ changedetection_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', changedetection_name, changedetection_traefik_host, '5000'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', changedetection_name, changedetection_traefik_host, '5000', auth=changedetection_traefik_auth), {}) }}
 
 changedetection_browser_container_labels_defaults: {}
 

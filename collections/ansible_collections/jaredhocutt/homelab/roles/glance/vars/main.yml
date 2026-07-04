@@ -25,7 +25,7 @@ glance_container_secrets_defaults: []
 
 glance_container_labels_defaults: >
   {{ glance_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', glance_name, glance_traefik_host, '8080'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', glance_name, glance_traefik_host, '8080', auth=glance_traefik_auth), {}) }}
 
 ###############################################################################
 # Quadlet Options

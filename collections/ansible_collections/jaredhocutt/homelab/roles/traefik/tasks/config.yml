@@ -65,3 +65,14 @@
     mode: "0600"
   become: true
   notify: Restart {{ traefik_name }}
+
+- name: Create authentik.yaml configuration file
+  ansible.builtin.template:
+    src: authentik.yaml.j2
+    dest: "{{ _traefik_dynamic_volume_info.volumes[0].Mountpoint }}/authentik.yaml"
+    owner: root
+    group: root
+    mode: "0600"
+  become: true
+  when: traefik_authentik_enable
+  notify: Restart {{ traefik_name }}
