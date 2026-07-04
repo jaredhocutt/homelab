@@ -20,6 +20,7 @@ class LookupModule(LookupBase):
         port = terms[2]
         entrypoint = kwargs.get("entrypoint", "websecure")
         network = kwargs.get("network", "traefik")
+        auth = kwargs.get("auth", False)
 
         labels = {
             "traefik.enable": "true",
@@ -28,5 +29,18 @@ class LookupModule(LookupBase):
             f"traefik.http.routers.{name}.entrypoints": entrypoint,
             f"traefik.http.services.{name}.loadbalancer.server.port": str(port),
         }
+
+        if auth:
+            # Gate this router behind the Authentik forward-auth middleware
+            # (defined in the traefik role's authentik.yaml dynamic config).
+            labels[f"traefik.http.routers.{name}.middlewares"] = "authentik@file"
+            # The outpost callback/start paths must be served by the outpost,
+            # not the backend app, so route them to the Authentik service. The
+            # longer PathPrefix rule outranks the bare Host rule by rule length.
+            labels[f"traefik.http.routers.{name}-authentik.rule"] = (
+                f"Host(`{host}`) && PathPrefix(`/outpost.goauthentik.io/`)"
+            )
+            labels[f"traefik.http.routers.{name}-authentik.entrypoints"] = entrypoint
+            labels[f"traefik.http.routers.{name}-authentik.service"] = "authentik@file"
 
         return [labels]  # Lookups must return lists
