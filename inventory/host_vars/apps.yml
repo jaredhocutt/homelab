@@ -1,4 +1,6 @@
 ---
+# yamllint disable rule:line-length
+
 
 common_traefik_domain: "{{ lookup('jaredhocutt.homelab.bws', 'apps_common_traefik_domain') }}"
 
