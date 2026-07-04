@@ -122,6 +122,7 @@ changedetection_traefik_auth: true
 glance_image_tag: v0.8.5  # skopeo list-tags docker://docker.io/glanceapp/glance | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
 
 glance_traefik_host: "dashboard.{{ common_traefik_domain }}"
+glance_traefik_auth: true
 
 ###############################################################################
 # go2rtc
@@ -145,6 +146,20 @@ healthchecks_container_env:
   EMAIL_HOST_USER: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_username') }}"
   EMAIL_USE_TLS: "True"
   REGISTRATION_OPEN: "False"
+  REMOTE_USER_HEADER: HTTP_X_AUTHENTIK_EMAIL
+  SITE_LOGO_URL: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/healthchecks.png
+
+healthchecks_container_labels:
+  traefik.http.routers.healthchecks.middlewares: authentik@file
+  traefik.http.routers.healthchecks-authentik.rule: "Host(`{{ healthchecks_traefik_host }}`) && PathPrefix(`/outpost.goauthentik.io/`)"
+  traefik.http.routers.healthchecks-authentik.entrypoints: websecure
+  traefik.http.routers.healthchecks-authentik.service: authentik@file
+  traefik.http.routers.healthchecks-noauth.rule: >-
+    Host(`{{ healthchecks_traefik_host }}`) &&
+    (PathPrefix(`/ping/`) || PathPrefix(`/api/`) || PathPrefix(`/badge/`))
+  traefik.http.routers.healthchecks-noauth.entrypoints: websecure
+  traefik.http.routers.healthchecks-noauth.service: healthchecks
+  traefik.http.routers.healthchecks-noauth.priority: "1000"
 
 healthchecks_secrets:
   healthchecks_discord_client_id: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_discord_client_id') }}"
