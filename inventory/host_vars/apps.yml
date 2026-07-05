@@ -476,6 +476,7 @@ traefik_command:
   - --certificatesresolvers.letsencrypt.acme.email={{ lookup('jaredhocutt.homelab.bws', 'traefik_letsencrypt_email') }}
   - --certificatesresolvers.letsencrypt.acme.storage=/certs/acme.json
   - --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare
+  - --certificatesresolvers.letsencrypt.acme.dnschallenge.resolvers=1.1.1.1:53,8.8.8.8:53
   - --entrypoints.websecure.http.tls.certresolver=letsencrypt
 
 traefik_secrets:
