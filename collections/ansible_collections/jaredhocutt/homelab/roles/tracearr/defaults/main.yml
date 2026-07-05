@@ -1,0 +1,40 @@
+---
+# defaults file for jaredhocutt.homelab.tracearr
+
+tracearr_name: tracearr
+
+tracearr_image: ghcr.io/connorgallopo/tracearr
+tracearr_image_tag: latest
+tracearr_timescaledb_image: docker.io/timescale/timescaledb-ha
+tracearr_timescaledb_image_tag: pg18.1-ts2.25.0
+tracearr_redis_image: docker.io/library/redis
+tracearr_redis_image_tag: 8-alpine
+
+tracearr_volume_data: "{{ tracearr_name }}-data"
+tracearr_timescaledb_volume_data: "{{ tracearr_name }}-timescaledb-data"
+tracearr_redis_volume_data: "{{ tracearr_name }}-redis-data"
+
+tracearr_traefik_enable: true
+tracearr_traefik_host: "{{ tracearr_name }}.{{ common_traefik_domain }}"
+tracearr_ports:
+  - 3000:3000
+
+tracearr_secrets: {}
+
+tracearr_container_env: {}
+tracearr_container_secrets: []
+tracearr_container_labels: {}
+tracearr_container_quadlet_options: []
+
+tracearr_timescaledb_container_env: {}
+tracearr_timescaledb_container_secrets: []
+tracearr_timescaledb_container_labels: {}
+tracearr_timescaledb_container_quadlet_options: []
+
+tracearr_redis_container_env: {}
+tracearr_redis_container_secrets: []
+tracearr_redis_container_labels: {}
+tracearr_redis_container_quadlet_options: []
+
+tracearr_url: https://{{ tracearr_traefik_host }}
+tracearr_timescaledb_shm_size: 512mb

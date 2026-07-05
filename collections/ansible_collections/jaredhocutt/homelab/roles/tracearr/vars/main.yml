@@ -1,0 +1,79 @@
+---
+# vars file for jaredhocutt.homelab.tracearr
+
+tracearr_timescaledb_db_name: tracearr
+tracearr_timescaledb_user: tracearr
+
+###############################################################################
+# Envrionment
+###############################################################################
+
+tracearr_container_env_defaults:
+  NODE_ENV: production
+  HOST: 0.0.0.0
+  PORT: "3000"
+  REDIS_URL: "redis://{{ tracearr_name }}-redis:6379"
+  CORS_ORIGIN: "{{ tracearr_url }}"
+  LOG_LEVEL: info
+
+tracearr_timescaledb_container_env_defaults: {}
+
+tracearr_redis_container_env_defaults: {}
+
+###############################################################################
+# Secrets
+###############################################################################
+
+tracearr_secrets_defaults:
+  tracearr_timescaledb_db_name: "{{ tracearr_timescaledb_db_name }}"
+  tracearr_timescaledb_user: "{{ tracearr_timescaledb_user }}"
+  tracearr_timescaledb_password: "{{ tracearr_timescaledb_password }}"
+  tracearr_database_url: >-
+    postgres://{{ tracearr_timescaledb_user }}:{{ tracearr_timescaledb_password }}@{{ tracearr_name }}-timescaledb:5432/{{ tracearr_timescaledb_db_name }}
+  tracearr_jwt_secret: "{{ tracearr_jwt_secret }}"
+  tracearr_cookie_secret: "{{ tracearr_cookie_secret }}"
+
+tracearr_secrets_combined: >-
+  {{ tracearr_secrets_defaults
+  | combine(tracearr_secrets, recursive=True) }}
+
+tracearr_container_secrets_defaults:
+  - tracearr_database_url,type=env,target=DATABASE_URL
+  - tracearr_jwt_secret,type=env,target=JWT_SECRET
+  - tracearr_cookie_secret,type=env,target=COOKIE_SECRET
+
+tracearr_timescaledb_container_secrets_defaults:
+  - tracearr_timescaledb_db_name,type=env,target=POSTGRES_DB
+  - tracearr_timescaledb_user,type=env,target=POSTGRES_USER
+  - tracearr_timescaledb_password,type=env,target=POSTGRES_PASSWORD
+
+tracearr_redis_container_secrets_defaults: []
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+tracearr_container_labels_defaults: >
+  {{ tracearr_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', tracearr_name, tracearr_traefik_host, '3000'), {}) }}
+
+tracearr_timescaledb_container_labels_defaults: {}
+
+tracearr_redis_container_labels_defaults: {}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+tracearr_quadlet_options_depends:
+  - |
+    [Unit]
+    Requires={{ tracearr_name }}-timescaledb.service
+    Requires={{ tracearr_name }}-redis.service
+    After={{ tracearr_name }}-timescaledb.service
+    After={{ tracearr_name }}-redis.service
+tracearr_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + tracearr_quadlet_options_depends }}"
+
+tracearr_timescaledb_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+
+tracearr_redis_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

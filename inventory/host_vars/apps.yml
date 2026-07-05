@@ -451,6 +451,20 @@ tandoor_container_secrets:
 tautulli_image_tag: version-v2.17.2  # skopeo list-tags docker://lscr.io/linuxserver/tautulli | jq -r '.Tags[] | select(test("^version-v[0-9]"))'
 
 ###############################################################################
+# tracearr
+###############################################################################
+
+tracearr_image_tag: "1.4.29"  # skopeo list-tags docker://ghcr.io/connorgallopo/tracearr | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
+tracearr_timescaledb_image_tag: pg18.1-ts2.25.0  # The project hard codes this tag, so let's keep it
+tracearr_redis_image_tag: 8.8.0-alpine  # skopeo list-tags docker://docker.io/library/redis | jq -r '.Tags[] | select(test("^8\\.[0-9\\.]*-alpine$"))'
+
+tracearr_timescaledb_password: "{{ lookup('jaredhocutt.homelab.bws', 'tracearr_timescaledb_password') }}"
+tracearr_jwt_secret: "{{ lookup('jaredhocutt.homelab.bws', 'tracearr_jwt_secret') }}"
+tracearr_cookie_secret: "{{ lookup('jaredhocutt.homelab.bws', 'tracearr_cookie_secret') }}"
+
+tracearr_timescaledb_shm_size: 2048m
+
+###############################################################################
 # traefik
 ###############################################################################
 

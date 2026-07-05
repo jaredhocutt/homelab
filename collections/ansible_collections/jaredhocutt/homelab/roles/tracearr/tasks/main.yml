@@ -1,0 +1,130 @@
+---
+# tasks file for jaredhocutt.homelab.tracearr
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ tracearr_image }}"
+      image_tag: "{{ tracearr_image_tag }}"
+    - image: "{{ tracearr_timescaledb_image }}"
+      image_tag: "{{ tracearr_timescaledb_image_tag }}"
+    - image: "{{ tracearr_redis_image }}"
+      image_tag: "{{ tracearr_redis_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ tracearr_name }}"
+    driver: bridge
+    disable_dns: false
+    opt:
+      isolate: "true"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ tracearr_volume_data }}"
+      options: "{{ tracearr_volume_data_options | default(omit) }}"
+    - name: "{{ tracearr_timescaledb_volume_data }}"
+      options: "{{ tracearr_timescaledb_volume_data_options | default(omit) }}"
+    - name: "{{ tracearr_redis_volume_data }}"
+      options: "{{ tracearr_redis_volume_data_options | default(omit) }}"
+
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  no_log: true
+  loop: "{{ tracearr_secrets_combined | dict2items }}"
+
+- name: Create timescaledb container
+  containers.podman.podman_container:
+    name: "{{ tracearr_name }}-timescaledb"
+    image: "{{ tracearr_timescaledb_image }}:{{ tracearr_timescaledb_image_tag }}"
+    network: "{{ tracearr_name }}.network"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='timescaledb') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='timescaledb') }}"
+    volumes:
+      - "{{ tracearr_timescaledb_volume_data }}.volume:/home/postgres/pgdata/data"
+    command:
+      - postgres
+      - -c
+      - timescaledb.license=timescale
+      - -c
+      - timescaledb.max_tuples_decompressed_per_dml_transaction=0
+      - -c
+      - max_locks_per_transaction=4096
+      - -c
+      - timescaledb.telemetry_level=off
+    shm_size: "{{ tracearr_timescaledb_shm_size }}"
+    ulimit:
+      - nofile=65536:65536
+    healthcheck_interval: 10s
+    healthcheck_retries: 5
+    healthcheck_start_period: 20s
+    healthcheck_timeout: 5s
+    healthcheck: CMD-SHELL pg_isready -d {{ tracearr_timescaledb_db_name }} -U {{ tracearr_timescaledb_user }}
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='timescaledb') }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='timescaledb') }}"
+    state: quadlet
+  notify: Restart timescaledb for {{ tracearr_name }}
+  become: true
+
+- name: Create redis container
+  containers.podman.podman_container:
+    name: "{{ tracearr_name }}-redis"
+    image: "{{ tracearr_redis_image }}:{{ tracearr_redis_image_tag }}"
+    network: "{{ tracearr_name }}.network"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='redis') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='redis') }}"
+    volumes:
+      - "{{ tracearr_redis_volume_data }}.volume:/data"
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+    healthcheck_interval: 10s
+    healthcheck_retries: 5
+    healthcheck_timeout: 5s
+    healthcheck: CMD-SHELL redis-cli ping
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='redis') }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='redis') }}"
+    state: quadlet
+  notify: Restart redis for {{ tracearr_name }}
+  become: true
+
+- name: Create tracearr container
+  containers.podman.podman_container:
+    name: "{{ tracearr_name }}"
+    image: "{{ tracearr_image }}:{{ tracearr_image_tag }}"
+    network:
+      - "{{ tracearr_name }}.network"
+      - "{{ tracearr_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
+    volumes:
+      - "{{ tracearr_volume_data }}.volume:/data/backup"
+    publish: "{{ tracearr_traefik_enable | ternary(omit, tracearr_ports) }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
+    state: quadlet
+  notify: Restart {{ tracearr_name }}
+  become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

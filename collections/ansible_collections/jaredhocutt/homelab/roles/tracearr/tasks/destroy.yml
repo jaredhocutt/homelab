@@ -1,0 +1,69 @@
+---
+
+- name: Stop services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: stopped
+  become: true
+  failed_when: false
+  loop:
+    - "{{ tracearr_name }}.service"
+    - "{{ tracearr_name }}-redis.service"
+    - "{{ tracearr_name }}-timescaledb.service"
+    - "{{ tracearr_volume_data }}-volume.service"
+    - "{{ tracearr_timescaledb_volume_data }}-volume.service"
+    - "{{ tracearr_redis_volume_data }}-volume.service"
+    - "{{ tracearr_name }}-network.service"
+
+- name: Destroy containers
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ tracearr_name }}"
+    - "{{ tracearr_name }}-redis"
+    - "{{ tracearr_name }}-timescaledb"
+
+- name: Destroy secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    state: absent
+  become: true
+  no_log: true
+  loop: "{{ tracearr_secrets_combined | dict2items }}"
+
+- name: Destroy volumes
+  containers.podman.podman_volume:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ tracearr_volume_data }}"
+    - "{{ tracearr_timescaledb_volume_data }}"
+    - "{{ tracearr_redis_volume_data }}"
+
+- name: Destroy network
+  containers.podman.podman_network:
+    name: "{{ tracearr_name }}"
+    state: absent
+  become: true
+
+- name: Cleanup quadlet files
+  ansible.builtin.file:
+    path: /etc/containers/systemd/{{ item }}
+    state: absent
+  become: true
+  loop:
+    - "{{ tracearr_name }}.container"
+    - "{{ tracearr_name }}-redis.container"
+    - "{{ tracearr_name }}-timescaledb.container"
+    - "{{ tracearr_volume_data }}.volume"
+    - "{{ tracearr_timescaledb_volume_data }}.volume"
+    - "{{ tracearr_redis_volume_data }}.volume"
+    - "{{ tracearr_name }}.network"
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true

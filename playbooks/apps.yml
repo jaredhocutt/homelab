@@ -190,6 +190,11 @@
         name: jaredhocutt.homelab.tautulli
       tags: [tautulli]
 
+    - name: Install tracearr
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.tracearr
+      tags: [tracearr]
+
     - name: Install transfer_sh
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.transfer_sh

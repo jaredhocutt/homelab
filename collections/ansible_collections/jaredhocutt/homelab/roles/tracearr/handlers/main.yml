@@ -1,0 +1,26 @@
+---
+# handlers file for jaredhocutt.homelab.tracearr
+
+- name: Restart {{ tracearr_name }}
+  ansible.builtin.systemd:
+    name: "{{ tracearr_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart timescaledb for {{ tracearr_name }}
+  ansible.builtin.systemd:
+    name: "{{ tracearr_name }}-timescaledb.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart redis for {{ tracearr_name }}
+  ansible.builtin.systemd:
+    name: "{{ tracearr_name }}-redis.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
