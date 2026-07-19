@@ -35,7 +35,7 @@
     - name: Assert traefik container quadlet has the expected image, socket, and ports
       ansible.builtin.assert:
         that:
-          - "'docker.io/library/traefik' in (container_quadlet.content | b64decode)"
+          - "'ghcr.io/traefik/traefik' in (container_quadlet.content | b64decode)"
           - "'/run/podman/podman.sock:/var/run/docker.sock' in (container_quadlet.content | b64decode)"
           - "'80:80' in (container_quadlet.content | b64decode)"
           - "'443:443' in (container_quadlet.content | b64decode)"

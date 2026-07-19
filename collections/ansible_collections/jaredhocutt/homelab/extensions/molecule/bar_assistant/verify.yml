@@ -39,7 +39,7 @@
     - name: Assert bar-assistant container quadlet has the expected image and ports
       ansible.builtin.assert:
         that:
-          - "'docker.io/barassistant/server' in (container_quadlet.content | b64decode)"
+          - "'ghcr.io/karlomikus/barassistant' in (container_quadlet.content | b64decode)"
           - "'8082:8080' in (container_quadlet.content | b64decode)"
 
     - name: Read salt-rim container quadlet contents
@@ -50,5 +50,5 @@
     - name: Assert salt-rim container quadlet has the expected image and ports
       ansible.builtin.assert:
         that:
-          - "'docker.io/barassistant/salt-rim' in (salt_rim_quadlet.content | b64decode)"
+          - "'ghcr.io/karlomikus/salt-rim' in (salt_rim_quadlet.content | b64decode)"
           - "'8080:8080' in (salt_rim_quadlet.content | b64decode)"

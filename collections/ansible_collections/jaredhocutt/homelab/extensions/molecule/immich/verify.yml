@@ -63,4 +63,4 @@
     - name: Assert redis container quadlet has the expected image
       ansible.builtin.assert:
         that:
-          - "'docker.io/valkey/valkey' in (redis_quadlet.content | b64decode)"
+          - "'ghcr.io/valkey-io/valkey' in (redis_quadlet.content | b64decode)"

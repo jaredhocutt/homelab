@@ -23,5 +23,5 @@
     - name: Assert quadlet has the expected image and test endpoint
       ansible.builtin.assert:
         that:
-          - "'docker.io/fosrl/newt' in (quadlet_contents.content | b64decode)"
+          - "'ghcr.io/fosrl/newt' in (quadlet_contents.content | b64decode)"
           - "'test-endpoint.example' in (quadlet_contents.content | b64decode)"

@@ -3,7 +3,7 @@
 
 traefik_name: traefik
 
-traefik_image: docker.io/library/traefik
+traefik_image: ghcr.io/traefik/traefik
 traefik_image_tag: latest
 
 traefik_volume_certs: "{{ traefik_name }}-certs"

@@ -40,7 +40,7 @@
     - name: Assert pangolin container quadlet has the expected image
       ansible.builtin.assert:
         that:
-          - "'docker.io/fosrl/pangolin' in (pangolin_quadlet.content | b64decode)"
+          - "'ghcr.io/fosrl/pangolin' in (pangolin_quadlet.content | b64decode)"
 
     - name: Read gerbil container quadlet contents
       ansible.builtin.slurp:
@@ -50,7 +50,7 @@
     - name: Assert gerbil container quadlet has the expected image, caps, and ports
       ansible.builtin.assert:
         that:
-          - "'docker.io/fosrl/gerbil' in (gerbil_quadlet.content | b64decode)"
+          - "'ghcr.io/fosrl/gerbil' in (gerbil_quadlet.content | b64decode)"
           - "'AddCapability=NET_ADMIN' in (gerbil_quadlet.content | b64decode)"
           - "'AddCapability=SYS_MODULE' in (gerbil_quadlet.content | b64decode)"
           - "'80:80' in (gerbil_quadlet.content | b64decode)"
@@ -64,7 +64,7 @@
     - name: Assert traefik container quadlet shares the gerbil network namespace
       ansible.builtin.assert:
         that:
-          - "'docker.io/library/traefik' in (traefik_quadlet.content | b64decode)"
+          - "'ghcr.io/traefik/traefik' in (traefik_quadlet.content | b64decode)"
           - "'container:pangolin-gerbil' in (traefik_quadlet.content | b64decode)"
 
     - name: Get config volume info

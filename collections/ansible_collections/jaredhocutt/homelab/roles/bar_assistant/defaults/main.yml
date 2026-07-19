@@ -3,9 +3,9 @@
 
 bar_assistant_name: bar-assistant
 
-bar_assistant_image: docker.io/barassistant/server
+bar_assistant_image: ghcr.io/karlomikus/barassistant
 bar_assistant_image_tag: dev
-bar_assistant_salt_rim_image: docker.io/barassistant/salt-rim
+bar_assistant_salt_rim_image: ghcr.io/karlomikus/salt-rim
 bar_assistant_salt_rim_image_tag: dev
 bar_assistant_redis_image: docker.io/library/redis
 bar_assistant_redis_image_tag: latest
