@@ -454,7 +454,7 @@ tautulli_image_tag: version-v2.17.2  # skopeo list-tags docker://lscr.io/linuxse
 # tracearr
 ###############################################################################
 
-tracearr_image_tag: "1.4.29"  # skopeo list-tags docker://ghcr.io/connorgallopo/tracearr | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
+tracearr_image_tag: "1.4.30"  # skopeo list-tags docker://ghcr.io/connorgallopo/tracearr | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
 tracearr_timescaledb_image_tag: pg18.1-ts2.25.0  # The project hard codes this tag, so let's keep it
 tracearr_redis_image_tag: 8.8.0-alpine  # skopeo list-tags docker://docker.io/library/redis | jq -r '.Tags[] | select(test("^8\\.[0-9\\.]*-alpine$"))'
 
