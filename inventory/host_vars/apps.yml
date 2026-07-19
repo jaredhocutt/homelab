@@ -10,7 +10,7 @@ shared_volume_download_books: download-books
 # authentik
 ###############################################################################
 
-authentik_image_tag: "2026.5.3"  # skopeo list-tags docker://ghcr.io/goauthentik/server | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
+authentik_image_tag: "2026.5.5"  # skopeo list-tags docker://ghcr.io/goauthentik/server | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
 authentik_postgres_image_tag: "16.14"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
 
 authentik_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'authentik_postgres_password') }}"
@@ -65,7 +65,7 @@ backrest_env:
 # bar_assistant
 ###############################################################################
 
-bar_assistant_image_tag: "5.15.2"  # skopeo list-tags docker://ghcr.io/karlomikus/barassistant | jq -r '.Tags[] | select(test("^5\\.[0-9]"))'
+bar_assistant_image_tag: "5.15.3"  # skopeo list-tags docker://ghcr.io/karlomikus/barassistant | jq -r '.Tags[] | select(test("^5\\.[0-9]"))'
 bar_assistant_salt_rim_image_tag: "4.15.0"  # skopeo list-tags docker://ghcr.io/karlomikus/salt-rim | jq -r '.Tags[] | select(test("^4\\.[0-9]"))'
 bar_assistant_redis_image_tag: "8.8.0"  # skopeo list-tags docker://docker.io/library/redis | jq -r '.Tags[] | select(test("^[0-9]\\.[0-9\\.]*$"))'
 bar_assistant_meilisearch_image_tag: v1.15.2  # skopeo list-tags docker://docker.io/getmeili/meilisearch | jq -r '.Tags[] | select(test("^v1.15"))'
@@ -110,7 +110,7 @@ calibre_web_automated_container_secrets:
 # changedetection
 ###############################################################################
 
-changedetection_image_tag: "0.55.7"  # skopeo list-tags docker://ghcr.io/dgtlmoon/changedetection.io | jq -r '.Tags[] | select(test("^[0-9]"))'
+changedetection_image_tag: "0.55.8"  # skopeo list-tags docker://ghcr.io/dgtlmoon/changedetection.io | jq -r '.Tags[] | select(test("^[0-9]"))'
 changedetection_browser_image_tag: "0.0.3"  # skopeo list-tags docker://docker.io/dgtlmoon/sockpuppetbrowser | jq -r '.Tags[] | select(test("^[0-9]"))'
 
 changedetection_traefik_auth: true
@@ -211,7 +211,7 @@ homebox_container_secrets:
 ###############################################################################
 
 karakeep_image_tag: "0.32.0"  # skopeo list-tags docker://ghcr.io/karakeep-app/karakeep | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
-karakeep_browserless_image_tag: v2.54.2  # skopeo list-tags docker://ghcr.io/browserless/chromium | jq -r '.Tags[] | select(test("^v?[0-9.]+$"))'
+karakeep_browserless_image_tag: v2.55.0  # skopeo list-tags docker://ghcr.io/browserless/chromium | jq -r '.Tags[] | select(test("^v?[0-9.]+$"))'
 karakeep_meilisearch_image_tag: v1.13.3  # The project hard codes this tag, so let's keep it
 
 karakeep_nextauth_url: "{{ lookup('jaredhocutt.homelab.bws', 'karakeep_nextauth_url') }}"
@@ -250,7 +250,7 @@ newt_karakeep_container_secrets:
 # newt
 ###############################################################################
 
-newt_image_tag: "1.14.0"  # skopeo list-tags docker://ghcr.io/fosrl/newt | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
+newt_image_tag: "1.15.0"  # skopeo list-tags docker://ghcr.io/fosrl/newt | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
 
 newt_endpoint: https://pangolin.{{ lookup('jaredhocutt.homelab.bws', 'pangolin_base_domain') }}
 
@@ -314,7 +314,7 @@ newt_palworld_container_secrets:
 # pangolin_cli
 ###############################################################################
 
-pangolin_cli_image_tag: "0.12.0"  # skopeo list-tags docker://ghcr.io/fosrl/cli | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
+pangolin_cli_image_tag: "0.14.0"  # skopeo list-tags docker://ghcr.io/fosrl/cli | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
 
 pangolin_cli_endpoint: https://pangolin.{{ lookup('jaredhocutt.homelab.bws', 'pangolin_base_domain') }}
 
@@ -363,7 +363,7 @@ server_setup_users: "{{ kickstart_users + _additional_users }}"  # Include kicks
 # shelfmark
 ###############################################################################
 
-shelfmark_image_tag: v1.3.2  # skopeo list-tags docker://ghcr.io/calibrain/shelfmark | jq -r '.Tags[] | select(test("^v[0-9]"))'
+shelfmark_image_tag: v1.3.3  # skopeo list-tags docker://ghcr.io/calibrain/shelfmark | jq -r '.Tags[] | select(test("^v[0-9]"))'
 
 shelfmark_volume_books: "{{ shared_volume_download_books }}"
 
@@ -454,7 +454,7 @@ tautulli_image_tag: version-v2.17.2  # skopeo list-tags docker://lscr.io/linuxse
 # tracearr
 ###############################################################################
 
-tracearr_image_tag: "1.4.30"  # skopeo list-tags docker://ghcr.io/connorgallopo/tracearr | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
+tracearr_image_tag: "1.5.0"  # skopeo list-tags docker://ghcr.io/connorgallopo/tracearr | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
 tracearr_timescaledb_image_tag: pg18.1-ts2.25.0  # The project hard codes this tag, so let's keep it
 tracearr_redis_image_tag: 8.8.0-alpine  # skopeo list-tags docker://docker.io/library/redis | jq -r '.Tags[] | select(test("^8\\.[0-9\\.]*-alpine$"))'
 
@@ -468,7 +468,7 @@ tracearr_timescaledb_shm_size: 2048m
 # traefik
 ###############################################################################
 
-traefik_image_tag: v3.7.6  # skopeo list-tags docker://ghcr.io/traefik/traefik | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+traefik_image_tag: v3.7.8  # skopeo list-tags docker://ghcr.io/traefik/traefik | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
 
 traefik_traefik_host: "{{ lookup('jaredhocutt.homelab.bws', 'traefik_traefik_host') }}"
 
