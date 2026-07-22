@@ -134,7 +134,7 @@ go2rtc_image_tag: "1.9.14"  # skopeo list-tags docker://ghcr.io/alexxit/go2rtc |
 # healthchecks
 ###############################################################################
 
-healthchecks_image_tag: version-v4.2  # skopeo list-tags docker://lscr.io/linuxserver/healthchecks | jq -r '.Tags[] | select(test("^version-v[0-9]"))'
+healthchecks_image_tag: version-v4.3  # skopeo list-tags docker://lscr.io/linuxserver/healthchecks | jq -r '.Tags[] | select(test("^version-v[0-9]"))'
 
 healthchecks_email: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_email') }}"
 healthchecks_password: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_password') }}"
@@ -258,7 +258,7 @@ newt_endpoint: https://pangolin.{{ lookup('jaredhocutt.homelab.bws', 'pangolin_b
 # n8n
 ###############################################################################
 
-n8n_image_tag: "2.29.5"  # skopeo list-tags docker://docker.n8n.io/n8nio/n8n | jq -r '.Tags[] | select(test("^2\\.[0-9\\.]+$"))'
+n8n_image_tag: "2.31.3"  # skopeo list-tags docker://docker.n8n.io/n8nio/n8n | jq -r '.Tags[] | select(test("^2\\.[0-9\\.]+$"))'
 n8n_postgres_image_tag: "16.14"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
 
 n8n_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'n8n_postgres_password') }}"
@@ -270,7 +270,7 @@ n8n_container_env:
 # nocodb
 ###############################################################################
 
-nocodb_image_tag: "2026.06.2"  # skopeo list-tags docker://docker.io/nocodb/nocodb | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
+nocodb_image_tag: "2026.07.0"  # skopeo list-tags docker://docker.io/nocodb/nocodb | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
 nocodb_postgres_image_tag: "16.14"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
 
 nocodb_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'nocodb_postgres_password') }}"
@@ -401,7 +401,7 @@ snipe_it_container_secrets:
 # stirling_pdf
 ###############################################################################
 
-stirling_pdf_image_tag: 2.14.0-fat  # skopeo list-tags docker://docker.stirlingpdf.com/stirlingtools/stirling-pdf | jq -r '.Tags[] | select(test("^[0-9\\.]+-fat$"))'
+stirling_pdf_image_tag: 2.14.2-fat  # skopeo list-tags docker://docker.stirlingpdf.com/stirlingtools/stirling-pdf | jq -r '.Tags[] | select(test("^[0-9\\.]+-fat$"))'
 
 stirling_pdf_container_env:
   DOCKER_ENABLE_SECURITY: "false"
@@ -410,7 +410,7 @@ stirling_pdf_container_env:
 # tandoor
 ###############################################################################
 
-tandoor_image_tag: "2.6.12"  # skopeo list-tags docker://docker.io/vabene1111/recipes | jq -r '.Tags[] | select(test("^[0-9]\\."))'
+tandoor_image_tag: "2.6.13"  # skopeo list-tags docker://docker.io/vabene1111/recipes | jq -r '.Tags[] | select(test("^[0-9]\\."))'
 tandoor_postgres_image_tag: "16.14"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
 
 tandoor_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'tandoor_postgres_password') }}"
