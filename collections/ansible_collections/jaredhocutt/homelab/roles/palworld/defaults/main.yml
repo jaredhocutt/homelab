@@ -9,6 +9,20 @@ palworld_image_tag: latest
 palworld_volume_saved: "{{ palworld_name }}-saved"
 palworld_volume_scripts: "{{ palworld_name }}-scripts"
 
+# Hard memory limit for the game container so a leak/crash-loop can't starve
+# other apps sharing this host. Set to "" to disable the limit.
+palworld_memory: 8g
+
+# Used to seed PalWorldSettings.ini on first boot only (the file is never
+# overwritten once it exists, so later manual/in-game edits are preserved).
+# ServerPassword is the only real access control (Pangolin cannot authenticate
+# raw UDP game traffic), so it must be set before the first start. Additional
+# OptionSettings can be supplied via palworld_option_settings.
+palworld_server_name: Palworld
+palworld_server_password: ""
+palworld_admin_password: ""
+palworld_option_settings: {}
+
 palworld_secrets: {}
 
 palworld_container_env: {}

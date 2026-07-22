@@ -60,6 +60,35 @@
   become: true
   notify: Restart {{ palworld_name }}
 
+- name: Start saved volume service to create it
+  ansible.builtin.systemd:
+    name: "{{ palworld_volume_saved }}-volume.service"
+    state: started
+  become: true
+
+- name: Get saved volume info
+  containers.podman.podman_volume_info:
+    name: "{{ palworld_volume_saved }}"
+  become: true
+  register: _palworld_saved_volume_info
+
+- name: Ensure config directory exists
+  ansible.builtin.file:
+    path: "{{ _palworld_saved_volume_info.volumes[0].Mountpoint }}/Config/LinuxServer"
+    state: directory
+    mode: "0755"
+  become: true
+
+- name: Seed PalWorldSettings.ini if it does not exist
+  ansible.builtin.template:
+    src: PalWorldSettings.ini.j2
+    dest: "{{ _palworld_saved_volume_info.volumes[0].Mountpoint }}/Config/LinuxServer/PalWorldSettings.ini"
+    mode: "0644"
+    force: false  # seed once; never overwrite manual/in-game edits afterward
+  become: true
+  no_log: true
+  notify: Restart {{ palworld_name }}
+
 - name: Create secrets
   containers.podman.podman_secret:
     name: "{{ item.key }}"
@@ -74,6 +103,7 @@
     name: "{{ palworld_name }}"
     image: "{{ palworld_image }}:{{ palworld_image_tag }}"
     network: "{{ palworld_name }}.network"
+    memory: "{{ palworld_memory or omit }}"
     env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:

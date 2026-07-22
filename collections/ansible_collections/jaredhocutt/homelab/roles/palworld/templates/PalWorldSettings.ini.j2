@@ -1,0 +1,2 @@
+[/Script/Pal.PalGameWorldSettings]
+OptionSettings=({% for key, value in palworld_option_settings_combined.items() %}{{ key }}={% if value is string %}"{{ value }}"{% else %}{{ value }}{% endif %}{% if not loop.last %},{% endif %}{% endfor %})

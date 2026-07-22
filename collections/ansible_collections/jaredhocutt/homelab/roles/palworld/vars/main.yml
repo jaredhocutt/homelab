@@ -1,6 +1,16 @@
 ---
 # vars file for jaredhocutt.homelab.palworld
 
+palworld_option_settings_defaults:
+  ServerName: "{{ palworld_server_name }}"
+  ServerPassword: "{{ palworld_server_password }}"
+  AdminPassword: "{{ palworld_admin_password }}"
+
+palworld_option_settings_combined: >-
+  {{ palworld_option_settings_defaults
+  | combine(palworld_option_settings, recursive=True) }}
+
+
 ###############################################################################
 # Envrionment
 ###############################################################################
