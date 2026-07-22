@@ -12,4 +12,4 @@ The command should be in the following format with the `--tags` populated correc
 
 `uv run ansible-playbook -v playbooks/$INVENTORY_NAME.yml --tags`
 
-Then output a message that could be used for a git commit that outlines what was updated. Then create a commmit using `git commit -sS` and use the generated commit message. Ask for approval before creating the commit.
+Then output a message that could be used for a git commit that outlines what was updated. Then create a commmit using `git commit -sS` and use the generated commit message. There will oftentimes be other changes in the inventory file that you should not commit, so be selective about which lines you add to the commit. Ask for approval before creating the commit.
