@@ -10,7 +10,7 @@ shared_volume_download_books: download-books
 # authentik
 ###############################################################################
 
-authentik_image_tag: "2026.5.6"  # skopeo list-tags docker://ghcr.io/goauthentik/server | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
+authentik_image_tag: "2026.8"  # skopeo list-tags docker://ghcr.io/goauthentik/server | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
 authentik_postgres_image_tag: "16.14"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
 
 authentik_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'authentik_postgres_password') }}"
@@ -41,7 +41,7 @@ newt_authentik_container_secrets:
 # audiobookshelf
 ###############################################################################
 
-audiobookshelf_image_tag: "2.35.1"  # skopeo list-tags docker://ghcr.io/advplyr/audiobookshelf | jq -r '.Tags[] | select(test("^[0-9]"))'
+audiobookshelf_image_tag: "2.36.0"  # skopeo list-tags docker://ghcr.io/advplyr/audiobookshelf | jq -r '.Tags[] | select(test("^[0-9]"))'
 
 newt_audiobookshelf_secrets:
   newt_audiobookshelf_newt_id: "{{ lookup('jaredhocutt.homelab.bws', 'newt_audiobookshelf_newt_id') }}"
@@ -65,9 +65,9 @@ backrest_env:
 # bar_assistant
 ###############################################################################
 
-bar_assistant_image_tag: "5.15.3"  # skopeo list-tags docker://ghcr.io/karlomikus/barassistant | jq -r '.Tags[] | select(test("^5\\.[0-9]"))'
+bar_assistant_image_tag: "5.15.4"  # skopeo list-tags docker://ghcr.io/karlomikus/barassistant | jq -r '.Tags[] | select(test("^5\\.[0-9]"))'
 bar_assistant_salt_rim_image_tag: "4.15.0"  # skopeo list-tags docker://ghcr.io/karlomikus/salt-rim | jq -r '.Tags[] | select(test("^4\\.[0-9]"))'
-bar_assistant_redis_image_tag: "8.8.0"  # skopeo list-tags docker://docker.io/library/redis | jq -r '.Tags[] | select(test("^[0-9]\\.[0-9\\.]*$"))'
+bar_assistant_redis_image_tag: "8.10.0"  # skopeo list-tags docker://docker.io/library/redis | jq -r '.Tags[] | select(test("^[0-9]\\.[0-9\\.]*$"))'
 bar_assistant_meilisearch_image_tag: v1.15.2  # skopeo list-tags docker://docker.io/getmeili/meilisearch | jq -r '.Tags[] | select(test("^v1.15"))'
 
 bar_assistant_meilisearch_master_key: "{{ lookup('jaredhocutt.homelab.bws', 'bar_assistant_meilisearch_master_key') }}"
@@ -87,7 +87,7 @@ bar_assistant_container_secrets:
 # bentopdf
 ###############################################################################
 
-bentopdf_image_tag: v2.8.6  # skopeo list-tags docker://ghcr.io/alam00000/bentopdf-simple | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+bentopdf_image_tag: v2.8.7  # skopeo list-tags docker://ghcr.io/alam00000/bentopdf-simple | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
 
 ###############################################################################
 # calibre_web_automated
@@ -210,8 +210,8 @@ homebox_container_secrets:
 # karakeep
 ###############################################################################
 
-karakeep_image_tag: "0.32.0"  # skopeo list-tags docker://ghcr.io/karakeep-app/karakeep | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
-karakeep_browserless_image_tag: v2.55.0  # skopeo list-tags docker://ghcr.io/browserless/chromium | jq -r '.Tags[] | select(test("^v?[0-9.]+$"))'
+karakeep_image_tag: "0.33.2"  # skopeo list-tags docker://ghcr.io/karakeep-app/karakeep | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
+karakeep_browserless_image_tag: v2.55.3  # skopeo list-tags docker://ghcr.io/browserless/chromium | jq -r '.Tags[] | select(test("^v?[0-9.]+$"))'
 karakeep_meilisearch_image_tag: v1.13.3  # The project hard codes this tag, so let's keep it
 
 karakeep_nextauth_url: "{{ lookup('jaredhocutt.homelab.bws', 'karakeep_nextauth_url') }}"
@@ -258,7 +258,7 @@ newt_endpoint: https://pangolin.{{ lookup('jaredhocutt.homelab.bws', 'pangolin_b
 # n8n
 ###############################################################################
 
-n8n_image_tag: "2.32.2"  # skopeo list-tags docker://docker.n8n.io/n8nio/n8n | jq -r '.Tags[] | select(test("^2\\.[0-9\\.]+$"))'
+n8n_image_tag: "2.35.1"  # skopeo list-tags docker://docker.n8n.io/n8nio/n8n | jq -r '.Tags[] | select(test("^2\\.[0-9\\.]+$"))'
 n8n_postgres_image_tag: "16.14"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
 
 n8n_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'n8n_postgres_password') }}"
@@ -270,7 +270,7 @@ n8n_container_env:
 # nocodb
 ###############################################################################
 
-nocodb_image_tag: "2026.07.0"  # skopeo list-tags docker://docker.io/nocodb/nocodb | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
+nocodb_image_tag: "2026.08.0"  # skopeo list-tags docker://docker.io/nocodb/nocodb | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
 nocodb_postgres_image_tag: "16.14"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
 
 nocodb_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'nocodb_postgres_password') }}"
@@ -279,7 +279,7 @@ nocodb_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'nocodb_postgres
 # open_webui
 ###############################################################################
 
-open_webui_image_tag: v0.10.2  # skopeo list-tags docker://ghcr.io/open-webui/open-webui | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+open_webui_image_tag: v0.11.0  # skopeo list-tags docker://ghcr.io/open-webui/open-webui | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
 
 open_webui_container_env:
   WEBUI_URL: https://open-webui.{{ common_traefik_domain }}
@@ -301,7 +301,7 @@ open_webui_container_secrets:
 # palworld
 ###############################################################################
 
-palworld_image_tag: v1.0.1.100619  # skopeo list-tags docker://ghcr.io/pocketpairjp/palserver | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+palworld_image_tag: v1.0.3.101283  # skopeo list-tags docker://ghcr.io/pocketpairjp/palserver | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
 
 palworld_memory: 16g
 
@@ -320,7 +320,7 @@ newt_palworld_container_secrets:
 # pangolin_cli
 ###############################################################################
 
-pangolin_cli_image_tag: "0.15.0"  # skopeo list-tags docker://ghcr.io/fosrl/cli | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
+pangolin_cli_image_tag: "0.15.1"  # skopeo list-tags docker://ghcr.io/fosrl/cli | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
 
 pangolin_cli_endpoint: https://pangolin.{{ lookup('jaredhocutt.homelab.bws', 'pangolin_base_domain') }}
 
@@ -341,7 +341,7 @@ prowlarr_image_tag: version-2.5.2.5491  # skopeo list-tags docker://ghcr.io/linu
 # seerr
 ###############################################################################
 
-seerr_image_tag: v3.3.0  # skopeo list-tags docker://ghcr.io/seerr-team/seerr | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+seerr_image_tag: v3.4.1  # skopeo list-tags docker://ghcr.io/seerr-team/seerr | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
 
 newt_seerr_secrets:
   newt_seerr_newt_id: "{{ lookup('jaredhocutt.homelab.bws', 'newt_seerr_newt_id') }}"
@@ -369,7 +369,7 @@ server_setup_users: "{{ kickstart_users + _additional_users }}"  # Include kicks
 # shelfmark
 ###############################################################################
 
-shelfmark_image_tag: v1.3.4  # skopeo list-tags docker://ghcr.io/calibrain/shelfmark | jq -r '.Tags[] | select(test("^v[0-9]"))'
+shelfmark_image_tag: v1.3.5  # skopeo list-tags docker://ghcr.io/calibrain/shelfmark | jq -r '.Tags[] | select(test("^v[0-9]"))'
 
 shelfmark_volume_books: "{{ shared_volume_download_books }}"
 
@@ -381,7 +381,7 @@ shelfmark_container_env:
 # snipe_it
 ###############################################################################
 
-snipe_it_image_tag: v8.6.3  # skopeo list-tags docker://docker.io/snipe/snipe-it | jq -r '.Tags[] | select(test("^v[0-9]"))'
+snipe_it_image_tag: v8.7.0  # skopeo list-tags docker://docker.io/snipe/snipe-it | jq -r '.Tags[] | select(test("^v[0-9]"))'
 
 snipe_it_app_key: "{{ lookup('jaredhocutt.homelab.bws', 'snipe_it_app_key') }}"
 snipe_it_mariadb_root_password: "{{ lookup('jaredhocutt.homelab.bws', 'snipe_it_mariadb_root_password') }}"
@@ -407,7 +407,7 @@ snipe_it_container_secrets:
 # stirling_pdf
 ###############################################################################
 
-stirling_pdf_image_tag: 2.14.2-fat  # skopeo list-tags docker://docker.stirlingpdf.com/stirlingtools/stirling-pdf | jq -r '.Tags[] | select(test("^[0-9\\.]+-fat$"))'
+stirling_pdf_image_tag: 2.14.3-fat  # skopeo list-tags docker://docker.stirlingpdf.com/stirlingtools/stirling-pdf | jq -r '.Tags[] | select(test("^[0-9\\.]+-fat$"))'
 
 stirling_pdf_container_env:
   DOCKER_ENABLE_SECURITY: "false"
@@ -460,9 +460,9 @@ tautulli_image_tag: version-v2.17.2  # skopeo list-tags docker://lscr.io/linuxse
 # tracearr
 ###############################################################################
 
-tracearr_image_tag: "1.5.0"  # skopeo list-tags docker://ghcr.io/connorgallopo/tracearr | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
+tracearr_image_tag: "2.0.1"  # skopeo list-tags docker://ghcr.io/connorgallopo/tracearr | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
 tracearr_timescaledb_image_tag: pg18.1-ts2.25.0  # The project hard codes this tag, so let's keep it
-tracearr_redis_image_tag: 8.8.0-alpine  # skopeo list-tags docker://docker.io/library/redis | jq -r '.Tags[] | select(test("^8\\.[0-9\\.]*-alpine$"))'
+tracearr_redis_image_tag: 8.10.0-alpine  # skopeo list-tags docker://docker.io/library/redis | jq -r '.Tags[] | select(test("^8\\.[0-9\\.]*-alpine$"))'
 
 tracearr_timescaledb_password: "{{ lookup('jaredhocutt.homelab.bws', 'tracearr_timescaledb_password') }}"
 tracearr_jwt_secret: "{{ lookup('jaredhocutt.homelab.bws', 'tracearr_jwt_secret') }}"
@@ -474,7 +474,7 @@ tracearr_timescaledb_shm_size: 2048m
 # traefik
 ###############################################################################
 
-traefik_image_tag: v3.7.8  # skopeo list-tags docker://ghcr.io/traefik/traefik | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+traefik_image_tag: v3.7.10  # skopeo list-tags docker://ghcr.io/traefik/traefik | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
 
 traefik_traefik_host: "{{ lookup('jaredhocutt.homelab.bws', 'traefik_traefik_host') }}"
 
@@ -502,7 +502,7 @@ transfer_sh_image_tag: v1.6.1-noroot  # skopeo list-tags docker://docker.io/dutc
 # uptime_kuma
 ###############################################################################
 
-uptime_kuma_image_tag: "2.4.0"  # skopeo list-tags docker://ghcr.io/louislam/uptime-kuma | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
+uptime_kuma_image_tag: "2.5.0"  # skopeo list-tags docker://ghcr.io/louislam/uptime-kuma | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
 
 ###############################################################################
 # warracker
