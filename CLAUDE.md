@@ -69,3 +69,7 @@ When adding a new role, follow this pattern (or run `uv run task duplicate-role 
 ### Image tag updates
 
 Every `<service>_image_tag:` variable in an inventory file should have a trailing comment with the exact `skopeo list-tags … | jq …` pipeline that lists candidate upstream tags. The `check-image-tags` script (and the `/update-image-tags` slash command) rely on this convention to suggest updates — keep the comment intact whenever you touch the tag line.
+
+Before suggesting a tag, the script verifies it is actually pullable by fetching its raw manifest and confirming a `linux/amd64` image manifest exists (override with `--platform`, skip with `--no-pull-check`). This catches tags that exist in `list-tags` but that podman cannot pull — most notably a **nested image index**, where the top-level index points at further indexes instead of image manifests, and `podman pull` fails with "Unexpectedly received a manifest list instead of a manifest for a single image". Note that `skopeo inspect` recurses into nested indexes and reports such images as healthy, so only the raw-manifest check detects them. A flagged tag is reported but never silently skipped, so a later fixed release still shows up.
+
+When a tag has to be held back for a reason like this, keep the `skopeo` comment intact and append a second `#` comment on the same line explaining the hold — the trailing text is a shell comment, so it does not affect the pipeline the script runs (see `authentik_image_tag` in `inventory/host_vars/apps.yml`).

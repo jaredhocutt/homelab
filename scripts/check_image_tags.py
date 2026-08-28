@@ -10,6 +10,7 @@ If no file is specified, presents an interactive list of inventory files.
 """
 
 import argparse
+import json
 import re
 import subprocess
 import sys
@@ -23,6 +24,14 @@ CYAN = "\033[96m"
 RESET = "\033[0m"
 BOLD = "\033[1m"
 
+# Manifest media types that represent a multi-platform index rather than a
+# single image. A child entry with one of these types means the index is
+# nested, which podman cannot pull.
+INDEX_MEDIA_TYPES = {
+    "application/vnd.oci.image.index.v1+json",
+    "application/vnd.docker.distribution.manifest.list.v2+json",
+}
+
 
 def parse_image_tag_lines(file_path: Path) -> list[dict]:
     """
@@ -32,6 +41,7 @@ def parse_image_tag_lines(file_path: Path) -> list[dict]:
     - variable: the variable name
     - current_value: the current tag value
     - skopeo_command: the full skopeo | jq command from the comment
+    - image_ref: the docker://... image reference from the skopeo command
     - line_number: 1-based line number in the file
     """
     results = []
@@ -49,11 +59,14 @@ def parse_image_tag_lines(file_path: Path) -> list[dict]:
         for line_number, line in enumerate(f, 1):
             match = pattern.match(line.strip())
             if match:
+                command = match.group(3)
+                ref_match = re.search(r"docker://[^\s|'\"]+", command)
                 results.append(
                     {
                         "variable": match.group(1),
                         "current_value": match.group(2),
-                        "skopeo_command": match.group(3),
+                        "skopeo_command": command,
+                        "image_ref": ref_match.group(0) if ref_match else None,
                         "line_number": line_number,
                     }
                 )
@@ -86,6 +99,80 @@ def run_skopeo_command(command: str, timeout: int = 30) -> list[str] | None:
         return None
     except Exception:
         return None
+
+
+def check_pullable(
+    image_ref: str,
+    tag: str,
+    platform: str = "linux/amd64",
+    timeout: int = 30,
+) -> str | None:
+    """
+    Check that image_ref:tag resolves to an image manifest podman can pull.
+
+    Returns None if the image looks fine, otherwise a short string describing
+    the problem.
+
+    This inspects the raw manifest rather than relying on `skopeo inspect`,
+    because skopeo and podman disagree: skopeo transparently recurses into a
+    nested image index, while podman's pull path expects an image manifest at
+    the second level and fails with "Unexpectedly received a manifest list
+    instead of a manifest for a single image". authentik 2026.8.x is published
+    this way, so `skopeo inspect` reports it as perfectly healthy while
+    `podman pull` cannot fetch it at all.
+
+    Only the manifest is fetched, never any blobs.
+    """
+    target_os, _, target_arch = platform.partition("/")
+
+    try:
+        result = subprocess.run(
+            ["skopeo", "inspect", "--raw", f"{image_ref}:{tag}"],
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+        )
+    except (subprocess.TimeoutExpired, OSError):
+        return "could not read manifest"
+
+    if result.returncode != 0:
+        return "could not read manifest"
+
+    try:
+        manifest = json.loads(result.stdout)
+    except json.JSONDecodeError:
+        return "could not parse manifest"
+
+    entries = manifest.get("manifests")
+    if not entries:
+        # A plain single-platform image manifest; nothing to resolve.
+        return None
+
+    match = None
+    for entry in entries:
+        entry_platform = entry.get("platform") or {}
+        if (
+            entry_platform.get("os") == target_os
+            and entry_platform.get("architecture") == target_arch
+        ):
+            match = entry
+            break
+
+    if match is None:
+        # "unknown/unknown" entries are buildx attestations, not real platforms,
+        # so leave them out of the list we show the user.
+        available = sorted(
+            f"{(e.get('platform') or {}).get('os')}/"
+            f"{(e.get('platform') or {}).get('architecture')}"
+            for e in entries
+            if (e.get("platform") or {}).get("architecture") != "unknown"
+        )
+        return f"no {platform} image (found: {', '.join(available) or 'none'})"
+
+    if match.get("mediaType") in INDEX_MEDIA_TYPES:
+        return f"nested image index for {platform}; podman cannot pull it"
+
+    return None
 
 
 def parse_version(tag: str) -> tuple:
@@ -165,6 +252,16 @@ def main():
         "--updates-only",
         action="store_true",
         help="Only show variables that have updates available",
+    )
+    parser.add_argument(
+        "--platform",
+        default="linux/amd64",
+        help="Platform the suggested tags must be pullable for (default: linux/amd64)",
+    )
+    parser.add_argument(
+        "--no-pull-check",
+        action="store_true",
+        help="Skip verifying that suggested tags are actually pullable",
     )
     parser.add_argument(
         "--json",
@@ -264,9 +361,22 @@ def main():
         latest = get_latest_tag(tags, current)
         status = compare_versions(current, latest) if latest else "unknown"
 
+        # Only the tag we are about to suggest gets verified, so this costs one
+        # extra manifest fetch per available update rather than per variable.
+        pull_warning = None
         if status == "update-available":
             updates_available += 1
-            print(f"{YELLOW}update available{RESET}")
+            if not args.no_pull_check and item["image_ref"]:
+                pull_warning = check_pullable(
+                    item["image_ref"],
+                    latest,
+                    platform=args.platform,
+                    timeout=args.timeout,
+                )
+            if pull_warning:
+                print(f"{YELLOW}update available{RESET} {RED}({pull_warning}){RESET}")
+            else:
+                print(f"{YELLOW}update available{RESET}")
         elif status == "up-to-date":
             print(f"{GREEN}up-to-date{RESET}")
         else:
@@ -277,14 +387,13 @@ def main():
                 **item,
                 "latest_value": latest,
                 "status": status,
+                "pull_warning": pull_warning,
                 "all_tags": tags[-10:] if tags else [],  # Keep last 10 tags
             }
         )
 
     # Output results
     if args.json:
-        import json
-
         # Filter if updates-only
         if args.updates_only:
             results = [r for r in results if r["status"] == "update-available"]
@@ -300,10 +409,10 @@ def main():
             variable = r["variable"]
             current = r["current_value"]
 
-            if status == "up-to-date" and not args.updates_only:
+            if r["status"] == "up-to-date" and not args.updates_only:
                 print(f"  {GREEN}✓{RESET} {variable}: {current}")
                 print()
-            elif status == "error" and not args.updates_only:
+            elif r["status"] == "error" and not args.updates_only:
                 print(f"  {RED}✗{RESET} {variable}: {current} (failed to check)")
                 print()
 
@@ -319,7 +428,12 @@ def main():
             if status == "update-available":
                 print(f"  {YELLOW}▶{RESET} {BOLD}{variable}{RESET}")
                 print(f"    Current: {current}")
-                print(f"    Latest:  {GREEN}{latest}{RESET}")
+                if r["pull_warning"]:
+                    print(f"    Latest:  {RED}{latest}{RESET}")
+                    print(f"    {RED}⚠ Not deployable: {r['pull_warning']}{RESET}")
+                    print(f"    {RED}  Leave this one at {current}.{RESET}")
+                else:
+                    print(f"    Latest:  {GREEN}{latest}{RESET}")
                 print()
 
         print(f"\n{BOLD}Summary:{RESET}")
@@ -327,6 +441,13 @@ def main():
         print(f"  Up-to-date:    {GREEN}{len([r for r in results if r['status'] == 'up-to-date'])}{RESET}")
         print(f"  Updates:       {YELLOW}{updates_available}{RESET}")
         print(f"  Errors:        {RED}{len([r for r in results if r['status'] == 'error'])}{RESET}")
+
+        not_deployable = [r for r in results if r["pull_warning"]]
+        if not_deployable:
+            print(f"  Not deployable:{RED}{len(not_deployable)}{RESET}")
+            print()
+            for r in not_deployable:
+                print(f"  {RED}⚠{RESET} {r['variable']}: {r['latest_value']} — {r['pull_warning']}")
 
     sys.exit(0 if updates_available == 0 else 1)
 
