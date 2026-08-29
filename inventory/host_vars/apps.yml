@@ -87,7 +87,7 @@ bar_assistant_container_secrets:
 # bentopdf
 ###############################################################################
 
-bentopdf_image_tag: v2.8.7  # skopeo list-tags docker://ghcr.io/alam00000/bentopdf-simple | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+bentopdf_image_tag: v2.8.8  # skopeo list-tags docker://ghcr.io/alam00000/bentopdf-simple | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
 
 ###############################################################################
 # calibre_web_automated
@@ -258,7 +258,7 @@ newt_endpoint: https://pangolin.{{ lookup('jaredhocutt.homelab.bws', 'pangolin_b
 # n8n
 ###############################################################################
 
-n8n_image_tag: "2.37.3"  # skopeo list-tags docker://docker.n8n.io/n8nio/n8n | jq -r '.Tags[] | select(test("^2\\.[0-9\\.]+$"))'
+n8n_image_tag: "2.37.4"  # skopeo list-tags docker://docker.n8n.io/n8nio/n8n | jq -r '.Tags[] | select(test("^2\\.[0-9\\.]+$"))'
 n8n_postgres_image_tag: "16.15"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
 
 n8n_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'n8n_postgres_password') }}"
@@ -454,13 +454,13 @@ tandoor_container_secrets:
 # tautulli
 ###############################################################################
 
-tautulli_image_tag: version-v2.18.0  # skopeo list-tags docker://lscr.io/linuxserver/tautulli | jq -r '.Tags[] | select(test("^version-v[0-9]"))'
+tautulli_image_tag: version-v2.18.1  # skopeo list-tags docker://lscr.io/linuxserver/tautulli | jq -r '.Tags[] | select(test("^version-v[0-9]"))'
 
 ###############################################################################
 # tracearr
 ###############################################################################
 
-tracearr_image_tag: "2.2.1"  # skopeo list-tags docker://ghcr.io/connorgallopo/tracearr | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
+tracearr_image_tag: "2.2.2"  # skopeo list-tags docker://ghcr.io/connorgallopo/tracearr | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
 tracearr_timescaledb_image_tag: pg18.1-ts2.25.0  # The project hard codes this tag, so let's keep it
 tracearr_redis_image_tag: 8.10.1-alpine  # skopeo list-tags docker://docker.io/library/redis | jq -r '.Tags[] | select(test("^8\\.[0-9\\.]*-alpine$"))'
 
