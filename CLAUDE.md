@@ -12,7 +12,10 @@ Ansible project for managing a personal homelab. Almost all logic lives in a sin
 - `uv sync` installs both runtime and dev dependencies (ansible-core, ansible-lint, molecule, taskipy, etc.).
 - Run everything through `uv run …` so the pinned ansible-core / collection requirements are used.
 - Galaxy collection dependencies are pinned in `collections/requirements.yml`; install with `uv run ansible-galaxy collection install -r collections/requirements.yml`.
-- Vault password comes from `vault/vault-pass.gpg` (decrypted by `vault/vault-open.sh`, wired up via `ansible.cfg`). `ANSIBLE_VAULT_PASSWORD` env var overrides it.
+- The control node must be macOS or Linux (including WSL2 on Windows) — ansible-core does not run natively on Windows. On WSL2, keep the repo inside the Linux filesystem (`~/...`), not `/mnt/c/...`, so file modes and performance behave.
+- Required outside of uv: the `bws` CLI and `jq` (vault password), `skopeo` (`check-image-tags`), `podman` (molecule), and GNU sed — `gsed` via `brew install gnu-sed` on macOS.
+- `BWS_ACCESS_TOKEN` and `BWS_ORGANIZATION_ID` must be in the environment. Everything secret-related depends on them; the `bws` CLI needs only the token, since it is org-scoped, but the `jaredhocutt.homelab.bws` lookup needs both.
+- Vault password comes from Bitwarden Secrets Manager, under the secret name `ansible_vault_password`. `vault/vault-open.sh` (wired up via `ansible.cfg`) fetches it with `bws secret list | jq`, resolving by name because `bws secret get` only accepts a UUID. `ANSIBLE_VAULT_PASSWORD` overrides the lookup; `ANSIBLE_VAULT_SECRET_NAME` overrides the secret name.
 
 ## Common commands
 
@@ -22,7 +25,7 @@ Always run from the repo root unless noted.
 - Target one role on a host: append `--tags <role_name>` (every role import in the playbooks is tagged with the role's short name).
 - Limit to a host: `--limit <host>` (hosts defined in `inventory/hosts.yml`).
 - Lint: `uv run ansible-lint`.
-- Edit a vault file: `uv run task vault-edit <path>` (opens in VS Code).
+- Edit a vault file: `uv run task vault-edit <path>` (uses `$EDITOR`; set it inline to override, e.g. `EDITOR='code --wait' uv run task vault-edit <path>`).
 - Check for newer container image tags: `uv run task check-image-tags` (interactive picker over inventory files; reads `*_image_tag:` lines whose trailing comment is a `skopeo list-tags … | jq …` pipeline).
 - Open all files for a role in VS Code: `uv run task open-role-files <role>`.
 - Scaffold a new role by copying an existing one: `uv run task duplicate-role <new_role>` (interactive — asks single vs multi-container, which sidecars, then ranks existing roles by similarity for you to pick the source; handles file rename + variable prefix rewrite). Pass `<existing_role> <new_role>` to skip the picker and duplicate directly.

@@ -1,0 +1,9 @@
+# Normalize line endings so the repo behaves identically on macOS, Linux/WSL,
+# and Windows. Shell scripts in particular break outright with CRLF endings.
+* text=auto eol=lf
+
+# Never touch these.
+*.gpg   binary
+*.png   binary
+*.jpg   binary
+*.ico   binary
