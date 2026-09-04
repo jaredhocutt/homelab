@@ -10,7 +10,7 @@ shared_volume_download_books: download-books
 # authentik
 ###############################################################################
 
-authentik_image_tag: "2026.5.6"  # skopeo list-tags docker://ghcr.io/goauthentik/server | jq -r '.Tags[] | select(test("^[0-9]+\\.[0-9]+\\.[0-9]+$"))'  # Held at 2026.5.6: the whole 2026.8.x line is published as a nested OCI image index, which podman cannot pull ("Unexpectedly received a manifest list instead of a manifest for a single image"). Recheck when 2026.8.1+ ships.
+authentik_image_tag: "2026.8.1"  # skopeo list-tags docker://ghcr.io/goauthentik/server | jq -r '.Tags[] | select(test("^[0-9]+\\.[0-9]+\\.[0-9]+$"))'
 authentik_postgres_image_tag: "16.15"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
 
 authentik_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'authentik_postgres_password') }}"
@@ -110,7 +110,7 @@ calibre_web_automated_container_secrets:
 # changedetection
 ###############################################################################
 
-changedetection_image_tag: "0.55.8"  # skopeo list-tags docker://ghcr.io/dgtlmoon/changedetection.io | jq -r '.Tags[] | select(test("^[0-9]"))'
+changedetection_image_tag: "0.60.3"  # skopeo list-tags docker://ghcr.io/dgtlmoon/changedetection.io | jq -r '.Tags[] | select(test("^[0-9]"))'
 changedetection_browser_image_tag: "0.0.3"  # skopeo list-tags docker://docker.io/dgtlmoon/sockpuppetbrowser | jq -r '.Tags[] | select(test("^[0-9]"))'
 
 changedetection_traefik_auth: true
@@ -119,7 +119,7 @@ changedetection_traefik_auth: true
 # glance
 ###############################################################################
 
-glance_image_tag: v0.8.5  # skopeo list-tags docker://docker.io/glanceapp/glance | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+glance_image_tag: v0.8.6  # skopeo list-tags docker://docker.io/glanceapp/glance | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
 
 glance_traefik_host: "dashboard.{{ common_traefik_domain }}"
 glance_traefik_auth: true
@@ -134,7 +134,7 @@ go2rtc_image_tag: "1.9.14"  # skopeo list-tags docker://ghcr.io/alexxit/go2rtc |
 # healthchecks
 ###############################################################################
 
-healthchecks_image_tag: version-v4.3  # skopeo list-tags docker://lscr.io/linuxserver/healthchecks | jq -r '.Tags[] | select(test("^version-v[0-9]"))'
+healthchecks_image_tag: version-v4.4  # skopeo list-tags docker://lscr.io/linuxserver/healthchecks | jq -r '.Tags[] | select(test("^version-v[0-9]"))'
 
 healthchecks_email: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_email') }}"
 healthchecks_password: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_password') }}"
@@ -211,7 +211,7 @@ homebox_container_secrets:
 ###############################################################################
 
 karakeep_image_tag: "0.33.2"  # skopeo list-tags docker://ghcr.io/karakeep-app/karakeep | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
-karakeep_browserless_image_tag: v2.56.0  # skopeo list-tags docker://ghcr.io/browserless/chromium | jq -r '.Tags[] | select(test("^v?[0-9.]+$"))'
+karakeep_browserless_image_tag: v2.56.3  # skopeo list-tags docker://ghcr.io/browserless/chromium | jq -r '.Tags[] | select(test("^v?[0-9.]+$"))'
 karakeep_meilisearch_image_tag: v1.13.3  # The project hard codes this tag, so let's keep it
 
 karakeep_nextauth_url: "{{ lookup('jaredhocutt.homelab.bws', 'karakeep_nextauth_url') }}"
@@ -258,7 +258,7 @@ newt_endpoint: https://pangolin.{{ lookup('jaredhocutt.homelab.bws', 'pangolin_b
 # n8n
 ###############################################################################
 
-n8n_image_tag: "2.37.4"  # skopeo list-tags docker://docker.n8n.io/n8nio/n8n | jq -r '.Tags[] | select(test("^2\\.[0-9\\.]+$"))'
+n8n_image_tag: "2.37.4"  # skopeo list-tags docker://docker.n8n.io/n8nio/n8n | jq -r '.Tags[] | select(test("^2\\.[0-9\\.]+$"))'  # Held at 2.37.4: 2.38.3 is not pullable — its manifest cannot be read. Recheck on the next release.
 n8n_postgres_image_tag: "16.15"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
 
 n8n_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'n8n_postgres_password') }}"
@@ -270,7 +270,7 @@ n8n_container_env:
 # nocodb
 ###############################################################################
 
-nocodb_image_tag: "2026.08.1"  # skopeo list-tags docker://docker.io/nocodb/nocodb | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
+nocodb_image_tag: "2026.08.2"  # skopeo list-tags docker://docker.io/nocodb/nocodb | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
 nocodb_postgres_image_tag: "16.15"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
 
 nocodb_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'nocodb_postgres_password') }}"
@@ -279,7 +279,7 @@ nocodb_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'nocodb_postgres
 # open_webui
 ###############################################################################
 
-open_webui_image_tag: v0.11.1  # skopeo list-tags docker://ghcr.io/open-webui/open-webui | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+open_webui_image_tag: v0.11.3  # skopeo list-tags docker://ghcr.io/open-webui/open-webui | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
 
 open_webui_container_env:
   WEBUI_URL: https://open-webui.{{ common_traefik_domain }}
@@ -369,7 +369,7 @@ server_setup_users: "{{ kickstart_users + _additional_users }}"  # Include kicks
 # shelfmark
 ###############################################################################
 
-shelfmark_image_tag: v1.3.12  # skopeo list-tags docker://ghcr.io/calibrain/shelfmark | jq -r '.Tags[] | select(test("^v[0-9]"))'
+shelfmark_image_tag: v1.3.15  # skopeo list-tags docker://ghcr.io/calibrain/shelfmark | jq -r '.Tags[] | select(test("^v[0-9]"))'
 
 shelfmark_volume_books: "{{ shared_volume_download_books }}"
 
@@ -460,7 +460,7 @@ tautulli_image_tag: version-v2.18.1  # skopeo list-tags docker://lscr.io/linuxse
 # tracearr
 ###############################################################################
 
-tracearr_image_tag: "2.2.2"  # skopeo list-tags docker://ghcr.io/connorgallopo/tracearr | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
+tracearr_image_tag: "2.2.3"  # skopeo list-tags docker://ghcr.io/connorgallopo/tracearr | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
 tracearr_timescaledb_image_tag: pg18.1-ts2.25.0  # The project hard codes this tag, so let's keep it
 tracearr_redis_image_tag: 8.10.1-alpine  # skopeo list-tags docker://docker.io/library/redis | jq -r '.Tags[] | select(test("^8\\.[0-9\\.]*-alpine$"))'
 
