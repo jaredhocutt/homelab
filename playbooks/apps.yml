@@ -125,6 +125,11 @@
         newt_container_secrets: "{{ newt_karakeep_container_secrets }}"
       tags: [newt, karakeep]
 
+    - name: Install lubelogger
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.lubelogger
+      tags: [lubelogger]
+
     - name: Install n8n
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.n8n

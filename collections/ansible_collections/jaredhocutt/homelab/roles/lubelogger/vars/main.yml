@@ -1,0 +1,35 @@
+---
+# vars file for jaredhocutt.homelab.lubelogger
+
+###############################################################################
+# Envrionment
+###############################################################################
+
+lubelogger_container_env_defaults:
+  LUBELOGGER_DOMAIN: "{{ lubelogger_url }}"
+
+###############################################################################
+# Secrets
+###############################################################################
+
+lubelogger_secrets_defaults: {}
+
+lubelogger_secrets_combined: >-
+  {{ lubelogger_secrets_defaults
+  | combine(lubelogger_secrets, recursive=True) }}
+
+lubelogger_container_secrets_defaults: []
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+lubelogger_container_labels_defaults: >-
+  {{ lubelogger_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', lubelogger_name, lubelogger_traefik_host, '8080'), {}) }}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+lubelogger_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

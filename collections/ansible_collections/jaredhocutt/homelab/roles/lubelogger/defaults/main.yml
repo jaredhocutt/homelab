@@ -1,0 +1,24 @@
+---
+# defaults file for jaredhocutt.homelab.lubelogger
+
+lubelogger_name: lubelogger
+
+lubelogger_image: ghcr.io/hargata/lubelogger
+lubelogger_image_tag: latest
+
+lubelogger_volume_data: "{{ lubelogger_name }}-data"
+lubelogger_volume_keys: "{{ lubelogger_name }}-keys"
+
+lubelogger_traefik_enable: true
+lubelogger_traefik_host: "{{ lubelogger_name }}.{{ common_traefik_domain }}"
+lubelogger_ports:
+  - 8090:8080
+
+lubelogger_secrets: {}
+
+lubelogger_container_env: {}
+lubelogger_container_secrets: []
+lubelogger_container_labels: {}
+lubelogger_container_quadlet_options: []
+
+lubelogger_url: https://{{ lubelogger_traefik_host }}

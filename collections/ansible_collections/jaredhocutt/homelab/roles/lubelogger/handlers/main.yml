@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.lubelogger
+
+- name: Restart {{ lubelogger_name }}
+  ansible.builtin.systemd:
+    name: "{{ lubelogger_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
