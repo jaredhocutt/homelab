@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.convertx
+
+- name: Restart {{ convertx_name }}
+  ansible.builtin.systemd:
+    name: "{{ convertx_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

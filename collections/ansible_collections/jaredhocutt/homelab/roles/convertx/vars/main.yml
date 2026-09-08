@@ -1,0 +1,36 @@
+---
+# vars file for jaredhocutt.homelab.convertx
+
+###############################################################################
+# Envrionment
+###############################################################################
+
+convertx_container_env_defaults: {}
+
+###############################################################################
+# Secrets
+###############################################################################
+
+convertx_secrets_defaults:
+  convertx_jwt_secret: "{{ convertx_jwt_secret }}"
+
+convertx_secrets_combined: >-
+  {{ convertx_secrets_defaults
+  | combine(convertx_secrets, recursive=True) }}
+
+convertx_container_secrets_defaults:
+  - convertx_jwt_secret,type=env,target=JWT_SECRET
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+convertx_container_labels_defaults: >-
+  {{ convertx_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', convertx_name, convertx_traefik_host, '3000'), {}) }}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+convertx_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

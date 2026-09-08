@@ -1,0 +1,21 @@
+---
+# defaults file for jaredhocutt.homelab.convertx
+
+convertx_name: convertx
+
+convertx_image: ghcr.io/c4illin/convertx
+convertx_image_tag: latest
+
+convertx_volume_data: "{{ convertx_name }}-data"
+
+convertx_traefik_enable: true
+convertx_traefik_host: "{{ convertx_name }}.{{ common_traefik_domain }}"
+convertx_ports:
+  - 3000:3000
+
+convertx_secrets: {}
+
+convertx_container_env: {}
+convertx_container_secrets: []
+convertx_container_labels: {}
+convertx_container_quadlet_options: []

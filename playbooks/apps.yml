@@ -75,6 +75,11 @@
         name: jaredhocutt.homelab.changedetection
       tags: [changedetection]
 
+    - name: Install convertx
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.convertx
+      tags: [convertx]
+
     - name: Install glance
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.glance

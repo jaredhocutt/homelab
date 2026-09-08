@@ -1,0 +1,11 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    convertx_traefik_enable: false
+    convertx_jwt_secret: test-jwt-secret
+  tasks:
+    - name: Include convertx role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.convertx

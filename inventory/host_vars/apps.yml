@@ -116,6 +116,14 @@ changedetection_browser_image_tag: "0.0.3"  # skopeo list-tags docker://docker.i
 changedetection_traefik_auth: true
 
 ###############################################################################
+# convertx
+###############################################################################
+
+convertx_image_tag: v0.18.0  # skopeo list-tags docker://ghcr.io/c4illin/convertx | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+
+convertx_jwt_secret: "{{ lookup('jaredhocutt.homelab.bws', 'convertx_jwt_secret') }}"
+
+###############################################################################
 # glance
 ###############################################################################
 
