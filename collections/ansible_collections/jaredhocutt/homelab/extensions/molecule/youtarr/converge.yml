@@ -1,0 +1,12 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    youtarr_traefik_enable: false
+    youtarr_mariadb_root_password: test-mariadb-root-password
+    youtarr_mariadb_password: test-mariadb-password
+  tasks:
+    - name: Include youtarr role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.youtarr

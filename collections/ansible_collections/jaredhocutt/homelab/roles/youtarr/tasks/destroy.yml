@@ -1,0 +1,72 @@
+---
+
+- name: Stop services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: stopped
+  become: true
+  failed_when: false
+  loop:
+    - "{{ youtarr_name }}.service"
+    - "{{ youtarr_name }}-mariadb.service"
+    - "{{ youtarr_volume_config }}-volume.service"
+    - "{{ youtarr_volume_jobs }}-volume.service"
+    - "{{ youtarr_volume_images }}-volume.service"
+    - "{{ youtarr_volume_media }}-volume.service"
+    - "{{ youtarr_mariadb_volume_data }}-volume.service"
+    - "{{ youtarr_name }}-network.service"
+
+- name: Destroy containers
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ youtarr_name }}"
+    - "{{ youtarr_name }}-mariadb"
+
+- name: Destroy secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    state: absent
+  become: true
+  no_log: true
+  loop: "{{ youtarr_secrets_combined | dict2items }}"
+
+- name: Destroy volumes
+  containers.podman.podman_volume:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ youtarr_volume_config }}"
+    - "{{ youtarr_volume_jobs }}"
+    - "{{ youtarr_volume_images }}"
+    - "{{ youtarr_volume_media }}"
+    - "{{ youtarr_mariadb_volume_data }}"
+
+- name: Destroy network
+  containers.podman.podman_network:
+    name: "{{ youtarr_name }}"
+    state: absent
+  become: true
+
+- name: Cleanup quadlet files
+  ansible.builtin.file:
+    path: /etc/containers/systemd/{{ item }}
+    state: absent
+  become: true
+  loop:
+    - "{{ youtarr_name }}.container"
+    - "{{ youtarr_name }}-mariadb.container"
+    - "{{ youtarr_volume_config }}.volume"
+    - "{{ youtarr_volume_jobs }}.volume"
+    - "{{ youtarr_volume_images }}.volume"
+    - "{{ youtarr_volume_media }}.volume"
+    - "{{ youtarr_mariadb_volume_data }}.volume"
+    - "{{ youtarr_name }}.network"
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true

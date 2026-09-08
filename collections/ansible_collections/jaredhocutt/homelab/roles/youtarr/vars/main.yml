@@ -1,0 +1,64 @@
+---
+# vars file for jaredhocutt.homelab.youtarr
+
+youtarr_mariadb_db_name: youtarr
+youtarr_mariadb_user: youtarr
+
+###############################################################################
+# Envrionment
+###############################################################################
+
+youtarr_container_env_defaults:
+  DB_HOST: "{{ youtarr_name }}-mariadb"
+  DB_PORT: "3306"
+  YOUTUBE_OUTPUT_DIR: "{{ youtarr_media_path }}"
+
+youtarr_mariadb_container_env_defaults: {}
+
+###############################################################################
+# Secrets
+###############################################################################
+
+youtarr_secrets_defaults:
+  youtarr_mariadb_root_password: "{{ youtarr_mariadb_root_password }}"
+  youtarr_mariadb_db_name: "{{ youtarr_mariadb_db_name }}"
+  youtarr_mariadb_user: "{{ youtarr_mariadb_user }}"
+  youtarr_mariadb_password: "{{ youtarr_mariadb_password }}"
+
+youtarr_secrets_combined: >-
+  {{ youtarr_secrets_defaults
+  | combine(youtarr_secrets, recursive=True) }}
+
+youtarr_container_secrets_defaults:
+  - youtarr_mariadb_db_name,type=env,target=DB_NAME
+  - youtarr_mariadb_user,type=env,target=DB_USER
+  - youtarr_mariadb_password,type=env,target=DB_PASSWORD
+
+youtarr_mariadb_container_secrets_defaults:
+  - youtarr_mariadb_root_password,type=env,target=MARIADB_ROOT_PASSWORD
+  - youtarr_mariadb_db_name,type=env,target=MARIADB_DATABASE
+  - youtarr_mariadb_user,type=env,target=MARIADB_USER
+  - youtarr_mariadb_password,type=env,target=MARIADB_PASSWORD
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+youtarr_container_labels_defaults: >-
+  {{ youtarr_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', youtarr_name, youtarr_traefik_host, '3011'), {}) }}
+
+youtarr_mariadb_container_labels_defaults: {}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+youtarr_quadlet_options_depends:
+  - |
+    [Unit]
+    Requires={{ youtarr_name }}-mariadb.service
+    After={{ youtarr_name }}-mariadb.service
+youtarr_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + youtarr_quadlet_options_depends }}"
+
+youtarr_mariadb_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
