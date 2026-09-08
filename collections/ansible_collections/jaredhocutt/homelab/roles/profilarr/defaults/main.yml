@@ -1,0 +1,30 @@
+---
+# defaults file for jaredhocutt.homelab.profilarr
+
+profilarr_name: profilarr
+
+profilarr_image: ghcr.io/dictionarry-hub/profilarr
+profilarr_image_tag: latest
+profilarr_parser_image: ghcr.io/dictionarry-hub/profilarr-parser
+profilarr_parser_image_tag: latest
+
+profilarr_volume_config: "{{ profilarr_name }}-config"
+
+profilarr_traefik_enable: true
+profilarr_traefik_host: "{{ profilarr_name }}.{{ common_traefik_domain }}"
+profilarr_ports:
+  - 6868:6868
+
+profilarr_secrets: {}
+
+profilarr_container_env: {}
+profilarr_container_secrets: []
+profilarr_container_labels: {}
+profilarr_container_quadlet_options: []
+
+profilarr_parser_container_env: {}
+profilarr_parser_container_secrets: []
+profilarr_parser_container_labels: {}
+profilarr_parser_container_quadlet_options: []
+
+profilarr_url: https://{{ profilarr_traefik_host }}

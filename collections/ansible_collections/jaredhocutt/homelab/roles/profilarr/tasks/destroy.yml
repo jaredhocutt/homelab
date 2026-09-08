@@ -1,0 +1,60 @@
+---
+
+- name: Stop services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: stopped
+  become: true
+  failed_when: false
+  loop:
+    - "{{ profilarr_name }}.service"
+    - "{{ profilarr_name }}-parser.service"
+    - "{{ profilarr_volume_config }}-volume.service"
+    - "{{ profilarr_name }}-network.service"
+
+- name: Destroy containers
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ profilarr_name }}"
+    - "{{ profilarr_name }}-parser"
+
+- name: Destroy secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    state: absent
+  become: true
+  no_log: true
+  loop: "{{ profilarr_secrets_combined | dict2items }}"
+
+- name: Destroy volumes
+  containers.podman.podman_volume:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ profilarr_volume_config }}"
+
+- name: Destroy network
+  containers.podman.podman_network:
+    name: "{{ profilarr_name }}"
+    state: absent
+  become: true
+
+- name: Cleanup quadlet files
+  ansible.builtin.file:
+    path: /etc/containers/systemd/{{ item }}
+    state: absent
+  become: true
+  loop:
+    - "{{ profilarr_name }}.container"
+    - "{{ profilarr_name }}-parser.container"
+    - "{{ profilarr_volume_config }}.volume"
+    - "{{ profilarr_name }}.network"
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true

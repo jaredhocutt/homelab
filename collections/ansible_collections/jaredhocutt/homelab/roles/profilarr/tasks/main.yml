@@ -1,0 +1,80 @@
+---
+# tasks file for jaredhocutt.homelab.profilarr
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ profilarr_image }}"
+      image_tag: "{{ profilarr_image_tag }}"
+    - image: "{{ profilarr_parser_image }}"
+      image_tag: "{{ profilarr_parser_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ profilarr_name }}"
+    driver: bridge
+    disable_dns: false
+    opt:
+      isolate: "true"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ profilarr_volume_config }}"
+      options: "{{ profilarr_volume_config_options | default(omit) }}"
+
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  no_log: true
+  loop: "{{ profilarr_secrets_combined | dict2items }}"
+
+- name: Create parser container
+  containers.podman.podman_container:
+    name: "{{ profilarr_name }}-parser"
+    image: "{{ profilarr_parser_image }}:{{ profilarr_parser_image_tag }}"
+    network: "{{ profilarr_name }}.network"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='parser') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='parser') }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='parser') }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='parser') }}"
+    state: quadlet
+  notify: Restart parser for {{ profilarr_name }}
+  become: true
+
+- name: Create profilarr container
+  containers.podman.podman_container:
+    name: "{{ profilarr_name }}"
+    image: "{{ profilarr_image }}:{{ profilarr_image_tag }}"
+    network:
+      - "{{ profilarr_name }}.network"
+      - "{{ profilarr_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
+    volumes:
+      - "{{ profilarr_volume_config }}.volume:/config"
+    publish: "{{ profilarr_traefik_enable | ternary(omit, profilarr_ports) }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
+    state: quadlet
+  notify: Restart {{ profilarr_name }}
+  become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

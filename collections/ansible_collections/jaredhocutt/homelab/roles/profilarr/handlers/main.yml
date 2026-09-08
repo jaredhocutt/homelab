@@ -1,0 +1,18 @@
+---
+# handlers file for jaredhocutt.homelab.profilarr
+
+- name: Restart {{ profilarr_name }}
+  ansible.builtin.systemd:
+    name: "{{ profilarr_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart parser for {{ profilarr_name }}
+  ansible.builtin.systemd:
+    name: "{{ profilarr_name }}-parser.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

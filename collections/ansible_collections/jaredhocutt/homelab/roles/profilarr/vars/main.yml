@@ -1,0 +1,49 @@
+---
+# vars file for jaredhocutt.homelab.profilarr
+
+###############################################################################
+# Envrionment
+###############################################################################
+
+profilarr_container_env_defaults:
+  ORIGIN: "{{ profilarr_url }}"
+  PARSER_HOST: "{{ profilarr_name }}-parser"
+
+profilarr_parser_container_env_defaults: {}
+
+###############################################################################
+# Secrets
+###############################################################################
+
+profilarr_secrets_defaults: {}
+
+profilarr_secrets_combined: >-
+  {{ profilarr_secrets_defaults
+  | combine(profilarr_secrets, recursive=True) }}
+
+profilarr_container_secrets_defaults: []
+
+profilarr_parser_container_secrets_defaults: []
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+profilarr_container_labels_defaults: >-
+  {{ profilarr_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', profilarr_name, profilarr_traefik_host, '6868'), {}) }}
+
+profilarr_parser_container_labels_defaults: {}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+profilarr_quadlet_options_depends:
+  - |
+    [Unit]
+    Requires={{ profilarr_name }}-parser.service
+    After={{ profilarr_name }}-parser.service
+profilarr_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + profilarr_quadlet_options_depends }}"
+
+profilarr_parser_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
