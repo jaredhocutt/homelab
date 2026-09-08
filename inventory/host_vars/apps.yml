@@ -362,6 +362,35 @@ pangolin_cli_container_secrets:
 prowlarr_image_tag: version-2.5.2.5491  # skopeo list-tags docker://ghcr.io/linuxserver/prowlarr | jq -r '.Tags[] | select(test("^version-[0-9]"))'
 
 ###############################################################################
+# radarr
+###############################################################################
+
+radarr_image_tag: version-5.27.5.10198
+
+radarr_env:
+  PUID: "{{ global_media_uid }}"
+  PGID: "{{ global_media_gid }}"
+
+radarr_volume_download: "{{ global_volume_download }}"
+radarr_volume_download_options: "{{ global_volume_download_options }}"
+radarr_volume_media: "{{ global_volume_media }}"
+radarr_volume_media_options: "{{ global_volume_media_options }}"
+
+###############################################################################
+# sabnzbd
+###############################################################################
+
+sabnzbd_image_tag: version-4.5.3
+
+sabnzbd_env:
+  PUID: "{{ global_media_uid }}"
+  PGID: "{{ global_media_gid }}"
+  DOCKER_MODS: linuxserver/mods:universal-package-install
+  INSTALL_PACKAGES: file
+
+sabnzbd_volume_download: "{{ global_volume_download }}"
+
+###############################################################################
 # seerr
 ###############################################################################
 
@@ -426,6 +455,21 @@ snipe_it_secrets:
   snipe_it_mail_password: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_password') }}"
 snipe_it_container_secrets:
   - snipe_it_mail_password,type=env,target=MAIL_PASSWORD
+
+###############################################################################
+# sonarr
+###############################################################################
+
+sonarr_image_tag: version-4.0.15.2941
+
+sonarr_env:
+  PUID: "{{ global_media_uid }}"
+  PGID: "{{ global_media_gid }}"
+
+sonarr_volume_download: "{{ global_volume_download }}"
+sonarr_volume_download_options: "{{ global_volume_download_options }}"
+sonarr_volume_media: "{{ global_volume_media }}"
+sonarr_volume_media_options: "{{ global_volume_media_options }}"
 
 ###############################################################################
 # stirling_pdf
