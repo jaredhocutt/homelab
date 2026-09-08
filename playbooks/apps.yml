@@ -110,6 +110,11 @@
         name: jaredhocutt.homelab.homebox
       tags: [homebox]
 
+    - name: Install it_tools
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.it_tools
+      tags: [it_tools]
+
     - name: Install karakeep
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.karakeep

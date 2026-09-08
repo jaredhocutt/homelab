@@ -1,0 +1,19 @@
+---
+# defaults file for jaredhocutt.homelab.it_tools
+
+it_tools_name: it-tools
+
+it_tools_image: ghcr.io/corentinth/it-tools
+it_tools_image_tag: latest
+
+it_tools_traefik_enable: true
+it_tools_traefik_host: "{{ it_tools_name }}.{{ common_traefik_domain }}"
+it_tools_ports:
+  - 8092:80
+
+it_tools_secrets: {}
+
+it_tools_container_env: {}
+it_tools_container_secrets: []
+it_tools_container_labels: {}
+it_tools_container_quadlet_options: []

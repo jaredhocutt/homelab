@@ -1,0 +1,34 @@
+---
+# vars file for jaredhocutt.homelab.it_tools
+
+###############################################################################
+# Envrionment
+###############################################################################
+
+it_tools_container_env_defaults: {}
+
+###############################################################################
+# Secrets
+###############################################################################
+
+it_tools_secrets_defaults: {}
+
+it_tools_secrets_combined: >-
+  {{ it_tools_secrets_defaults
+  | combine(it_tools_secrets, recursive=True) }}
+
+it_tools_container_secrets_defaults: []
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+it_tools_container_labels_defaults: >-
+  {{ it_tools_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', it_tools_name, it_tools_traefik_host, '80'), {}) }}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+it_tools_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

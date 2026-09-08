@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.it_tools
+
+- name: Restart {{ it_tools_name }}
+  ansible.builtin.systemd:
+    name: "{{ it_tools_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
