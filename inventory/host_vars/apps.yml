@@ -90,6 +90,16 @@ bar_assistant_container_secrets:
 bentopdf_image_tag: v2.8.8  # skopeo list-tags docker://ghcr.io/alam00000/bentopdf-simple | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
 
 ###############################################################################
+# board_game_tracker
+###############################################################################
+
+board_game_tracker_image_tag: "0.2.181"  # skopeo list-tags docker://docker.io/uping/boardgametracker | jq -r '.Tags[] | select(test("^[0-9]+\\.[0-9]+\\.[0-9]+$"))'
+board_game_tracker_postgres_image_tag: "16.15"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
+
+board_game_tracker_jwt_secret: "{{ lookup('jaredhocutt.homelab.bws', 'board_game_tracker_jwt_secret') }}"
+board_game_tracker_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'board_game_tracker_postgres_password') }}"
+
+###############################################################################
 # calibre_web_automated
 ###############################################################################
 

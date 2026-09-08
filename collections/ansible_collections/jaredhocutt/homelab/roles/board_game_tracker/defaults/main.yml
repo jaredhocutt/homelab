@@ -1,0 +1,31 @@
+---
+# defaults file for jaredhocutt.homelab.board_game_tracker
+
+board_game_tracker_name: board-game-tracker
+
+board_game_tracker_image: docker.io/uping/boardgametracker
+board_game_tracker_image_tag: latest
+board_game_tracker_postgres_image: docker.io/library/postgres
+board_game_tracker_postgres_image_tag: "16"
+
+board_game_tracker_volume_images: "{{ board_game_tracker_name }}-images"
+board_game_tracker_volume_logs: "{{ board_game_tracker_name }}-logs"
+board_game_tracker_volume_manuals: "{{ board_game_tracker_name }}-manuals"
+board_game_tracker_postgres_volume_data: "{{ board_game_tracker_name }}-postgres-data"
+
+board_game_tracker_traefik_enable: true
+board_game_tracker_traefik_host: "{{ board_game_tracker_name }}.{{ common_traefik_domain }}"
+board_game_tracker_ports:
+  - 5444:5444
+
+board_game_tracker_secrets: {}
+
+board_game_tracker_container_env: {}
+board_game_tracker_container_secrets: []
+board_game_tracker_container_labels: {}
+board_game_tracker_container_quadlet_options: []
+
+board_game_tracker_postgres_container_env: {}
+board_game_tracker_postgres_container_secrets: []
+board_game_tracker_postgres_container_labels: {}
+board_game_tracker_postgres_container_quadlet_options: []

@@ -1,0 +1,63 @@
+---
+# vars file for jaredhocutt.homelab.board_game_tracker
+
+board_game_tracker_postgres_db_name: boardgametracker
+board_game_tracker_postgres_user: boardgametracker
+
+###############################################################################
+# Envrionment
+###############################################################################
+
+board_game_tracker_container_env_defaults:
+  DB_HOST: "{{ board_game_tracker_name }}-postgres"
+  DB_PORT: "5432"
+
+board_game_tracker_postgres_container_env_defaults: {}
+
+###############################################################################
+# Secrets
+###############################################################################
+
+board_game_tracker_secrets_defaults:
+  board_game_tracker_jwt_secret: "{{ board_game_tracker_jwt_secret }}"
+  board_game_tracker_postgres_db_name: "{{ board_game_tracker_postgres_db_name }}"
+  board_game_tracker_postgres_user: "{{ board_game_tracker_postgres_user }}"
+  board_game_tracker_postgres_password: "{{ board_game_tracker_postgres_password }}"
+
+board_game_tracker_secrets_combined: >-
+  {{ board_game_tracker_secrets_defaults
+  | combine(board_game_tracker_secrets, recursive=True) }}
+
+board_game_tracker_container_secrets_defaults:
+  - board_game_tracker_jwt_secret,type=env,target=JWT_SECRET
+  - board_game_tracker_postgres_db_name,type=env,target=DB_NAME
+  - board_game_tracker_postgres_user,type=env,target=DB_USER
+  - board_game_tracker_postgres_password,type=env,target=DB_PASSWORD
+
+board_game_tracker_postgres_container_secrets_defaults:
+  - board_game_tracker_postgres_db_name,type=env,target=POSTGRES_DB
+  - board_game_tracker_postgres_user,type=env,target=POSTGRES_USER
+  - board_game_tracker_postgres_password,type=env,target=POSTGRES_PASSWORD
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+board_game_tracker_container_labels_defaults: >-
+  {{ board_game_tracker_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', board_game_tracker_name, board_game_tracker_traefik_host, '5444'), {}) }}
+
+board_game_tracker_postgres_container_labels_defaults: {}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+board_game_tracker_quadlet_options_depends:
+  - |
+    [Unit]
+    Requires={{ board_game_tracker_name }}-postgres.service
+    After={{ board_game_tracker_name }}-postgres.service
+board_game_tracker_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + board_game_tracker_quadlet_options_depends }}"
+
+board_game_tracker_postgres_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

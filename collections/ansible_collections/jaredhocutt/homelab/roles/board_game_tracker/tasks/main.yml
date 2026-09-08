@@ -1,0 +1,100 @@
+---
+# tasks file for jaredhocutt.homelab.board_game_tracker
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ board_game_tracker_image }}"
+      image_tag: "{{ board_game_tracker_image_tag }}"
+    - image: "{{ board_game_tracker_postgres_image }}"
+      image_tag: "{{ board_game_tracker_postgres_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ board_game_tracker_name }}"
+    driver: bridge
+    disable_dns: false
+    opt:
+      isolate: "true"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ board_game_tracker_volume_images }}"
+      options: "{{ board_game_tracker_volume_images_options | default(omit) }}"
+    - name: "{{ board_game_tracker_volume_logs }}"
+      options: "{{ board_game_tracker_volume_logs_options | default(omit) }}"
+    - name: "{{ board_game_tracker_volume_manuals }}"
+      options: "{{ board_game_tracker_volume_manuals_options | default(omit) }}"
+    - name: "{{ board_game_tracker_postgres_volume_data }}"
+      options: "{{ board_game_tracker_postgres_volume_data_options | default(omit) }}"
+
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  no_log: true
+  loop: "{{ board_game_tracker_secrets_combined | dict2items }}"
+
+- name: Create postgres container
+  containers.podman.podman_container:
+    name: "{{ board_game_tracker_name }}-postgres"
+    image: "{{ board_game_tracker_postgres_image }}:{{ board_game_tracker_postgres_image_tag }}"
+    network: "{{ board_game_tracker_name }}.network"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='postgres') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='postgres') }}"
+    volumes:
+      - "{{ board_game_tracker_postgres_volume_data }}.volume:/var/lib/postgresql/data"
+    healthcheck_interval: 30s
+    healthcheck_retries: 5
+    healthcheck_start_period: 20s
+    healthcheck_timeout: 5s
+    healthcheck: CMD-SHELL pg_isready -d {{ board_game_tracker_postgres_db_name }} -U {{ board_game_tracker_postgres_user }}
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='postgres') }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='postgres') }}"
+    state: quadlet
+  notify: Restart postgres for {{ board_game_tracker_name }}
+  become: true
+
+- name: Create board_game_tracker container
+  containers.podman.podman_container:
+    name: "{{ board_game_tracker_name }}"
+    image: "{{ board_game_tracker_image }}:{{ board_game_tracker_image_tag }}"
+    network:
+      - "{{ board_game_tracker_name }}.network"
+      - "{{ board_game_tracker_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
+    volumes:
+      - "{{ board_game_tracker_volume_images }}.volume:/app/images"
+      - "{{ board_game_tracker_volume_logs }}.volume:/app/logs"
+      - "{{ board_game_tracker_volume_manuals }}.volume:/app/manuals"
+    publish: "{{ board_game_tracker_traefik_enable | ternary(omit, board_game_tracker_ports) }}"
+    healthcheck_interval: 30s
+    healthcheck_retries: 3
+    healthcheck_start_period: 10s
+    healthcheck_timeout: 5s
+    healthcheck: CMD curl -f http://localhost:5444/api/health
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
+    state: quadlet
+  notify: Restart {{ board_game_tracker_name }}
+  become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

@@ -1,0 +1,12 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    board_game_tracker_traefik_enable: false
+    board_game_tracker_jwt_secret: test-jwt-secret
+    board_game_tracker_postgres_password: test-postgres-password
+  tasks:
+    - name: Include board_game_tracker role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.board_game_tracker

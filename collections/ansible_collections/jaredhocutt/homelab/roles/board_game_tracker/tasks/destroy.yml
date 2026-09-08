@@ -1,0 +1,69 @@
+---
+
+- name: Stop services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: stopped
+  become: true
+  failed_when: false
+  loop:
+    - "{{ board_game_tracker_name }}.service"
+    - "{{ board_game_tracker_name }}-postgres.service"
+    - "{{ board_game_tracker_volume_images }}-volume.service"
+    - "{{ board_game_tracker_volume_logs }}-volume.service"
+    - "{{ board_game_tracker_volume_manuals }}-volume.service"
+    - "{{ board_game_tracker_postgres_volume_data }}-volume.service"
+    - "{{ board_game_tracker_name }}-network.service"
+
+- name: Destroy containers
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ board_game_tracker_name }}"
+    - "{{ board_game_tracker_name }}-postgres"
+
+- name: Destroy secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    state: absent
+  become: true
+  no_log: true
+  loop: "{{ board_game_tracker_secrets_combined | dict2items }}"
+
+- name: Destroy volumes
+  containers.podman.podman_volume:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ board_game_tracker_volume_images }}"
+    - "{{ board_game_tracker_volume_logs }}"
+    - "{{ board_game_tracker_volume_manuals }}"
+    - "{{ board_game_tracker_postgres_volume_data }}"
+
+- name: Destroy network
+  containers.podman.podman_network:
+    name: "{{ board_game_tracker_name }}"
+    state: absent
+  become: true
+
+- name: Cleanup quadlet files
+  ansible.builtin.file:
+    path: /etc/containers/systemd/{{ item }}
+    state: absent
+  become: true
+  loop:
+    - "{{ board_game_tracker_name }}.container"
+    - "{{ board_game_tracker_name }}-postgres.container"
+    - "{{ board_game_tracker_volume_images }}.volume"
+    - "{{ board_game_tracker_volume_logs }}.volume"
+    - "{{ board_game_tracker_volume_manuals }}.volume"
+    - "{{ board_game_tracker_postgres_volume_data }}.volume"
+    - "{{ board_game_tracker_name }}.network"
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true

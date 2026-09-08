@@ -65,6 +65,11 @@
         name: jaredhocutt.homelab.bentopdf
       tags: [bentopdf]
 
+    - name: Install board_game_tracker
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.board_game_tracker
+      tags: [board_game_tracker]
+
     - name: Install calibre_web_automated
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.calibre_web_automated
