@@ -1,0 +1,64 @@
+---
+# vars file for jaredhocutt.homelab.romm
+
+romm_mariadb_db_name: romm
+romm_mariadb_user: romm
+
+###############################################################################
+# Envrionment
+###############################################################################
+
+romm_container_env_defaults:
+  DB_HOST: "{{ romm_name }}-mariadb"
+
+romm_mariadb_container_env_defaults: {}
+
+###############################################################################
+# Secrets
+###############################################################################
+
+romm_secrets_defaults:
+  romm_auth_secret_key: "{{ romm_auth_secret_key }}"
+  romm_mariadb_root_password: "{{ romm_mariadb_root_password }}"
+  romm_mariadb_db_name: "{{ romm_mariadb_db_name }}"
+  romm_mariadb_user: "{{ romm_mariadb_user }}"
+  romm_mariadb_password: "{{ romm_mariadb_password }}"
+
+romm_secrets_combined: >-
+  {{ romm_secrets_defaults
+  | combine(romm_secrets, recursive=True) }}
+
+romm_container_secrets_defaults:
+  - romm_auth_secret_key,type=env,target=ROMM_AUTH_SECRET_KEY
+  - romm_mariadb_db_name,type=env,target=DB_NAME
+  - romm_mariadb_user,type=env,target=DB_USER
+  - romm_mariadb_password,type=env,target=DB_PASSWD
+
+romm_mariadb_container_secrets_defaults:
+  - romm_mariadb_root_password,type=env,target=MARIADB_ROOT_PASSWORD
+  - romm_mariadb_db_name,type=env,target=MARIADB_DATABASE
+  - romm_mariadb_user,type=env,target=MARIADB_USER
+  - romm_mariadb_password,type=env,target=MARIADB_PASSWORD
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+romm_container_labels_defaults: >-
+  {{ romm_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', romm_name, romm_traefik_host, '8080'), {}) }}
+
+romm_mariadb_container_labels_defaults: {}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+romm_quadlet_options_depends:
+  - |
+    [Unit]
+    Requires={{ romm_name }}-mariadb.service
+    After={{ romm_name }}-mariadb.service
+romm_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + romm_quadlet_options_depends }}"
+
+romm_mariadb_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

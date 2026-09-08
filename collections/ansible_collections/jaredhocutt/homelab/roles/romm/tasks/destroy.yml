@@ -1,0 +1,75 @@
+---
+
+- name: Stop services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: stopped
+  become: true
+  failed_when: false
+  loop:
+    - "{{ romm_name }}.service"
+    - "{{ romm_name }}-mariadb.service"
+    - "{{ romm_volume_resources }}-volume.service"
+    - "{{ romm_volume_assets }}-volume.service"
+    - "{{ romm_volume_config }}-volume.service"
+    - "{{ romm_volume_redis_data }}-volume.service"
+    - "{{ romm_volume_library }}-volume.service"
+    - "{{ romm_mariadb_volume_data }}-volume.service"
+    - "{{ romm_name }}-network.service"
+
+- name: Destroy containers
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ romm_name }}"
+    - "{{ romm_name }}-mariadb"
+
+- name: Destroy secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    state: absent
+  become: true
+  no_log: true
+  loop: "{{ romm_secrets_combined | dict2items }}"
+
+- name: Destroy volumes
+  containers.podman.podman_volume:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ romm_volume_resources }}"
+    - "{{ romm_volume_assets }}"
+    - "{{ romm_volume_config }}"
+    - "{{ romm_volume_redis_data }}"
+    - "{{ romm_volume_library }}"
+    - "{{ romm_mariadb_volume_data }}"
+
+- name: Destroy network
+  containers.podman.podman_network:
+    name: "{{ romm_name }}"
+    state: absent
+  become: true
+
+- name: Cleanup quadlet files
+  ansible.builtin.file:
+    path: /etc/containers/systemd/{{ item }}
+    state: absent
+  become: true
+  loop:
+    - "{{ romm_name }}.container"
+    - "{{ romm_name }}-mariadb.container"
+    - "{{ romm_volume_resources }}.volume"
+    - "{{ romm_volume_assets }}.volume"
+    - "{{ romm_volume_config }}.volume"
+    - "{{ romm_volume_redis_data }}.volume"
+    - "{{ romm_volume_library }}.volume"
+    - "{{ romm_mariadb_volume_data }}.volume"
+    - "{{ romm_name }}.network"
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true

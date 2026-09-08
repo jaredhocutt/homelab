@@ -1,0 +1,33 @@
+---
+# defaults file for jaredhocutt.homelab.romm
+
+romm_name: romm
+
+romm_image: docker.io/rommapp/romm
+romm_image_tag: latest
+romm_mariadb_image: docker.io/library/mariadb
+romm_mariadb_image_tag: "11"
+
+romm_volume_resources: "{{ romm_name }}-resources"
+romm_volume_assets: "{{ romm_name }}-assets"
+romm_volume_config: "{{ romm_name }}-config"
+romm_volume_redis_data: "{{ romm_name }}-redis-data"
+romm_volume_library: "{{ romm_name }}-library"
+romm_mariadb_volume_data: "{{ romm_name }}-mariadb-data"
+
+romm_traefik_enable: true
+romm_traefik_host: "{{ romm_name }}.{{ common_traefik_domain }}"
+romm_ports:
+  - 8087:8080
+
+romm_secrets: {}
+
+romm_container_env: {}
+romm_container_secrets: []
+romm_container_labels: {}
+romm_container_quadlet_options: []
+
+romm_mariadb_container_env: {}
+romm_mariadb_container_secrets: []
+romm_mariadb_container_labels: {}
+romm_mariadb_container_quadlet_options: []

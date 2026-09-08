@@ -1,0 +1,13 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    romm_traefik_enable: false
+    romm_auth_secret_key: test-auth-secret-key
+    romm_mariadb_root_password: test-mariadb-root-password
+    romm_mariadb_password: test-mariadb-password
+  tasks:
+    - name: Include romm role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.romm

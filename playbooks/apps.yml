@@ -180,6 +180,11 @@
         name: jaredhocutt.homelab.radarr
       tags: [radarr]
 
+    - name: Install romm
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.romm
+      tags: [romm]
+
     - name: Install sabnzbd
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.sabnzbd
@@ -249,3 +254,8 @@
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.warracker
       tags: [warracker]
+
+    - name: Install youtarr
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.youtarr
+      tags: [youtarr]

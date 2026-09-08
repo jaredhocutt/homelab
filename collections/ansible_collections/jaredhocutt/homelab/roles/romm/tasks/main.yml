@@ -1,0 +1,103 @@
+---
+# tasks file for jaredhocutt.homelab.romm
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ romm_image }}"
+      image_tag: "{{ romm_image_tag }}"
+    - image: "{{ romm_mariadb_image }}"
+      image_tag: "{{ romm_mariadb_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ romm_name }}"
+    driver: bridge
+    disable_dns: false
+    opt:
+      isolate: "true"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ romm_volume_resources }}"
+      options: "{{ romm_volume_resources_options | default(omit) }}"
+    - name: "{{ romm_volume_assets }}"
+      options: "{{ romm_volume_assets_options | default(omit) }}"
+    - name: "{{ romm_volume_config }}"
+      options: "{{ romm_volume_config_options | default(omit) }}"
+    - name: "{{ romm_volume_redis_data }}"
+      options: "{{ romm_volume_redis_data_options | default(omit) }}"
+    - name: "{{ romm_volume_library }}"
+      options: "{{ romm_volume_library_options | default(omit) }}"
+    - name: "{{ romm_mariadb_volume_data }}"
+      options: "{{ romm_mariadb_volume_data_options | default(omit) }}"
+
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  no_log: true
+  loop: "{{ romm_secrets_combined | dict2items }}"
+
+- name: Create mariadb container
+  containers.podman.podman_container:
+    name: "{{ romm_name }}-mariadb"
+    image: "{{ romm_mariadb_image }}:{{ romm_mariadb_image_tag }}"
+    network: "{{ romm_name }}.network"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='mariadb') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='mariadb') }}"
+    volumes:
+      - "{{ romm_mariadb_volume_data }}.volume:/var/lib/mysql"
+    healthcheck_interval: 10s
+    healthcheck_retries: 5
+    healthcheck_start_period: 30s
+    healthcheck_timeout: 5s
+    healthcheck: CMD healthcheck.sh --connect --innodb_initialized
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='mariadb') }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='mariadb') }}"
+    state: quadlet
+  notify: Restart mariadb for {{ romm_name }}
+  become: true
+
+- name: Create romm container
+  containers.podman.podman_container:
+    name: "{{ romm_name }}"
+    image: "{{ romm_image }}:{{ romm_image_tag }}"
+    network:
+      - "{{ romm_name }}.network"
+      - "{{ romm_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
+    security_opt:
+      - label=level:s0
+    volumes:
+      - "{{ romm_volume_resources }}.volume:/romm/resources"
+      - "{{ romm_volume_assets }}.volume:/romm/assets"
+      - "{{ romm_volume_config }}.volume:/romm/config"
+      - "{{ romm_volume_redis_data }}.volume:/redis-data"
+      - "{{ romm_volume_library }}.volume:/romm/library:z"
+    publish: "{{ romm_traefik_enable | ternary(omit, romm_ports) }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
+    state: quadlet
+  notify: Restart {{ romm_name }}
+  become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

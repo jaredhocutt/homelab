@@ -1,0 +1,18 @@
+---
+# handlers file for jaredhocutt.homelab.romm
+
+- name: Restart {{ romm_name }}
+  ansible.builtin.systemd:
+    name: "{{ romm_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart mariadb for {{ romm_name }}
+  ansible.builtin.systemd:
+    name: "{{ romm_name }}-mariadb.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

@@ -390,6 +390,22 @@ radarr_volume_media: "{{ global_volume_media }}"
 radarr_volume_media_options: "{{ global_volume_media_options }}"
 
 ###############################################################################
+# romm
+###############################################################################
+
+romm_image_tag: "5.2.0"  # skopeo list-tags docker://docker.io/rommapp/romm | jq -r '.Tags[] | select(test("^[0-9]+\\.[0-9]+\\.[0-9]+$"))'
+romm_mariadb_image_tag: "11.8.9"  # skopeo list-tags docker://docker.io/library/mariadb | jq -r '.Tags[] | select(test("^11\\.[0-9]+\\.[0-9]+$"))'
+
+romm_auth_secret_key: "{{ lookup('jaredhocutt.homelab.bws', 'romm_auth_secret_key') }}"
+romm_mariadb_root_password: "{{ lookup('jaredhocutt.homelab.bws', 'romm_mariadb_root_password') }}"
+romm_mariadb_password: "{{ lookup('jaredhocutt.homelab.bws', 'romm_mariadb_password') }}"
+
+romm_container_env:
+  HASHEOUS_API_ENABLED: "true"
+  SCAN_WORKERS: "2"
+  WEB_SERVER_CONCURRENCY: "3"
+
+###############################################################################
 # sabnzbd
 ###############################################################################
 
