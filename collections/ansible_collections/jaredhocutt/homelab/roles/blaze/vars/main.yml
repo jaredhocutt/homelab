@@ -1,0 +1,35 @@
+---
+# vars file for jaredhocutt.homelab.blaze
+
+###############################################################################
+# Envrionment
+###############################################################################
+
+blaze_container_env_defaults:
+  PORT: "8080"
+
+###############################################################################
+# Secrets
+###############################################################################
+
+blaze_secrets_defaults: {}
+
+blaze_secrets_combined: >-
+  {{ blaze_secrets_defaults
+  | combine(blaze_secrets, recursive=True) }}
+
+blaze_container_secrets_defaults: []
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+blaze_container_labels_defaults: >-
+  {{ blaze_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', blaze_name, blaze_traefik_host, '8080'), {}) }}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+blaze_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

@@ -65,6 +65,11 @@
         name: jaredhocutt.homelab.bentopdf
       tags: [bentopdf]
 
+    - name: Install blaze
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.blaze
+      tags: [blaze]
+
     - name: Install board_game_tracker
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.board_game_tracker

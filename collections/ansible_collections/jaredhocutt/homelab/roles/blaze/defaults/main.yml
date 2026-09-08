@@ -1,0 +1,19 @@
+---
+# defaults file for jaredhocutt.homelab.blaze
+
+blaze_name: blaze
+
+blaze_image: docker.io/akashhamirwasia/blaze
+blaze_image_tag: latest
+
+blaze_traefik_enable: true
+blaze_traefik_host: "{{ blaze_name }}.{{ common_traefik_domain }}"
+blaze_ports:
+  - 8091:8080
+
+blaze_secrets: {}
+
+blaze_container_env: {}
+blaze_container_secrets: []
+blaze_container_labels: {}
+blaze_container_quadlet_options: []
