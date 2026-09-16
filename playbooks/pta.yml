@@ -1,0 +1,56 @@
+---
+
+- name: Perform initial server setup
+  hosts: pta
+  tasks:
+    - name: Perform initial server setup
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.server_setup
+      tags: [server_setup]
+
+- name: Deploy and configure foundation apps
+  hosts: pta
+  tasks:
+    - name: Install traefik
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.traefik
+      tags: [traefik]
+  tags: [foundation_apps]
+
+- name: Deploy and configure apps
+  hosts: pta
+  tasks:
+    - name: Install backrest
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.backrest
+      tags: [backrest]
+
+    - name: Install bentopdf
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.bentopdf
+      tags: [bentopdf]
+
+    - name: Install blaze
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.blaze
+      tags: [blaze]
+
+    - name: Install convertx
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.convertx
+      tags: [convertx]
+
+    - name: Install it_tools
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.it_tools
+      tags: [it_tools]
+
+    - name: Install n8n
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.n8n
+      tags: [n8n]
+
+    - name: Install uptime_kuma
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.uptime_kuma
+      tags: [uptime_kuma]

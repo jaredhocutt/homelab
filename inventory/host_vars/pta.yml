@@ -1,6 +1,84 @@
 ---
+# yamllint disable rule:line-length
 
 common_traefik_domain: "{{ lookup('jaredhocutt.homelab.bws', 'pta_common_traefik_domain') }}"
+
+###############################################################################
+# backrest
+###############################################################################
+
+backrest_version: v1.14.1
+
+backrest_traefik_host: "backrest.{{ common_traefik_domain }}"
+
+backrest_env:
+  BACKREST_PORT: 0.0.0.0:9898
+
+###############################################################################
+# bentopdf
+###############################################################################
+
+bentopdf_image_tag: v2.8.8  # skopeo list-tags docker://ghcr.io/alam00000/bentopdf-simple | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+
+###############################################################################
+# blaze
+###############################################################################
+
+blaze_image_tag: release-v3.0.1  # skopeo list-tags docker://docker.io/akashhamirwasia/blaze | jq -r '.Tags[] | select(test("^release-v[0-9\\.]+$"))'
+
+###############################################################################
+# convertx
+###############################################################################
+
+convertx_image_tag: v0.18.0  # skopeo list-tags docker://ghcr.io/c4illin/convertx | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+
+convertx_jwt_secret: "{{ lookup('jaredhocutt.homelab.bws', 'pta_convertx_jwt_secret') }}"
+
+###############################################################################
+# it_tools
+###############################################################################
+
+it_tools_image_tag: 2024.10.22-7ca5933  # skopeo list-tags docker://ghcr.io/corentinth/it-tools | jq -r '.Tags[] | select(test("^[0-9]{4}\\.[0-9]+\\.[0-9]+-[0-9a-f]+$"))'
+
+###############################################################################
+# n8n
+###############################################################################
+
+n8n_image_tag: "2.37.4"  # skopeo list-tags docker://docker.n8n.io/n8nio/n8n | jq -r '.Tags[] | select(test("^2\\.[0-9\\.]+$"))'  # Held at 2.37.4: 2.38.3 is not pullable — its manifest cannot be read. Recheck on the next release.
+n8n_postgres_image_tag: "16.15"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
+
+n8n_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'pta_n8n_postgres_password') }}"
+
+n8n_container_env:
+  N8N_LOG_LEVEL: debug
+
+###############################################################################
+# traefik
+###############################################################################
+
+traefik_image_tag: v3.7.12  # skopeo list-tags docker://ghcr.io/traefik/traefik | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+
+traefik_traefik_host: traefik.{{ common_traefik_domain }}
+
+traefik_command:
+  - --certificatesresolvers.letsencrypt.acme.email={{ lookup('jaredhocutt.homelab.bws', 'pta_traefik_letsencrypt_email') }}
+  - --certificatesresolvers.letsencrypt.acme.storage=/certs/acme.json
+  - --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare
+  - --certificatesresolvers.letsencrypt.acme.dnschallenge.resolvers=1.1.1.1:53,8.8.8.8:53
+  - --entrypoints.websecure.http.tls.certresolver=letsencrypt
+
+traefik_secrets:
+  traefik_letsencrypt_cloudflare_dns_api_key: "{{ lookup('jaredhocutt.homelab.bws', 'traefik_letsencrypt_cloudflare_dns_api_key') }}"
+  traefik_letsencrypt_cloudflare_zone_api_key: "{{ lookup('jaredhocutt.homelab.bws', 'traefik_letsencrypt_cloudflare_zone_api_key') }}"
+traefik_container_secrets:
+  - traefik_letsencrypt_cloudflare_dns_api_key,type=env,target=CF_DNS_API_TOKEN
+  - traefik_letsencrypt_cloudflare_zone_api_key,type=env,target=CF_ZONE_API_TOKEN
+
+###############################################################################
+# uptime_kuma
+###############################################################################
+
+uptime_kuma_image_tag: "2.5.3"  # skopeo list-tags docker://ghcr.io/louislam/uptime-kuma | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
 
 ###############################################################################
 # kickstart
