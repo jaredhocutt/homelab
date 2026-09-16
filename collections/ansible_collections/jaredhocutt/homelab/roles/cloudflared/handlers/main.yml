@@ -1,0 +1,10 @@
+---
+# handlers file for jaredhocutt.homelab.cloudflared
+
+- name: Restart {{ cloudflared_name }}
+  ansible.builtin.systemd:
+    name: "{{ cloudflared_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

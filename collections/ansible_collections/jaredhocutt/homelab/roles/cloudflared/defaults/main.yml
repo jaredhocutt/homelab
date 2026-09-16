@@ -1,0 +1,16 @@
+---
+# defaults file for jaredhocutt.homelab.cloudflared
+
+cloudflared_name: cloudflared
+
+cloudflared_image: docker.io/cloudflare/cloudflared
+cloudflared_image_tag: latest
+
+cloudflared_network_mode: container
+
+cloudflared_secrets: {}
+
+cloudflared_container_env: {}
+cloudflared_container_secrets: []
+cloudflared_container_labels: {}
+cloudflared_container_quadlet_options: []

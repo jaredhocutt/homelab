@@ -1,0 +1,11 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    cloudflared_attach_to: "unused-in-bridge-mode"
+    cloudflared_network_mode: bridge
+  tasks:
+    - name: Include cloudflared role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.cloudflared

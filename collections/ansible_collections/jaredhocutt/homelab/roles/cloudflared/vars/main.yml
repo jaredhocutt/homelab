@@ -1,0 +1,45 @@
+---
+# vars file for jaredhocutt.homelab.cloudflared
+
+###############################################################################
+# Envrionment
+###############################################################################
+
+cloudflared_container_env_defaults:
+  # Bind the metrics/readiness endpoint on all interfaces so it can be probed
+  # from outside the container (e.g. `curl http://<ip>:2000/ready`).
+  TUNNEL_METRICS: 0.0.0.0:2000
+
+###############################################################################
+# Secrets
+###############################################################################
+
+cloudflared_secrets_defaults: {}
+
+cloudflared_secrets_combined: >-
+  {{ cloudflared_secrets_defaults
+  | combine(cloudflared_secrets, recursive=True) }}
+
+# The tunnel token is expected to be provided as a podman secret mapped to the
+# TUNNEL_TOKEN env var, e.g.:
+#   - cloudflared_<app>_tunnel_token,type=env,target=TUNNEL_TOKEN
+cloudflared_container_secrets_defaults: []
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+cloudflared_container_labels_defaults: {}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+cloudflared_quadlet_options_depends:
+  - |
+    [Unit]
+    Requires={{ cloudflared_attach_to }}.service
+    After={{ cloudflared_attach_to }}.service
+cloudflared_container_quadlet_options_defaults: >-
+  {{ common_quadlet_options_defaults
+  + (cloudflared_quadlet_options_depends if cloudflared_network_mode == 'container' else []) }}
