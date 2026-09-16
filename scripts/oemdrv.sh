@@ -19,7 +19,7 @@ fi
 disk_path="/dev/${disk_input#/dev/}"
 echo "Using disk: ${disk_path}"
 
-diskutil partitionDisk ${disk_path} MBR FAT32 OEMDRV 10G "Free Space" DUMMY R
+diskutil partitionDisk ${disk_path} MBR FAT32 OEMDRV 5G "Free Space" DUMMY R
 diskutil mountDisk OEMDRV
 
 # Verify that /Volumes/OEMDRV exists
