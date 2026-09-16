@@ -21,7 +21,7 @@ Ansible project for managing a personal homelab. Almost all logic lives in a sin
 
 Always run from the repo root unless noted.
 
-- Run a playbook: `uv run ansible-playbook playbooks/apps.yml` (other entrypoints: `edge.yml`, `media.yml`, `router.yml`, `kickstart.yml`, `sandbox.yml`).
+- Run a playbook: `uv run ansible-playbook playbooks/apps.yml` (other entrypoints: `edge.yml`, `media.yml`, `pta.yml`, `pta_edge.yml`, `router.yml`, `kickstart.yml`, `sandbox.yml`).
 - Target one role on a host: append `--tags <role_name>` (every role import in the playbooks is tagged with the role's short name).
 - Limit to a host: `--limit <host>` (hosts defined in `inventory/hosts.yml`).
 - Lint: `uv run ansible-lint`.
@@ -68,6 +68,7 @@ When adding a new role, follow this pattern (or run `uv run task duplicate-role 
 - `inventory/hosts.yml` defines per-host `ansible_host` via `bws` lookups, plus group memberships. Groups in active use: `apps`, `media`, `edge`, `router` (also rolled up into `linux` / `network`).
 - `inventory/group_vars/all/{all.yml,vault.yml}` holds the shared variables (vault file is encrypted).
 - `edge` is special: `playbooks/edge.yml` runs `connection: local` to provision a DigitalOcean droplet (droplet + reserved IP + firewalls + Cloudflare wildcard DNS), then `add_host`s the resulting IP and continues against it.
+- `pta_edge` is the same idea on Google Cloud: `playbooks/pta_edge.yml` provisions a Free Tier `e2-micro` with the `google.cloud` collection (static address + firewall rules + instance + Cloudflare wildcard DNS), then `add_host`s it and deploys Pangolin. It authenticates via per-module `module_defaults` (the collection's `gcp` action group is broken in 1.14), sourced from BWS (`pta_gcp_project`, `pta_gcp_service_account_key`) and uses its own `pta_cloudflare_token`, since the PTA's zone is separate from the personal one. The `pta` host's apps reach it through `newt` sidecars, exactly like `apps` does with `edge`.
 
 ### Image tag updates
 

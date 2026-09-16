@@ -1,0 +1,119 @@
+---
+# yamllint disable rule:line-length
+
+ansible_python_interpreter: python3
+
+###############################################################################
+# backrest
+###############################################################################
+
+backrest_version: v1.14.1
+
+backrest_traefik_enable: false
+
+backrest_env:
+  BACKREST_PORT: 0.0.0.0:9898
+
+###############################################################################
+# pangolin
+###############################################################################
+
+pangolin_image_tag: "ee-1.22.0"  # skopeo list-tags docker://ghcr.io/fosrl/pangolin | jq -r '.Tags[] | select(test("^ee-[0-9\\.]+$"))'
+pangolin_gerbil_image_tag: "1.5.0"  # skopeo list-tags docker://ghcr.io/fosrl/gerbil | jq -r '.Tags[] | select(test("^[0-9]\\."))'
+pangolin_traefik_image_tag: v3.7.13  # skopeo list-tags docker://ghcr.io/traefik/traefik | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+
+pangolin_base_domain: "{{ lookup('jaredhocutt.homelab.bws', 'pta_pangolin_base_domain') }}"
+pangolin_server_secret: "{{ lookup('jaredhocutt.homelab.bws', 'pta_pangolin_server_secret') }}"
+pangolin_traefik_letsencrypt_email: "{{ lookup('jaredhocutt.homelab.bws', 'pta_pangolin_smtp_no_reply') }}"
+
+pangolin_smtp_host: "{{ lookup('jaredhocutt.homelab.bws', 'pta_smtp_host') }}"
+pangolin_smtp_port: "{{ lookup('jaredhocutt.homelab.bws', 'pta_smtp_port') }}"
+pangolin_smtp_user: "{{ lookup('jaredhocutt.homelab.bws', 'pta_smtp_username') }}"
+pangolin_smtp_password: "{{ lookup('jaredhocutt.homelab.bws', 'pta_smtp_password') }}"
+pangolin_no_reply: "{{ lookup('jaredhocutt.homelab.bws', 'pta_pangolin_smtp_no_reply') }}"
+
+###############################################################################
+# server_setup
+###############################################################################
+
+server_setup_dnf_automatic: true
+server_setup_fail2ban: true
+
+###############################################################################
+# gcp
+###############################################################################
+
+gcp_project: "{{ lookup('jaredhocutt.homelab.bws', 'pta_gcp_project') }}"
+
+gcp_instance_name: pta-edge
+
+# Free Tier: one e2-micro per month in us-west1, us-central1, or us-east1,
+# with a 30 GB pd-standard disk. Other machine types/regions/disk types are
+# billed at normal rates.
+gcp_region: us-east1
+gcp_zone: "{{ gcp_region }}-b"
+gcp_machine_type: e2-micro
+gcp_disk_type: pd-standard
+gcp_disk_size_gb: 30
+
+gcp_network: default
+# PREMIUM egress is ~$0.12/GB after the free 1 GB/month; STANDARD is ~$0.085/GB.
+# The static address and the instance NIC must use the same tier.
+gcp_network_tier: PREMIUM
+
+# Fedora publishes GCE images to the fedora-cloud project. Verify the current
+# family name with:
+#   gcloud compute images list --project fedora-cloud --no-standard-images
+gcp_image_project: fedora-cloud
+gcp_image_family: fedora-cloud-43-x86-64
+
+# Rules apply to instances tagged with gcp_instance_name. Rule names are
+# prefixed with gcp_instance_name in the playbook.
+gcp_firewall_rules:
+  - name: default
+    allowed:
+      - ip_protocol: tcp
+        ports: ["22"]
+      - ip_protocol: icmp
+  - name: pangolin
+    allowed:
+      - ip_protocol: tcp
+        ports: ["80", "443"]
+      - ip_protocol: udp
+        ports: ["51820", "21820"]
+
+gcp_user_data: |
+  #cloud-config
+  write_files:
+    - path: /etc/sudoers.d/99-custom-defaults
+      owner: root:root
+      permissions: '0440'
+      content: |
+        Defaults:{{ lookup('jaredhocutt.homelab.bws', 'server_user_2_username') }} !requiretty
+
+  users:
+    - name: {{ lookup('jaredhocutt.homelab.bws', 'server_user_1_username') }}
+      gecos: {{ lookup('jaredhocutt.homelab.bws', 'server_user_1_fullname') }}
+      uid: {{ lookup('jaredhocutt.homelab.bws', 'server_user_1_uid') }}
+      groups: {{ lookup('jaredhocutt.homelab.bws', 'server_user_1_groups') }}
+      passwd: {{ lookup('jaredhocutt.homelab.bws', 'server_user_1_password_crypted') }}
+      lock_passwd: false
+      ssh_authorized_keys:
+        - {{ lookup('jaredhocutt.homelab.bws', 'ssh_authorized_key_1') }}
+        - {{ lookup('jaredhocutt.homelab.bws', 'ssh_authorized_key_2') }}
+    - name: {{ lookup('jaredhocutt.homelab.bws', 'server_user_2_username') }}
+      gecos: {{ lookup('jaredhocutt.homelab.bws', 'server_user_2_fullname') }}
+      uid: {{ lookup('jaredhocutt.homelab.bws', 'server_user_2_uid') }}
+      groups: {{ lookup('jaredhocutt.homelab.bws', 'server_user_2_groups') }}
+      sudo:
+        - "ALL=(ALL) NOPASSWD:ALL"
+      lock_passwd: true
+      ssh_authorized_keys:
+        - {{ lookup('jaredhocutt.homelab.bws', 'ssh_authorized_key_4') }}
+
+  # An e2-micro only has 1 GB of RAM; give pangolin + gerbil + traefik some
+  # headroom beyond Fedora's default zram swap.
+  swap:
+    filename: /swapfile
+    size: 2G
+    maxsize: 2G

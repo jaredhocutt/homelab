@@ -30,10 +30,30 @@
         name: jaredhocutt.homelab.bentopdf
       tags: [bentopdf]
 
+    - name: Install bentopdf newt
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.newt
+      vars:
+        newt_name: newt-bentopdf
+        newt_attach_to: bentopdf
+        newt_secrets: "{{ newt_bentopdf_secrets }}"
+        newt_container_secrets: "{{ newt_bentopdf_container_secrets }}"
+      tags: [newt, bentopdf]
+
     - name: Install blaze
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.blaze
       tags: [blaze]
+
+    - name: Install blaze newt
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.newt
+      vars:
+        newt_name: newt-blaze
+        newt_attach_to: blaze
+        newt_secrets: "{{ newt_blaze_secrets }}"
+        newt_container_secrets: "{{ newt_blaze_container_secrets }}"
+      tags: [newt, blaze]
 
     - name: Install convertx
       ansible.builtin.import_role:
@@ -44,6 +64,16 @@
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.it_tools
       tags: [it_tools]
+
+    - name: Install it_tools newt
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.newt
+      vars:
+        newt_name: newt-it-tools
+        newt_attach_to: it-tools
+        newt_secrets: "{{ newt_it_tools_secrets }}"
+        newt_container_secrets: "{{ newt_it_tools_container_secrets }}"
+      tags: [newt, it_tools]
 
     - name: Install n8n
       ansible.builtin.import_role:

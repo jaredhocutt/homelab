@@ -1,0 +1,154 @@
+---
+
+- name: Create infrastructure
+  hosts: pta_edge
+  connection: local
+  gather_facts: false
+  environment:
+    CLOUDFLARE_TOKEN: "{{ lookup('jaredhocutt.homelab.bws', 'pta_cloudflare_token') }}"
+  # The google.cloud.gcp action group is broken in 1.14 (it references a module
+  # that was removed from the collection), so list the modules individually.
+  # auth_kind is set per task only because ansible-lint's args rule does not
+  # see module_defaults and flags it as missing.
+  module_defaults:
+    google.cloud.gcp_compute_address: &gcp_auth
+      project: "{{ gcp_project }}"
+      service_account_contents: "{{ lookup('jaredhocutt.homelab.bws', 'pta_gcp_service_account_key') }}"
+    google.cloud.gcp_compute_firewall: *gcp_auth
+    google.cloud.gcp_compute_instance_info: *gcp_auth
+    google.cloud.gcp_compute_instance: *gcp_auth
+  tasks:
+    # A static address is free while attached to a running instance and
+    # survives instance re-creation, so the DNS record never has to change.
+    - name: Reserve static external IP
+      google.cloud.gcp_compute_address:
+        auth_kind: serviceaccount
+        name: "{{ gcp_instance_name }}"
+        region: "{{ gcp_region }}"
+        network_tier: "{{ gcp_network_tier }}"
+        state: present
+      register: _pta_edge_address
+      tags: [always]
+
+    - name: Set edge IP fact
+      ansible.builtin.set_fact:
+        _pta_edge_ip: "{{ _pta_edge_address.address }}"
+      tags: [always]
+
+    # Unlike the DigitalOcean firewall module, gcp_compute_firewall updates
+    # existing rules in place, so this is safe to run on every play.
+    - name: Create firewall rules
+      google.cloud.gcp_compute_firewall:
+        auth_kind: serviceaccount
+        name: "{{ gcp_instance_name }}-{{ item.name }}"
+        network:
+          selfLink: global/networks/{{ gcp_network }}
+        direction: INGRESS
+        allowed: "{{ item.allowed }}"
+        source_ranges:
+          - 0.0.0.0/0
+        target_tags:
+          - "{{ gcp_instance_name }}"
+        state: present
+      loop: "{{ gcp_firewall_rules }}"
+      loop_control:
+        label: "{{ item.name }}"
+
+    - name: Look up existing instance
+      google.cloud.gcp_compute_instance_info:
+        auth_kind: serviceaccount
+        zone: "{{ gcp_zone }}"
+        filters:
+          - name = {{ gcp_instance_name }}
+      register: _pta_edge_instance_info
+      tags: [always]
+
+    # gcp_compute_instance tries to reconcile every field on an existing
+    # instance (including disks), so only ever call it for creation.
+    - name: Create instance
+      google.cloud.gcp_compute_instance:
+        auth_kind: serviceaccount
+        name: "{{ gcp_instance_name }}"
+        zone: "{{ gcp_zone }}"
+        machine_type: "{{ gcp_machine_type }}"
+        deletion_protection: true
+        disks:
+          - auto_delete: true
+            boot: true
+            initialize_params:
+              source_image: projects/{{ gcp_image_project }}/global/images/family/{{ gcp_image_family }}
+              disk_size_gb: "{{ gcp_disk_size_gb }}"
+              disk_type: zones/{{ gcp_zone }}/diskTypes/{{ gcp_disk_type }}
+        network_interfaces:
+          - network:
+              selfLink: global/networks/{{ gcp_network }}
+            access_configs:
+              - name: External NAT
+                type: ONE_TO_ONE_NAT
+                nat_ip: "{{ _pta_edge_address }}"
+                network_tier: "{{ gcp_network_tier }}"
+        tags:
+          items:
+            - "{{ gcp_instance_name }}"
+        metadata:
+          user-data: "{{ gcp_user_data }}"
+        state: present
+      when: _pta_edge_instance_info.resources | length == 0
+      tags: [always]
+
+    - name: Create wildcard DNS record for pangolin
+      community.general.cloudflare_dns:
+        zone: "{{ pangolin_base_domain.split('.')[-2:] | join('.') }}"
+        record: "*.{{ pangolin_base_domain.split('.')[:-2] | join('.') }}"
+        type: A
+        value: "{{ _pta_edge_ip }}"
+        ttl: 300
+        solo: true
+        proxied: false
+        state: present
+
+    - name: Wait for SSH to be available
+      ansible.builtin.wait_for:
+        host: "{{ _pta_edge_ip }}"
+        port: 22
+        timeout: 300
+
+    - name: Add new instance to inventory group
+      ansible.builtin.add_host:
+        name: pta_edge
+        ansible_host: "{{ _pta_edge_ip }}"
+        ansible_ssh_common_args: "-o StrictHostKeyChecking=accept-new"
+      changed_when: false
+      tags: [always]
+
+- name: Perform initial server setup
+  hosts: pta_edge
+  tasks:
+    - name: Perform initial server setup
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.server_setup
+      tags: [server_setup]
+
+- name: Deploy and configure apps
+  hosts: pta_edge
+  tasks:
+    - name: Wait for wildcard DNS record to propagate
+      ansible.builtin.command:
+        cmd: dig +short A test.{{ pangolin_base_domain }} @8.8.8.8
+      delegate_to: localhost
+      register: _pta_edge_wildcard_dns_result
+      until: _pta_edge_wildcard_dns_result.stdout.strip() == _pta_edge_ip
+      retries: 30
+      delay: 30  # 30 retries every 30 seconds = up to 15 minutes
+      changed_when: false
+      failed_when: _pta_edge_wildcard_dns_result.rc != 0
+
+    - name: Install backrest
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.backrest
+      tags: [backrest]
+
+    - name: Install pangolin
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.pangolin
+      tags: [pangolin]
