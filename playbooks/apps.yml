@@ -170,6 +170,11 @@
         name: jaredhocutt.homelab.pangolin_cli
       tags: [pangolin_cli]
 
+    - name: Install postiz
+      ansible.builtin.import_role:
+        name: jaredhocutt.homelab.postiz
+      tags: [postiz]
+
     - name: Install profilarr
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.profilarr

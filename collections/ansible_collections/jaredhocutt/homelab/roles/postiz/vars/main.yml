@@ -1,0 +1,137 @@
+---
+# vars file for jaredhocutt.homelab.postiz
+
+postiz_postgres_db_name: postiz
+postiz_postgres_user: postiz
+postiz_database_url: postgresql://{{ postiz_postgres_user }}:{{ postiz_postgres_password }}@{{ postiz_name }}-postgres:5432/{{ postiz_postgres_db_name }}
+
+postiz_temporal_postgres_user: temporal
+
+###############################################################################
+# Envrionment
+###############################################################################
+
+postiz_container_env_defaults:
+  MAIN_URL: "{{ postiz_url }}"
+  FRONTEND_URL: "{{ postiz_url }}"
+  NEXT_PUBLIC_BACKEND_URL: "{{ postiz_url }}/api"
+  BACKEND_INTERNAL_URL: "http://localhost:3000"
+  REDIS_URL: "redis://{{ postiz_name }}-redis:6379"
+  TEMPORAL_ADDRESS: "{{ postiz_name }}-temporal:7233"
+  IS_GENERAL: "true"
+  RUN_CRON: "true"
+  STORAGE_PROVIDER: local
+  UPLOAD_DIRECTORY: /uploads
+
+postiz_postgres_container_env_defaults: {}
+
+postiz_redis_container_env_defaults: {}
+
+postiz_temporal_container_env_defaults:
+  DB: postgres12
+  DB_PORT: "5432"
+  POSTGRES_SEEDS: "{{ postiz_name }}-temporal-postgres"
+  DYNAMIC_CONFIG_FILE_PATH: config/dynamicconfig/dynamicconfig.yaml
+  ENABLE_ES: "true"
+  ES_SEEDS: "{{ postiz_name }}-temporal-elasticsearch"
+  ES_VERSION: v7
+  TEMPORAL_NAMESPACE: default
+
+postiz_temporal_postgres_container_env_defaults: {}
+
+postiz_temporal_elasticsearch_container_env_defaults:
+  cluster.routing.allocation.disk.threshold_enabled: "true"
+  cluster.routing.allocation.disk.watermark.low: 512mb
+  cluster.routing.allocation.disk.watermark.high: 256mb
+  cluster.routing.allocation.disk.watermark.flood_stage: 128mb
+  discovery.type: single-node
+  ES_JAVA_OPTS: -Xms256m -Xmx256m
+  xpack.security.enabled: "false"
+
+###############################################################################
+# Secrets
+###############################################################################
+
+postiz_secrets_defaults:
+  postiz_jwt_secret: "{{ postiz_jwt_secret }}"
+  postiz_database_url: "{{ postiz_database_url }}"
+  postiz_postgres_db_name: "{{ postiz_postgres_db_name }}"
+  postiz_postgres_user: "{{ postiz_postgres_user }}"
+  postiz_postgres_password: "{{ postiz_postgres_password }}"
+  postiz_temporal_postgres_user: "{{ postiz_temporal_postgres_user }}"
+  postiz_temporal_postgres_password: "{{ postiz_temporal_postgres_password }}"
+
+postiz_secrets_combined: >-
+  {{ postiz_secrets_defaults
+  | combine(postiz_secrets, recursive=True) }}
+
+postiz_container_secrets_defaults:
+  - postiz_jwt_secret,type=env,target=JWT_SECRET
+  - postiz_database_url,type=env,target=DATABASE_URL
+
+postiz_postgres_container_secrets_defaults:
+  - postiz_postgres_db_name,type=env,target=POSTGRES_DB
+  - postiz_postgres_user,type=env,target=POSTGRES_USER
+  - postiz_postgres_password,type=env,target=POSTGRES_PASSWORD
+
+postiz_redis_container_secrets_defaults: []
+
+postiz_temporal_container_secrets_defaults:
+  - postiz_temporal_postgres_user,type=env,target=POSTGRES_USER
+  - postiz_temporal_postgres_password,type=env,target=POSTGRES_PWD
+
+postiz_temporal_postgres_container_secrets_defaults:
+  - postiz_temporal_postgres_user,type=env,target=POSTGRES_USER
+  - postiz_temporal_postgres_password,type=env,target=POSTGRES_PASSWORD
+
+postiz_temporal_elasticsearch_container_secrets_defaults: []
+
+###############################################################################
+# Container Labels
+###############################################################################
+
+postiz_container_labels_defaults: >-
+  {{ postiz_traefik_enable
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', postiz_name, postiz_traefik_host, '5000'), {}) }}
+
+postiz_postgres_container_labels_defaults: {}
+
+postiz_redis_container_labels_defaults: {}
+
+postiz_temporal_container_labels_defaults: {}
+
+postiz_temporal_postgres_container_labels_defaults: {}
+
+postiz_temporal_elasticsearch_container_labels_defaults: {}
+
+###############################################################################
+# Quadlet Options
+###############################################################################
+
+postiz_quadlet_options_depends:
+  - |
+    [Unit]
+    Requires={{ postiz_name }}-postgres.service
+    Requires={{ postiz_name }}-redis.service
+    Requires={{ postiz_name }}-temporal.service
+    After={{ postiz_name }}-postgres.service
+    After={{ postiz_name }}-redis.service
+    After={{ postiz_name }}-temporal.service
+postiz_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + postiz_quadlet_options_depends }}"
+
+postiz_postgres_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+
+postiz_redis_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+
+postiz_temporal_quadlet_options_depends:
+  - |
+    [Unit]
+    Requires={{ postiz_name }}-temporal-postgres.service
+    Requires={{ postiz_name }}-temporal-elasticsearch.service
+    After={{ postiz_name }}-temporal-postgres.service
+    After={{ postiz_name }}-temporal-elasticsearch.service
+postiz_temporal_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + postiz_temporal_quadlet_options_depends }}"
+
+postiz_temporal_postgres_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+
+postiz_temporal_elasticsearch_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"

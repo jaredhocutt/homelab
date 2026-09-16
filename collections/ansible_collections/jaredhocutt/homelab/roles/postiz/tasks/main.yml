@@ -1,0 +1,222 @@
+---
+# tasks file for jaredhocutt.homelab.postiz
+
+- name: Pull container images
+  containers.podman.podman_image:
+    name: "{{ item.image }}:{{ item.image_tag }}"
+    state: present
+  become: true
+  loop:
+    - image: "{{ postiz_image }}"
+      image_tag: "{{ postiz_image_tag }}"
+    - image: "{{ postiz_postgres_image }}"
+      image_tag: "{{ postiz_postgres_image_tag }}"
+    - image: "{{ postiz_redis_image }}"
+      image_tag: "{{ postiz_redis_image_tag }}"
+    - image: "{{ postiz_temporal_image }}"
+      image_tag: "{{ postiz_temporal_image_tag }}"
+    - image: "{{ postiz_temporal_postgres_image }}"
+      image_tag: "{{ postiz_temporal_postgres_image_tag }}"
+    - image: "{{ postiz_temporal_elasticsearch_image }}"
+      image_tag: "{{ postiz_temporal_elasticsearch_image_tag }}"
+
+- name: Create network
+  containers.podman.podman_network:
+    name: "{{ postiz_name }}"
+    driver: bridge
+    disable_dns: false
+    opt:
+      isolate: "true"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+
+- name: Create volumes
+  containers.podman.podman_volume:
+    name: "{{ item.name }}"
+    quadlet_options: "{{ item.options | default(omit) }}"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  loop:
+    - name: "{{ postiz_volume_config }}"
+      options: "{{ postiz_volume_config_options | default(omit) }}"
+    - name: "{{ postiz_volume_uploads }}"
+      options: "{{ postiz_volume_uploads_options | default(omit) }}"
+    - name: "{{ postiz_postgres_volume_data }}"
+      options: "{{ postiz_postgres_volume_data_options | default(omit) }}"
+    - name: "{{ postiz_redis_volume_data }}"
+      options: "{{ postiz_redis_volume_data_options | default(omit) }}"
+    - name: "{{ postiz_temporal_volume_config }}"
+      options: "{{ postiz_temporal_volume_config_options | default(omit) }}"
+    - name: "{{ postiz_temporal_postgres_volume_data }}"
+      options: "{{ postiz_temporal_postgres_volume_data_options | default(omit) }}"
+    - name: "{{ postiz_temporal_elasticsearch_volume_data }}"
+      options: "{{ postiz_temporal_elasticsearch_volume_data_options | default(omit) }}"
+  register: _postiz_created_volumes
+
+- name: Create secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    data: "{{ item.value }}"
+    state: present
+  become: true
+  no_log: true
+  loop: "{{ postiz_secrets_combined | dict2items }}"
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
+  when: _postiz_created_volumes.changed  # noqa: no-handler
+
+- name: Start temporal config volume service to create it
+  ansible.builtin.systemd:
+    name: "{{ postiz_temporal_volume_config }}-volume.service"
+    state: started
+  become: true
+
+- name: Get temporal config volume info
+  containers.podman.podman_volume_info:
+    name: "{{ postiz_temporal_volume_config }}"
+  become: true
+  register: _postiz_temporal_config_volume_info
+
+- name: Seed temporal dynamic configuration file if it does not exist
+  ansible.builtin.copy:
+    src: dynamicconfig.yaml
+    dest: "{{ _postiz_temporal_config_volume_info.volumes[0].Mountpoint }}/dynamicconfig.yaml"
+    owner: root
+    group: root
+    mode: "0644"
+    force: false  # seed once; never overwrite manual tuning afterward
+  become: true
+  notify: Restart temporal for {{ postiz_name }}
+
+- name: Create postgres container
+  containers.podman.podman_container:
+    name: "{{ postiz_name }}-postgres"
+    image: "{{ postiz_postgres_image }}:{{ postiz_postgres_image_tag }}"
+    network: "{{ postiz_name }}.network"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='postgres') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='postgres') }}"
+    volumes:
+      - "{{ postiz_postgres_volume_data }}.volume:/var/lib/postgresql/data"
+    healthcheck_interval: 10s
+    healthcheck_retries: 5
+    healthcheck_start_period: 10s
+    healthcheck_timeout: 5s
+    healthcheck: CMD-SHELL pg_isready -d {{ postiz_postgres_db_name }} -U {{ postiz_postgres_user }}
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='postgres') }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='postgres') }}"
+    state: quadlet
+  notify: Restart postgres for {{ postiz_name }}
+  become: true
+
+- name: Create redis container
+  containers.podman.podman_container:
+    name: "{{ postiz_name }}-redis"
+    image: "{{ postiz_redis_image }}:{{ postiz_redis_image_tag }}"
+    network: "{{ postiz_name }}.network"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='redis') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='redis') }}"
+    volumes:
+      - "{{ postiz_redis_volume_data }}.volume:/data"
+    healthcheck_interval: 10s
+    healthcheck_retries: 5
+    healthcheck_start_period: 5s
+    healthcheck_timeout: 5s
+    healthcheck: CMD-SHELL redis-cli ping
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='redis') }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='redis') }}"
+    state: quadlet
+  notify: Restart redis for {{ postiz_name }}
+  become: true
+
+- name: Create temporal postgres container
+  containers.podman.podman_container:
+    name: "{{ postiz_name }}-temporal-postgres"
+    image: "{{ postiz_temporal_postgres_image }}:{{ postiz_temporal_postgres_image_tag }}"
+    network: "{{ postiz_name }}.network"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='temporal_postgres') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='temporal_postgres') }}"
+    volumes:
+      - "{{ postiz_temporal_postgres_volume_data }}.volume:/var/lib/postgresql/data"
+    healthcheck_interval: 10s
+    healthcheck_retries: 5
+    healthcheck_start_period: 10s
+    healthcheck_timeout: 5s
+    healthcheck: CMD-SHELL pg_isready -U {{ postiz_temporal_postgres_user }}
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='temporal_postgres') }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='temporal_postgres') }}"
+    state: quadlet
+  notify: Restart temporal-postgres for {{ postiz_name }}
+  become: true
+
+- name: Create temporal elasticsearch container
+  containers.podman.podman_container:
+    name: "{{ postiz_name }}-temporal-elasticsearch"
+    image: "{{ postiz_temporal_elasticsearch_image }}:{{ postiz_temporal_elasticsearch_image_tag }}"
+    network: "{{ postiz_name }}.network"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='temporal_elasticsearch') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='temporal_elasticsearch') }}"
+    volumes:
+      - "{{ postiz_temporal_elasticsearch_volume_data }}.volume:/usr/share/elasticsearch/data"
+    healthcheck_interval: 10s
+    healthcheck_retries: 10
+    healthcheck_start_period: 60s
+    healthcheck_timeout: 10s
+    healthcheck: CMD-SHELL curl -fsS "http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=5s" || exit 1
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='temporal_elasticsearch') }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='temporal_elasticsearch') }}"
+    state: quadlet
+  notify: Restart temporal-elasticsearch for {{ postiz_name }}
+  become: true
+
+- name: Create temporal container
+  containers.podman.podman_container:
+    name: "{{ postiz_name }}-temporal"
+    image: "{{ postiz_temporal_image }}:{{ postiz_temporal_image_tag }}"
+    network: "{{ postiz_name }}.network"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='temporal') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='temporal') }}"
+    volumes:
+      - "{{ postiz_temporal_volume_config }}.volume:/etc/temporal/config/dynamicconfig"
+    healthcheck_interval: 10s
+    healthcheck_retries: 10
+    healthcheck_start_period: 30s
+    healthcheck_timeout: 5s
+    healthcheck: CMD temporal operator cluster health --address {{ postiz_name }}-temporal:7233
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='temporal') }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='temporal') }}"
+    state: quadlet
+  notify: Restart temporal for {{ postiz_name }}
+  become: true
+
+- name: Create postiz container
+  containers.podman.podman_container:
+    name: "{{ postiz_name }}"
+    image: "{{ postiz_image }}:{{ postiz_image_tag }}"
+    network:
+      - "{{ postiz_name }}.network"
+      - "{{ postiz_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
+    volumes:
+      - "{{ postiz_volume_config }}.volume:/config"
+      - "{{ postiz_volume_uploads }}.volume:/uploads"
+    publish: "{{ postiz_traefik_enable | ternary(omit, postiz_ports) }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
+    state: quadlet
+  notify: Restart {{ postiz_name }}
+  become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers

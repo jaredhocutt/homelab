@@ -1,0 +1,50 @@
+---
+# handlers file for jaredhocutt.homelab.postiz
+
+- name: Restart {{ postiz_name }}
+  ansible.builtin.systemd:
+    name: "{{ postiz_name }}.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart postgres for {{ postiz_name }}
+  ansible.builtin.systemd:
+    name: "{{ postiz_name }}-postgres.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart redis for {{ postiz_name }}
+  ansible.builtin.systemd:
+    name: "{{ postiz_name }}-redis.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart temporal for {{ postiz_name }}
+  ansible.builtin.systemd:
+    name: "{{ postiz_name }}-temporal.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart temporal-postgres for {{ postiz_name }}
+  ansible.builtin.systemd:
+    name: "{{ postiz_name }}-temporal-postgres.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true
+
+- name: Restart temporal-elasticsearch for {{ postiz_name }}
+  ansible.builtin.systemd:
+    name: "{{ postiz_name }}-temporal-elasticsearch.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

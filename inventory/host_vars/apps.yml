@@ -368,6 +368,22 @@ pangolin_cli_container_secrets:
   - pangolin_cli_client_secret,type=env,target=CLIENT_SECRET
 
 ###############################################################################
+# postiz
+###############################################################################
+
+postiz_image_tag: v2.23.0  # skopeo list-tags docker://ghcr.io/gitroomhq/postiz-app | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+postiz_postgres_image_tag: 17.11-alpine  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^17\\.[0-9]+-alpine$"))'
+postiz_redis_image_tag: "7.2.16"  # skopeo list-tags docker://docker.io/library/redis | jq -r '.Tags[] | select(test("^7\\.2\\.[0-9]+$"))'
+postiz_temporal_postgres_image_tag: "16.15"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
+
+postiz_jwt_secret: "{{ lookup('jaredhocutt.homelab.bws', 'postiz_jwt_secret') }}"
+postiz_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'postiz_postgres_password') }}"
+postiz_temporal_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'postiz_temporal_postgres_password') }}"
+
+postiz_container_env:
+  DISABLE_REGISTRATION: "true"
+
+###############################################################################
 # profilarr
 ###############################################################################
 

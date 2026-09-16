@@ -1,0 +1,13 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    postiz_traefik_enable: false
+    postiz_jwt_secret: test-jwt-secret
+    postiz_postgres_password: test-postgres-password
+    postiz_temporal_postgres_password: test-temporal-postgres-password
+  tasks:
+    - name: Include postiz role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.postiz

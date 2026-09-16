@@ -1,0 +1,90 @@
+---
+
+- name: Stop services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: stopped
+  become: true
+  failed_when: false
+  loop:
+    - "{{ postiz_name }}.service"
+    - "{{ postiz_name }}-temporal.service"
+    - "{{ postiz_name }}-temporal-elasticsearch.service"
+    - "{{ postiz_name }}-temporal-postgres.service"
+    - "{{ postiz_name }}-redis.service"
+    - "{{ postiz_name }}-postgres.service"
+    - "{{ postiz_volume_config }}-volume.service"
+    - "{{ postiz_volume_uploads }}-volume.service"
+    - "{{ postiz_postgres_volume_data }}-volume.service"
+    - "{{ postiz_redis_volume_data }}-volume.service"
+    - "{{ postiz_temporal_volume_config }}-volume.service"
+    - "{{ postiz_temporal_postgres_volume_data }}-volume.service"
+    - "{{ postiz_temporal_elasticsearch_volume_data }}-volume.service"
+    - "{{ postiz_name }}-network.service"
+
+- name: Destroy containers
+  containers.podman.podman_container:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ postiz_name }}"
+    - "{{ postiz_name }}-temporal"
+    - "{{ postiz_name }}-temporal-elasticsearch"
+    - "{{ postiz_name }}-temporal-postgres"
+    - "{{ postiz_name }}-redis"
+    - "{{ postiz_name }}-postgres"
+
+- name: Destroy secrets
+  containers.podman.podman_secret:
+    name: "{{ item.key }}"
+    state: absent
+  become: true
+  no_log: true
+  loop: "{{ postiz_secrets_combined | dict2items }}"
+
+- name: Destroy volumes
+  containers.podman.podman_volume:
+    name: "{{ item }}"
+    state: absent
+  become: true
+  loop:
+    - "{{ postiz_volume_config }}"
+    - "{{ postiz_volume_uploads }}"
+    - "{{ postiz_postgres_volume_data }}"
+    - "{{ postiz_redis_volume_data }}"
+    - "{{ postiz_temporal_volume_config }}"
+    - "{{ postiz_temporal_postgres_volume_data }}"
+    - "{{ postiz_temporal_elasticsearch_volume_data }}"
+
+- name: Destroy network
+  containers.podman.podman_network:
+    name: "{{ postiz_name }}"
+    state: absent
+  become: true
+
+- name: Cleanup quadlet files
+  ansible.builtin.file:
+    path: /etc/containers/systemd/{{ item }}
+    state: absent
+  become: true
+  loop:
+    - "{{ postiz_name }}.container"
+    - "{{ postiz_name }}-temporal.container"
+    - "{{ postiz_name }}-temporal-elasticsearch.container"
+    - "{{ postiz_name }}-temporal-postgres.container"
+    - "{{ postiz_name }}-redis.container"
+    - "{{ postiz_name }}-postgres.container"
+    - "{{ postiz_volume_config }}.volume"
+    - "{{ postiz_volume_uploads }}.volume"
+    - "{{ postiz_postgres_volume_data }}.volume"
+    - "{{ postiz_redis_volume_data }}.volume"
+    - "{{ postiz_temporal_volume_config }}.volume"
+    - "{{ postiz_temporal_postgres_volume_data }}.volume"
+    - "{{ postiz_temporal_elasticsearch_volume_data }}.volume"
+    - "{{ postiz_name }}.network"
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true

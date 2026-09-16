@@ -1,0 +1,16 @@
+---
+# Temporal dynamic configuration, re-read by the server every 60s.
+#
+# A file must exist at DYNAMIC_CONFIG_FILE_PATH or the Temporal server refuses
+# to start: its file-based config client stats the path during init and a read
+# error is fatal. The image ships an empty docker.yaml at the default path, but
+# the quadlet volume mounted over /etc/temporal/config/dynamicconfig hides it,
+# so this file takes its place.
+#
+# Left empty on purpose — the server runs on its built-in defaults. Upstream's
+# development-sql.yaml sets limit.maxIDLength (tightening the default of 1000
+# to 255) and system.forceSearchAttributesCacheRefreshOnRead, which Temporal
+# documents as dev-only. Neither belongs in a production deployment.
+#
+# Production overrides go here:
+# https://docs.temporal.io/references/dynamic-configuration

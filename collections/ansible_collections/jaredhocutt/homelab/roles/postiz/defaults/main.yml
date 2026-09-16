@@ -1,0 +1,64 @@
+---
+# defaults file for jaredhocutt.homelab.postiz
+
+postiz_name: postiz
+
+postiz_image: ghcr.io/gitroomhq/postiz-app
+postiz_image_tag: latest
+postiz_postgres_image: docker.io/library/postgres
+postiz_postgres_image_tag: 17-alpine
+postiz_redis_image: docker.io/library/redis
+postiz_redis_image_tag: "7.2"
+postiz_temporal_image: docker.io/temporalio/auto-setup
+postiz_temporal_image_tag: 1.28.1
+postiz_temporal_postgres_image: docker.io/library/postgres
+postiz_temporal_postgres_image_tag: "16"
+postiz_temporal_elasticsearch_image: docker.io/library/elasticsearch
+postiz_temporal_elasticsearch_image_tag: 7.17.27
+
+postiz_volume_config: "{{ postiz_name }}-config"
+postiz_volume_uploads: "{{ postiz_name }}-uploads"
+postiz_postgres_volume_data: "{{ postiz_name }}-postgres-data"
+postiz_redis_volume_data: "{{ postiz_name }}-redis-data"
+postiz_temporal_volume_config: "{{ postiz_name }}-temporal-config"
+postiz_temporal_postgres_volume_data: "{{ postiz_name }}-temporal-postgres-data"
+postiz_temporal_elasticsearch_volume_data: "{{ postiz_name }}-temporal-elasticsearch-data"
+
+postiz_traefik_enable: true
+postiz_traefik_host: "{{ postiz_name }}.{{ common_traefik_domain }}"
+postiz_ports:
+  - 4007:5000
+
+postiz_secrets: {}
+
+postiz_container_env: {}
+postiz_container_secrets: []
+postiz_container_labels: {}
+postiz_container_quadlet_options: []
+
+postiz_postgres_container_env: {}
+postiz_postgres_container_secrets: []
+postiz_postgres_container_labels: {}
+postiz_postgres_container_quadlet_options: []
+
+postiz_redis_container_env: {}
+postiz_redis_container_secrets: []
+postiz_redis_container_labels: {}
+postiz_redis_container_quadlet_options: []
+
+postiz_temporal_container_env: {}
+postiz_temporal_container_secrets: []
+postiz_temporal_container_labels: {}
+postiz_temporal_container_quadlet_options: []
+
+postiz_temporal_postgres_container_env: {}
+postiz_temporal_postgres_container_secrets: []
+postiz_temporal_postgres_container_labels: {}
+postiz_temporal_postgres_container_quadlet_options: []
+
+postiz_temporal_elasticsearch_container_env: {}
+postiz_temporal_elasticsearch_container_secrets: []
+postiz_temporal_elasticsearch_container_labels: {}
+postiz_temporal_elasticsearch_container_quadlet_options: []
+
+postiz_url: https://{{ postiz_traefik_host }}
