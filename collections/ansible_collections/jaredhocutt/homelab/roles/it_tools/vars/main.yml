@@ -25,7 +25,7 @@ it_tools_container_secrets_defaults: []
 
 it_tools_container_labels_defaults: >-
   {{ it_tools_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', it_tools_name, it_tools_traefik_host, '80'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', it_tools_name, it_tools_traefik_host, '8080'), {}) }}
 
 ###############################################################################
 # Quadlet Options

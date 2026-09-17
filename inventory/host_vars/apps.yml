@@ -233,7 +233,7 @@ homebox_container_secrets:
 # it_tools
 ###############################################################################
 
-it_tools_image_tag: 2024.10.22-7ca5933  # skopeo list-tags docker://ghcr.io/corentinth/it-tools | jq -r '.Tags[] | select(test("^[0-9]{4}\\.[0-9]+\\.[0-9]+-[0-9a-f]+$"))'
+it_tools_image_tag: 2026.7.11  # skopeo list-tags docker://ghcr.io/sharevb/it-tools | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
 
 ###############################################################################
 # karakeep
