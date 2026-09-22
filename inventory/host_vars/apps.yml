@@ -399,9 +399,9 @@ prowlarr_image_tag: version-2.5.2.5491  # skopeo list-tags docker://ghcr.io/linu
 # radarr
 ###############################################################################
 
-radarr_image_tag: version-5.27.5.10198
+radarr_image_tag: version-5.27.5.10198  # skopeo list-tags docker://lscr.io/linuxserver/radarr | jq -r '.Tags[] | select(test("^version-[0-9]"))'
 
-radarr_env:
+radarr_container_env:
   PUID: "{{ global_media_uid }}"
   PGID: "{{ global_media_gid }}"
 
@@ -430,9 +430,9 @@ romm_container_env:
 # sabnzbd
 ###############################################################################
 
-sabnzbd_image_tag: version-4.5.3
+sabnzbd_image_tag: version-4.5.3  # skopeo list-tags docker://lscr.io/linuxserver/sabnzbd | jq -r '.Tags[] | select(test("^version-[0-9]"))'
 
-sabnzbd_env:
+sabnzbd_container_env:
   PUID: "{{ global_media_uid }}"
   PGID: "{{ global_media_gid }}"
   DOCKER_MODS: linuxserver/mods:universal-package-install
@@ -510,9 +510,9 @@ snipe_it_container_secrets:
 # sonarr
 ###############################################################################
 
-sonarr_image_tag: version-4.0.15.2941
+sonarr_image_tag: version-4.0.15.2941  # skopeo list-tags docker://lscr.io/linuxserver/sonarr | jq -r '.Tags[] | select(test("^version-[0-9]"))'
 
-sonarr_env:
+sonarr_container_env:
   PUID: "{{ global_media_uid }}"
   PGID: "{{ global_media_gid }}"
 
