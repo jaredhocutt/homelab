@@ -428,7 +428,7 @@ def main():
             if status == "update-available":
                 print(f"  {YELLOW}▶{RESET} {BOLD}{variable}{RESET}")
                 print(f"    Current: {current}")
-                if r["pull_warning"]:
+                if r.get("pull_warning"):
                     print(f"    Latest:  {RED}{latest}{RESET}")
                     print(f"    {RED}⚠ Not deployable: {r['pull_warning']}{RESET}")
                     print(f"    {RED}  Leave this one at {current}.{RESET}")
@@ -442,7 +442,7 @@ def main():
         print(f"  Updates:       {YELLOW}{updates_available}{RESET}")
         print(f"  Errors:        {RED}{len([r for r in results if r['status'] == 'error'])}{RESET}")
 
-        not_deployable = [r for r in results if r["pull_warning"]]
+        not_deployable = [r for r in results if r.get("pull_warning")]
         if not_deployable:
             print(f"  Not deployable:{RED}{len(not_deployable)}{RESET}")
             print()

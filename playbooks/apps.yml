@@ -185,20 +185,20 @@
         name: jaredhocutt.homelab.prowlarr
       tags: [prowlarr]
 
-    - name: Install radarr
-      ansible.builtin.import_role:
-        name: jaredhocutt.homelab.radarr
-      tags: [radarr]
+    # - name: Install radarr
+    #   ansible.builtin.import_role:
+    #     name: jaredhocutt.homelab.radarr
+    #   tags: [radarr]
 
     - name: Install romm
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.romm
       tags: [romm]
 
-    - name: Install sabnzbd
-      ansible.builtin.import_role:
-        name: jaredhocutt.homelab.sabnzbd
-      tags: [sabnzbd]
+    # - name: Install sabnzbd
+    #   ansible.builtin.import_role:
+    #     name: jaredhocutt.homelab.sabnzbd
+    #   tags: [sabnzbd]
 
     - name: Install seerr
       ansible.builtin.import_role:
@@ -225,10 +225,10 @@
         name: jaredhocutt.homelab.snipe_it
       tags: [snipe_it]
 
-    - name: Install sonarr
-      ansible.builtin.import_role:
-        name: jaredhocutt.homelab.sonarr
-      tags: [sonarr]
+    # - name: Install sonarr
+    #   ansible.builtin.import_role:
+    #     name: jaredhocutt.homelab.sonarr
+    #   tags: [sonarr]
 
     - name: Install stirling_pdf
       ansible.builtin.import_role:
