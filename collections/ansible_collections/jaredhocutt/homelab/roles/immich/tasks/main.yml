@@ -99,7 +99,7 @@
 - name: Create machine_learning container
   containers.podman.podman_container:
     name: "{{ immich_name }}-machine-learning"
-    image: "{{ immich_image }}:{{ immich_image_tag }}"
+    image: "{{ immich_machine_learning_image }}:{{ immich_machine_learning_image_tag }}"
     network: "{{ immich_name }}.network"
     env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='machine_learning') }}"
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='machine_learning') }}"

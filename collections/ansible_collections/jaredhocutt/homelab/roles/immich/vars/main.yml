@@ -11,6 +11,7 @@ immich_postgres_user: immich
 immich_container_env_defaults:
   DB_HOSTNAME: "{{ immich_name }}-postgres"
   REDIS_HOSTNAME: "{{ immich_name }}-redis"
+  IMMICH_MACHINE_LEARNING_URL: http://{{ immich_name }}-machine-learning:3003
 
 immich_machine_learning_container_env_defaults: {}
 
@@ -37,10 +38,7 @@ immich_container_secrets_defaults:
   - immich_postgres_user,type=env,target=DB_USERNAME
   - immich_postgres_password,type=env,target=DB_PASSWORD
 
-immich_machine_learning_container_secrets_defaults:
-  - immich_postgres_db_name,type=env,target=DB_DATABASE_NAME
-  - immich_postgres_user,type=env,target=DB_USERNAME
-  - immich_postgres_password,type=env,target=DB_PASSWORD
+immich_machine_learning_container_secrets_defaults: []
 
 immich_postgres_container_secrets_defaults:
   - immich_postgres_db_name,type=env,target=POSTGRES_DB

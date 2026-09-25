@@ -64,3 +64,13 @@
       ansible.builtin.assert:
         that:
           - "'ghcr.io/valkey-io/valkey' in (redis_quadlet.content | b64decode)"
+
+    - name: Read machine learning container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/immich-machine-learning.container"
+      register: machine_learning_quadlet
+
+    - name: Assert machine learning container quadlet has the expected image
+      ansible.builtin.assert:
+        that:
+          - "'ghcr.io/immich-app/immich-machine-learning' in (machine_learning_quadlet.content | b64decode)"
