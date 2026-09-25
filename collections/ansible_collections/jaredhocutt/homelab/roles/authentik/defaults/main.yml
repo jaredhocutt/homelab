@@ -13,6 +13,8 @@ authentik_volume_certs: "{{ authentik_name }}-certs"
 authentik_volume_templates: "{{ authentik_name }}-templates"
 authentik_postgres_volume_data: "{{ authentik_name }}-postgres-data"
 
+authentik_shm_size: 512mb
+
 authentik_traefik_enable: true
 authentik_traefik_host: "{{ authentik_name }}.{{ common_traefik_domain }}"
 authentik_ports:
