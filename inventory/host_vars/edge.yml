@@ -20,6 +20,7 @@ backrest_env:
 pangolin_image_tag: "ee-1.23.0"  # skopeo list-tags docker://ghcr.io/fosrl/pangolin | jq -r '.Tags[] | select(test("^ee-[0-9\\.]+$"))'
 pangolin_gerbil_image_tag: "1.5.2"  # skopeo list-tags docker://ghcr.io/fosrl/gerbil | jq -r '.Tags[] | select(test("^[0-9]\\."))'
 pangolin_traefik_image_tag: v3.7.13  # skopeo list-tags docker://ghcr.io/traefik/traefik | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+pangolin_badger_version: v1.7.0  # curl -s https://api.github.com/repos/fosrl/badger/releases/latest | jq -r .tag_name
 
 pangolin_gerbil_ports_extra:
   - 8211:8211/udp  # pangolin

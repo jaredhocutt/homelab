@@ -9,6 +9,9 @@ pangolin_gerbil_image: ghcr.io/fosrl/gerbil
 pangolin_gerbil_image_tag: latest
 pangolin_traefik_image: ghcr.io/traefik/traefik
 pangolin_traefik_image_tag: v3.6
+# Traefik plugin that enforces Pangolin resource auth; keep it in step with the
+# pangolin image, since the upstream installer pins the latest badger release
+pangolin_badger_version: v1.7.0
 
 pangolin_volume_config: "{{ pangolin_name }}-config"
 pangolin_gerbil_volume_config: "{{ pangolin_name }}-gerbil-config"
