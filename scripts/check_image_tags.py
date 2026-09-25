@@ -7,6 +7,17 @@ skopeo commands in their comments, runs those commands to get the latest
 available tags, and compares them to the current values.
 
 If no file is specified, presents an interactive list of inventory files.
+
+A tag can be held back by appending a hold marker after the skopeo command:
+
+    foo_image_tag: v1.2.3  # skopeo list-tags ... | jq ...  # hold: <reason>
+    foo_image_tag: v1.2.3  # skopeo list-tags ... | jq ...  # hold: <url>
+
+A plain-text reason reports the tag as held and never suggests an update. A
+URL points at an upstream compose file; the tag follows whatever that file
+pins for the same image, so an update is suggested only when upstream moves.
+In a raw.githubusercontent.com URL, {latest_release} is replaced with the
+repository's latest GitHub release tag.
 """
 
 import argparse
@@ -14,6 +25,8 @@ import json
 import re
 import subprocess
 import sys
+import urllib.error
+import urllib.request
 from pathlib import Path
 
 # ANSI color codes
@@ -32,6 +45,9 @@ INDEX_MEDIA_TYPES = {
     "application/vnd.docker.distribution.manifest.list.v2+json",
 }
 
+# Trailing marker that holds a tag back; see the module docstring.
+HOLD_PATTERN = re.compile(r"\s+#\s*hold:\s*(.+?)\s*$")
+
 
 def parse_image_tag_lines(file_path: Path) -> list[dict]:
     """
@@ -42,6 +58,7 @@ def parse_image_tag_lines(file_path: Path) -> list[dict]:
     - current_value: the current tag value
     - skopeo_command: the full skopeo | jq command from the comment
     - image_ref: the docker://... image reference from the skopeo command
+    - hold: the hold reason or upstream URL, or None if the tag isn't held
     - line_number: 1-based line number in the file
     """
     results = []
@@ -60,6 +77,11 @@ def parse_image_tag_lines(file_path: Path) -> list[dict]:
             match = pattern.match(line.strip())
             if match:
                 command = match.group(3)
+                hold = None
+                hold_match = HOLD_PATTERN.search(command)
+                if hold_match:
+                    hold = hold_match.group(1)
+                    command = command[: hold_match.start()]
                 ref_match = re.search(r"docker://[^\s|'\"]+", command)
                 results.append(
                     {
@@ -67,6 +89,7 @@ def parse_image_tag_lines(file_path: Path) -> list[dict]:
                         "current_value": match.group(2),
                         "skopeo_command": command,
                         "image_ref": ref_match.group(0) if ref_match else None,
+                        "hold": hold,
                         "line_number": line_number,
                     }
                 )
@@ -99,6 +122,71 @@ def run_skopeo_command(command: str, timeout: int = 30) -> list[str] | None:
         return None
     except Exception:
         return None
+
+
+def normalize_image_name(ref: str) -> str:
+    """
+    Reduce an image reference to a comparable name without its tag.
+
+    "docker://docker.io/library/elasticsearch" and "elasticsearch:7.17.27"
+    both become "elasticsearch".
+    """
+    name = ref.removeprefix("docker://").split("@", 1)[0]
+    last_slash = name.rfind("/")
+    colon = name.rfind(":")
+    if colon > last_slash:
+        name = name[:colon]
+    name = name.removeprefix("docker.io/").removeprefix("index.docker.io/")
+    return name.removeprefix("library/")
+
+
+def resolve_hold_url(url: str, timeout: int = 30) -> str:
+    """Substitute {latest_release} in a raw.githubusercontent.com URL."""
+    if "{latest_release}" not in url:
+        return url
+
+    repo_match = re.match(r"https://raw\.githubusercontent\.com/([^/]+)/([^/]+)/", url)
+    if not repo_match:
+        raise ValueError("{latest_release} only works in raw.githubusercontent.com URLs")
+
+    owner, repo = repo_match.groups()
+    api_url = f"https://api.github.com/repos/{owner}/{repo}/releases/latest"
+    with urllib.request.urlopen(api_url, timeout=timeout) as response:
+        tag = json.load(response)["tag_name"]
+    return url.replace("{latest_release}", tag)
+
+
+def get_upstream_tag(url: str, image_ref: str, timeout: int = 30) -> str:
+    """
+    Return the tag an upstream compose file pins for image_ref.
+
+    Raises ValueError if the file can't be read or doesn't pin the image.
+    """
+    try:
+        resolved_url = resolve_hold_url(url, timeout=timeout)
+        with urllib.request.urlopen(resolved_url, timeout=timeout) as response:
+            content = response.read().decode()
+    except (urllib.error.URLError, OSError, KeyError, json.JSONDecodeError) as e:
+        raise ValueError(f"could not read upstream file: {e}") from e
+
+    wanted = normalize_image_name(image_ref)
+    for line in content.splitlines():
+        image_match = re.match(r"\s*image:\s*[\"']?([^\s\"'#]+)", line)
+        if not image_match:
+            continue
+        image = image_match.group(1)
+        if normalize_image_name(image) != wanted:
+            continue
+
+        tag = image.split("@", 1)[0].rpartition(":")[2]
+        # Compose files often use ${VERSION:-default}; take the default.
+        default_match = re.fullmatch(r"\$\{[^:}]+:?-([^}]+)\}", tag)
+        if default_match:
+            tag = default_match.group(1)
+        if tag and "/" not in tag and "$" not in tag:
+            return tag
+
+    raise ValueError(f"upstream file does not pin {wanted}")
 
 
 def check_pullable(
@@ -361,6 +449,33 @@ def main():
         latest = get_latest_tag(tags, current)
         status = compare_versions(current, latest) if latest else "unknown"
 
+        # A held tag never takes the registry's newest tag. One held to an
+        # upstream URL follows that file's pin instead; any other hold stays put.
+        hold = item["hold"]
+        registry_latest = latest
+        upstream_value = None
+        if hold:
+            if re.match(r"https?://", hold):
+                try:
+                    upstream_value = get_upstream_tag(hold, item["image_ref"] or "", timeout=args.timeout)
+                except ValueError as e:
+                    print(f"{RED}failed ({e}){RESET}")
+                    results.append(
+                        {
+                            **item,
+                            "latest_value": None,
+                            "registry_latest": registry_latest,
+                            "status": "error",
+                            "error": str(e),
+                            "all_tags": tags[-10:],
+                        }
+                    )
+                    continue
+                latest = upstream_value
+                status = "held" if upstream_value == current else "update-available"
+            else:
+                status = "held"
+
         # Only the tag we are about to suggest gets verified, so this costs one
         # extra manifest fetch per available update rather than per variable.
         pull_warning = None
@@ -379,6 +494,8 @@ def main():
                 print(f"{YELLOW}update available{RESET}")
         elif status == "up-to-date":
             print(f"{GREEN}up-to-date{RESET}")
+        elif status == "held":
+            print(f"{CYAN}held{RESET}")
         else:
             print(f"{RED}unknown{RESET}")
 
@@ -386,6 +503,8 @@ def main():
             {
                 **item,
                 "latest_value": latest,
+                "registry_latest": registry_latest,
+                "upstream_value": upstream_value,
                 "status": status,
                 "pull_warning": pull_warning,
                 "all_tags": tags[-10:] if tags else [],  # Keep last 10 tags
@@ -412,8 +531,16 @@ def main():
             if r["status"] == "up-to-date" and not args.updates_only:
                 print(f"  {GREEN}✓{RESET} {variable}: {current}")
                 print()
+            elif r["status"] == "held" and not args.updates_only:
+                if r.get("upstream_value"):
+                    reason = "matches the upstream pin"
+                else:
+                    reason = f"held: {r['hold']}"
+                print(f"  {CYAN}⏸{RESET} {variable}: {current} ({reason}; newest in registry: {r['registry_latest']})")
+                print()
             elif r["status"] == "error" and not args.updates_only:
-                print(f"  {RED}✗{RESET} {variable}: {current} (failed to check)")
+                detail = r.get("error") or "failed to check"
+                print(f"  {RED}✗{RESET} {variable}: {current} ({detail})")
                 print()
 
         for r in results:
@@ -434,12 +561,15 @@ def main():
                     print(f"    {RED}  Leave this one at {current}.{RESET}")
                 else:
                     print(f"    Latest:  {GREEN}{latest}{RESET}")
+                if r.get("upstream_value"):
+                    print(f"    {CYAN}Held to upstream, which now pins {latest}: {r['hold']}{RESET}")
                 print()
 
         print(f"\n{BOLD}Summary:{RESET}")
         print(f"  Total checked: {len(results)}")
         print(f"  Up-to-date:    {GREEN}{len([r for r in results if r['status'] == 'up-to-date'])}{RESET}")
         print(f"  Updates:       {YELLOW}{updates_available}{RESET}")
+        print(f"  Held:          {CYAN}{len([r for r in results if r['status'] == 'held'])}{RESET}")
         print(f"  Errors:        {RED}{len([r for r in results if r['status'] == 'error'])}{RESET}")
 
         not_deployable = [r for r in results if r.get("pull_warning")]
