@@ -51,7 +51,7 @@
     env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
-      - "{{ go2rtc_volume_config }}:/config"
+      - "{{ go2rtc_volume_config }}.volume:/config"
     publish: "{{ go2rtc_traefik_enable | ternary(omit, go2rtc_ports) }}"
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"

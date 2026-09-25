@@ -35,5 +35,5 @@
       ansible.builtin.assert:
         that:
           - "'ghcr.io/alexxit/go2rtc' in (container_quadlet.content | b64decode)"
-          - "'go2rtc-config:/config' in (container_quadlet.content | b64decode)"
+          - "'go2rtc-config.volume:/config' in (container_quadlet.content | b64decode)"
           - "'1984:1984' in (container_quadlet.content | b64decode)"
