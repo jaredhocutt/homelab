@@ -6,7 +6,11 @@ If INVENTORY_NAME is blank, then prompt for which inventory file to use. The fil
 
 `uv run task check-image-tags inventory/host_vars/$INVENTORY_NAME.yml`
 
-Using the output of the command, make an update to the respective inventory file to update the image tags that need it. After making changes to the inventory file, output the command needed to update the apps that require it.
+Using the output of the command, make an update to the respective inventory file to update the image tags that need it.
+
+- Never change a tag the script reports as **held**.
+- For an update on a line with a `# hold: <url>` marker, set the tag to the reported latest value (the upstream pin), not the registry's newest tag, and keep the marker.
+- Skip any tag the script flags as not deployable (not pullable), and mention it in your output. After making changes to the inventory file, output the command needed to update the apps that require it.
 
 The command should be in the following format with the `--tags` populated correctly.
 
