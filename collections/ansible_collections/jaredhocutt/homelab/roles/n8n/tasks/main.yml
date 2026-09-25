@@ -13,6 +13,8 @@
       image_tag: "{{ n8n_postgres_image_tag }}"
     - image: "{{ n8n_redis_image }}"
       image_tag: "{{ n8n_redis_image_tag }}"
+    - image: "{{ n8n_runners_image }}"
+      image_tag: "{{ n8n_runners_image_tag }}"
 
 - name: Create network
   containers.podman.podman_network:
@@ -129,6 +131,20 @@
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='worker') }}"
     state: quadlet
   notify: Restart worker for {{ n8n_name }}
+  become: true
+
+- name: Create runners container
+  containers.podman.podman_container:
+    name: "{{ n8n_name }}-runners"
+    image: "{{ n8n_runners_image }}:{{ n8n_runners_image_tag }}"
+    network: "container:{{ n8n_name }}-worker"
+    env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='runners') }}"
+    secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='runners') }}"
+    labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='runners') }}"
+    quadlet_file_mode: "0600"
+    quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='runners') }}"
+    state: quadlet
+  notify: Restart runners for {{ n8n_name }}
   become: true
 
 - name: Flush handlers

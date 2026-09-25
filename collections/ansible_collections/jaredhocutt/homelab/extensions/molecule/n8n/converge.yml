@@ -5,6 +5,8 @@
   vars:
     n8n_traefik_enable: false
     n8n_postgres_password: test-postgres-password
+    n8n_encryption_key: test-encryption-key
+    n8n_runners_auth_token: test-runners-auth-token
   tasks:
     - name: Include n8n role
       ansible.builtin.include_role:

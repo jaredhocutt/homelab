@@ -32,3 +32,11 @@
     enabled: true
     daemon_reload: true
   become: true
+
+- name: Restart runners for {{ n8n_name }}
+  ansible.builtin.systemd:
+    name: "{{ n8n_name }}-runners.service"
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  become: true

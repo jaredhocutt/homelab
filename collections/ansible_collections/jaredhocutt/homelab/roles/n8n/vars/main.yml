@@ -18,12 +18,19 @@ n8n_container_env_defaults:
   EXECUTIONS_MODE: queue
   QUEUE_BULL_REDIS_HOST: "{{ n8n_name }}-redis"
   QUEUE_HEALTH_CHECK_ACTIVE: "true"
+  OFFLOAD_MANUAL_EXECUTIONS_TO_WORKERS: "true"
+  # Queue mode does not support the filesystem binary data mode
+  N8N_DEFAULT_BINARY_DATA_MODE: database
+  # Code node tasks run in the isolated runners sidecar, not inside n8n itself
+  N8N_RUNNERS_MODE: external
 
 n8n_worker_container_env_defaults: "{{ n8n_container_env_defaults }}"
 
 n8n_postgres_container_env_defaults: {}
 
 n8n_redis_container_env_defaults: {}
+
+n8n_runners_container_env_defaults: {}
 
 ###############################################################################
 # Secrets
@@ -33,6 +40,8 @@ n8n_secrets_defaults:
   n8n_postgres_db_name: "{{ n8n_postgres_db_name }}"
   n8n_postgres_user: "{{ n8n_postgres_user }}"
   n8n_postgres_password: "{{ n8n_postgres_password }}"
+  n8n_encryption_key: "{{ n8n_encryption_key }}"
+  n8n_runners_auth_token: "{{ n8n_runners_auth_token }}"
 
 n8n_secrets_combined: >-
   {{ n8n_secrets_defaults
@@ -42,6 +51,8 @@ n8n_container_secrets_defaults:
   - n8n_postgres_db_name,type=env,target=DB_POSTGRESDB_DATABASE
   - n8n_postgres_user,type=env,target=DB_POSTGRESDB_USER
   - n8n_postgres_password,type=env,target=DB_POSTGRESDB_PASSWORD
+  - n8n_encryption_key,type=env,target=N8N_ENCRYPTION_KEY
+  - n8n_runners_auth_token,type=env,target=N8N_RUNNERS_AUTH_TOKEN
 
 n8n_worker_container_secrets_defaults: "{{ n8n_container_secrets_defaults }}"
 
@@ -51,6 +62,9 @@ n8n_postgres_container_secrets_defaults:
   - n8n_postgres_password,type=env,target=POSTGRES_PASSWORD
 
 n8n_redis_container_secrets_defaults: []
+
+n8n_runners_container_secrets_defaults:
+  - n8n_runners_auth_token,type=env,target=N8N_RUNNERS_AUTH_TOKEN
 
 ###############################################################################
 # Container Labels
@@ -65,6 +79,8 @@ n8n_worker_container_labels_defaults: {}
 n8n_postgres_container_labels_defaults: {}
 
 n8n_redis_container_labels_defaults: {}
+
+n8n_runners_container_labels_defaults: {}
 
 ###############################################################################
 # Quadlet Options
@@ -93,3 +109,12 @@ n8n_worker_container_quadlet_options_defaults: "{{ common_quadlet_options_defaul
 n8n_postgres_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
 
 n8n_redis_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+
+# The runners share the worker's network namespace, so they must be restarted
+# whenever the worker is
+n8n_runners_quadlet_options_depends:
+  - |
+    [Unit]
+    Requires={{ n8n_name }}-worker.service
+    After={{ n8n_name }}-worker.service
+n8n_runners_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + n8n_runners_quadlet_options_depends }}"

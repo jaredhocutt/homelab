@@ -13,6 +13,7 @@
       - n8n-redis.container
       - n8n.container
       - n8n-worker.container
+      - n8n-runners.container
   tasks:
     - name: Stat each expected quadlet file
       ansible.builtin.stat:
@@ -39,7 +40,7 @@
     - name: Assert n8n container quadlet has the expected image, volume, and ports
       ansible.builtin.assert:
         that:
-          - "'docker.n8n.io/n8nio/n8n' in (container_quadlet.content | b64decode)"
+          - "'ghcr.io/n8n-io/n8n' in (container_quadlet.content | b64decode)"
           - "'n8n-data.volume:/home/node/.n8n' in (container_quadlet.content | b64decode)"
           - "'5678:5678' in (container_quadlet.content | b64decode)"
 
@@ -51,5 +52,16 @@
     - name: Assert worker container quadlet uses the same image and runs worker command
       ansible.builtin.assert:
         that:
-          - "'docker.n8n.io/n8nio/n8n' in (worker_quadlet.content | b64decode)"
+          - "'ghcr.io/n8n-io/n8n' in (worker_quadlet.content | b64decode)"
           - "'worker' in (worker_quadlet.content | b64decode)"
+
+    - name: Read runners container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/n8n-runners.container"
+      register: runners_quadlet
+
+    - name: Assert runners container quadlet uses the runners image and the worker's network
+      ansible.builtin.assert:
+        that:
+          - "'ghcr.io/n8n-io/runners' in (runners_quadlet.content | b64decode)"
+          - "'Network=container:n8n-worker' in (runners_quadlet.content | b64decode)"

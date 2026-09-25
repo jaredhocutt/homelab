@@ -7,6 +7,7 @@
   become: true
   failed_when: false
   loop:
+    - "{{ n8n_name }}-runners.service"
     - "{{ n8n_name }}.service"
     - "{{ n8n_name }}-worker.service"
     - "{{ n8n_name }}-redis.service"
@@ -22,6 +23,7 @@
     state: absent
   become: true
   loop:
+    - "{{ n8n_name }}-runners"
     - "{{ n8n_name }}"
     - "{{ n8n_name }}-worker"
     - "{{ n8n_name }}-redis"
@@ -57,6 +59,7 @@
     state: absent
   become: true
   loop:
+    - "{{ n8n_name }}-runners.container"
     - "{{ n8n_name }}.container"
     - "{{ n8n_name }}-worker.container"
     - "{{ n8n_name }}-redis.container"
