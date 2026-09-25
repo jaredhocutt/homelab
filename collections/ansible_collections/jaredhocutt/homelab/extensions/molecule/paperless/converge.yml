@@ -5,6 +5,7 @@
   vars:
     paperless_traefik_enable: false
     paperless_postgres_password: test-postgres-password
+    paperless_secret_key: test-secret-key
   tasks:
     - name: Include paperless role
       ansible.builtin.include_role:

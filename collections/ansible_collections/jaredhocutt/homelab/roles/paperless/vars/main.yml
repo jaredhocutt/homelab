@@ -38,6 +38,7 @@ paperless_secrets_defaults:
   paperless_postgres_db_name: "{{ paperless_postgres_db_name }}"
   paperless_postgres_user: "{{ paperless_postgres_user }}"
   paperless_postgres_password: "{{ paperless_postgres_password }}"
+  paperless_secret_key: "{{ paperless_secret_key }}"
 
 paperless_secrets_combined: >-
   {{ paperless_secrets_defaults
@@ -47,6 +48,7 @@ paperless_container_secrets_defaults:
   - paperless_postgres_db_name,type=env,target=PAPERLESS_DBNAME
   - paperless_postgres_user,type=env,target=PAPERLESS_DBUSER
   - paperless_postgres_password,type=env,target=PAPERLESS_DBPASS
+  - paperless_secret_key,type=env,target=PAPERLESS_SECRET_KEY
 
 paperless_postgres_container_secrets_defaults:
   - paperless_postgres_db_name,type=env,target=POSTGRES_DB

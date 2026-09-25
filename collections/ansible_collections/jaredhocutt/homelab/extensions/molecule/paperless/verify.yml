@@ -47,3 +47,14 @@
         that:
           - "'ghcr.io/paperless-ngx/paperless-ngx' in (container_quadlet.content | b64decode)"
           - "'8000:8000' in (container_quadlet.content | b64decode)"
+
+    - name: Read postgres container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/paperless-postgres.container"
+      register: postgres_quadlet
+
+    - name: Assert postgres container quadlet mounts the volume where Postgres 18+ expects it
+      ansible.builtin.assert:
+        that:
+          - "'paperless-postgres-data.volume:/var/lib/postgresql' in (postgres_quadlet.content | b64decode)"
+          - "'/var/lib/postgresql/data' not in (postgres_quadlet.content | b64decode)"
