@@ -6,7 +6,7 @@ romm_name: romm
 romm_image: docker.io/rommapp/romm
 romm_image_tag: latest
 romm_mariadb_image: docker.io/library/mariadb
-romm_mariadb_image_tag: "11"
+romm_mariadb_image_tag: latest
 
 romm_volume_resources: "{{ romm_name }}-resources"
 romm_volume_assets: "{{ romm_name }}-assets"
@@ -18,7 +18,7 @@ romm_mariadb_volume_data: "{{ romm_name }}-mariadb-data"
 romm_traefik_enable: true
 romm_traefik_host: "{{ romm_name }}.{{ common_traefik_domain }}"
 romm_ports:
-  - 8087:8080
+  - 80:8080
 
 romm_secrets: {}
 
