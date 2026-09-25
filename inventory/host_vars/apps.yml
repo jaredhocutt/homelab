@@ -104,6 +104,19 @@ board_game_tracker_postgres_image_tag: "16.15"  # skopeo list-tags docker://dock
 board_game_tracker_jwt_secret: "{{ lookup('jaredhocutt.homelab.bws', 'board_game_tracker_jwt_secret') }}"
 board_game_tracker_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'board_game_tracker_postgres_password') }}"
 
+board_game_tracker_container_env:
+  SMTP_HOST: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_host') }}"
+  SMTP_PORT: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_port') }}"
+  SMTP_USERNAME: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_username') }}"
+  SMTP_USE_SSL: "true"
+  SMTP_FROM_ADDRESS: "{{ lookup('jaredhocutt.homelab.bws', 'board_game_tracker_smtp_from') }}"
+  SMTP_FROM_NAME: Board Game Tracker
+
+board_game_tracker_secrets:
+  board_game_tracker_smtp_password: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_password') }}"
+board_game_tracker_container_secrets:
+  - board_game_tracker_smtp_password,type=env,target=SMTP_PASSWORD
+
 ###############################################################################
 # calibre_web_automated
 ###############################################################################
