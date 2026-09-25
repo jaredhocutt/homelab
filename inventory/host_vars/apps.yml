@@ -53,7 +53,7 @@ newt_audiobookshelf_container_secrets:
 # backrest
 ###############################################################################
 
-backrest_version: v1.11.2
+backrest_version: v1.14.1
 
 backrest_traefik_host: "backrest-apps.{{ common_traefik_domain }}"
 

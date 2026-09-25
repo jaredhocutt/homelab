@@ -6,7 +6,7 @@ ansible_python_interpreter: python3
 # backrest
 ###############################################################################
 
-backrest_version: v1.11.2
+backrest_version: v1.14.1
 
 backrest_traefik_enable: false
 
