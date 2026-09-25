@@ -42,21 +42,6 @@ pangolin_smtp_password: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_pass
 pangolin_no_reply: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_smtp_no_reply') }}"
 
 ###############################################################################
-# pangolin_cli
-###############################################################################
-
-pangolin_cli_image_tag: "0.17.0"  # skopeo list-tags docker://ghcr.io/fosrl/cli | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
-
-pangolin_cli_endpoint: https://pangolin.{{ lookup('jaredhocutt.homelab.bws', 'pangolin_base_domain') }}
-
-pangolin_cli_secrets:
-  pangolin_cli_client_id: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_cli_edge_client_id') }}"
-  pangolin_cli_client_secret: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_cli_edge_client_secret') }}"
-pangolin_cli_container_secrets:
-  - pangolin_cli_client_id,type=env,target=CLIENT_ID
-  - pangolin_cli_client_secret,type=env,target=CLIENT_SECRET
-
-###############################################################################
 # server_setup
 ###############################################################################
 
