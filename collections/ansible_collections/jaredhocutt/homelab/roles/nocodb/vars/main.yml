@@ -19,7 +19,8 @@ nocodb_postgres_container_env_defaults: {}
 ###############################################################################
 
 nocodb_secrets_defaults:
-  nocodb_db: pg://{{ nocodb_name }}-postgres:5432?u={{ nocodb_postgres_user }}&p={{ nocodb_postgres_password }}&d={{ nocodb_postgres_db_name }}"
+  nocodb_db: >-
+    pg://{{ nocodb_name }}-postgres:5432?u={{ nocodb_postgres_user }}&p={{ nocodb_postgres_password | urlencode }}&d={{ nocodb_postgres_db_name }}
   nocodb_postgres_db_name: "{{ nocodb_postgres_db_name }}"
   nocodb_postgres_user: "{{ nocodb_postgres_user }}"
   nocodb_postgres_password: "{{ nocodb_postgres_password }}"
