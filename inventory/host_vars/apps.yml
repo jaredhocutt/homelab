@@ -196,6 +196,12 @@ healthchecks_container_labels:
   traefik.http.routers.healthchecks-noauth.entrypoints: websecure
   traefik.http.routers.healthchecks-noauth.service: healthchecks
   traefik.http.routers.healthchecks-noauth.priority: "1000"
+  traefik.http.routers.healthchecks-noauth.middlewares: healthchecks-strip-auth-headers
+  # The noauth router bypasses Authentik, so strip any client-supplied identity
+  # header; otherwise REMOTE_USER_HEADER would trust it and log the client in.
+  # The underscore spelling is stripped too since WSGI maps it to the same key.
+  traefik.http.middlewares.healthchecks-strip-auth-headers.headers.customrequestheaders.X-Authentik-Email: ""
+  traefik.http.middlewares.healthchecks-strip-auth-headers.headers.customrequestheaders.X_Authentik_Email: ""
 
 healthchecks_secrets:
   healthchecks_discord_client_id: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_discord_client_id') }}"
