@@ -422,9 +422,24 @@ romm_mariadb_root_password: "{{ lookup('jaredhocutt.homelab.bws', 'romm_mariadb_
 romm_mariadb_password: "{{ lookup('jaredhocutt.homelab.bws', 'romm_mariadb_password') }}"
 
 romm_container_env:
+  ROMM_BASE_URL: https://romm.{{ common_traefik_domain }}
   HASHEOUS_API_ENABLED: "true"
   SCAN_WORKERS: "2"
   WEB_SERVER_CONCURRENCY: "3"
+  OIDC_ENABLED: "true"
+  OIDC_PROVIDER: Hocutt SSO
+  OIDC_AUTOLOGIN: "true"
+  OIDC_RP_INITIATED_LOGOUT: "true"
+  OIDC_REDIRECT_URI: https://romm.{{ common_traefik_domain }}/api/oauth/openid
+  OIDC_SERVER_APPLICATION_URL: "{{ lookup('jaredhocutt.homelab.bws', 'romm_oidc_server_application_url') }}"
+  OIDC_END_SESSION_ENDPOINT: "{{ lookup('jaredhocutt.homelab.bws', 'romm_oidc_end_session_endpoint') }}"
+
+romm_secrets:
+  romm_oidc_client_id: "{{ lookup('jaredhocutt.homelab.bws', 'romm_oidc_client_id') }}"
+  romm_oidc_client_secret: "{{ lookup('jaredhocutt.homelab.bws', 'romm_oidc_client_secret') }}"
+romm_container_secrets:
+  - romm_oidc_client_id,type=env,target=OIDC_CLIENT_ID
+  - romm_oidc_client_secret,type=env,target=OIDC_CLIENT_SECRET
 
 ###############################################################################
 # sabnzbd
