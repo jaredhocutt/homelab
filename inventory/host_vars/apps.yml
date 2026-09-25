@@ -618,7 +618,7 @@ tautulli_image_tag: version-v2.18.1  # skopeo list-tags docker://lscr.io/linuxse
 ###############################################################################
 
 tracearr_image_tag: "2.4.1"  # skopeo list-tags docker://ghcr.io/connorgallopo/tracearr | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
-tracearr_timescaledb_image_tag: pg18.1-ts2.25.0  # The project hard codes this tag, so let's keep it
+tracearr_timescaledb_image_tag: pg18.4-ts2.29.1  # skopeo list-tags docker://docker.io/timescale/timescaledb-ha | jq -r '.Tags[] | select(test("^pg18\\.[0-9]+-ts[0-9\\.]+$"))'  # hold: https://raw.githubusercontent.com/connorgallopo/tracearr/main/docker/examples/docker-compose.pg18.yml
 tracearr_redis_image_tag: 8.10.2-alpine  # skopeo list-tags docker://docker.io/library/redis | jq -r '.Tags[] | select(test("^8\\.[0-9\\.]*-alpine$"))'
 
 tracearr_timescaledb_password: "{{ lookup('jaredhocutt.homelab.bws', 'tracearr_timescaledb_password') }}"
