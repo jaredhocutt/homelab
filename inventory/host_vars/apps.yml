@@ -457,6 +457,8 @@ newt_seerr_container_secrets:
 # server_setup
 ###############################################################################
 
+server_setup_dnf_automatic: true
+
 _additional_users:
   - fullname: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_3_fullname') }}"
     username: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_3_username') }}"

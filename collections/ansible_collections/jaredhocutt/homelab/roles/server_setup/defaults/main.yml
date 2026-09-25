@@ -8,3 +8,9 @@ server_setup_users: []
 
 server_setup_dnf_automatic: false
 server_setup_fail2ban: false
+
+server_setup_dnf_automatic_upgrade_type: default
+server_setup_dnf_automatic_reboot: when-needed
+server_setup_dnf_automatic_emit_via:
+  - stdio
+  - motd

@@ -1,3 +1,11 @@
+# {{ ansible_managed }}
+
 [commands]
-apply_updates=True
-reboot=when-needed
+upgrade_type = {{ server_setup_dnf_automatic_upgrade_type }}
+download_updates = True
+apply_updates = True
+reboot = {{ server_setup_dnf_automatic_reboot }}
+
+[emitters]
+system_name = {{ inventory_hostname }}
+emit_via = {{ server_setup_dnf_automatic_emit_via | join(",") }}
