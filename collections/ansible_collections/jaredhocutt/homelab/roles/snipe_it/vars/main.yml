@@ -12,7 +12,7 @@ snipe_it_container_env_defaults:
   APP_ENV: production
   APP_DEBUG: "false"
   APP_URL: "https://{{ snipe_it_traefik_host }}"
-  APP_TIMEZONE: "America/New_York"
+  APP_TIMEZONE: "{{ common_timezone }}"
   APP_LOCALE: "en-US"
   MAX_RESULTS: 500
   PRIVATE_FILESYSTEM_DISK: local

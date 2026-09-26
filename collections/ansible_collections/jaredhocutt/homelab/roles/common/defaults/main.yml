@@ -1,6 +1,8 @@
 ---
 # defaults file for jaredhocutt.homelab.common
 
+common_timezone: America/New_York
+
 common_traefik_domain: podman.localhost
 common_traefik_entrypoint: websecure
 common_traefik_network: "{{ traefik_name | default('traefik') }}"

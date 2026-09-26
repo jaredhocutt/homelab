@@ -9,3 +9,5 @@ kickstart_storage_additional: []
 kickstart_storage_volume_groups: []
 
 kickstart_users: []
+
+kickstart_timezone: America/New_York

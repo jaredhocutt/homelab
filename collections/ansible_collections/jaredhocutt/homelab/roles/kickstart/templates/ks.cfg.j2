@@ -43,7 +43,7 @@ logvol {{ logical_volume.mountpoint }} --fstype="{{ logical_volume.filesystem }}
 {% endfor -%}
 
 # System timezone
-timezone America/New_York --utc
+timezone {{ kickstart_timezone }} --utc
 
 # Users
 rootpw --lock
