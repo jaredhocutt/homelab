@@ -16,5 +16,9 @@
   ansible.builtin.include_tasks: fail2ban.yml
   when: server_setup_fail2ban
 
+- name: Harden sshd
+  ansible.builtin.include_tasks: sshd.yml
+  when: server_setup_sshd_hardening
+
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers

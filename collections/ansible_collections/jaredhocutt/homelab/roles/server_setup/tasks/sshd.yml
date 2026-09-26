@@ -1,0 +1,20 @@
+---
+
+- name: Configure sshd hardening
+  ansible.builtin.template:
+    src: sshd-hardening.conf.j2
+    dest: /etc/ssh/sshd_config.d/01-hardening.conf
+    owner: root
+    group: root
+    mode: "0600"
+    validate: /usr/sbin/sshd -t -f %s
+  notify: Reload sshd
+  become: true
+
+- name: Validate the full sshd configuration
+  ansible.builtin.command: /usr/sbin/sshd -t
+  changed_when: false
+  become: true
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
