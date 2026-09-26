@@ -669,13 +669,20 @@ warracker_container_env:
   OIDC_ISSUER_URL: "{{ lookup('jaredhocutt.homelab.bws', 'warracker_oidc_issuer_url') }}"
   OIDC_ADMIN_GROUP: "{{ lookup('jaredhocutt.homelab.bws', 'warracker_oidc_admin_group') }}"
   OIDC_ONLY_MODE: "true"
+  SMTP_HOST: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_host') }}"
+  SMTP_PORT: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_port') }}"
+  SMTP_USERNAME: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_username') }}"
+  SMTP_FROM_ADDRESS: "{{ lookup('jaredhocutt.homelab.bws', 'warracker_smtp_from') }}"
+  SMTP_SENDER_EMAIL: "{{ lookup('jaredhocutt.homelab.bws', 'warracker_smtp_from') }}"
 
 warracker_secrets:
   warracker_oidc_client_id: "{{ lookup('jaredhocutt.homelab.bws', 'warracker_oidc_client_id') }}"
   warracker_oidc_client_secret: "{{ lookup('jaredhocutt.homelab.bws', 'warracker_oidc_client_secret') }}"
+  warracker_smtp_password: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_password') }}"
 warracker_container_secrets:
   - warracker_oidc_client_id,type=env,target=OIDC_CLIENT_ID
   - warracker_oidc_client_secret,type=env,target=OIDC_CLIENT_SECRET
+  - warracker_smtp_password,type=env,target=SMTP_PASSWORD
 
 ###############################################################################
 # youtarr
