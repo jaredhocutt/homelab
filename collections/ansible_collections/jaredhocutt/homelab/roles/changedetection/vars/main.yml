@@ -7,6 +7,7 @@
 
 changedetection_container_env_defaults:
   PLAYWRIGHT_DRIVER_URL: "ws://{{ changedetection_name }}-browser:3000"
+  BASE_URL: "https://{{ changedetection_traefik_host }}"
 
 changedetection_browser_container_env_defaults:
   SCREEN_WIDTH: "1920"
