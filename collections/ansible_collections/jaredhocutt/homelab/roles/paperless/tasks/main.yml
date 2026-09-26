@@ -79,6 +79,7 @@
     healthcheck_timeout: 5s
     healthcheck: CMD-SHELL pg_isready -d {{ paperless_postgres_db_name }} -U {{ paperless_postgres_user }}
     healthcheck_failure_action: kill
+    sdnotify: healthy
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='postgres') }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='postgres') }}"
@@ -101,6 +102,7 @@
     healthcheck_timeout: 3s
     healthcheck: CMD-SHELL redis-cli ping | grep PONG
     healthcheck_failure_action: kill
+    sdnotify: healthy
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='redis') }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='redis') }}"
@@ -122,6 +124,7 @@
     healthcheck_timeout: 10s
     healthcheck: CMD-SHELL curl -f http://localhost:3000/health
     healthcheck_failure_action: kill
+    sdnotify: healthy
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='gotenberg') }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='gotenberg') }}"
@@ -165,6 +168,7 @@
     healthcheck_timeout: 10s
     healthcheck: CMD-SHELL /usr/bin/curl -fs -S --max-time 2 http://localhost:8000
     healthcheck_failure_action: kill
+    sdnotify: healthy
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
     state: quadlet

@@ -66,6 +66,7 @@
     healthcheck_timeout: 5s
     healthcheck: CMD-SHELL pg_isready -d {{ n8n_postgres_db_name }} -U {{ n8n_postgres_user }}
     healthcheck_failure_action: kill
+    sdnotify: healthy
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='postgres') }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='postgres') }}"
@@ -87,6 +88,7 @@
     healthcheck_timeout: 5s
     healthcheck: CMD-SHELL redis-cli ping
     healthcheck_failure_action: kill
+    sdnotify: healthy
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='redis') }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='redis') }}"
@@ -112,6 +114,7 @@
     healthcheck_timeout: 10s
     healthcheck: CMD-SHELL wget -q --spider http://localhost:5678/healthz || exit 1
     healthcheck_failure_action: kill
+    sdnotify: healthy
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
@@ -135,6 +138,7 @@
     healthcheck_timeout: 5s
     healthcheck: CMD-SHELL wget -q --spider http://localhost:5678/healthz || exit 1
     healthcheck_failure_action: kill
+    sdnotify: healthy
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='worker') }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='worker') }}"

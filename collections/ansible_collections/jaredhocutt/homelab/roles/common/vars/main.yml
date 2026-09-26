@@ -17,6 +17,7 @@ common_container_quadlet_options_defaults:
   - |
     [Service]
     Restart=always
+    TimeoutStartSec=300
   - |
     [Install]
     WantedBy=multi-user.target

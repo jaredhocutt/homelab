@@ -66,6 +66,7 @@
     healthcheck_timeout: 3s
     healthcheck: CMD-SHELL redis-cli ping | grep PONG
     healthcheck_failure_action: kill
+    sdnotify: healthy
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='redis') }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='redis') }}"
@@ -91,6 +92,7 @@
     healthcheck_timeout: 5s
     healthcheck: CMD-SHELL curl -f http://localhost:7700/health
     healthcheck_failure_action: kill
+    sdnotify: healthy
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='meilisearch') }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='meilisearch') }}"

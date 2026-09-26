@@ -62,6 +62,7 @@
     healthcheck_timeout: 5s
     healthcheck: CMD-SHELL pg_isready -d {{ tandoor_postgres_db_name }} -U {{ tandoor_postgres_user }}
     healthcheck_failure_action: kill
+    sdnotify: healthy
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='postgres') }}"
     state: quadlet

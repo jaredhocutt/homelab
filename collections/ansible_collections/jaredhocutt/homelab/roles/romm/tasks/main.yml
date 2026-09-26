@@ -68,6 +68,7 @@
     healthcheck_timeout: 5s
     healthcheck: CMD healthcheck.sh --connect --innodb_initialized
     healthcheck_failure_action: kill
+    sdnotify: healthy
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='mariadb') }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='mariadb') }}"
