@@ -94,6 +94,12 @@
       - "{{ romm_volume_redis_data }}.volume:/redis-data"
       - "{{ romm_volume_library }}.volume:/romm/library:z"
     publish: "{{ romm_traefik_enable | ternary(omit, romm_ports) }}"
+    healthcheck_interval: 30s
+    healthcheck_retries: 3
+    healthcheck_start_period: 60s
+    healthcheck_timeout: 10s
+    healthcheck: CMD-SHELL wget -q --spider http://127.0.0.1:8080/api/heartbeat || exit 1
+    healthcheck_failure_action: kill
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
