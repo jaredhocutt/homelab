@@ -5,9 +5,7 @@
   ansible.builtin.dnf:
     name:
       - podman
-      - podman-compose
       - podman-tui
-      - dbus-tools
     state: present
   become: true
 
@@ -20,23 +18,43 @@
   become: true
   when: podman_enable_socket
 
-- name: Install podman firewalld reload
-  ansible.builtin.copy:
-    src: podman-firewalld-reload.sh
-    dest: /usr/local/bin/podman-firewalld-reload
-    owner: root
-    group: root
-    mode: "0755"
+# TODO: remove this cleanup block once every host has run it. The custom
+# dbus-monitor script was replaced by netavark-firewalld-reload.service.
+- name: Check for legacy podman firewalld reload service
+  ansible.builtin.stat:
+    path: /etc/systemd/system/podman-firewalld-reload.service
+  register: podman_legacy_firewalld_reload
+
+- name: Stop and disable legacy podman firewalld reload service
+  ansible.builtin.systemd:
+    name: podman-firewalld-reload.service
+    state: stopped
+    enabled: false
+  become: true
+  when: podman_legacy_firewalld_reload.stat.exists
+
+- name: Remove legacy podman firewalld reload files
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/systemd/system/podman-firewalld-reload.service
+    - /usr/local/bin/podman-firewalld-reload
   become: true
 
-- name: Create systemd service for podman firewalld reload
-  ansible.builtin.copy:
-    src: podman-firewalld-reload.service
-    dest: /etc/systemd/system/podman-firewalld-reload.service
-    owner: root
-    group: root
-    mode: "0644"
-  notify: Restart podman-firewalld-reload
+- name: Reload systemd after removing legacy podman firewalld reload service
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
+  when: podman_legacy_firewalld_reload.stat.exists
+
+# netavark ships this unit but doesn't enable it. It reapplies container
+# firewall rules when firewalld starts, restarts, or reloads.
+- name: Enable and start netavark firewalld reload service
+  ansible.builtin.systemd:
+    name: netavark-firewalld-reload.service
+    state: started
+    enabled: true
   become: true
 
 - name: Login to podman registries
