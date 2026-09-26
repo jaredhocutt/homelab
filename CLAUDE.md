@@ -41,7 +41,7 @@ The collection at `collections/ansible_collections/jaredhocutt/homelab/` is wher
 - `plugins/lookup/` — three custom lookups that roles depend on heavily:
   - `bws` — pulls secrets from Bitwarden Secrets Manager. Used everywhere a credential is needed, including in `inventory/hosts.yml` to resolve `ansible_host` IPs and in playbook `environment:` blocks (e.g. `CLOUDFLARE_TOKEN`, `DIGITALOCEAN_TOKEN`).
   - `container_config` — generates `env`, `secrets`, `labels`, and `quadlet_options` arguments for `containers.podman.podman_container` from role variables. Roles call it as `lookup('jaredhocutt.homelab.container_config', 'env'|'secrets'|'labels'|'quadlet_options')` rather than building those dicts inline.
-  - `traefik_labels` — generates Traefik router/service/middleware labels for container-based services.
+  - `traefik_labels` — generates Traefik router/service/middleware labels for container-based services. Every role passes `auth=<role>_traefik_auth` (default `false`) and `noauth_paths=<role>_traefik_noauth_paths` (default `[]`), so putting a service behind Authentik forward-auth, with bypass paths for APIs or webhooks, is an inventory change. The noauth router strips client-supplied `X-Authentik-*` headers; never hand-roll these labels in inventory.
 - `extensions/molecule/` — molecule scenarios, one directory per role. Shared config lives in `extensions/molecule/config.yml`, `prepare.yml`, and `Dockerfile.j2`; per-role `molecule.yml` files inherit from these and add overrides only when needed. **The `newt` role is the canonical reference scenario** (chosen for its simplicity) — copy it when adding new tests.
 
 ### Role pattern
