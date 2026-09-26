@@ -221,7 +221,7 @@ healthchecks_container_secrets:
 ###############################################################################
 
 homebox_image_tag: "0.26.2"  # skopeo list-tags docker://ghcr.io/sysadminsmedia/homebox | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
-homebox_postgres_image_tag: "17.9"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^17\\.[0-9]$"))'
+homebox_postgres_image_tag: "17.11"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^17\\.[0-9]+$"))'
 
 homebox_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'homebox_postgres_password') }}"
 homebox_auth_api_key_pepper: "{{ lookup('jaredhocutt.homelab.bws', 'homebox_auth_api_key_pepper') }}"
