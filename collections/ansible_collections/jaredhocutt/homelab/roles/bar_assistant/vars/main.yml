@@ -23,6 +23,9 @@ bar_assistant_redis_container_env_defaults:
 bar_assistant_meilisearch_container_env_defaults:
   MEILI_ENV: production
   MEILI_NO_ANALYTICS: "true"
+  # Upgrade the database in place when the image version changes; a no-op
+  # otherwise. Needs meilisearch >= v1.51 and a database from >= v1.12.
+  MEILI_UPGRADE_DB: "true"
 
 ###############################################################################
 # Secrets
