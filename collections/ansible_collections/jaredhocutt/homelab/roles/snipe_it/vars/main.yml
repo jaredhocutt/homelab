@@ -23,6 +23,11 @@ snipe_it_container_env_defaults:
   ALLOW_BACKUP_DELETE: "false"
   ALLOW_DATA_PURGE: "false"
   IMAGE_LIB: gd
+  # Traefik reaches the container over a podman network (10.89.0.0/16 and up),
+  # so trust its X-Forwarded-* headers for the scheme and client IP.
+  APP_TRUSTED_PROXIES: 10.0.0.0/8
+  APP_FORCE_TLS: "true"
+  SECURE_COOKIES: "true"
 
 snipe_it_mariadb_container_env_defaults: {}
 
