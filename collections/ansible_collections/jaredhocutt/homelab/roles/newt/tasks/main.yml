@@ -26,6 +26,11 @@
     network: "{{ ('container:' + newt_attach_to) if newt_network_mode == 'container' else omit }}"
     env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
+    healthcheck_interval: 30s
+    healthcheck_retries: 3
+    healthcheck_start_period: 10s
+    healthcheck_timeout: 5s
+    healthcheck: CMD-SHELL test -f /tmp/healthy
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"

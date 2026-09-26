@@ -62,6 +62,11 @@
       - "{{ audiobookshelf_volume_audiobooks }}.volume:/audiobooks"
       - "{{ audiobookshelf_volume_podcasts }}.volume:/podcasts"
     publish: "{{ audiobookshelf_traefik_enable | ternary(omit, audiobookshelf_ports) }}"
+    healthcheck_interval: 30s
+    healthcheck_retries: 3
+    healthcheck_start_period: 30s
+    healthcheck_timeout: 5s
+    healthcheck: CMD-SHELL wget -q --spider http://localhost:80/healthcheck || exit 1
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"

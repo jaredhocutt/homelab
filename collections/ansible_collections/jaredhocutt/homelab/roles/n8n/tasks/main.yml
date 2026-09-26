@@ -126,6 +126,11 @@
     volumes:
       - "{{ n8n_volume_data }}.volume:/home/node/.n8n"
     command: worker
+    healthcheck_interval: 30s
+    healthcheck_retries: 5
+    healthcheck_start_period: 30s
+    healthcheck_timeout: 5s
+    healthcheck: CMD-SHELL wget -q --spider http://localhost:5678/healthz || exit 1
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='worker') }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='worker') }}"
