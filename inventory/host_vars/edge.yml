@@ -159,6 +159,12 @@ digitalocean_firewall_pangolin_inbound_rules:
         - "0.0.0.0/0"
         - "::/0"
   - protocol: udp
+    ports: "443"
+    sources:
+      addresses:
+        - "0.0.0.0/0"
+        - "::/0"
+  - protocol: udp
     ports: "21820"
     sources:
       addresses:

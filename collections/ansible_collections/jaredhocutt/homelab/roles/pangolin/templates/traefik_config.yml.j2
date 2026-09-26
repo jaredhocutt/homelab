@@ -42,6 +42,8 @@ entryPoints:
     transport:
       respondingTimeouts:
         readTimeout: "30m"
+    http3:
+      advertisedPort: 443
     http:
       tls:
         certResolver: letsencrypt

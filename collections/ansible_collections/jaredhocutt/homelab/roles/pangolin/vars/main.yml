@@ -4,6 +4,7 @@
 pangolin_gerbil_ports_defaults:
   - 80:80
   - 443:443
+  - 443:443/udp
   - 51820:51820/udp
   - 21820:21820/udp
 
