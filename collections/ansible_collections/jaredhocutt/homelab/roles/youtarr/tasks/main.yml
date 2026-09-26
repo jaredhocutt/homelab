@@ -65,6 +65,7 @@
     healthcheck_retries: 5
     healthcheck_timeout: 1s
     healthcheck: CMD healthcheck.sh --connect --innodb_initialized
+    healthcheck_failure_action: kill
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels', container='mariadb') }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options', container='mariadb') }}"
@@ -94,6 +95,7 @@
     healthcheck_start_period: 40s
     healthcheck_timeout: 10s
     healthcheck: CMD curl --fail --silent --show-error --output /dev/null http://localhost:3011/api/health
+    healthcheck_failure_action: kill
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"

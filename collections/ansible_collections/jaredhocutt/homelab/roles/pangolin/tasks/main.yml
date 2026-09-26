@@ -125,6 +125,7 @@
     healthcheck_retries: 15
     healthcheck_timeout: 10s
     healthcheck: CMD curl -f http://localhost:3001/api/v1/
+    healthcheck_failure_action: kill
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"

@@ -31,6 +31,7 @@
     healthcheck_start_period: 10s
     healthcheck_timeout: 5s
     healthcheck: CMD-SHELL test -f /tmp/healthy
+    healthcheck_failure_action: kill
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
     quadlet_options: "{{ lookup('jaredhocutt.homelab.container_config', 'quadlet_options') }}"
