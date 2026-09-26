@@ -230,11 +230,6 @@
     #     name: jaredhocutt.homelab.sonarr
     #   tags: [sonarr]
 
-    - name: Install stirling_pdf
-      ansible.builtin.import_role:
-        name: jaredhocutt.homelab.stirling_pdf
-      tags: [stirling_pdf]
-
     - name: Install tandoor
       ansible.builtin.import_role:
         name: jaredhocutt.homelab.tandoor

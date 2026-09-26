@@ -561,15 +561,6 @@ sonarr_volume_media: "{{ global_volume_media }}"
 sonarr_volume_media_options: "{{ global_volume_media_options }}"
 
 ###############################################################################
-# stirling_pdf
-###############################################################################
-
-stirling_pdf_image_tag: 3.0.0-fat  # skopeo list-tags docker://docker.stirlingpdf.com/stirlingtools/stirling-pdf | jq -r '.Tags[] | select(test("^[0-9\\.]+-fat$"))'
-
-stirling_pdf_container_env:
-  DOCKER_ENABLE_SECURITY: "false"
-
-###############################################################################
 # tandoor
 ###############################################################################
 
