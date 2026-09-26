@@ -12,6 +12,8 @@ profilarr_volume_config: "{{ profilarr_name }}-config"
 
 profilarr_traefik_enable: true
 profilarr_traefik_host: "{{ profilarr_name }}.{{ common_traefik_domain }}"
+profilarr_traefik_auth: false
+profilarr_traefik_noauth_paths: []
 profilarr_ports:
   - 6868:6868
 

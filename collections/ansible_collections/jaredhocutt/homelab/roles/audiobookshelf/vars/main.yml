@@ -25,7 +25,8 @@ audiobookshelf_container_secrets_defaults: []
 
 audiobookshelf_container_labels_defaults: >
   {{ audiobookshelf_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', audiobookshelf_name, audiobookshelf_traefik_host, '80'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', audiobookshelf_name, audiobookshelf_traefik_host, '80',
+      auth=audiobookshelf_traefik_auth, noauth_paths=audiobookshelf_traefik_noauth_paths), {}) }}
 
 ###############################################################################
 # Quadlet Options

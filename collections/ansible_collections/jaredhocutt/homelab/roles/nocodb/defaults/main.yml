@@ -13,6 +13,8 @@ nocodb_postgres_volume_data: "{{ nocodb_name }}-postgres-data"
 
 nocodb_traefik_enable: true
 nocodb_traefik_host: "{{ nocodb_name }}.{{ common_traefik_domain }}"
+nocodb_traefik_auth: false
+nocodb_traefik_noauth_paths: []
 nocodb_ports:
   - 8080:8080
 

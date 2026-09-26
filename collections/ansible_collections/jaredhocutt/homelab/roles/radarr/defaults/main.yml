@@ -12,6 +12,8 @@ radarr_volume_media: "{{ radarr_name }}-media"
 
 radarr_traefik_enable: true
 radarr_traefik_host: "{{ radarr_name }}.{{ common_traefik_domain }}"
+radarr_traefik_auth: false
+radarr_traefik_noauth_paths: []
 radarr_ports:
   - 7878:7878
 

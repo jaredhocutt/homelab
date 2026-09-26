@@ -27,7 +27,8 @@ convertx_container_secrets_defaults:
 
 convertx_container_labels_defaults: >-
   {{ convertx_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', convertx_name, convertx_traefik_host, '3000'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', convertx_name, convertx_traefik_host, '3000',
+      auth=convertx_traefik_auth, noauth_paths=convertx_traefik_noauth_paths), {}) }}
 
 ###############################################################################
 # Quadlet Options

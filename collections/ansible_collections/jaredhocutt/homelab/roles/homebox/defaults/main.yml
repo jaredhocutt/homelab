@@ -13,6 +13,8 @@ homebox_postgres_volume_data: "{{ homebox_name }}-postgres-data"
 
 homebox_traefik_enable: true
 homebox_traefik_host: "{{ homebox_name }}.{{ common_traefik_domain }}"
+homebox_traefik_auth: false
+homebox_traefik_noauth_paths: []
 homebox_ports:
   - 3100:7745
 

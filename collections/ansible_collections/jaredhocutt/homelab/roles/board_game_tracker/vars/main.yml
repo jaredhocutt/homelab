@@ -45,7 +45,8 @@ board_game_tracker_postgres_container_secrets_defaults:
 
 board_game_tracker_container_labels_defaults: >-
   {{ board_game_tracker_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', board_game_tracker_name, board_game_tracker_traefik_host, '5444'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', board_game_tracker_name, board_game_tracker_traefik_host, '5444',
+      auth=board_game_tracker_traefik_auth, noauth_paths=board_game_tracker_traefik_noauth_paths), {}) }}
 
 board_game_tracker_postgres_container_labels_defaults: {}
 

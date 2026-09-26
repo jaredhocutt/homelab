@@ -25,7 +25,8 @@ sonarr_container_secrets_defaults: []
 
 sonarr_container_labels_defaults: >
   {{ sonarr_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', sonarr_name, sonarr_traefik_host, '8989'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', sonarr_name, sonarr_traefik_host, '8989',
+      auth=sonarr_traefik_auth, noauth_paths=sonarr_traefik_noauth_paths), {}) }}
 
 ###############################################################################
 # Quadlet Options

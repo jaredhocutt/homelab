@@ -14,6 +14,8 @@ tandoor_postgres_volume_data: "{{ tandoor_name }}-postgres-data"
 
 tandoor_traefik_enable: true
 tandoor_traefik_host: "{{ tandoor_name }}.{{ common_traefik_domain }}"
+tandoor_traefik_auth: false
+tandoor_traefik_noauth_paths: []
 tandoor_ports:
   - 80:80
 

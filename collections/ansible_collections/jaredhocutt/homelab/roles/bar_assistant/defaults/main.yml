@@ -18,6 +18,8 @@ bar_assistant_meilisearch_volume_data: "{{ bar_assistant_name }}-meilisearch-dat
 
 bar_assistant_traefik_enable: true
 bar_assistant_traefik_host: "{{ bar_assistant_name }}-api.{{ common_traefik_domain }}"
+bar_assistant_traefik_auth: false
+bar_assistant_traefik_noauth_paths: []
 bar_assistant_salt_rim_traefik_host: "{{ bar_assistant_name }}.{{ common_traefik_domain }}"
 bar_assistant_meilisearch_traefik_host: "{{ bar_assistant_name }}-meilisearch.{{ common_traefik_domain }}"
 bar_assistant_ports:

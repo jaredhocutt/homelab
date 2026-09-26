@@ -25,7 +25,8 @@ calibre_web_automated_container_secrets_defaults: []
 
 calibre_web_automated_container_labels_defaults: >
   {{ calibre_web_automated_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', calibre_web_automated_name, calibre_web_automated_traefik_host, '8083'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', calibre_web_automated_name, calibre_web_automated_traefik_host, '8083',
+      auth=calibre_web_automated_traefik_auth, noauth_paths=calibre_web_automated_traefik_noauth_paths), {}) }}
 
 ###############################################################################
 # Quadlet Options

@@ -19,6 +19,8 @@ immich_redis_volume_data: "{{ immich_name }}-redis-data"
 
 immich_traefik_enable: true
 immich_traefik_host: "{{ immich_name }}.{{ common_traefik_domain }}"
+immich_traefik_auth: false
+immich_traefik_noauth_paths: []
 immich_ports:
   - 2283:2283
 

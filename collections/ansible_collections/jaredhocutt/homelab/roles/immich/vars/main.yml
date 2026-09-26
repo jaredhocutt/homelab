@@ -53,7 +53,8 @@ immich_redis_container_secrets_defaults: []
 
 immich_container_labels_defaults: >
   {{ immich_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', immich_name, immich_traefik_host, '2283'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', immich_name, immich_traefik_host, '2283',
+      auth=immich_traefik_auth, noauth_paths=immich_traefik_noauth_paths), {}) }}
 
 immich_machine_learning_container_labels_defaults: {}
 

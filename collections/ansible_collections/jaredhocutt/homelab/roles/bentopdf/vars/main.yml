@@ -25,7 +25,8 @@ bentopdf_container_secrets_defaults: []
 
 bentopdf_container_labels_defaults: >-
   {{ bentopdf_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', bentopdf_name, bentopdf_traefik_host, '8080'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', bentopdf_name, bentopdf_traefik_host, '8080',
+      auth=bentopdf_traefik_auth, noauth_paths=bentopdf_traefik_noauth_paths), {}) }}
 
 ###############################################################################
 # Quadlet Options

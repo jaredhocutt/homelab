@@ -10,6 +10,8 @@ convertx_volume_data: "{{ convertx_name }}-data"
 
 convertx_traefik_enable: true
 convertx_traefik_host: "{{ convertx_name }}.{{ common_traefik_domain }}"
+convertx_traefik_auth: false
+convertx_traefik_noauth_paths: []
 convertx_ports:
   - 3000:3000
 

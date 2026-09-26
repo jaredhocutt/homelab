@@ -25,7 +25,8 @@ prowlarr_container_secrets_defaults: []
 
 prowlarr_container_labels_defaults: >
   {{ prowlarr_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', prowlarr_name, prowlarr_traefik_host, '9696'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', prowlarr_name, prowlarr_traefik_host, '9696',
+      auth=prowlarr_traefik_auth, noauth_paths=prowlarr_traefik_noauth_paths), {}) }}
 
 ###############################################################################
 # Quadlet Options

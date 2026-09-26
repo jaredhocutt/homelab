@@ -10,6 +10,8 @@ prowlarr_volume_config: "{{ prowlarr_name }}-config"
 
 prowlarr_traefik_enable: true
 prowlarr_traefik_host: "{{ prowlarr_name }}.{{ common_traefik_domain }}"
+prowlarr_traefik_auth: false
+prowlarr_traefik_noauth_paths: []
 prowlarr_ports:
   - 9696:9696
 

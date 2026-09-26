@@ -57,7 +57,8 @@ karakeep_meilisearch_container_secrets_defaults:
 
 karakeep_container_labels_defaults: >
   {{ karakeep_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', karakeep_name, karakeep_traefik_host, '3000'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', karakeep_name, karakeep_traefik_host, '3000',
+      auth=karakeep_traefik_auth, noauth_paths=karakeep_traefik_noauth_paths), {}) }}
 
 karakeep_browserless_container_labels_defaults: {}
 

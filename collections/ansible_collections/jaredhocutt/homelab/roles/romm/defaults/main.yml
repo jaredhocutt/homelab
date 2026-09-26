@@ -17,6 +17,8 @@ romm_mariadb_volume_data: "{{ romm_name }}-mariadb-data"
 
 romm_traefik_enable: true
 romm_traefik_host: "{{ romm_name }}.{{ common_traefik_domain }}"
+romm_traefik_auth: false
+romm_traefik_noauth_paths: []
 romm_ports:
   - 80:8080
 

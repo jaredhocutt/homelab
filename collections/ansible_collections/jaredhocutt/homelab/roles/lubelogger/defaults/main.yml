@@ -11,6 +11,8 @@ lubelogger_volume_keys: "{{ lubelogger_name }}-keys"
 
 lubelogger_traefik_enable: true
 lubelogger_traefik_host: "{{ lubelogger_name }}.{{ common_traefik_domain }}"
+lubelogger_traefik_auth: false
+lubelogger_traefik_noauth_paths: []
 lubelogger_ports:
   - 8090:8080
 

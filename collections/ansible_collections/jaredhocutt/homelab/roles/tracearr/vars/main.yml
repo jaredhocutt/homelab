@@ -58,7 +58,8 @@ tracearr_redis_container_secrets_defaults: []
 
 tracearr_container_labels_defaults: >
   {{ tracearr_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', tracearr_name, tracearr_traefik_host, '3000'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', tracearr_name, tracearr_traefik_host, '3000',
+      auth=tracearr_traefik_auth, noauth_paths=tracearr_traefik_noauth_paths), {}) }}
 
 tracearr_timescaledb_container_labels_defaults: {}
 

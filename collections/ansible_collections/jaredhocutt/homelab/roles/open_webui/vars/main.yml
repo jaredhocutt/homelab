@@ -25,7 +25,8 @@ open_webui_container_secrets_defaults: []
 
 open_webui_container_labels_defaults: >
   {{ open_webui_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', open_webui_name, open_webui_traefik_host, '8080'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', open_webui_name, open_webui_traefik_host, '8080',
+      auth=open_webui_traefik_auth, noauth_paths=open_webui_traefik_noauth_paths), {}) }}
 
 ###############################################################################
 # Quadlet Options

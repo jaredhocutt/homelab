@@ -8,6 +8,8 @@ bentopdf_image_tag: latest
 
 bentopdf_traefik_enable: true
 bentopdf_traefik_host: "{{ bentopdf_name }}.{{ common_traefik_domain }}"
+bentopdf_traefik_auth: false
+bentopdf_traefik_noauth_paths: []
 bentopdf_ports:
   - 3000:8080
 

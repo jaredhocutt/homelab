@@ -12,6 +12,8 @@ calibre_web_automated_volume_library: "{{ calibre_web_automated_name }}-library"
 
 calibre_web_automated_traefik_enable: true
 calibre_web_automated_traefik_host: "{{ calibre_web_automated_name }}.{{ common_traefik_domain }}"
+calibre_web_automated_traefik_auth: false
+calibre_web_automated_traefik_noauth_paths: []
 calibre_web_automated_ports:
   - 8083:8083
 

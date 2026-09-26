@@ -17,6 +17,8 @@ tracearr_redis_volume_data: "{{ tracearr_name }}-redis-data"
 
 tracearr_traefik_enable: true
 tracearr_traefik_host: "{{ tracearr_name }}.{{ common_traefik_domain }}"
+tracearr_traefik_auth: false
+tracearr_traefik_noauth_paths: []
 tracearr_ports:
   - 3000:3000
 

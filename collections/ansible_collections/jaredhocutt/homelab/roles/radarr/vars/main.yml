@@ -25,7 +25,8 @@ radarr_container_secrets_defaults: []
 
 radarr_container_labels_defaults: >
   {{ radarr_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', radarr_name, radarr_traefik_host, '7878'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', radarr_name, radarr_traefik_host, '7878',
+      auth=radarr_traefik_auth, noauth_paths=radarr_traefik_noauth_paths), {}) }}
 
 ###############################################################################
 # Quadlet Options

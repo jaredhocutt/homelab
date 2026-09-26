@@ -19,6 +19,8 @@ n8n_redis_volume_data: "{{ n8n_name }}-redis-data"
 
 n8n_traefik_enable: true
 n8n_traefik_host: "{{ n8n_name }}.{{ common_traefik_domain }}"
+n8n_traefik_auth: false
+n8n_traefik_noauth_paths: []
 n8n_ports:
   - 5678:5678
 

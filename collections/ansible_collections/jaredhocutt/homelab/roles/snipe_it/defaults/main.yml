@@ -13,6 +13,8 @@ snipe_it_mariadb_volume_data: "{{ snipe_it_name }}-mariadb-data"
 
 snipe_it_traefik_enable: true
 snipe_it_traefik_host: "{{ snipe_it_name }}.{{ common_traefik_domain }}"
+snipe_it_traefik_auth: false
+snipe_it_traefik_noauth_paths: []
 snipe_it_ports:
   - 8000:80
 

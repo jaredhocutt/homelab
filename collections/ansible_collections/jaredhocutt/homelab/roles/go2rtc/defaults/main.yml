@@ -10,6 +10,8 @@ go2rtc_volume_config: "{{ go2rtc_name }}-config"
 
 go2rtc_traefik_enable: true
 go2rtc_traefik_host: "{{ go2rtc_name }}.{{ common_traefik_domain }}"
+go2rtc_traefik_auth: false
+go2rtc_traefik_noauth_paths: []
 go2rtc_ports:
   - 1984:1984
 

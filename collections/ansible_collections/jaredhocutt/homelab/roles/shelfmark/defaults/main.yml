@@ -11,6 +11,8 @@ shelfmark_volume_books: "{{ shelfmark_name }}-books"
 
 shelfmark_traefik_enable: true
 shelfmark_traefik_host: "{{ shelfmark_name }}.{{ common_traefik_domain }}"
+shelfmark_traefik_auth: false
+shelfmark_traefik_noauth_paths: []
 shelfmark_ports:
   - 8084:8084
 

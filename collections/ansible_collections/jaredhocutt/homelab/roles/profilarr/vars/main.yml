@@ -31,7 +31,8 @@ profilarr_parser_container_secrets_defaults: []
 
 profilarr_container_labels_defaults: >-
   {{ profilarr_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', profilarr_name, profilarr_traefik_host, '6868'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', profilarr_name, profilarr_traefik_host, '6868',
+      auth=profilarr_traefik_auth, noauth_paths=profilarr_traefik_noauth_paths), {}) }}
 
 profilarr_parser_container_labels_defaults: {}
 

@@ -25,7 +25,8 @@ tautulli_container_secrets_defaults: []
 
 tautulli_container_labels_defaults: >
   {{ tautulli_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', tautulli_name, tautulli_traefik_host, '8181'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', tautulli_name, tautulli_traefik_host, '8181',
+      auth=tautulli_traefik_auth, noauth_paths=tautulli_traefik_noauth_paths), {}) }}
 
 ###############################################################################
 # Quadlet Options

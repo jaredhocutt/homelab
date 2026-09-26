@@ -47,7 +47,8 @@ tandoor_postgres_container_secrets_defaults:
 
 tandoor_container_labels_defaults: >
   {{ tandoor_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', tandoor_name, tandoor_traefik_host, '80'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', tandoor_name, tandoor_traefik_host, '80',
+      auth=tandoor_traefik_auth, noauth_paths=tandoor_traefik_noauth_paths), {}) }}
 
 tandoor_postgres_container_labels_defaults: {}
 

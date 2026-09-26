@@ -48,7 +48,8 @@ warracker_postgres_container_secrets_defaults:
 
 warracker_container_labels_defaults: >
   {{ warracker_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', warracker_name, warracker_traefik_host, '80'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', warracker_name, warracker_traefik_host, '80',
+      auth=warracker_traefik_auth, noauth_paths=warracker_traefik_noauth_paths), {}) }}
 
 warracker_postgres_container_labels_defaults: {}
 

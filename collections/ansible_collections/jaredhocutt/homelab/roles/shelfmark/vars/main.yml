@@ -25,7 +25,8 @@ shelfmark_container_secrets_defaults: []
 
 shelfmark_container_labels_defaults: >
   {{ shelfmark_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', shelfmark_name, shelfmark_traefik_host, '8084'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', shelfmark_name, shelfmark_traefik_host, '8084',
+      auth=shelfmark_traefik_auth, noauth_paths=shelfmark_traefik_noauth_paths), {}) }}
 
 ###############################################################################
 # Quadlet Options

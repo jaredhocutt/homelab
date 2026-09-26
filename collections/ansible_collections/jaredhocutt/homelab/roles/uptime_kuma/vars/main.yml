@@ -25,7 +25,8 @@ uptime_kuma_container_secrets_defaults: []
 
 uptime_kuma_container_labels_defaults: >
   {{ uptime_kuma_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', uptime_kuma_name, uptime_kuma_traefik_host, '3001'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', uptime_kuma_name, uptime_kuma_traefik_host, '3001',
+      auth=uptime_kuma_traefik_auth, noauth_paths=uptime_kuma_traefik_noauth_paths), {}) }}
 
 ###############################################################################
 # Quadlet Options

@@ -16,6 +16,8 @@ youtarr_mariadb_volume_data: "{{ youtarr_name }}-mariadb-data"
 
 youtarr_traefik_enable: true
 youtarr_traefik_host: "{{ youtarr_name }}.{{ common_traefik_domain }}"
+youtarr_traefik_auth: false
+youtarr_traefik_noauth_paths: []
 youtarr_ports:
   - 3087:3011
 

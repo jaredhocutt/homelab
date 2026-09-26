@@ -46,7 +46,8 @@ romm_mariadb_container_secrets_defaults:
 
 romm_container_labels_defaults: >-
   {{ romm_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', romm_name, romm_traefik_host, '8080'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', romm_name, romm_traefik_host, '8080',
+      auth=romm_traefik_auth, noauth_paths=romm_traefik_noauth_paths), {}) }}
 
 romm_mariadb_container_labels_defaults: {}
 

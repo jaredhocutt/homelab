@@ -10,6 +10,8 @@ transfer_sh_volume_transfers: "{{ transfer_sh_name }}-transfers"
 
 transfer_sh_traefik_enable: true
 transfer_sh_traefik_host: "{{ transfer_sh_name }}.{{ common_traefik_domain }}"
+transfer_sh_traefik_auth: false
+transfer_sh_traefik_noauth_paths: []
 transfer_sh_ports:
   - 8080:8080
 

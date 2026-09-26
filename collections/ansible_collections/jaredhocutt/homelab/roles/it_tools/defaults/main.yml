@@ -8,6 +8,8 @@ it_tools_image_tag: latest
 
 it_tools_traefik_enable: true
 it_tools_traefik_host: "{{ it_tools_name }}.{{ common_traefik_domain }}"
+it_tools_traefik_auth: false
+it_tools_traefik_noauth_paths: []
 it_tools_ports:
   - 8092:80
 

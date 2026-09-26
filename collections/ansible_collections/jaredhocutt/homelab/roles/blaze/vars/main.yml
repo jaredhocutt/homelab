@@ -26,7 +26,8 @@ blaze_container_secrets_defaults: []
 
 blaze_container_labels_defaults: >-
   {{ blaze_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', blaze_name, blaze_traefik_host, '8080'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', blaze_name, blaze_traefik_host, '8080',
+      auth=blaze_traefik_auth, noauth_paths=blaze_traefik_noauth_paths), {}) }}
 
 ###############################################################################
 # Quadlet Options

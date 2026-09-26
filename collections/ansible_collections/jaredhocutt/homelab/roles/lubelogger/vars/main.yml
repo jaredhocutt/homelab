@@ -26,7 +26,8 @@ lubelogger_container_secrets_defaults: []
 
 lubelogger_container_labels_defaults: >-
   {{ lubelogger_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', lubelogger_name, lubelogger_traefik_host, '8080'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', lubelogger_name, lubelogger_traefik_host, '8080',
+      auth=lubelogger_traefik_auth, noauth_paths=lubelogger_traefik_noauth_paths), {}) }}
 
 ###############################################################################
 # Quadlet Options

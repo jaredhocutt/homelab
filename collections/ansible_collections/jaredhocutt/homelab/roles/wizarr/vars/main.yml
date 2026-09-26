@@ -25,7 +25,8 @@ wizarr_container_secrets_defaults: []
 
 wizarr_container_labels_defaults: >
   {{ wizarr_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', wizarr_name, wizarr_traefik_host, '5690'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', wizarr_name, wizarr_traefik_host, '5690',
+      auth=wizarr_traefik_auth, noauth_paths=wizarr_traefik_noauth_paths), {}) }}
 
 ###############################################################################
 # Quadlet Options

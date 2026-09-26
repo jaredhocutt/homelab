@@ -51,7 +51,8 @@ bar_assistant_meilisearch_container_secrets_defaults:
 
 bar_assistant_container_labels_defaults: >
   {{ bar_assistant_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', bar_assistant_name, bar_assistant_traefik_host, '8080'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', bar_assistant_name, bar_assistant_traefik_host, '8080',
+      auth=bar_assistant_traefik_auth, noauth_paths=bar_assistant_traefik_noauth_paths), {}) }}
 
 bar_assistant_salt_rim_container_labels_defaults: >
   {{ bar_assistant_traefik_enable

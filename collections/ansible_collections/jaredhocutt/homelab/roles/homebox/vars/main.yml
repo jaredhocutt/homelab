@@ -48,7 +48,8 @@ homebox_postgres_container_secrets_defaults:
 
 homebox_container_labels_defaults: >
   {{ homebox_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', homebox_name, homebox_traefik_host, '7745'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', homebox_name, homebox_traefik_host, '7745',
+      auth=homebox_traefik_auth, noauth_paths=homebox_traefik_noauth_paths), {}) }}
 
 homebox_postgres_container_labels_defaults: {}
 

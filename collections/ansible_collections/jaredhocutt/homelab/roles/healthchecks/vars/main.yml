@@ -33,7 +33,8 @@ healthchecks_container_secrets_defaults:
 
 healthchecks_container_labels_defaults: >
   {{ healthchecks_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', healthchecks_name, healthchecks_traefik_host, '8000'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', healthchecks_name, healthchecks_traefik_host, '8000',
+      auth=healthchecks_traefik_auth, noauth_paths=healthchecks_traefik_noauth_paths), {}) }}
 
 ###############################################################################
 # Quadlet Options
