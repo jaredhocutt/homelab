@@ -39,6 +39,9 @@ pangolin_traefik_container_secrets: []
 pangolin_traefik_container_labels: {}
 pangolin_traefik_container_quadlet_options: []
 
+pangolin_memory: 2g
+pangolin_memory_reservation: 512m
+
 pangolin_log_level: info
 pangolin_traefik_log_level: "{{ pangolin_log_level }}"
 
