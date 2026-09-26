@@ -17,8 +17,7 @@ bar_assistant_salt_rim_container_env_defaults:
   API_URL: "{{ bar_assistant_api_url }}"
   MEILISEARCH_URL: "{{ bar_assistant_meilisearch_url }}"
 
-bar_assistant_redis_container_env_defaults:
-  ALLOW_EMPTY_PASSWORD: "yes"
+bar_assistant_redis_container_env_defaults: {}
 
 bar_assistant_meilisearch_container_env_defaults:
   MEILI_ENV: production
