@@ -21,6 +21,10 @@ karakeep_browserless_container_env_defaults:
 
 karakeep_meilisearch_container_env_defaults:
   MEILI_NO_ANALYTICS: "true"
+  # Upgrade the database in place when the image version changes. This is the
+  # pre-v1.51 form of the flag; switch to MEILI_UPGRADE_DB once karakeep's
+  # upstream pins meilisearch >= v1.51.
+  MEILI_EXPERIMENTAL_DUMPLESS_UPGRADE: "true"
 
 ###############################################################################
 # Secrets
