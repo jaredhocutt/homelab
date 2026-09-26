@@ -5,7 +5,10 @@
 # Envrionment
 ###############################################################################
 
-transfer_sh_container_env_defaults: {}
+transfer_sh_container_env_defaults:
+  PURGE_DAYS: "{{ transfer_sh_purge_days }}"
+  PURGE_INTERVAL: "{{ transfer_sh_purge_interval }}"
+  MAX_UPLOAD_SIZE: "{{ transfer_sh_max_upload_size }}"
 
 ###############################################################################
 # Secrets

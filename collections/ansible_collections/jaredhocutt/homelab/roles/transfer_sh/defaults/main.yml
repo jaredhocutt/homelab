@@ -15,6 +15,10 @@ transfer_sh_traefik_noauth_paths: []
 transfer_sh_ports:
   - 8080:8080
 
+transfer_sh_purge_days: 14
+transfer_sh_purge_interval: 24
+transfer_sh_max_upload_size: 5242880
+
 transfer_sh_secrets: {}
 
 transfer_sh_container_env: {}
