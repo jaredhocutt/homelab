@@ -1,0 +1,18 @@
+---
+# Only lint this repo's own code. Galaxy collections from
+# collections/requirements.yml are installed next to jaredhocutt.homelab (and
+# git-ignored), so without these excludes ansible-lint walks all of them.
+exclude_paths:
+  - .ansible/
+  - collections/ansible_collections/ansible/
+  - collections/ansible_collections/bitwarden/
+  - collections/ansible_collections/community/
+  - collections/ansible_collections/containers/
+  - collections/ansible_collections/digitalocean/
+  - collections/ansible_collections/google/
+  - collections/ansible_collections/pfsensible/
+  - collections/ansible_collections/jaredhocutt/homelab/.ansible/
+
+skip_list:
+  # The collection lives in this repo and is never published to Galaxy.
+  - galaxy[no-changelog]
