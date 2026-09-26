@@ -11,6 +11,7 @@ tracearr_redis_image: docker.io/library/redis
 tracearr_redis_image_tag: 8-alpine
 
 tracearr_volume_data: "{{ tracearr_name }}-data"
+tracearr_volume_image_cache: "{{ tracearr_name }}-image-cache"
 tracearr_timescaledb_volume_data: "{{ tracearr_name }}-timescaledb-data"
 tracearr_redis_volume_data: "{{ tracearr_name }}-redis-data"
 

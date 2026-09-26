@@ -11,6 +11,7 @@
     - "{{ tracearr_name }}-redis.service"
     - "{{ tracearr_name }}-timescaledb.service"
     - "{{ tracearr_volume_data }}-volume.service"
+    - "{{ tracearr_volume_image_cache }}-volume.service"
     - "{{ tracearr_timescaledb_volume_data }}-volume.service"
     - "{{ tracearr_redis_volume_data }}-volume.service"
     - "{{ tracearr_name }}-network.service"
@@ -40,6 +41,7 @@
   become: true
   loop:
     - "{{ tracearr_volume_data }}"
+    - "{{ tracearr_volume_image_cache }}"
     - "{{ tracearr_timescaledb_volume_data }}"
     - "{{ tracearr_redis_volume_data }}"
 
@@ -59,6 +61,7 @@
     - "{{ tracearr_name }}-redis.container"
     - "{{ tracearr_name }}-timescaledb.container"
     - "{{ tracearr_volume_data }}.volume"
+    - "{{ tracearr_volume_image_cache }}.volume"
     - "{{ tracearr_timescaledb_volume_data }}.volume"
     - "{{ tracearr_redis_volume_data }}.volume"
     - "{{ tracearr_name }}.network"

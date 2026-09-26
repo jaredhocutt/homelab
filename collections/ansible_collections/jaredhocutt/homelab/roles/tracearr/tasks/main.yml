@@ -35,6 +35,8 @@
   loop:
     - name: "{{ tracearr_volume_data }}"
       options: "{{ tracearr_volume_data_options | default(omit) }}"
+    - name: "{{ tracearr_volume_image_cache }}"
+      options: "{{ tracearr_volume_image_cache_options | default(omit) }}"
     - name: "{{ tracearr_timescaledb_volume_data }}"
       options: "{{ tracearr_timescaledb_volume_data_options | default(omit) }}"
     - name: "{{ tracearr_redis_volume_data }}"
@@ -63,11 +65,13 @@
       - -c
       - timescaledb.license=timescale
       - -c
-      - timescaledb.max_tuples_decompressed_per_dml_transaction=0
+      - timescaledb.max_tuples_decompressed_per_dml_transaction=100000
       - -c
       - max_locks_per_transaction=4096
       - -c
       - timescaledb.telemetry_level=off
+      - -c
+      - max_connections=150
     shm_size: "{{ tracearr_timescaledb_shm_size }}"
     ulimit:
       - nofile=65536:65536
@@ -118,6 +122,7 @@
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
       - "{{ tracearr_volume_data }}.volume:/data/backup"
+      - "{{ tracearr_volume_image_cache }}.volume:/data/tracearr/image-cache"
     publish: "{{ tracearr_traefik_enable | ternary(omit, tracearr_ports) }}"
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
