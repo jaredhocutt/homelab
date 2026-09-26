@@ -636,6 +636,13 @@ traefik_container_secrets:
 
 transfer_sh_image_tag: v1.6.1-noroot  # skopeo list-tags docker://docker.io/dutchcoders/transfer.sh | jq -r '.Tags[] | select(test("^v[0-9\\.]+\\-noroot$"))'
 
+transfer_sh_container_env:
+  HTTP_AUTH_USER: "{{ lookup('jaredhocutt.homelab.bws', 'transfer_sh_http_auth_user') }}"
+transfer_sh_secrets:
+  transfer_sh_http_auth_pass: "{{ lookup('jaredhocutt.homelab.bws', 'transfer_sh_http_auth_pass') }}"
+transfer_sh_container_secrets:
+  - transfer_sh_http_auth_pass,type=env,target=HTTP_AUTH_PASS
+
 ###############################################################################
 # uptime_kuma
 ###############################################################################
