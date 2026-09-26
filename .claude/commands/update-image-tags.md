@@ -10,6 +10,8 @@ Using the output of the command, make an update to the respective inventory file
 
 - Never change a tag the script reports as **held**.
 - For an update on a line with a `# hold: <url>` marker, set the tag to the reported latest value (the upstream pin), not the registry's newest tag, and keep the marker.
+- Treat `*_version` lines with a `# github-release` marker the same way as image tags.
+- If the script says a held tag should be re-checked after updating another variable, run it again after your edits and apply any new upstream pin.
 - Skip any tag the script flags as not deployable (not pullable), and mention it in your output. After making changes to the inventory file, output the command needed to update the apps that require it.
 
 The command should be in the following format with the `--tags` populated correctly.
