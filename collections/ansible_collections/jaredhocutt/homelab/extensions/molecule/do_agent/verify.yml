@@ -5,7 +5,6 @@
   vars:
     quadlet_dir: /etc/containers/systemd
     expected_quadlets:
-      - do-agent.network
       - do-agent.container
   tasks:
     - name: Stat each expected quadlet file
@@ -30,9 +29,10 @@
         src: "{{ quadlet_dir }}/do-agent.container"
       register: container_quadlet
 
-    - name: Assert do-agent container quadlet has the expected image and host mounts
+    - name: Assert do-agent container quadlet has the expected image, host mounts, and host network
       ansible.builtin.assert:
         that:
           - "'docker.io/digitalocean/do-agent' in (container_quadlet.content | b64decode)"
           - "'/proc:/host/proc:ro' in (container_quadlet.content | b64decode)"
           - "'/sys:/host/sys:ro' in (container_quadlet.content | b64decode)"
+          - "'Network=host' in (container_quadlet.content | b64decode)"

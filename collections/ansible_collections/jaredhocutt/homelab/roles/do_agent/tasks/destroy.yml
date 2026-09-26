@@ -8,7 +8,6 @@
   failed_when: false
   loop:
     - "{{ do_agent_name }}.service"
-    - "{{ do_agent_name }}-network.service"
 
 - name: Destroy containers
   containers.podman.podman_container:
@@ -26,12 +25,6 @@
   no_log: true
   loop: "{{ do_agent_secrets_combined | dict2items }}"
 
-- name: Destroy network
-  containers.podman.podman_network:
-    name: "{{ do_agent_name }}"
-    state: absent
-  become: true
-
 - name: Cleanup quadlet files
   ansible.builtin.file:
     path: /etc/containers/systemd/{{ item }}
@@ -39,7 +32,6 @@
   become: true
   loop:
     - "{{ do_agent_name }}.container"
-    - "{{ do_agent_name }}.network"
 
 - name: Reload systemd daemon
   ansible.builtin.systemd:

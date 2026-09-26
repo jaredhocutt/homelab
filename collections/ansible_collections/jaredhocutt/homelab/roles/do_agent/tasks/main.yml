@@ -10,17 +10,6 @@
     - image: "{{ do_agent_image }}"
       image_tag: "{{ do_agent_image_tag }}"
 
-- name: Create network
-  containers.podman.podman_network:
-    name: "{{ do_agent_name }}"
-    driver: bridge
-    disable_dns: false
-    opt:
-      isolate: "true"
-    quadlet_file_mode: "0600"
-    state: quadlet
-  become: true
-
 - name: Create secrets
   containers.podman.podman_secret:
     name: "{{ item.key }}"
@@ -34,7 +23,9 @@
   containers.podman.podman_container:
     name: "{{ do_agent_name }}"
     image: "{{ do_agent_image }}:{{ do_agent_image_tag }}"
-    network: "{{ do_agent_name }}.network"
+    # /host/proc/net resolves through /proc/self, i.e. the agent's own network
+    # namespace, so it needs the host's to report the droplet's network metrics.
+    network: host
     env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
@@ -49,3 +40,34 @@
 
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers
+
+# TODO: remove this cleanup block once edge has run it. The agent used to run
+# on its own bridge network.
+- name: Check for legacy do_agent network quadlet
+  ansible.builtin.stat:
+    path: /etc/containers/systemd/{{ do_agent_name }}.network
+  register: _do_agent_legacy_network
+
+- name: Remove legacy do_agent network
+  when: _do_agent_legacy_network.stat.exists
+  become: true
+  block:
+    - name: Stop legacy do_agent network service
+      ansible.builtin.systemd:
+        name: "{{ do_agent_name }}-network.service"
+        state: stopped
+      failed_when: false
+
+    - name: Destroy legacy do_agent network
+      containers.podman.podman_network:
+        name: "{{ do_agent_name }}"
+        state: absent
+
+    - name: Remove legacy do_agent network quadlet
+      ansible.builtin.file:
+        path: /etc/containers/systemd/{{ do_agent_name }}.network
+        state: absent
+
+    - name: Reload systemd after removing legacy do_agent network
+      ansible.builtin.systemd:
+        daemon_reload: true
