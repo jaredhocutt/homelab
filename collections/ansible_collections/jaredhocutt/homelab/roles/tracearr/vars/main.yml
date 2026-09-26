@@ -30,7 +30,9 @@ tracearr_secrets_defaults:
   tracearr_timescaledb_user: "{{ tracearr_timescaledb_user }}"
   tracearr_timescaledb_password: "{{ tracearr_timescaledb_password }}"
   tracearr_database_url: >-
-    postgres://{{ tracearr_timescaledb_user }}:{{ tracearr_timescaledb_password }}@{{ tracearr_name }}-timescaledb:5432/{{ tracearr_timescaledb_db_name }}
+    postgres://{{ tracearr_timescaledb_user | urlencode | replace('/', '%2F')
+    }}:{{ tracearr_timescaledb_password | urlencode | replace('/', '%2F')
+    }}@{{ tracearr_name }}-timescaledb:5432/{{ tracearr_timescaledb_db_name }}
   tracearr_jwt_secret: "{{ tracearr_jwt_secret }}"
   tracearr_cookie_secret: "{{ tracearr_cookie_secret }}"
 

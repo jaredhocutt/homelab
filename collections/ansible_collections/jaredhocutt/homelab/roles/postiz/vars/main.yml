@@ -3,7 +3,11 @@
 
 postiz_postgres_db_name: postiz
 postiz_postgres_user: postiz
-postiz_database_url: postgresql://{{ postiz_postgres_user }}:{{ postiz_postgres_password }}@{{ postiz_name }}-postgres:5432/{{ postiz_postgres_db_name }}
+# Credentials are percent-encoded; urlencode leaves / alone, which would end the userinfo
+postiz_database_url: >-
+  postgresql://{{ postiz_postgres_user | urlencode | replace('/', '%2F')
+  }}:{{ postiz_postgres_password | urlencode | replace('/', '%2F')
+  }}@{{ postiz_name }}-postgres:5432/{{ postiz_postgres_db_name }}
 
 postiz_temporal_postgres_user: temporal
 

@@ -4,7 +4,7 @@
 # Karakeep connects to browserless with Playwright, so the websocket URL must
 # include the /chromium/playwright path. The token is embedded in the URL, so it
 # is routed through a Podman secret rather than the plaintext quadlet env.
-karakeep_browser_websocket_url: "ws://{{ karakeep_name }}-browserless:3000/chromium/playwright?token={{ karakeep_browserless_token }}"
+karakeep_browser_websocket_url: "ws://{{ karakeep_name }}-browserless:3000/chromium/playwright?token={{ karakeep_browserless_token | urlencode }}"
 
 ###############################################################################
 # Envrionment
