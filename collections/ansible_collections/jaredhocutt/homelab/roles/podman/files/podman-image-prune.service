@@ -1,0 +1,12 @@
+[Unit]
+Description=Remove unused podman images
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+# Removes images no container uses that were built over a week ago (until=
+# filters on the image's creation time). Quadlet runs containers with --rm, so
+# a stopped unit's image counts as unused; Quadlet pulls it again
+# (Pull=missing) the next time the unit starts.
+ExecStart=/usr/bin/podman image prune --all --force --filter until=168h

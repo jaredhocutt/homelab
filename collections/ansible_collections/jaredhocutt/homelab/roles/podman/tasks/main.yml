@@ -57,6 +57,27 @@
     enabled: true
   become: true
 
+- name: Install podman image prune service and timer
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /etc/systemd/system/{{ item }}
+    owner: root
+    group: root
+    mode: "0644"
+  loop:
+    - podman-image-prune.service
+    - podman-image-prune.timer
+  become: true
+  register: _podman_image_prune_units
+
+- name: Enable and start podman image prune timer
+  ansible.builtin.systemd:
+    name: podman-image-prune.timer
+    state: started
+    enabled: true
+    daemon_reload: "{{ _podman_image_prune_units.changed }}"
+  become: true
+
 - name: Login to podman registries
   containers.podman.podman_login:
     registry: "{{ item.registry }}"
