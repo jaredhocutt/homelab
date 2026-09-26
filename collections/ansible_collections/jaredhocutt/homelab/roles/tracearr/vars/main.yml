@@ -15,6 +15,7 @@ tracearr_container_env_defaults:
   REDIS_URL: "redis://{{ tracearr_name }}-redis:6379"
   CORS_ORIGIN: "{{ tracearr_url }}"
   LOG_LEVEL: info
+  TIMESCALEDB_AUTO_UPDATE: "true"
 
 tracearr_timescaledb_container_env_defaults: {}
 
