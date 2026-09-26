@@ -347,9 +347,11 @@ open_webui_container_env:
 open_webui_secrets:
   open_webui_oauth_client_id: "{{ lookup('jaredhocutt.homelab.bws', 'open_webui_oauth_client_id') }}"
   open_webui_oauth_client_secret: "{{ lookup('jaredhocutt.homelab.bws', 'open_webui_oauth_client_secret') }}"
+  open_webui_secret_key: "{{ lookup('jaredhocutt.homelab.bws', 'open_webui_secret_key') }}"
 open_webui_container_secrets:
   - open_webui_oauth_client_id,type=env,target=OAUTH_CLIENT_ID
   - open_webui_oauth_client_secret,type=env,target=OAUTH_CLIENT_SECRET
+  - open_webui_secret_key,type=env,target=WEBUI_SECRET_KEY
 
 ###############################################################################
 # palworld
