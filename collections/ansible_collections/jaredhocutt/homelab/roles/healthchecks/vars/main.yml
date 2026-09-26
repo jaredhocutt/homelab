@@ -39,4 +39,4 @@ healthchecks_container_labels_defaults: >
 # Quadlet Options
 ###############################################################################
 
-healthchecks_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+healthchecks_container_quadlet_options_defaults: []

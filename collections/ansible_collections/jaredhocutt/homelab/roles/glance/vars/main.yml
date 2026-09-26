@@ -31,4 +31,4 @@ glance_container_labels_defaults: >
 # Quadlet Options
 ###############################################################################
 
-glance_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+glance_container_quadlet_options_defaults: []

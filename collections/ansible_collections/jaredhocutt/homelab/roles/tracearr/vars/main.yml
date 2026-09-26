@@ -73,8 +73,8 @@ tracearr_quadlet_options_depends:
     Requires={{ tracearr_name }}-redis.service
     After={{ tracearr_name }}-timescaledb.service
     After={{ tracearr_name }}-redis.service
-tracearr_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + tracearr_quadlet_options_depends }}"
+tracearr_container_quadlet_options_defaults: "{{ tracearr_quadlet_options_depends }}"
 
-tracearr_timescaledb_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+tracearr_timescaledb_container_quadlet_options_defaults: []
 
-tracearr_redis_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+tracearr_redis_container_quadlet_options_defaults: []

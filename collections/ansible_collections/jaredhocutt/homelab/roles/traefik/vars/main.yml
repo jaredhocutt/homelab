@@ -58,4 +58,4 @@ traefik_container_labels_defaults: "{{ traefik_traefik_enable | ternary((traefik
 # Quadlet Options
 ###############################################################################
 
-traefik_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+traefik_container_quadlet_options_defaults: []

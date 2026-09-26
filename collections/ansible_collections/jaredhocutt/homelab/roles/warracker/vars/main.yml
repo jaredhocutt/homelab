@@ -61,6 +61,6 @@ warracker_quadlet_options_depends:
     [Unit]
     Requires={{ warracker_name }}-postgres.service
     After={{ warracker_name }}-postgres.service
-warracker_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + warracker_quadlet_options_depends }}"
+warracker_container_quadlet_options_defaults: "{{ warracker_quadlet_options_depends }}"
 
-warracker_postgres_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+warracker_postgres_container_quadlet_options_defaults: []

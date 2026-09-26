@@ -47,7 +47,7 @@ pangolin_traefik_container_labels_defaults: {}
 # Quadlet Options
 ###############################################################################
 
-pangolin_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+pangolin_container_quadlet_options_defaults: []
 
 pangolin_gerbil_quadlet_options_depends:
   - |
@@ -55,7 +55,7 @@ pangolin_gerbil_quadlet_options_depends:
     Requires={{ pangolin_name }}.service
     After={{ pangolin_name }}.service
 
-pangolin_gerbil_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + pangolin_gerbil_quadlet_options_depends }}"
+pangolin_gerbil_container_quadlet_options_defaults: "{{ pangolin_gerbil_quadlet_options_depends }}"
 
 pangolin_traefik_quadlet_options_depends:
   - |
@@ -63,4 +63,4 @@ pangolin_traefik_quadlet_options_depends:
     Requires={{ pangolin_name }}-gerbil.service
     After={{ pangolin_name }}-gerbil.service
 
-pangolin_traefik_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + pangolin_traefik_quadlet_options_depends }}"
+pangolin_traefik_container_quadlet_options_defaults: "{{ pangolin_traefik_quadlet_options_depends }}"

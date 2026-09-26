@@ -98,19 +98,19 @@ paperless_quadlet_options_depends:
     After={{ paperless_name }}-redis.service
     After={{ paperless_name }}-gotenberg.service
     After={{ paperless_name }}-tika.service
-paperless_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + paperless_quadlet_options_depends }}"
+paperless_container_quadlet_options_defaults: "{{ paperless_quadlet_options_depends }}"
 
-paperless_postgres_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+paperless_postgres_container_quadlet_options_defaults: []
 
-paperless_redis_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+paperless_redis_container_quadlet_options_defaults: []
 
-paperless_gotenberg_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+paperless_gotenberg_container_quadlet_options_defaults: []
 
-paperless_tika_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+paperless_tika_container_quadlet_options_defaults: []
 
 paperless_ai_quadlet_options_depends:
   - |
     [Unit]
     Requires={{ paperless_name }}.service
     After={{ paperless_name }}.service
-paperless_ai_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + paperless_ai_quadlet_options_depends }}"
+paperless_ai_container_quadlet_options_defaults: "{{ paperless_ai_quadlet_options_depends }}"

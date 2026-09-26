@@ -12,7 +12,8 @@ common_container_env_defaults:
 # Quadlet Options
 ###############################################################################
 
-common_quadlet_options_defaults:
+# Merged into every container's quadlet options by the container_config lookup
+common_container_quadlet_options_defaults:
   - |
     [Service]
     Restart=always

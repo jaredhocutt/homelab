@@ -59,6 +59,6 @@ youtarr_quadlet_options_depends:
     [Unit]
     Requires={{ youtarr_name }}-mariadb.service
     After={{ youtarr_name }}-mariadb.service
-youtarr_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + youtarr_quadlet_options_depends }}"
+youtarr_container_quadlet_options_defaults: "{{ youtarr_quadlet_options_depends }}"
 
-youtarr_mariadb_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+youtarr_mariadb_container_quadlet_options_defaults: []

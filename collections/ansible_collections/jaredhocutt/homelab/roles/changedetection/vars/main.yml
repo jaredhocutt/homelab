@@ -48,6 +48,6 @@ changedetection_quadlet_options_depends:
     [Unit]
     Requires={{ changedetection_name }}-browser.service
     After={{ changedetection_name }}-browser.service
-changedetection_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + changedetection_quadlet_options_depends }}"
+changedetection_container_quadlet_options_defaults: "{{ changedetection_quadlet_options_depends }}"
 
-changedetection_browser_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+changedetection_browser_container_quadlet_options_defaults: []

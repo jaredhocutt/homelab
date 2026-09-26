@@ -93,7 +93,7 @@ n8n_quadlet_options_depends:
     Requires={{ n8n_name }}-redis.service
     After={{ n8n_name }}-postgres.service
     After={{ n8n_name }}-redis.service
-n8n_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + n8n_quadlet_options_depends }}"
+n8n_container_quadlet_options_defaults: "{{ n8n_quadlet_options_depends }}"
 
 n8n_worker_quadlet_options_depends:
   - |
@@ -104,11 +104,11 @@ n8n_worker_quadlet_options_depends:
     After={{ n8n_name }}.service
     After={{ n8n_name }}-postgres.service
     After={{ n8n_name }}-redis.service
-n8n_worker_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + n8n_worker_quadlet_options_depends }}"
+n8n_worker_container_quadlet_options_defaults: "{{ n8n_worker_quadlet_options_depends }}"
 
-n8n_postgres_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+n8n_postgres_container_quadlet_options_defaults: []
 
-n8n_redis_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+n8n_redis_container_quadlet_options_defaults: []
 
 # The runners share the worker's network namespace, so they must be restarted
 # whenever the worker is
@@ -117,4 +117,4 @@ n8n_runners_quadlet_options_depends:
     [Unit]
     Requires={{ n8n_name }}-worker.service
     After={{ n8n_name }}-worker.service
-n8n_runners_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + n8n_runners_quadlet_options_depends }}"
+n8n_runners_container_quadlet_options_defaults: "{{ n8n_runners_quadlet_options_depends }}"

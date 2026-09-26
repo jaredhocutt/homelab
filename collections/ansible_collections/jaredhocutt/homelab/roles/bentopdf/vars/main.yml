@@ -31,4 +31,4 @@ bentopdf_container_labels_defaults: >-
 # Quadlet Options
 ###############################################################################
 
-bentopdf_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+bentopdf_container_quadlet_options_defaults: []

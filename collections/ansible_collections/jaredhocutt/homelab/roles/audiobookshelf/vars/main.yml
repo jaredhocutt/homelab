@@ -31,4 +31,4 @@ audiobookshelf_container_labels_defaults: >
 # Quadlet Options
 ###############################################################################
 
-audiobookshelf_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+audiobookshelf_container_quadlet_options_defaults: []

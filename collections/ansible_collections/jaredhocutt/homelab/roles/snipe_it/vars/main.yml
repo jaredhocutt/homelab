@@ -77,6 +77,6 @@ snipe_it_quadlet_options_depends:
     [Unit]
     Requires={{ snipe_it_name }}-mariadb.service
     After={{ snipe_it_name }}-mariadb.service
-snipe_it_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + snipe_it_quadlet_options_depends }}"
+snipe_it_container_quadlet_options_defaults: "{{ snipe_it_quadlet_options_depends }}"
 
-snipe_it_mariadb_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+snipe_it_mariadb_container_quadlet_options_defaults: []

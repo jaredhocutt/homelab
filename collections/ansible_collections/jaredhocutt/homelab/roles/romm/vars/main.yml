@@ -59,6 +59,6 @@ romm_quadlet_options_depends:
     [Unit]
     Requires={{ romm_name }}-mariadb.service
     After={{ romm_name }}-mariadb.service
-romm_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + romm_quadlet_options_depends }}"
+romm_container_quadlet_options_defaults: "{{ romm_quadlet_options_depends }}"
 
-romm_mariadb_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+romm_mariadb_container_quadlet_options_defaults: []

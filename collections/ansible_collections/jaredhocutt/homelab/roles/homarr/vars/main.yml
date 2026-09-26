@@ -33,4 +33,4 @@ homarr_container_labels_defaults: >
 # Quadlet Options
 ###############################################################################
 
-homarr_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+homarr_container_quadlet_options_defaults: []

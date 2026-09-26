@@ -31,4 +31,4 @@ sonarr_container_labels_defaults: >
 # Quadlet Options
 ###############################################################################
 
-sonarr_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+sonarr_container_quadlet_options_defaults: []

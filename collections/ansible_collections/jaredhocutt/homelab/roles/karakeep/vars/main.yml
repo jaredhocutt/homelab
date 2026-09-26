@@ -74,8 +74,8 @@ karakeep_quadlet_options_depends:
     Requires={{ karakeep_name }}-meilisearch.service
     After={{ karakeep_name }}-browserless.service
     After={{ karakeep_name }}-meilisearch.service
-karakeep_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + karakeep_quadlet_options_depends }}"
+karakeep_container_quadlet_options_defaults: "{{ karakeep_quadlet_options_depends }}"
 
-karakeep_browserless_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+karakeep_browserless_container_quadlet_options_defaults: []
 
-karakeep_meilisearch_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+karakeep_meilisearch_container_quadlet_options_defaults: []

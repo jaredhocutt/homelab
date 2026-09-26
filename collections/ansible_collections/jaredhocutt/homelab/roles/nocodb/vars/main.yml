@@ -56,6 +56,6 @@ nocodb_quadlet_options_depends:
     [Unit]
     Requires={{ nocodb_name }}-postgres.service
     After={{ nocodb_name }}-postgres.service
-nocodb_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + nocodb_quadlet_options_depends }}"
+nocodb_container_quadlet_options_defaults: "{{ nocodb_quadlet_options_depends }}"
 
-nocodb_postgres_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+nocodb_postgres_container_quadlet_options_defaults: []

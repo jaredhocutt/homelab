@@ -29,4 +29,4 @@ do_agent_container_labels_defaults: {}
 # Quadlet Options
 ###############################################################################
 
-do_agent_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+do_agent_container_quadlet_options_defaults: []

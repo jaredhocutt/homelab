@@ -31,4 +31,4 @@ transfer_sh_container_labels_defaults: >
 # Quadlet Options
 ###############################################################################
 
-transfer_sh_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+transfer_sh_container_quadlet_options_defaults: []

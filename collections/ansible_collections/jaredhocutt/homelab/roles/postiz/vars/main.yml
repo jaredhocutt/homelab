@@ -117,11 +117,11 @@ postiz_quadlet_options_depends:
     After={{ postiz_name }}-postgres.service
     After={{ postiz_name }}-redis.service
     After={{ postiz_name }}-temporal.service
-postiz_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + postiz_quadlet_options_depends }}"
+postiz_container_quadlet_options_defaults: "{{ postiz_quadlet_options_depends }}"
 
-postiz_postgres_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+postiz_postgres_container_quadlet_options_defaults: []
 
-postiz_redis_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+postiz_redis_container_quadlet_options_defaults: []
 
 postiz_temporal_quadlet_options_depends:
   - |
@@ -130,8 +130,8 @@ postiz_temporal_quadlet_options_depends:
     Requires={{ postiz_name }}-temporal-elasticsearch.service
     After={{ postiz_name }}-temporal-postgres.service
     After={{ postiz_name }}-temporal-elasticsearch.service
-postiz_temporal_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + postiz_temporal_quadlet_options_depends }}"
+postiz_temporal_container_quadlet_options_defaults: "{{ postiz_temporal_quadlet_options_depends }}"
 
-postiz_temporal_postgres_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+postiz_temporal_postgres_container_quadlet_options_defaults: []
 
-postiz_temporal_elasticsearch_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+postiz_temporal_elasticsearch_container_quadlet_options_defaults: []

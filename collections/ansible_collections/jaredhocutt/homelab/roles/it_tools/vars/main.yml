@@ -31,4 +31,4 @@ it_tools_container_labels_defaults: >-
 # Quadlet Options
 ###############################################################################
 
-it_tools_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+it_tools_container_quadlet_options_defaults: []

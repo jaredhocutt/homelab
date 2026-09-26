@@ -68,13 +68,13 @@ authentik_server_quadlet_options_depends:
     [Unit]
     Requires={{ authentik_name }}-postgres.service
     After={{ authentik_name }}-postgres.service
-authentik_server_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + authentik_server_quadlet_options_depends }}"
+authentik_server_container_quadlet_options_defaults: "{{ authentik_server_quadlet_options_depends }}"
 
 authentik_worker_quadlet_options_depends:
   - |
     [Unit]
     Requires={{ authentik_name }}-postgres.service
     After={{ authentik_name }}-postgres.service
-authentik_worker_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + authentik_worker_quadlet_options_depends }}"
+authentik_worker_container_quadlet_options_defaults: "{{ authentik_worker_quadlet_options_depends }}"
 
-authentik_postgres_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+authentik_postgres_container_quadlet_options_defaults: []

@@ -30,4 +30,4 @@ pangolin_cli_container_labels_defaults: {}
 # Quadlet Options
 ###############################################################################
 
-pangolin_cli_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+pangolin_cli_container_quadlet_options_defaults: []

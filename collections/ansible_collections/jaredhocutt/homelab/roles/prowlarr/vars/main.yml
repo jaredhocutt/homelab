@@ -31,4 +31,4 @@ prowlarr_container_labels_defaults: >
 # Quadlet Options
 ###############################################################################
 
-prowlarr_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+prowlarr_container_quadlet_options_defaults: []

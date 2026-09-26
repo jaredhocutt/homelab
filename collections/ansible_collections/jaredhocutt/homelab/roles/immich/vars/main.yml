@@ -72,10 +72,10 @@ immich_quadlet_options_depends:
     Requires={{ immich_name }}-redis.service
     After={{ immich_name }}-postgres.service
     After={{ immich_name }}-redis.service
-immich_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + immich_quadlet_options_depends }}"
+immich_container_quadlet_options_defaults: "{{ immich_quadlet_options_depends }}"
 
-immich_machine_learning_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+immich_machine_learning_container_quadlet_options_defaults: []
 
-immich_postgres_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+immich_postgres_container_quadlet_options_defaults: []
 
-immich_redis_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+immich_redis_container_quadlet_options_defaults: []

@@ -33,4 +33,4 @@ convertx_container_labels_defaults: >-
 # Quadlet Options
 ###############################################################################
 
-convertx_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+convertx_container_quadlet_options_defaults: []

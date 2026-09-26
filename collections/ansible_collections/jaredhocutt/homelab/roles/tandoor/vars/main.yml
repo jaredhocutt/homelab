@@ -60,6 +60,6 @@ tandoor_quadlet_options_depends:
     [Unit]
     Requires={{ tandoor_name }}-postgres.service
     After={{ tandoor_name }}-postgres.service
-tandoor_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults + tandoor_quadlet_options_depends }}"
+tandoor_container_quadlet_options_defaults: "{{ tandoor_quadlet_options_depends }}"
 
-tandoor_postgres_container_quadlet_options_defaults: "{{ common_quadlet_options_defaults }}"
+tandoor_postgres_container_quadlet_options_defaults: []
