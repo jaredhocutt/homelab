@@ -90,7 +90,7 @@
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
       - "{{ glance_volume_config }}.volume:/app/config"
-      - /run/podman/podman.sock:/var/run/docker.sock:z
+      - /run/podman/podman.sock:/var/run/docker.sock:ro
     publish: "{{ glance_traefik_enable | ternary(omit, glance_ports) }}"
     labels: "{{ lookup('jaredhocutt.homelab.container_config', 'labels') }}"
     quadlet_file_mode: "0600"
