@@ -17,11 +17,25 @@ A plain-text reason reports the tag as held and never suggests an update. A
 URL points at an upstream compose file; the tag follows whatever that file
 pins for the same image, so an update is suggested only when upstream moves.
 In a raw.githubusercontent.com URL, {latest_release} is replaced with the
-repository's latest GitHub release tag.
+repository's latest GitHub release tag, and {some_variable} is replaced with
+that variable's current value from the same file, so a sidecar can follow the
+compose file of the release actually deployed:
+
+    # hold: https://raw.githubusercontent.com/o/r/v{app_image_tag}/compose.yml
+
+Versions that aren't image tags (a binary or plugin release) use a
+github-release marker instead of a skopeo command, and are compared with the
+repository's latest GitHub release:
+
+    foo_version: v1.2.3  # github-release owner/repo
+
+--drift compares every *_image_tag and *_version pinned in more than one
+inventory file and reports the ones that differ, without any network calls.
 """
 
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
@@ -48,6 +62,23 @@ INDEX_MEDIA_TYPES = {
 # Trailing marker that holds a tag back; see the module docstring.
 HOLD_PATTERN = re.compile(r"\s+#\s*hold:\s*(.+?)\s*$")
 
+# A plain "name: value" line, used to resolve {variable} placeholders
+SCALAR_PATTERN = re.compile(r"""^(\w+):\s*["']?([^"'#\s]+)["']?\s*(?:#.*)?$""")
+
+# Variables whose values are pinned versions, for --drift
+PINNED_PATTERN = re.compile(r"^\w+_(image_tag|version)$")
+
+
+def parse_scalar_vars(file_path: Path) -> dict[str, str]:
+    """Return every top-level "name: value" scalar in the file."""
+    values = {}
+    with open(file_path, "r") as f:
+        for line in f:
+            match = SCALAR_PATTERN.match(line.rstrip("\n"))
+            if match:
+                values[match.group(1)] = match.group(2)
+    return values
+
 
 def parse_image_tag_lines(file_path: Path) -> list[dict]:
     """
@@ -72,8 +103,31 @@ def parse_image_tag_lines(file_path: Path) -> list[dict]:
         r"#\s*(skopeo\s+list-tags\s+.+)$"  # Comment with skopeo command
     )
 
+    # variable_version: v1.2.3  # github-release owner/repo
+    release_pattern = re.compile(
+        r"^(\w+_version):\s*"
+        r'["\']?([^"\'#\s]+)["\']?\s*'
+        r"#\s*github-release\s+([\w.-]+/[\w.-]+)(.*)$"
+    )
+
     with open(file_path, "r") as f:
         for line_number, line in enumerate(f, 1):
+            release_match = release_pattern.match(line.strip())
+            if release_match:
+                hold_match = HOLD_PATTERN.search(release_match.group(4))
+                results.append(
+                    {
+                        "variable": release_match.group(1),
+                        "current_value": release_match.group(2),
+                        "skopeo_command": None,
+                        "github_repo": release_match.group(3),
+                        "image_ref": None,
+                        "hold": hold_match.group(1) if hold_match else None,
+                        "line_number": line_number,
+                    }
+                )
+                continue
+
             match = pattern.match(line.strip())
             if match:
                 command = match.group(3)
@@ -88,6 +142,7 @@ def parse_image_tag_lines(file_path: Path) -> list[dict]:
                         "variable": match.group(1),
                         "current_value": match.group(2),
                         "skopeo_command": command,
+                        "github_repo": None,
                         "image_ref": ref_match.group(0) if ref_match else None,
                         "hold": hold,
                         "line_number": line_number,
@@ -140,8 +195,29 @@ def normalize_image_name(ref: str) -> str:
     return name.removeprefix("library/")
 
 
-def resolve_hold_url(url: str, timeout: int = 30) -> str:
-    """Substitute {latest_release} in a raw.githubusercontent.com URL."""
+def get_latest_release(repo: str, timeout: int = 30) -> str:
+    """Return the tag of a GitHub repository's latest (non-prerelease) release."""
+    request = urllib.request.Request(f"https://api.github.com/repos/{repo}/releases/latest")
+    # Unauthenticated calls are limited to 60 an hour; use a token when there is one
+    token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+    if token:
+        request.add_header("Authorization", f"Bearer {token}")
+    with urllib.request.urlopen(request, timeout=timeout) as response:
+        return json.load(response)["tag_name"]
+
+
+def hold_url_variables(url: str) -> list[str]:
+    """Names of the {variable} placeholders in a hold URL."""
+    return [name for name in re.findall(r"\{(\w+)\}", url) if name != "latest_release"]
+
+
+def resolve_hold_url(url: str, variables: dict[str, str] | None = None, timeout: int = 30) -> str:
+    """Substitute {latest_release} and {variable} placeholders in a hold URL."""
+    for name in hold_url_variables(url):
+        if not variables or name not in variables:
+            raise ValueError(f"{{{name}}} is not set in this file")
+        url = url.replace(f"{{{name}}}", variables[name])
+
     if "{latest_release}" not in url:
         return url
 
@@ -150,20 +226,19 @@ def resolve_hold_url(url: str, timeout: int = 30) -> str:
         raise ValueError("{latest_release} only works in raw.githubusercontent.com URLs")
 
     owner, repo = repo_match.groups()
-    api_url = f"https://api.github.com/repos/{owner}/{repo}/releases/latest"
-    with urllib.request.urlopen(api_url, timeout=timeout) as response:
-        tag = json.load(response)["tag_name"]
-    return url.replace("{latest_release}", tag)
+    return url.replace("{latest_release}", get_latest_release(f"{owner}/{repo}", timeout=timeout))
 
 
-def get_upstream_tag(url: str, image_ref: str, timeout: int = 30) -> str:
+def get_upstream_tag(
+    url: str, image_ref: str, variables: dict[str, str] | None = None, timeout: int = 30
+) -> str:
     """
     Return the tag an upstream compose file pins for image_ref.
 
     Raises ValueError if the file can't be read or doesn't pin the image.
     """
     try:
-        resolved_url = resolve_hold_url(url, timeout=timeout)
+        resolved_url = resolve_hold_url(url, variables, timeout=timeout)
         with urllib.request.urlopen(resolved_url, timeout=timeout) as response:
             content = response.read().decode()
     except (urllib.error.URLError, OSError, KeyError, json.JSONDecodeError) as e:
@@ -321,6 +396,30 @@ def compare_versions(current: str, latest: str) -> str:
         return "update-available"
 
 
+def check_drift(files: list[Path], root: Path) -> int:
+    """Report pinned versions that differ between inventory files."""
+    pins: dict[str, dict[str, str]] = {}
+    for file_path in files:
+        for name, value in parse_scalar_vars(file_path).items():
+            if PINNED_PATTERN.match(name):
+                pins.setdefault(name, {})[str(file_path.relative_to(root))] = value
+
+    drifted = {
+        name: by_file
+        for name, by_file in sorted(pins.items())
+        if len(by_file) > 1 and len(set(by_file.values())) > 1
+    }
+    shared = sum(1 for by_file in pins.values() if len(by_file) > 1)
+
+    print(f"{BOLD}Pinned in more than one file: {shared}; differing: {len(drifted)}{RESET}\n")
+    for name, by_file in drifted.items():
+        print(f"  {YELLOW}≠{RESET} {BOLD}{name}{RESET}")
+        for file_name, value in sorted(by_file.items()):
+            print(f"    {file_name}: {value}")
+        print()
+    return len(drifted)
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Check for updated container image tags in a vars file"
@@ -352,6 +451,11 @@ def main():
         help="Skip verifying that suggested tags are actually pullable",
     )
     parser.add_argument(
+        "--drift",
+        action="store_true",
+        help="Compare versions pinned in more than one inventory file (no network calls)",
+    )
+    parser.add_argument(
         "--json",
         action="store_true",
         help="Output results as JSON",
@@ -371,6 +475,12 @@ def main():
 
     # Resolve file path
     script_dir = Path(__file__).parent.parent
+
+    if args.drift:
+        inventory_files = sorted(
+            p for p in (script_dir / "inventory").rglob("*.yml") if p.name != "hosts.yml"
+        )
+        sys.exit(0 if check_drift(inventory_files, script_dir) == 0 else 1)
 
     if args.file is None:
         # Discover inventory vars files and let the user pick
@@ -414,6 +524,7 @@ def main():
 
     # Parse the file
     image_tags = parse_image_tag_lines(file_path)
+    file_vars = parse_scalar_vars(file_path)
 
     if not image_tags:
         print(f"{YELLOW}No image tag variables with skopeo commands found.{RESET}")
@@ -432,7 +543,13 @@ def main():
         # Show progress
         print(f"  Checking {CYAN}{variable}{RESET}...", end=" ", flush=True)
 
-        tags = run_skopeo_command(command, timeout=args.timeout)
+        if item["github_repo"]:
+            try:
+                tags = [get_latest_release(item["github_repo"], timeout=args.timeout)]
+            except (urllib.error.URLError, OSError, KeyError, json.JSONDecodeError):
+                tags = None
+        else:
+            tags = run_skopeo_command(command, timeout=args.timeout)
 
         if tags is None:
             print(f"{RED}failed{RESET}")
@@ -457,7 +574,9 @@ def main():
         if hold:
             if re.match(r"https?://", hold):
                 try:
-                    upstream_value = get_upstream_tag(hold, item["image_ref"] or "", timeout=args.timeout)
+                    upstream_value = get_upstream_tag(
+                        hold, item["image_ref"] or "", file_vars, timeout=args.timeout
+                    )
                 except ValueError as e:
                     print(f"{RED}failed ({e}){RESET}")
                     results.append(
@@ -511,6 +630,15 @@ def main():
             }
         )
 
+    # A hold URL that follows another variable was resolved against that
+    # variable's current value; if it's being bumped too, check again afterwards.
+    updating = {r["variable"] for r in results if r["status"] == "update-available"}
+    for r in results:
+        if r.get("hold") and re.match(r"https?://", r["hold"]):
+            followed = [name for name in hold_url_variables(r["hold"]) if name in updating]
+            if followed:
+                r["recheck_after"] = followed
+
     # Output results
     if args.json:
         # Filter if updates-only
@@ -534,6 +662,8 @@ def main():
             elif r["status"] == "held" and not args.updates_only:
                 if r.get("upstream_value"):
                     reason = "matches the upstream pin"
+                    if r.get("recheck_after"):
+                        reason += f"; re-check after updating {', '.join(r['recheck_after'])}"
                 else:
                     reason = f"held: {r['hold']}"
                 print(f"  {CYAN}⏸{RESET} {variable}: {current} ({reason}; newest in registry: {r['registry_latest']})")
@@ -563,6 +693,8 @@ def main():
                     print(f"    Latest:  {GREEN}{latest}{RESET}")
                 if r.get("upstream_value"):
                     print(f"    {CYAN}Held to upstream, which now pins {latest}: {r['hold']}{RESET}")
+                if r.get("recheck_after"):
+                    print(f"    {CYAN}Follows {', '.join(r['recheck_after'])}; re-check after updating it{RESET}")
                 print()
 
         print(f"\n{BOLD}Summary:{RESET}")
