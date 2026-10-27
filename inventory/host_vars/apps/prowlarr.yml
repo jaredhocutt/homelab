@@ -1,0 +1,4 @@
+---
+# yamllint disable rule:line-length
+
+prowlarr_image_tag: version-2.6.5.5623  # skopeo list-tags docker://ghcr.io/linuxserver/prowlarr | jq -r '.Tags[] | select(test("^version-[0-9]"))'

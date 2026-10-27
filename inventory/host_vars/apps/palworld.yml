@@ -1,0 +1,17 @@
+---
+# yamllint disable rule:line-length
+
+palworld_image_tag: v1.0.5.102999  # skopeo list-tags docker://ghcr.io/pocketpairjp/palserver | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+
+palworld_memory: 16g
+
+palworld_server_name: "{{ lookup('jaredhocutt.homelab.bws', 'palworld_server_name') }}"
+palworld_server_password: "{{ lookup('jaredhocutt.homelab.bws', 'palworld_server_password') }}"
+palworld_admin_password: "{{ lookup('jaredhocutt.homelab.bws', 'palworld_admin_password') }}"
+
+newt_palworld_secrets:
+  newt_palworld_newt_id: "{{ lookup('jaredhocutt.homelab.bws', 'newt_palworld_newt_id') }}"
+  newt_palworld_newt_secret: "{{ lookup('jaredhocutt.homelab.bws', 'newt_palworld_newt_secret') }}"
+newt_palworld_container_secrets:
+  - newt_palworld_newt_id,type=env,target=NEWT_ID
+  - newt_palworld_newt_secret,type=env,target=NEWT_SECRET

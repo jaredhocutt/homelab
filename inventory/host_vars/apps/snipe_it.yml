@@ -1,0 +1,25 @@
+---
+# yamllint disable rule:line-length
+
+snipe_it_image_tag: v8.8.3  # skopeo list-tags docker://docker.io/snipe/snipe-it | jq -r '.Tags[] | select(test("^v[0-9]"))'
+snipe_it_mariadb_image_tag: "11.8.9"  # skopeo list-tags docker://docker.io/library/mariadb | jq -r '.Tags[] | select(test("^11\\.[0-9]+\\.[0-9]+$"))'
+
+snipe_it_app_key: "{{ lookup('jaredhocutt.homelab.bws', 'snipe_it_app_key') }}"
+snipe_it_mariadb_root_password: "{{ lookup('jaredhocutt.homelab.bws', 'snipe_it_mariadb_root_password') }}"
+snipe_it_mariadb_password: "{{ lookup('jaredhocutt.homelab.bws', 'snipe_it_mariadb_password') }}"
+
+snipe_it_container_env:
+  MAIL_HOST: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_host') }}"
+  MAIL_PORT: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_port') }}"
+  MAIL_USERNAME: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_username') }}"
+  MAIL_FROM_ADDR: "{{ lookup('jaredhocutt.homelab.bws', 'snipe_it_mail_from') }}"
+  MAIL_FROM_NAME: Snipe-IT
+  MAIL_REPLYTO_ADDR: "{{ lookup('jaredhocutt.homelab.bws', 'snipe_it_mail_from') }}"
+  MAIL_REPLYTO_NAME: Snipe-IT
+  MAIL_TLS_VERIFY_PEER: true
+  MAIL_AUTO_EMBED_METHOD: attachment
+
+snipe_it_secrets:
+  snipe_it_mail_password: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_password') }}"
+snipe_it_container_secrets:
+  - snipe_it_mail_password,type=env,target=MAIL_PASSWORD

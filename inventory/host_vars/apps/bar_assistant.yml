@@ -1,0 +1,20 @@
+---
+# yamllint disable rule:line-length
+
+bar_assistant_image_tag: "6.9.1"  # skopeo list-tags docker://ghcr.io/karlomikus/barassistant | jq -r '.Tags[] | select(test("^6\\.[0-9]"))'
+bar_assistant_salt_rim_image_tag: "5.8.0"  # skopeo list-tags docker://ghcr.io/karlomikus/salt-rim | jq -r '.Tags[] | select(test("^5\\.[0-9]"))'
+bar_assistant_redis_image_tag: "8.10.2"  # skopeo list-tags docker://docker.io/library/redis | jq -r '.Tags[] | select(test("^[0-9]\\.[0-9\\.]*$"))'
+bar_assistant_meilisearch_image_tag: v1.55.0  # skopeo list-tags docker://docker.io/getmeili/meilisearch | jq -r '.Tags[] | select(test("^v1\\.[0-9]+\\.[0-9]+$"))'
+
+bar_assistant_meilisearch_master_key: "{{ lookup('jaredhocutt.homelab.bws', 'bar_assistant_meilisearch_master_key') }}"
+
+bar_assistant_container_env:
+  AUTHENTIK_BASE_URL: "{{ lookup('jaredhocutt.homelab.bws', 'bar_assistant_authentik_base_url') }}"
+  AUTHENTIK_REDIRECT_URI: https://bar-assistant.{{ common_traefik_domain }}/oauth/callback
+
+bar_assistant_secrets:
+  bar_assistant_authentik_client_id: "{{ lookup('jaredhocutt.homelab.bws', 'bar_assistant_authentik_client_id') }}"
+  bar_assistant_authentik_client_secret: "{{ lookup('jaredhocutt.homelab.bws', 'bar_assistant_authentik_client_secret') }}"
+bar_assistant_container_secrets:
+  - bar_assistant_authentik_client_id,type=env,target=AUTHENTIK_CLIENT_ID
+  - bar_assistant_authentik_client_secret,type=env,target=AUTHENTIK_CLIENT_SECRET

@@ -1,0 +1,11 @@
+---
+# yamllint disable rule:line-length
+
+seerr_image_tag: v3.5.1  # skopeo list-tags docker://ghcr.io/seerr-team/seerr | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+
+newt_seerr_secrets:
+  newt_seerr_newt_id: "{{ lookup('jaredhocutt.homelab.bws', 'newt_seerr_newt_id') }}"
+  newt_seerr_newt_secret: "{{ lookup('jaredhocutt.homelab.bws', 'newt_seerr_newt_secret') }}"
+newt_seerr_container_secrets:
+  - newt_seerr_newt_id,type=env,target=NEWT_ID
+  - newt_seerr_newt_secret,type=env,target=NEWT_SECRET

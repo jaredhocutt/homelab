@@ -1,0 +1,7 @@
+---
+# yamllint disable rule:line-length
+
+glance_image_tag: v0.8.7  # skopeo list-tags docker://docker.io/glanceapp/glance | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+
+glance_traefik_host: "dashboard.{{ common_traefik_domain }}"
+glance_traefik_auth: true

@@ -1,0 +1,4 @@
+---
+# yamllint disable rule:line-length
+
+ansible_python_interpreter: python3

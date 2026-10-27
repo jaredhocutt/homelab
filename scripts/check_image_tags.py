@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
 """
-Check for updated container image tags in a vars file.
+Check for updated container image tags in a vars file or directory.
 
-Parses a YAML vars file, finds variables ending in _image_tag that have
+Parses YAML vars files, finds variables ending in _image_tag that have
 skopeo commands in their comments, runs those commands to get the latest
 available tags, and compares them to the current values.
 
-If no file is specified, presents an interactive list of inventory files.
+The target can be a single file or a directory such as
+inventory/host_vars/apps/, which Ansible merges into one host's variables; a
+directory checks every .yml file under it. The .yml extension may be left off,
+so inventory/host_vars/apps and inventory/host_vars/edge both work. If no
+target is specified, presents an interactive list of the inventory's
+host_vars and group_vars entries.
 
 A tag can be held back by appending a hold marker after the skopeo command:
 
@@ -18,8 +23,10 @@ URL points at an upstream compose file; the tag follows whatever that file
 pins for the same image, so an update is suggested only when upstream moves.
 In a raw.githubusercontent.com URL, {latest_release} is replaced with the
 repository's latest GitHub release tag, and {some_variable} is replaced with
-that variable's current value from the same file, so a sidecar can follow the
-compose file of the release actually deployed:
+that variable's current value from the same file (or, for a file in a
+host_vars/<host>/ or group_vars/<group>/ directory, any file in that
+directory), so a sidecar can follow the compose file of the release actually
+deployed:
 
     # hold: https://raw.githubusercontent.com/o/r/v{app_image_tag}/compose.yml
 
@@ -78,6 +85,50 @@ def parse_scalar_vars(file_path: Path) -> dict[str, str]:
             if match:
                 values[match.group(1)] = match.group(2)
     return values
+
+
+def resolve_target(path: Path, root: Path) -> Path | None:
+    """
+    Find the vars file or directory a command-line path refers to.
+
+    A relative path is tried against the repo root first, then the current
+    directory, each as given and with a .yml extension added.
+    """
+    bases = [path] if path.is_absolute() else [root / path, path]
+    for base in bases:
+        for candidate in (base, base.with_name(base.name + ".yml")):
+            if candidate.exists():
+                return candidate
+    return None
+
+
+def vars_files(target: Path) -> list[Path]:
+    """The .yml files a target file or directory covers."""
+    if target.is_dir():
+        return sorted(target.rglob("*.yml"))
+    return [target]
+
+
+def variable_scope(target: Path) -> list[Path]:
+    """
+    Files whose variables a hold URL's {variable} placeholders may reference.
+
+    Ansible merges every file in a host_vars/<host>/ or group_vars/<group>/
+    directory into one set of variables, so a file inside one can follow a
+    variable set in a sibling file.
+    """
+    for directory in (target, *target.parents):
+        if directory.parent.name in ("host_vars", "group_vars"):
+            return vars_files(directory)
+    return vars_files(target)
+
+
+def display_path(file_path: Path, root: Path) -> str:
+    """A path relative to the repo root when possible, for output."""
+    try:
+        return str(file_path.resolve().relative_to(root.resolve()))
+    except ValueError:
+        return str(file_path)
 
 
 def parse_image_tag_lines(file_path: Path) -> list[dict]:
@@ -422,12 +473,15 @@ def check_drift(files: list[Path], root: Path) -> int:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Check for updated container image tags in a vars file"
+        description="Check for updated container image tags in a vars file or directory"
     )
     parser.add_argument(
         "file",
         nargs="?",
-        help="Path to the YAML file to check (if omitted, presents a list of inventory files)",
+        help=(
+            "Path to the YAML file or directory to check; the .yml extension is optional "
+            "(if omitted, presents a list of inventory host_vars and group_vars entries)"
+        ),
     )
     parser.add_argument(
         "--timeout",
@@ -483,20 +537,24 @@ def main():
         sys.exit(0 if check_drift(inventory_files, script_dir) == 0 else 1)
 
     if args.file is None:
-        # Discover inventory vars files and let the user pick
+        # Offer each host's and group's vars, whether a single file or a
+        # directory of per-app files, and let the user pick
         inventory_dir = script_dir / "inventory"
         candidates = sorted(
             p
-            for p in inventory_dir.rglob("*.yml")
-            if p.name != "hosts.yml"
+            for vars_dir in ("host_vars", "group_vars")
+            if (inventory_dir / vars_dir).is_dir()
+            for p in (inventory_dir / vars_dir).iterdir()
+            if p.is_dir() or p.suffix == ".yml"
         )
         if not candidates:
-            print(f"{RED}Error: No YAML files found in {inventory_dir}{RESET}", file=sys.stderr)
+            print(f"{RED}Error: No vars files found in {inventory_dir}{RESET}", file=sys.stderr)
             sys.exit(1)
 
-        print(f"{BOLD}Select a vars file to check:{RESET}\n")
+        print(f"{BOLD}Select vars to check:{RESET}\n")
         for i, candidate in enumerate(candidates, 1):
-            print(f"  {CYAN}{i}{RESET}) {candidate.relative_to(script_dir)}")
+            suffix = "/" if candidate.is_dir() else ""
+            print(f"  {CYAN}{i}{RESET}) {candidate.relative_to(script_dir)}{suffix}")
         print()
 
         try:
@@ -504,33 +562,31 @@ def main():
             idx = int(choice) - 1
             if idx < 0 or idx >= len(candidates):
                 raise ValueError
-            file_path = candidates[idx]
+            target = candidates[idx]
         except (ValueError, EOFError, KeyboardInterrupt):
             print(f"\n{RED}Invalid selection.{RESET}", file=sys.stderr)
             sys.exit(1)
     else:
-        file_path = Path(args.file)
-        if not file_path.is_absolute():
-            # Try relative to script location first, then current directory
-            if (script_dir / file_path).exists():
-                file_path = script_dir / file_path
-            elif not file_path.exists():
-                print(f"{RED}Error: File not found: {file_path}{RESET}", file=sys.stderr)
-                sys.exit(1)
-
-        if not file_path.exists():
-            print(f"{RED}Error: File not found: {file_path}{RESET}", file=sys.stderr)
+        target = resolve_target(Path(args.file), script_dir)
+        if target is None:
+            print(f"{RED}Error: File not found: {args.file}{RESET}", file=sys.stderr)
             sys.exit(1)
 
-    # Parse the file
-    image_tags = parse_image_tag_lines(file_path)
-    file_vars = parse_scalar_vars(file_path)
+    # Parse the files, noting where each variable lives so it can be edited
+    image_tags = [
+        {**item, "file": display_path(file_path, script_dir)}
+        for file_path in vars_files(target)
+        for item in parse_image_tag_lines(file_path)
+    ]
+    file_vars = {}
+    for file_path in variable_scope(target):
+        file_vars.update(parse_scalar_vars(file_path))
 
     if not image_tags:
         print(f"{YELLOW}No image tag variables with skopeo commands found.{RESET}")
         sys.exit(0)
 
-    print(f"{BOLD}Checking {len(image_tags)} image tags...{RESET}\n")
+    print(f"{BOLD}Checking {len(image_tags)} image tags in {display_path(target, script_dir)}...{RESET}\n")
 
     results = []
     updates_available = 0
@@ -684,6 +740,7 @@ def main():
 
             if status == "update-available":
                 print(f"  {YELLOW}▶{RESET} {BOLD}{variable}{RESET}")
+                print(f"    File:    {r['file']}:{r['line_number']}")
                 print(f"    Current: {current}")
                 if r.get("pull_warning"):
                     print(f"    Latest:  {RED}{latest}{RESET}")

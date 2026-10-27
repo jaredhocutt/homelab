@@ -1,0 +1,5 @@
+---
+# yamllint disable rule:line-length
+
+server_setup_dnf_automatic: true
+server_setup_fail2ban: true

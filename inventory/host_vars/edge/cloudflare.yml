@@ -1,0 +1,4 @@
+---
+# yamllint disable rule:line-length
+
+cloudflare_zone: "{{ lookup('jaredhocutt.homelab.bws', 'cloudflare_zone') }}"

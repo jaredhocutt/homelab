@@ -1,0 +1,12 @@
+---
+# yamllint disable rule:line-length
+
+tracearr_image_tag: "3.1.1"  # skopeo list-tags docker://ghcr.io/connorgallopo/tracearr | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'
+tracearr_timescaledb_image_tag: pg18.4-ts2.29.1  # skopeo list-tags docker://docker.io/timescale/timescaledb-ha | jq -r '.Tags[] | select(test("^pg18\\.[0-9]+-ts[0-9\\.]+$"))'  # hold: https://raw.githubusercontent.com/connorgallopo/tracearr/v{tracearr_image_tag}/docker/examples/docker-compose.pg18.yml
+tracearr_redis_image_tag: 8.10.2-alpine  # skopeo list-tags docker://docker.io/library/redis | jq -r '.Tags[] | select(test("^8\\.[0-9\\.]*-alpine$"))'
+
+tracearr_timescaledb_password: "{{ lookup('jaredhocutt.homelab.bws', 'tracearr_timescaledb_password') }}"
+tracearr_jwt_secret: "{{ lookup('jaredhocutt.homelab.bws', 'tracearr_jwt_secret') }}"
+tracearr_cookie_secret: "{{ lookup('jaredhocutt.homelab.bws', 'tracearr_cookie_secret') }}"
+
+tracearr_timescaledb_shm_size: 2048m

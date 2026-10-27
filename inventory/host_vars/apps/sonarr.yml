@@ -1,0 +1,13 @@
+---
+# yamllint disable rule:line-length
+
+sonarr_image_tag: version-4.0.20.3014  # skopeo list-tags docker://lscr.io/linuxserver/sonarr | jq -r '.Tags[] | select(test("^version-[0-9]"))'
+
+sonarr_container_env:
+  PUID: "{{ global_media_uid }}"
+  PGID: "{{ global_media_gid }}"
+
+sonarr_volume_download: "{{ global_volume_download }}"
+sonarr_volume_download_options: "{{ global_volume_download_options }}"
+sonarr_volume_media: "{{ global_volume_media }}"
+sonarr_volume_media_options: "{{ global_volume_media_options }}"

@@ -1,0 +1,4 @@
+---
+# yamllint disable rule:line-length
+
+lubelogger_image_tag: v1.7.4  # skopeo list-tags docker://ghcr.io/hargata/lubelogger | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'

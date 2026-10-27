@@ -1,0 +1,78 @@
+---
+# yamllint disable rule:line-length
+
+kickstart_hostname: apps
+kickstart_network:
+  - device: enp1s0f0
+    activate: true
+  - device: enp1s0f1
+    activate: true
+    options: --nodefroute
+  - device: eno1
+    activate: false
+  - device: wlp0s20f3
+    activate: false
+
+kickstart_storage_disks:
+  - name: disk/by-id/nvme-Samsung_SSD_960_EVO_250GB_S3ESNX0J407135J
+    partitions:
+      - mountpoint: /boot/efi
+        filesystem: efi
+        size: 600
+        options: --fsoptions="umask=0077,shortname=winnt"
+      - mountpoint: /boot
+        filesystem: xfs
+        size: 1024
+      - mountpoint: pv.01
+        filesystem: lvmpv
+        size: 1
+        options: --grow
+  - name: disk/by-id/nvme-Samsung_SSD_980_PRO_2TB_S76ENU0WC12575X
+    partitions:
+      - mountpoint: pv.02
+        filesystem: lvmpv
+        size: 1
+        options: --grow
+kickstart_storage_volume_groups:
+  - name: fedora
+    physical_volumes:
+      - pv.01
+    logical_volumes:
+      - name: root
+        mountpoint: /
+        filesystem: xfs
+        size: "{{ 1024 * 50 }}"  # 50 GB
+      - name: home
+        mountpoint: /home
+        filesystem: xfs
+        size: "{{ 1024 * 30 }}"  # 30 GB
+      - name: swap
+        mountpoint: swap
+        filesystem: swap
+        size: "{{ 1024 * 4 }}"  # 4 GB
+  - name: data
+    physical_volumes:
+      - pv.02
+    logical_volumes:
+      - name: podman
+        mountpoint: /var/lib/containers
+        filesystem: xfs
+        percent: 100
+
+kickstart_users:
+  - fullname: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_1_fullname') }}"
+    username: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_1_username') }}"
+    groups: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_1_groups') }}"
+    uid: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_1_uid') }}"
+    gid: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_1_gid') }}"
+    password: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_1_password_crypted') }}"
+    authorized_keys: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_1_authorized_keys') | split('\n') }}"
+  - fullname: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_2_fullname') }}"
+    username: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_2_username') }}"
+    groups: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_2_groups') }}"
+    uid: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_2_uid') }}"
+    gid: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_2_gid') }}"
+    sudoers: |
+      {{ lookup('jaredhocutt.homelab.bws', 'server_user_2_username') }} ALL=(ALL) NOPASSWD: ALL
+      Defaults:{{ lookup('jaredhocutt.homelab.bws', 'server_user_2_username') }} !requiretty
+    authorized_keys: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_2_authorized_keys') | split('\n') }}"

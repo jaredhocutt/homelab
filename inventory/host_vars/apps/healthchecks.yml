@@ -1,0 +1,36 @@
+---
+# yamllint disable rule:line-length
+
+healthchecks_image_tag: version-v5.0.1  # skopeo list-tags docker://lscr.io/linuxserver/healthchecks | jq -r '.Tags[] | select(test("^version-v[0-9]"))'
+
+healthchecks_email: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_email') }}"
+healthchecks_password: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_password') }}"
+healthchecks_secret_key: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_secret_key') }}"
+healthchecks_container_env:
+  DEFAULT_FROM_EMAIL: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_from_email') }}"
+  EMAIL_HOST: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_host') }}"
+  EMAIL_PORT: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_port') }}"
+  EMAIL_HOST_USER: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_username') }}"
+  EMAIL_USE_TLS: "True"
+  REGISTRATION_OPEN: "False"
+  REMOTE_USER_HEADER: HTTP_X_AUTHENTIK_EMAIL
+  SITE_LOGO_URL: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/healthchecks.png
+
+healthchecks_traefik_auth: true
+healthchecks_traefik_noauth_paths:
+  - /ping/
+  - /api/
+  - /badge/
+
+healthchecks_secrets:
+  healthchecks_discord_client_id: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_discord_client_id') }}"
+  healthchecks_discord_client_secret: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_discord_client_secret') }}"
+  healthchecks_email_password: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_password') }}"
+  healthchecks_pushover_api_token: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_pushover_api_token') }}"
+  healthchecks_pushover_subscription_url: "{{ lookup('jaredhocutt.homelab.bws', 'healthchecks_pushover_subscription_url') }}"
+healthchecks_container_secrets:
+  - healthchecks_discord_client_id,type=env,target=DISCORD_CLIENT_ID
+  - healthchecks_discord_client_secret,type=env,target=DISCORD_CLIENT_SECRET
+  - healthchecks_email_password,type=env,target=EMAIL_HOST_PASSWORD
+  - healthchecks_pushover_api_token,type=env,target=PUSHOVER_API_TOKEN
+  - healthchecks_pushover_subscription_url,type=env,target=PUSHOVER_SUBSCRIPTION_URL

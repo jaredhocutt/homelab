@@ -1,0 +1,10 @@
+---
+# yamllint disable rule:line-length
+
+shelfmark_image_tag: v1.5.1  # skopeo list-tags docker://ghcr.io/calibrain/shelfmark | jq -r '.Tags[] | select(test("^v[0-9]"))'
+
+shelfmark_volume_books: "{{ shared_volume_download_books }}"
+
+shelfmark_container_env:
+  PUID: "{{ global_media_uid }}"
+  PGID: "{{ global_media_gid }}"

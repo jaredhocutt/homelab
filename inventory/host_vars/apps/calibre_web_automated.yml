@@ -1,0 +1,15 @@
+---
+# yamllint disable rule:line-length
+
+calibre_web_automated_image_tag: v4.0.8  # skopeo list-tags docker://ghcr.io/crocodilestick/calibre-web-automated | jq -r '.Tags[] | select(test("^v[0-9]"))'
+
+calibre_web_automated_volume_ingest: "{{ shared_volume_download_books }}"
+
+calibre_web_automated_container_env:
+  PUID: "{{ global_media_uid }}"
+  PGID: "{{ global_media_gid }}"
+
+calibre_web_automated_secrets:
+  calibre_web_automated_hardcover_token: "{{ lookup('jaredhocutt.homelab.bws', 'calibre_web_automated_hardcover_token') }}"
+calibre_web_automated_container_secrets:
+  - calibre_web_automated_hardcover_token,type=env,target=HARDCOVER_TOKEN

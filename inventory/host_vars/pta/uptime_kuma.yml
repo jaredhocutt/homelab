@@ -1,0 +1,4 @@
+---
+# yamllint disable rule:line-length
+
+uptime_kuma_image_tag: "2.5.5"  # skopeo list-tags docker://ghcr.io/louislam/uptime-kuma | jq -r '.Tags[] | select(test("^[0-9\\.]+$"))'

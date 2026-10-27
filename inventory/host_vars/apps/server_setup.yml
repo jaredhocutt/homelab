@@ -1,0 +1,15 @@
+---
+# yamllint disable rule:line-length
+
+server_setup_dnf_automatic: true
+
+_additional_users:
+  - fullname: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_3_fullname') }}"
+    username: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_3_username') }}"
+    uid: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_3_uid') }}"
+    gid: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_3_gid') }}"
+    sudoers: |
+      {{ lookup('jaredhocutt.homelab.bws', 'server_user_3_username') }} ALL=(ALL) NOPASSWD: ALL
+      Defaults:{{ lookup('jaredhocutt.homelab.bws', 'server_user_3_username') }} !requiretty
+    authorized_keys: "{{ lookup('jaredhocutt.homelab.bws', 'server_user_3_authorized_keys') | split('\n') }}"
+server_setup_users: "{{ kickstart_users + _additional_users }}"  # Include kickstart users in case any values change over time, the users can be updated

@@ -1,0 +1,13 @@
+---
+# yamllint disable rule:line-length
+
+radarr_image_tag: version-6.4.4.10685  # skopeo list-tags docker://lscr.io/linuxserver/radarr | jq -r '.Tags[] | select(test("^version-[0-9]"))'
+
+radarr_container_env:
+  PUID: "{{ global_media_uid }}"
+  PGID: "{{ global_media_gid }}"
+
+radarr_volume_download: "{{ global_volume_download }}"
+radarr_volume_download_options: "{{ global_volume_download_options }}"
+radarr_volume_media: "{{ global_volume_media }}"
+radarr_volume_media_options: "{{ global_volume_media_options }}"

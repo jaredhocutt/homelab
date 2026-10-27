@@ -1,62 +1,7 @@
 ---
-
-ansible_python_interpreter: python3
-
-###############################################################################
-# backrest
-###############################################################################
-
-backrest_version: v1.14.1  # github-release garethgeorge/backrest
-
-backrest_traefik_enable: false
-
-backrest_env:
-  BACKREST_PORT: 0.0.0.0:9898
-
-###############################################################################
-# do_agent
-###############################################################################
+# yamllint disable rule:line-length
 
 do_agent_image_tag: 3.18.16  # skopeo list-tags docker://docker.io/digitalocean/do-agent | jq -r '.Tags[] | select(test("^[0-9]+\\.[0-9]+\\.[0-9]+$"))'
-
-###############################################################################
-# pangolin
-###############################################################################
-
-pangolin_image_tag: "ee-1.25.3"  # skopeo list-tags docker://ghcr.io/fosrl/pangolin | jq -r '.Tags[] | select(test("^ee-[0-9\\.]+$"))'
-pangolin_gerbil_image_tag: "1.5.2"  # skopeo list-tags docker://ghcr.io/fosrl/gerbil | jq -r '.Tags[] | select(test("^[0-9]\\."))'
-pangolin_traefik_image_tag: v3.7.16  # skopeo list-tags docker://ghcr.io/traefik/traefik | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
-pangolin_badger_version: v1.7.0  # github-release fosrl/badger
-
-pangolin_gerbil_ports_extra:
-  - 8211:8211/udp  # pangolin
-
-pangolin_base_domain: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_base_domain') }}"
-pangolin_server_secret: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_server_secret') }}"
-pangolin_traefik_letsencrypt_email: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_smtp_no_reply') }}"
-
-pangolin_smtp_host: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_host') }}"
-pangolin_smtp_port: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_port') }}"
-pangolin_smtp_user: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_username') }}"
-pangolin_smtp_password: "{{ lookup('jaredhocutt.homelab.bws', 'homelab_smtp_password') }}"
-pangolin_no_reply: "{{ lookup('jaredhocutt.homelab.bws', 'pangolin_smtp_no_reply') }}"
-
-###############################################################################
-# server_setup
-###############################################################################
-
-server_setup_dnf_automatic: true
-server_setup_fail2ban: true
-
-###############################################################################
-# cloudflare
-###############################################################################
-
-cloudflare_zone: "{{ lookup('jaredhocutt.homelab.bws', 'cloudflare_zone') }}"
-
-###############################################################################
-# digitalocean_droplet
-###############################################################################
 
 droplet_region: nyc3
 droplet_image: fedora-43-x64
@@ -106,10 +51,6 @@ droplet_user_data: |
         fi
       done
       systemctl restart systemd-journald
-
-###############################################################################
-# digitalocean_firewall
-###############################################################################
 
 digitalocean_firewall_default_inbound_rules:
   - protocol: tcp

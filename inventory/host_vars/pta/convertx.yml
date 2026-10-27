@@ -1,0 +1,6 @@
+---
+# yamllint disable rule:line-length
+
+convertx_image_tag: v0.19.0  # skopeo list-tags docker://ghcr.io/c4illin/convertx | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+
+convertx_jwt_secret: "{{ lookup('jaredhocutt.homelab.bws', 'pta_convertx_jwt_secret') }}"

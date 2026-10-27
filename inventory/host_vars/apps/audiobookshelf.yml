@@ -1,0 +1,11 @@
+---
+# yamllint disable rule:line-length
+
+audiobookshelf_image_tag: "2.37.2"  # skopeo list-tags docker://ghcr.io/advplyr/audiobookshelf | jq -r '.Tags[] | select(test("^[0-9]"))'
+
+newt_audiobookshelf_secrets:
+  newt_audiobookshelf_newt_id: "{{ lookup('jaredhocutt.homelab.bws', 'newt_audiobookshelf_newt_id') }}"
+  newt_audiobookshelf_newt_secret: "{{ lookup('jaredhocutt.homelab.bws', 'newt_audiobookshelf_newt_secret') }}"
+newt_audiobookshelf_container_secrets:
+  - newt_audiobookshelf_newt_id,type=env,target=NEWT_ID
+  - newt_audiobookshelf_newt_secret,type=env,target=NEWT_SECRET
