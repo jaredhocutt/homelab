@@ -1,0 +1,32 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Stat the backrest binary
+      ansible.builtin.stat:
+        path: /usr/local/bin/backrest
+      register: binary
+
+    - name: Assert the backrest binary was installed
+      ansible.builtin.assert:
+        that:
+          - binary.stat.exists
+          - binary.stat.mode == "0755"
+
+    - name: Read the systemd service file
+      ansible.builtin.slurp:
+        src: /etc/systemd/system/backrest.service
+      register: service_file
+
+    - name: Assert the service file runs backrest with the default listen address
+      ansible.builtin.assert:
+        that:
+          - "'ExecStart=/usr/local/bin/backrest' in (service_file.content | b64decode)"
+          - "'Environment=\"BACKREST_PORT=127.0.0.1:9898\"' in (service_file.content | b64decode)"
+
+    - name: Wait for backrest to listen on its port
+      ansible.builtin.wait_for:
+        host: 127.0.0.1
+        port: 9898
+        timeout: 60

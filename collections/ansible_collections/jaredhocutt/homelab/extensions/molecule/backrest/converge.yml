@@ -1,0 +1,13 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    # Without traefik in the instance there is no dynamic config volume to
+    # write into, and a pinned version avoids a GitHub API call.
+    backrest_traefik_enable: false
+    backrest_version: v1.14.1
+  tasks:
+    - name: Include backrest role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.backrest

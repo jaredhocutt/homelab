@@ -1,0 +1,57 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  vars:
+    quadlet_dir: /etc/containers/systemd
+    expected_quadlets:
+      - tracearr.network
+      - tracearr-data.volume
+      - tracearr-image-cache.volume
+      - tracearr-timescaledb-data.volume
+      - tracearr-redis-data.volume
+      - tracearr-timescaledb.container
+      - tracearr-redis.container
+      - tracearr.container
+  tasks:
+    - name: Stat each expected quadlet file
+      ansible.builtin.stat:
+        path: "{{ quadlet_dir }}/{{ item }}"
+      register: quadlet_stats
+      loop: "{{ expected_quadlets }}"
+
+    - name: Assert each quadlet file exists with the expected mode
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.size > 0
+          - item.stat.mode == "0600"
+        fail_msg: "Quadlet {{ item.item }} missing or has wrong mode/size"
+      loop: "{{ quadlet_stats.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Read tracearr container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/tracearr.container"
+      register: container_quadlet
+
+    - name: Assert tracearr container quadlet has the expected image, volume, ports, and dependencies
+      ansible.builtin.assert:
+        that:
+          - "'ghcr.io/connorgallopo/tracearr' in (container_quadlet.content | b64decode)"
+          - "'tracearr-data.volume:/data/backup' in (container_quadlet.content | b64decode)"
+          - "'3000:3000' in (container_quadlet.content | b64decode)"
+          - "'Requires=tracearr-timescaledb.service' in (container_quadlet.content | b64decode)"
+          - "'Requires=tracearr-redis.service' in (container_quadlet.content | b64decode)"
+
+    - name: Read timescaledb container quadlet contents
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/tracearr-timescaledb.container"
+      register: timescaledb_quadlet
+
+    - name: Assert timescaledb container quadlet has the expected image and volume
+      ansible.builtin.assert:
+        that:
+          - "'docker.io/timescale/timescaledb-ha' in (timescaledb_quadlet.content | b64decode)"
+          - "'tracearr-timescaledb-data.volume:/home/postgres/pgdata/data' in (timescaledb_quadlet.content | b64decode)"
