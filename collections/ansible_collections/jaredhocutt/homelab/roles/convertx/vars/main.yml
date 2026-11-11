@@ -2,7 +2,7 @@
 # vars file for jaredhocutt.homelab.convertx
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 convertx_container_env_defaults: {}

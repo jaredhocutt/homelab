@@ -2,7 +2,7 @@
 # vars file for jaredhocutt.homelab.glance
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 glance_container_env_defaults: {}

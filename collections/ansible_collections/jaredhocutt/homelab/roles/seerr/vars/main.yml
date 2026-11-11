@@ -2,7 +2,7 @@
 # vars file for jaredhocutt.homelab.seerr
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 seerr_container_env_defaults: {}

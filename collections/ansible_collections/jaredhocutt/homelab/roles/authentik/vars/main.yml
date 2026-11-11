@@ -5,7 +5,7 @@ authentik_postgres_db_name: authentik
 authentik_postgres_user: authentik
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 authentik_server_container_env_defaults:

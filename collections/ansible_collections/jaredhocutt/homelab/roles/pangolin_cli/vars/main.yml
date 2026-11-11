@@ -2,7 +2,7 @@
 # vars file for jaredhocutt.homelab.pangolin_cli
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 pangolin_cli_container_env_defaults:

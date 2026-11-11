@@ -5,7 +5,7 @@ tracearr_timescaledb_db_name: tracearr
 tracearr_timescaledb_user: tracearr
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 tracearr_container_env_defaults:

@@ -2,7 +2,7 @@
 # vars file for jaredhocutt.homelab.prowlarr
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 prowlarr_container_env_defaults: {}

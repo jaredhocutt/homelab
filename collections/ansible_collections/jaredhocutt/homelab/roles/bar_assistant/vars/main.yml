@@ -2,7 +2,7 @@
 # vars file for jaredhocutt.homelab.bar_assistant
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 bar_assistant_container_env_defaults:

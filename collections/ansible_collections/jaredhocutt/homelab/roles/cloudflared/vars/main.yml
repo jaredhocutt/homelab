@@ -2,7 +2,7 @@
 # vars file for jaredhocutt.homelab.cloudflared
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 cloudflared_container_env_defaults:

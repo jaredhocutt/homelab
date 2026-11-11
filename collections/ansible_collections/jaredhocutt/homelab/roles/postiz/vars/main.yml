@@ -12,7 +12,7 @@ postiz_database_url: >-
 postiz_temporal_postgres_user: temporal
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 postiz_container_env_defaults:

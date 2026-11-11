@@ -2,7 +2,7 @@
 # vars file for jaredhocutt.homelab.calibre_web_automated
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 calibre_web_automated_container_env_defaults: {}

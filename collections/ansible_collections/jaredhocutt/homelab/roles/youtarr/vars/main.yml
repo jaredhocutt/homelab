@@ -5,7 +5,7 @@ youtarr_mariadb_db_name: youtarr
 youtarr_mariadb_user: youtarr
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 youtarr_container_env_defaults:

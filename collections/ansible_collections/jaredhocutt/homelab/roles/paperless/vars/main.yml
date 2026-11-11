@@ -5,7 +5,7 @@ paperless_postgres_db_name: paperless
 paperless_postgres_user: paperless
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 paperless_container_env_defaults:

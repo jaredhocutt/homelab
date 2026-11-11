@@ -7,7 +7,7 @@
 karakeep_browser_websocket_url: "ws://{{ karakeep_name }}-browserless:3000/chromium/playwright?token={{ karakeep_browserless_token | urlencode }}"
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 karakeep_container_env_defaults:

@@ -2,7 +2,7 @@
 # vars file for jaredhocutt.homelab.tautulli
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 tautulli_container_env_defaults: {}

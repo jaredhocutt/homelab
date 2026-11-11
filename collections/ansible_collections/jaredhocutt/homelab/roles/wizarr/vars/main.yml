@@ -2,7 +2,7 @@
 # vars file for jaredhocutt.homelab.wizarr
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 wizarr_container_env_defaults: {}

@@ -5,7 +5,7 @@ board_game_tracker_postgres_db_name: boardgametracker
 board_game_tracker_postgres_user: boardgametracker
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 board_game_tracker_container_env_defaults:

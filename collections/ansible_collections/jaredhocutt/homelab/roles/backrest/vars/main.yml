@@ -5,7 +5,7 @@ backrest_bin_path: /usr/local/bin/backrest
 backrest_installed_version: ""
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 backrest_env_defaults:

@@ -21,7 +21,7 @@ traefik_command_defaults:
   - --accesslog=true
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 traefik_container_env_defaults: {}

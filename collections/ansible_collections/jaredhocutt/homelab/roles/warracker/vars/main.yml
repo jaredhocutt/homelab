@@ -5,7 +5,7 @@ warracker_postgres_db_name: warracker
 warracker_postgres_user: warracker
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 warracker_container_env_defaults:

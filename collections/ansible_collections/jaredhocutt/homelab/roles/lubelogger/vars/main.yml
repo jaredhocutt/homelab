@@ -2,7 +2,7 @@
 # vars file for jaredhocutt.homelab.lubelogger
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 lubelogger_container_env_defaults:

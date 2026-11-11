@@ -2,7 +2,7 @@
 # vars file for jaredhocutt.homelab.profilarr
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 profilarr_container_env_defaults:

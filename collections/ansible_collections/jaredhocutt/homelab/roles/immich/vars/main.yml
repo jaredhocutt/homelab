@@ -5,7 +5,7 @@ immich_postgres_db_name: immich
 immich_postgres_user: immich
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 immich_container_env_defaults:

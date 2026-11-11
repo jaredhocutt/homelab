@@ -5,7 +5,7 @@ nocodb_postgres_db_name: nocodb
 nocodb_postgres_user: nocodb
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 nocodb_container_env_defaults:

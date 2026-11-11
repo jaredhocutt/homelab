@@ -2,7 +2,7 @@
 # vars file for jaredhocutt.homelab.shelfmark
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 shelfmark_container_env_defaults: {}

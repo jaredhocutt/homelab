@@ -2,7 +2,7 @@
 # vars file for jaredhocutt.homelab.changedetection
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 changedetection_container_env_defaults:

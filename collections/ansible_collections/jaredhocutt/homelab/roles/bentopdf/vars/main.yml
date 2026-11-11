@@ -2,7 +2,7 @@
 # vars file for jaredhocutt.homelab.bentopdf
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 bentopdf_container_env_defaults: {}

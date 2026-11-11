@@ -2,7 +2,7 @@
 # vars file for jaredhocutt.homelab.transfer_sh
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 transfer_sh_container_env_defaults:

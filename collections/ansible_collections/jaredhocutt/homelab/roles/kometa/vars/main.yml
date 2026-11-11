@@ -2,7 +2,7 @@
 # vars file for jaredhocutt.homelab.kometa
 
 ###############################################################################
-# Envrionment
+# Environment
 ###############################################################################
 
 kometa_container_env_defaults: {}
