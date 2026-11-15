@@ -1,7 +1,7 @@
 ---
 # yamllint disable rule:line-length
 
-seerr_image_tag: v3.5.1  # skopeo list-tags docker://ghcr.io/seerr-team/seerr | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
+seerr_image_tag: v3.5.2  # skopeo list-tags docker://ghcr.io/seerr-team/seerr | jq -r '.Tags[] | select(test("^v[0-9\\.]+$"))'
 
 newt_seerr_secrets:
   newt_seerr_newt_id: "{{ lookup('jaredhocutt.homelab.bws', 'newt_seerr_newt_id') }}"

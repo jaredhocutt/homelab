@@ -1,8 +1,8 @@
 ---
 # yamllint disable rule:line-length
 
-tandoor_image_tag: "2.7.2"  # skopeo list-tags docker://docker.io/vabene1111/recipes | jq -r '.Tags[] | select(test("^[0-9]\\."))'
-tandoor_postgres_image_tag: "16.15"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
+tandoor_image_tag: "2.7.3"  # skopeo list-tags docker://docker.io/vabene1111/recipes | jq -r '.Tags[] | select(test("^[0-9]\\."))'
+tandoor_postgres_image_tag: "16.16"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^16\\.[0-9]"))'
 
 tandoor_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'tandoor_postgres_password') }}"
 tandoor_secret_key: "{{ lookup('jaredhocutt.homelab.bws', 'tandoor_secret_key') }}"

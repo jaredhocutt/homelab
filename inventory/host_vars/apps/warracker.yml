@@ -1,8 +1,8 @@
 ---
 # yamllint disable rule:line-length
 
-warracker_image_tag: "1.0.4"  # skopeo list-tags docker://ghcr.io/sassanix/warracker/main | jq -r '.Tags[] | select(test("^[0-9]"))'
-warracker_postgres_image_tag: "15.19"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^15\\.[0-9]"))'
+warracker_image_tag: "1.0.6"  # skopeo list-tags docker://ghcr.io/sassanix/warracker/main | jq -r '.Tags[] | select(test("^[0-9]"))'
+warracker_postgres_image_tag: "15.20"  # skopeo list-tags docker://docker.io/library/postgres | jq -r '.Tags[] | select(test("^15\\.[0-9]"))'
 
 warracker_postgres_password: "{{ lookup('jaredhocutt.homelab.bws', 'warracker_postgres_password') }}"
 warracker_secret_key: "{{ lookup('jaredhocutt.homelab.bws', 'warracker_secret_key') }}"
