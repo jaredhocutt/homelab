@@ -1,2 +1,21 @@
 ---
 # vars file for jaredhocutt.homelab.server_setup
+
+###############################################################################
+# firewalld
+###############################################################################
+
+server_setup_firewalld_services_defaults:
+  ssh: true
+  dhcpv6-client: true
+  cockpit: "{{ server_setup_cockpit and not server_setup_cockpit_localhost_only }}"
+
+server_setup_firewalld_services_combined: >-
+  {{ server_setup_firewalld_services_defaults
+  | combine(server_setup_firewalld_services) }}
+
+server_setup_firewalld_ports_defaults: {}
+
+server_setup_firewalld_ports_combined: >-
+  {{ server_setup_firewalld_ports_defaults
+  | combine(server_setup_firewalld_ports) }}

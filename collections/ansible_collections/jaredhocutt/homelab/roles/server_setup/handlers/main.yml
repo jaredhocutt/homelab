@@ -14,3 +14,10 @@
     name: sshd.service
     state: reloaded
   become: true
+
+- name: Restart cockpit.socket
+  ansible.builtin.systemd:
+    name: cockpit.socket
+    state: restarted
+    daemon_reload: true
+  become: true

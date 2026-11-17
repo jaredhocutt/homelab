@@ -6,9 +6,34 @@ server_setup_enabled_services: []
 
 server_setup_users: []
 
+# Features: false removes what the role installed and configured
 server_setup_dnf_automatic: false
 server_setup_fail2ban: false
+server_setup_cockpit: true
+
+# Security controls: false only stops managing them and removes nothing, so an
+# inventory mistake can't leave a host without a firewall or with stock sshd
+server_setup_firewalld: true
 server_setup_sshd_hardening: true
+
+server_setup_firewalld_services: {}
+server_setup_firewalld_ports: {}
+
+server_setup_cockpit_packages:
+  - cockpit
+  - cockpit-files
+  - cockpit-networkmanager
+  - cockpit-podman
+  - cockpit-storaged
+  - cockpit-system
+  - pcp
+  - python3-pcp
+server_setup_cockpit_services:
+  - cockpit.socket
+  - pmlogger.service
+# Listen on 127.0.0.1 only (reach it through an SSH tunnel). When false, cockpit
+# listens on every address and the firewalld zone allows it.
+server_setup_cockpit_localhost_only: true
 
 server_setup_dnf_automatic_upgrade_type: default
 server_setup_dnf_automatic_reboot: when-needed

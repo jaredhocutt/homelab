@@ -8,6 +8,10 @@
   ansible.builtin.include_tasks: dnf_automatic.yml
   when: server_setup_dnf_automatic
 
+- name: Remove dnf-automatic
+  ansible.builtin.include_tasks: dnf_automatic_remove.yml
+  when: not server_setup_dnf_automatic
+
 - name: Create and configure users
   ansible.builtin.include_tasks: users.yml
   when: server_setup_users | length > 0
@@ -16,9 +20,25 @@
   ansible.builtin.include_tasks: fail2ban.yml
   when: server_setup_fail2ban
 
+- name: Remove fail2ban
+  ansible.builtin.include_tasks: fail2ban_remove.yml
+  when: not server_setup_fail2ban
+
+- name: Install and configure firewalld
+  ansible.builtin.include_tasks: firewalld.yml
+  when: server_setup_firewalld
+
 - name: Harden sshd
   ansible.builtin.include_tasks: sshd.yml
   when: server_setup_sshd_hardening
+
+- name: Install and configure cockpit
+  ansible.builtin.include_tasks: cockpit.yml
+  when: server_setup_cockpit
+
+- name: Remove cockpit
+  ansible.builtin.include_tasks: cockpit_remove.yml
+  when: not server_setup_cockpit
 
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers

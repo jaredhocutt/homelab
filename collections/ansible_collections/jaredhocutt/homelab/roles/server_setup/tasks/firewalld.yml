@@ -1,0 +1,82 @@
+---
+
+- name: Install firewalld
+  ansible.builtin.dnf:
+    name: firewalld
+    state: present
+  become: true
+
+- name: Enable and start firewalld
+  ansible.builtin.systemd:
+    name: firewalld.service
+    state: started
+    enabled: true
+  become: true
+
+# Ansible itself connects over SSH, so removing it would lock out every later run
+- name: Assert ssh stays allowed
+  ansible.builtin.assert:
+    that: server_setup_firewalld_services_combined.ssh | default(false)
+    fail_msg: server_setup_firewalld_services must not set ssh to false
+    quiet: true
+
+- name: Get the default zone
+  ansible.builtin.command: firewall-cmd --get-default-zone
+  register: _server_setup_firewalld_zone
+  changed_when: false
+  check_mode: false
+  become: true
+
+- name: Get the zone's services and ports
+  ansible.builtin.command: firewall-cmd --permanent --zone={{ _server_setup_firewalld_zone.stdout }} --list-{{ item }}
+  register: _server_setup_firewalld_current
+  changed_when: false
+  check_mode: false
+  become: true
+  loop:
+    - services
+    - ports
+
+- name: Allow services
+  ansible.posix.firewalld:
+    zone: "{{ _server_setup_firewalld_zone.stdout }}"
+    service: "{{ item }}"
+    permanent: true
+    immediate: true
+    state: enabled
+  become: true
+  loop: "{{ server_setup_firewalld_services_combined | dict2items | selectattr('value') | map(attribute='key') | list }}"
+
+- name: Remove services that aren't allowed
+  ansible.posix.firewalld:
+    zone: "{{ _server_setup_firewalld_zone.stdout }}"
+    service: "{{ item }}"
+    permanent: true
+    immediate: true
+    state: disabled
+  become: true
+  loop: >-
+    {{ _server_setup_firewalld_current.results[0].stdout.split()
+    | difference(server_setup_firewalld_services_combined | dict2items | selectattr('value') | map(attribute='key') | list) }}
+
+- name: Allow ports
+  ansible.posix.firewalld:
+    zone: "{{ _server_setup_firewalld_zone.stdout }}"
+    port: "{{ item }}"
+    permanent: true
+    immediate: true
+    state: enabled
+  become: true
+  loop: "{{ server_setup_firewalld_ports_combined | dict2items | selectattr('value') | map(attribute='key') | list }}"
+
+- name: Remove ports that aren't allowed
+  ansible.posix.firewalld:
+    zone: "{{ _server_setup_firewalld_zone.stdout }}"
+    port: "{{ item }}"
+    permanent: true
+    immediate: true
+    state: disabled
+  become: true
+  loop: >-
+    {{ _server_setup_firewalld_current.results[1].stdout.split()
+    | difference(server_setup_firewalld_ports_combined | dict2items | selectattr('value') | map(attribute='key') | list) }}

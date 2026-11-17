@@ -1,0 +1,27 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  vars:
+    # Enough for the web service without the full plugin set
+    server_setup_cockpit_packages:
+      - cockpit-system
+      - cockpit-ws
+    server_setup_cockpit_services:
+      - cockpit.socket
+    # On here; verify.yml turns them off and checks they're removed
+    server_setup_dnf_automatic: true
+    server_setup_fail2ban: true
+    # The test image has no sshd
+    server_setup_sshd_hardening: false
+    # The image's zone starts with dhcpv6-client, mdns and ssh, so this checks
+    # that a default can be turned off and that mdns gets pruned
+    server_setup_firewalld_services:
+      dhcpv6-client: false
+      http: true
+    server_setup_firewalld_ports:
+      9898/tcp: true
+  tasks:
+    - name: Include server_setup role
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.server_setup

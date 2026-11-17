@@ -1,0 +1,105 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  vars:
+    removed_packages:
+      - cockpit-bridge
+      - cockpit-system
+      - cockpit-ws
+      - dnf5-plugin-automatic
+      - fail2ban
+      - fail2ban-server
+  tasks:
+    - name: Get the zone's permanent and runtime services and ports
+      ansible.builtin.command: firewall-cmd {{ item }}
+      register: firewalld_state
+      changed_when: false
+      become: true
+      loop:
+        - --permanent --list-services
+        - --list-services
+        - --permanent --list-ports
+        - --list-ports
+
+    - name: Assert the zone holds exactly the allowed services and ports
+      ansible.builtin.assert:
+        that:
+          - firewalld_state.results[0].stdout.split() | sort == ['http', 'ssh']
+          - firewalld_state.results[1].stdout.split() | sort == ['http', 'ssh']
+          - firewalld_state.results[2].stdout.split() == ['9898/tcp']
+          - firewalld_state.results[3].stdout.split() == ['9898/tcp']
+
+    - name: Get cockpit.socket status
+      ansible.builtin.systemd:
+        name: cockpit.socket
+      register: cockpit_socket
+
+    - name: Assert cockpit listens on localhost only
+      ansible.builtin.assert:
+        that:
+          - cockpit_socket.status.Listen == '127.0.0.1:9090 (Stream)'
+
+    - name: Request cockpit on localhost
+      ansible.builtin.uri:
+        url: https://127.0.0.1:9090/
+        validate_certs: false
+      register: cockpit_local
+      retries: 5
+      delay: 2
+      until: cockpit_local.status == 200
+
+    - name: Get the state of the feature services
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+      register: features_on
+      loop:
+        - fail2ban.service
+        - dnf-automatic.timer
+
+    - name: Assert fail2ban and dnf-automatic are running
+      ansible.builtin.assert:
+        that: item.status.ActiveState == 'active'
+        fail_msg: "{{ item.item }} is {{ item.status.ActiveState }}"
+      loop: "{{ features_on.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Rerun server_setup with the features turned off
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.server_setup
+      vars:
+        server_setup_cockpit_packages:
+          - cockpit-system
+          - cockpit-ws
+        server_setup_cockpit_services:
+          - cockpit.socket
+        server_setup_sshd_hardening: false
+        server_setup_dnf_automatic: false
+        server_setup_fail2ban: false
+        server_setup_cockpit: false
+
+    # package_facts can't detect a package manager in the test image
+    - name: Query the features' packages
+      ansible.builtin.command: rpm -q {{ removed_packages | join(' ') }}  # noqa: command-instead-of-module
+      register: removed_query
+      changed_when: false
+      failed_when: false
+
+    - name: Stat files the features wrote
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      register: feature_files
+      loop:
+        - /etc/systemd/system/cockpit.socket.d/listen.conf
+        - /etc/fail2ban/jail.d/sshd.conf
+        - /etc/dnf/automatic.conf
+
+    - name: Assert the features' packages and files are gone
+      ansible.builtin.assert:
+        that:
+          # cockpit-bridge and fail2ban-server only came in as dependencies,
+          # so this also checks that dnf removed unneeded dependencies
+          - removed_query.stdout_lines | reject('search', 'is not installed') | list | length == 0
+          - feature_files.results | selectattr('stat.exists') | list | length == 0
+        fail_msg: "Still installed: {{ removed_query.stdout_lines | reject('search', 'is not installed') | list }}"

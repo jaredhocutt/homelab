@@ -15,29 +15,14 @@ podman_registries:
 
 server_setup_packages:
   - chezmoi
-  - cockpit
-  - cockpit-files
-  - cockpit-networkmanager
-  - cockpit-podman
-  - cockpit-storaged
-  - cockpit-system
   - curl
-  - dnf5-plugin-automatic
-  - firewalld
   - git
   - gnupg2
   - htop
   - net-tools
-  - pcp
-  - python3-pcp
   - rsync
   - tmux
   - unzip
   - vim
   - wget
   - zsh
-
-server_setup_enabled_services:
-  - cockpit.socket
-  - firewalld.service
-  - pmlogger.service

@@ -1,0 +1,32 @@
+---
+# Reverses cockpit.yml when server_setup_cockpit is false
+
+- name: Stop and disable cockpit services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: stopped
+    enabled: false
+  become: true
+  failed_when: false
+  loop: "{{ server_setup_cockpit_services }}"
+
+- name: Remove localhost-only listen drop-in
+  ansible.builtin.file:
+    path: /etc/systemd/system/cockpit.socket.d/listen.conf
+    state: absent
+  become: true
+  register: _server_setup_cockpit_dropin
+
+- name: Remove cockpit packages
+  ansible.builtin.dnf:
+    name: "{{ server_setup_cockpit_packages }}"
+    state: absent
+    # Also removes dependencies nothing else needs (as dnf autoremove would)
+    autoremove: true
+  become: true
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
+  when: _server_setup_cockpit_dropin.changed  # noqa: no-handler

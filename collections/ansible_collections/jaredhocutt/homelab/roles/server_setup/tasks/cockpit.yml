@@ -1,0 +1,51 @@
+---
+
+- name: Install cockpit
+  ansible.builtin.dnf:
+    name: "{{ server_setup_cockpit_packages }}"
+    state: present
+  become: true
+
+- name: Create cockpit.socket drop-in directory
+  ansible.builtin.file:
+    path: /etc/systemd/system/cockpit.socket.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+  when: server_setup_cockpit_localhost_only
+
+- name: Listen on localhost only
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/cockpit.socket.d/listen.conf
+    content: |
+      [Socket]
+      ListenStream=
+      ListenStream=127.0.0.1:9090
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart cockpit.socket
+  become: true
+  when: server_setup_cockpit_localhost_only
+
+- name: Remove localhost-only listen drop-in
+  ansible.builtin.file:
+    path: /etc/systemd/system/cockpit.socket.d/listen.conf
+    state: absent
+  notify: Restart cockpit.socket
+  become: true
+  when: not server_setup_cockpit_localhost_only
+
+# Handlers first, so the socket's first start already uses the listen drop-in
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+
+- name: Enable and start cockpit services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  become: true
+  loop: "{{ server_setup_cockpit_services }}"
