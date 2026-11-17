@@ -1,0 +1,23 @@
+---
+# Only the entry points other roles call are specified here; main is not
+# validated.
+argument_specs:
+  attach:
+    short_description: Attach traefik to an app's proxy network
+    description:
+      - Creates the network, adds it to traefik's quadlet through a drop-in, and connects the running traefik container.
+      - Called by app roles with include_role and tasks_from.
+    options:
+      traefik_attach_network:
+        type: str
+        required: true
+        description: Name of the proxy network, normally the app role's <role>_traefik_network.
+  detach:
+    short_description: Detach traefik from an app's proxy network
+    description:
+      - Reverses attach. Called from an app role's destroy.yml after its containers are destroyed.
+    options:
+      traefik_attach_network:
+        type: str
+        required: true
+        description: Name of the proxy network, normally the app role's <role>_traefik_network.

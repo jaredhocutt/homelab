@@ -37,6 +37,14 @@
   loop:
     - "{{ profilarr_volume_config }}"
 
+- name: Detach traefik from proxy network
+  ansible.builtin.include_role:
+    name: jaredhocutt.homelab.traefik
+    tasks_from: detach
+  vars:
+    traefik_attach_network: "{{ profilarr_traefik_network }}"
+  when: profilarr_traefik_enable
+
 - name: Destroy network
   containers.podman.podman_network:
     name: "{{ profilarr_name }}"

@@ -79,3 +79,69 @@
         that:
           - tls_yaml.stat.exists
           - tls_yaml.stat.mode == "0600"
+
+    - name: Read proxy network drop-in
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/traefik.container.d/network-molecule-proxy.conf"
+      register: proxy_dropin
+
+    - name: Read proxy network quadlet
+      ansible.builtin.slurp:
+        src: "{{ quadlet_dir }}/molecule-proxy.network"
+      register: proxy_network_quadlet
+
+    - name: Assert the drop-in adds the proxy network and the network is internal
+      ansible.builtin.assert:
+        that:
+          - "'Network=molecule-proxy.network' in (proxy_dropin.content | b64decode)"
+          - "'Internal=true' in (proxy_network_quadlet.content | b64decode)"
+          # The podman_network module writes the option as isolate=True
+          - "'isolate=true' in (proxy_network_quadlet.content | b64decode | lower)"
+
+    - name: Get traefik container info
+      containers.podman.podman_container_info:
+        name: traefik
+      become: true
+      register: traefik_info
+
+    - name: Assert running traefik is connected to the proxy network
+      ansible.builtin.assert:
+        that:
+          - traefik_info.containers[0].State.Running
+          - "'traefik' in traefik_info.containers[0].NetworkSettings.Networks"
+          - "'molecule-proxy' in traefik_info.containers[0].NetworkSettings.Networks"
+
+    - name: Detach traefik from the proxy network
+      ansible.builtin.include_role:
+        name: jaredhocutt.homelab.traefik
+        tasks_from: detach
+      vars:
+        traefik_attach_network: molecule-proxy
+
+    - name: Get traefik container info after detach
+      containers.podman.podman_container_info:
+        name: traefik
+      become: true
+      register: traefik_info_detached
+
+    - name: Stat proxy network files after detach
+      ansible.builtin.stat:
+        path: "{{ quadlet_dir }}/{{ item }}"
+      register: proxy_files_detached
+      loop:
+        - traefik.container.d/network-molecule-proxy.conf
+        - molecule-proxy.network
+
+    - name: Get proxy network info after detach
+      containers.podman.podman_network_info:
+        name: molecule-proxy
+      become: true
+      register: proxy_network_detached
+      failed_when: false
+
+    - name: Assert detach removed the drop-in, network and connection
+      ansible.builtin.assert:
+        that:
+          - "'molecule-proxy' not in traefik_info_detached.containers[0].NetworkSettings.Networks"
+          - proxy_files_detached.results | selectattr('stat.exists') | list | length == 0
+          - proxy_network_detached.networks | default([]) | length == 0

@@ -17,6 +17,7 @@ authentik_shm_size: 512mb
 
 authentik_traefik_enable: true
 authentik_traefik_host: "{{ authentik_name }}.{{ common_traefik_domain }}"
+authentik_traefik_network: "{{ authentik_name }}-proxy"
 authentik_ports:
   - 9000:9000
   - 9443:9443

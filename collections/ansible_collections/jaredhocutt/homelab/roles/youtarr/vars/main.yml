@@ -47,6 +47,7 @@ youtarr_mariadb_container_secrets_defaults:
 youtarr_container_labels_defaults: >-
   {{ youtarr_traefik_enable
   | ternary(lookup('jaredhocutt.homelab.traefik_labels', youtarr_name, youtarr_traefik_host, '3011',
+      network=youtarr_traefik_network,
       auth=youtarr_traefik_auth, noauth_paths=youtarr_traefik_noauth_paths), {}) }}
 
 youtarr_mariadb_container_labels_defaults: {}

@@ -36,7 +36,14 @@ class LookupModule(LookupBase):
         host = terms[1]
         port = terms[2]
         entrypoint = kwargs.get("entrypoint", "websecure")
-        network = kwargs.get("network", "traefik")
+        # The app's own proxy network (<role>_traefik_network), which traefik
+        # attaches to through the traefik role's tasks/attach.yml. Required, so
+        # a role can't silently fall back to a shared network.
+        network = kwargs.get("network")
+        if not network:
+            raise AnsibleError(
+                "traefik_labels lookup requires network=<role>_traefik_network"
+            )
         auth = kwargs.get("auth", False)
         noauth_paths = kwargs.get("noauth_paths") or []
 

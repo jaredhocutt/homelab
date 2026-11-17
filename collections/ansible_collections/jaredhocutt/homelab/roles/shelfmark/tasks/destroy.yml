@@ -37,6 +37,14 @@
     - "{{ shelfmark_volume_config }}"
     - "{{ shelfmark_volume_books }}"
 
+- name: Detach traefik from proxy network
+  ansible.builtin.include_role:
+    name: jaredhocutt.homelab.traefik
+    tasks_from: detach
+  vars:
+    traefik_attach_network: "{{ shelfmark_traefik_network }}"
+  when: shelfmark_traefik_enable
+
 - name: Destroy network
   containers.podman.podman_network:
     name: "{{ shelfmark_name }}"

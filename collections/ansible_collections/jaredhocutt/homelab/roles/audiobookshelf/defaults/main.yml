@@ -13,6 +13,7 @@ audiobookshelf_volume_podcasts: "{{ audiobookshelf_name }}-podcasts"
 
 audiobookshelf_traefik_enable: true
 audiobookshelf_traefik_host: "{{ audiobookshelf_name }}.{{ common_traefik_domain }}"
+audiobookshelf_traefik_network: "{{ audiobookshelf_name }}-proxy"
 audiobookshelf_traefik_auth: false
 audiobookshelf_traefik_noauth_paths: []
 audiobookshelf_ports:

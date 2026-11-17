@@ -78,26 +78,26 @@ All paths below are relative to `collections/ansible_collections/jaredhocutt/hom
 1. `<role>_name`
 2. Images and tags. Defaults use a floating tag (`latest`, `release`, or a major like `"16"`); the exact pin goes in the inventory.
 3. Volume names, as `"{{ <role>_name }}-<purpose>"`, and sidecars as `<role>_<sidecar>_volume_<purpose>`.
-4. `<role>_traefik_enable` / `_host` / `_auth: false` / `_noauth_paths: []` and `<role>_ports`.
+4. `<role>_traefik_enable` / `_host` / `_network: "{{ <role>_name }}-proxy"` / `_auth: false` / `_noauth_paths: []` and `<role>_ports`.
 5. `<role>_secrets: {}`
 6. The empty override set (`_container_env: {}`, `_container_secrets: []`, `_container_labels: {}`, `_container_quadlet_options: []`) for the main container, then each sidecar in turn.
 7. Any app-level tunables last, e.g. karakeep's `nextauth_url` derived from the Traefik host.
 
 **`vars/main.yml`.** Copy the source role's banner sections and their exact spelling: Environment, Secrets, Container Labels, Quadlet Options. Put fixed internal values (DB name/user, internal URLs like `http://{{ <role>_name }}-postgres:5432`) above the first banner. Each container gets its `_container_{env,secrets,labels,quadlet_options}_defaults`.
 - `<role>_secrets_defaults` maps Podman secret names (`<role>_<thing>`) to variables. `<role>_secrets_combined` combines that with `<role>_secrets`. Containers reference secrets as `<secret>,type=env,target=<ENV>`.
-- Labels come from `traefik_labels` with `auth=` and `noauth_paths=` set, wrapped in the `ternary(..., {})` on `traefik_enable`. Sidecar labels are `{}`.
+- Labels come from `traefik_labels` with `network=`, `auth=` and `noauth_paths=` set, wrapped in the `ternary(..., {})` on `traefik_enable`. Sidecar labels are `{}`.
 - The main container's `Requires=`/`After=` on its sidecars goes in `<role>_quadlet_options_depends`, and is used as its quadlet options default.
 - Add a short comment wherever a value isn't obvious, saying *why*, the way karakeep explains its websocket URL. Don't comment the obvious.
 
-**`tasks/main.yml`.** Steps go in this order: pull images (one looped task) → create network (`isolate: "true"`) → create volumes (looped, with `options: "{{ <var>_options | default(omit) }}"`) → create secrets → sidecars, dependencies first → main container → `flush_handlers`.
+**`tasks/main.yml`.** Steps go in this order: pull images (one looped task) → create network (`isolate: "true"`) → attach Traefik to the proxy network (`include_role` of `jaredhocutt.homelab.traefik` with `tasks_from: attach`, `when: <role>_traefik_enable`) → create volumes (looped, with `options: "{{ <var>_options | default(omit) }}"`) → create secrets → sidecars, dependencies first → main container → `flush_handlers`.
 - Container task keys follow the existing order: `name`, `image`, `network`, `env`, `secrets`, then any of `security_opt`/`cap_add`/`shm_size`/`init`/`command`, then `volumes`, `publish`, the `healthcheck_*` keys, `sdnotify`, `labels`, `quadlet_file_mode: "0600"`, `quadlet_options`, `state: quadlet`, `notify`, `become: true`.
-- Sidecars join only `<role>.network`. The main container also joins `common_traefik_network ~ '.network'` when Traefik is enabled, and uses `publish: "{{ <role>_traefik_enable | ternary(omit, <role>_ports) }}"`.
+- Sidecars join only `<role>.network`. The main container, and any other container with Traefik labels, also joins `<role>_traefik_network ~ '.network'` when Traefik is enabled, and uses `publish: "{{ <role>_traefik_enable | ternary(omit, <role>_ports) }}"`.
 - Healthchecks use the `CMD-SHELL` form with `healthcheck_failure_action: kill`, and the interval/retries/start_period/timeout keys like the other roles. Any sidecar another container waits on also gets `sdnotify: healthy`, so that `After=` really waits for it. Use the standard checks: `pg_isready -d … -U …`, `redis-cli ping`, `healthcheck.sh --connect --innodb_initialized`. Only add a healthcheck whose binary exists in the image. If there isn't one, leave it out and say so in the report.
 - Use `security_opt: [label=level:s0]` or `:z` only when the app needs a shared or bind-mounted path, as `romm` and `youtarr` do.
 
 **`handlers/main.yml`.** Add `Restart {{ <role>_name }}`, plus one `Restart <sidecar> for {{ <role>_name }}` per sidecar, each a `systemd` restart with `enabled` and `daemon_reload`.
 
-**`tasks/destroy.yml`.** This mirrors `main.yml` exactly: stop the services (main, sidecars, `<volume>-volume.service`, `<role>_name-network.service`), destroy the containers, destroy the secrets (`no_log: true`), destroy the volumes, destroy the network, remove the quadlet files, and reload systemd.
+**`tasks/destroy.yml`.** This mirrors `main.yml` exactly: stop the services (main, sidecars, `<volume>-volume.service`, `<role>_name-network.service`), destroy the containers, destroy the secrets (`no_log: true`), destroy the volumes, detach Traefik (`tasks_from: detach`, same `vars` and `when` as the attach), destroy the network, remove the quadlet files, and reload systemd.
 
 **`meta/main.yml`.** Depend on `jaredhocutt.homelab.common` and `jaredhocutt.homelab.podman`. Add `vars:` on the podman entry only if the role needs a host capability.
 

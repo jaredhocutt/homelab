@@ -43,6 +43,14 @@
     - "{{ board_game_tracker_volume_manuals }}"
     - "{{ board_game_tracker_postgres_volume_data }}"
 
+- name: Detach traefik from proxy network
+  ansible.builtin.include_role:
+    name: jaredhocutt.homelab.traefik
+    tasks_from: detach
+  vars:
+    traefik_attach_network: "{{ board_game_tracker_traefik_network }}"
+  when: board_game_tracker_traefik_enable
+
 - name: Destroy network
   containers.podman.podman_network:
     name: "{{ board_game_tracker_name }}"

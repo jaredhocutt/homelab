@@ -47,6 +47,14 @@
     - "{{ romm_volume_library }}"
     - "{{ romm_mariadb_volume_data }}"
 
+- name: Detach traefik from proxy network
+  ansible.builtin.include_role:
+    name: jaredhocutt.homelab.traefik
+    tasks_from: detach
+  vars:
+    traefik_attach_network: "{{ romm_traefik_network }}"
+  when: romm_traefik_enable
+
 - name: Destroy network
   containers.podman.podman_network:
     name: "{{ romm_name }}"

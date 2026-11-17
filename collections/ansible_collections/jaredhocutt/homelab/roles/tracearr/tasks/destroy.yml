@@ -45,6 +45,14 @@
     - "{{ tracearr_timescaledb_volume_data }}"
     - "{{ tracearr_redis_volume_data }}"
 
+- name: Detach traefik from proxy network
+  ansible.builtin.include_role:
+    name: jaredhocutt.homelab.traefik
+    tasks_from: detach
+  vars:
+    traefik_attach_network: "{{ tracearr_traefik_network }}"
+  when: tracearr_traefik_enable
+
 - name: Destroy network
   containers.podman.podman_network:
     name: "{{ tracearr_name }}"

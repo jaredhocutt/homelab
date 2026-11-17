@@ -27,6 +27,14 @@
     state: quadlet
   become: true
 
+- name: Attach traefik to proxy network
+  ansible.builtin.include_role:
+    name: jaredhocutt.homelab.traefik
+    tasks_from: attach
+  vars:
+    traefik_attach_network: "{{ bar_assistant_traefik_network }}"
+  when: bar_assistant_traefik_enable
+
 - name: Create volumes
   containers.podman.podman_volume:
     name: "{{ item.name }}"
@@ -80,7 +88,7 @@
     image: "{{ bar_assistant_meilisearch_image }}:{{ bar_assistant_meilisearch_image_tag }}"
     network:
       - "{{ bar_assistant_name }}.network"
-      - "{{ bar_assistant_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
+      - "{{ bar_assistant_traefik_enable | ternary(bar_assistant_traefik_network ~ '.network', omit) }}"
     env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='meilisearch') }}"
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='meilisearch') }}"
     volumes:
@@ -106,7 +114,7 @@
     image: "{{ bar_assistant_image }}:{{ bar_assistant_image_tag }}"
     network:
       - "{{ bar_assistant_name }}.network"
-      - "{{ bar_assistant_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
+      - "{{ bar_assistant_traefik_enable | ternary(bar_assistant_traefik_network ~ '.network', omit) }}"
     env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
@@ -125,7 +133,7 @@
     image: "{{ bar_assistant_salt_rim_image }}:{{ bar_assistant_salt_rim_image_tag }}"
     network:
       - "{{ bar_assistant_name }}.network"
-      - "{{ bar_assistant_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
+      - "{{ bar_assistant_traefik_enable | ternary(bar_assistant_traefik_network ~ '.network', omit) }}"
     env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='salt_rim') }}"
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='salt_rim') }}"
     publish: "{{ bar_assistant_traefik_enable | ternary(omit, bar_assistant_salt_rim_ports) }}"

@@ -26,6 +26,7 @@ go2rtc_container_secrets_defaults: []
 go2rtc_container_labels_defaults: >
   {{ go2rtc_traefik_enable
   | ternary(lookup('jaredhocutt.homelab.traefik_labels', go2rtc_name, go2rtc_traefik_host, '1984',
+      network=go2rtc_traefik_network,
       auth=go2rtc_traefik_auth, noauth_paths=go2rtc_traefik_noauth_paths), {}) }}
 
 ###############################################################################

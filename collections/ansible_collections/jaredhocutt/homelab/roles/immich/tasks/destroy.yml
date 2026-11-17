@@ -47,6 +47,14 @@
     - "{{ immich_postgres_volume_data }}"
     - "{{ immich_redis_volume_data }}"
 
+- name: Detach traefik from proxy network
+  ansible.builtin.include_role:
+    name: jaredhocutt.homelab.traefik
+    tasks_from: detach
+  vars:
+    traefik_attach_network: "{{ immich_traefik_network }}"
+  when: immich_traefik_enable
+
 - name: Destroy network
   containers.podman.podman_network:
     name: "{{ immich_name }}"

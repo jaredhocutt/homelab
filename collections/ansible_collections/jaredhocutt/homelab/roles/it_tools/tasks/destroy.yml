@@ -26,6 +26,14 @@
   no_log: true
   loop: "{{ it_tools_secrets_combined | dict2items }}"
 
+- name: Detach traefik from proxy network
+  ansible.builtin.include_role:
+    name: jaredhocutt.homelab.traefik
+    tasks_from: detach
+  vars:
+    traefik_attach_network: "{{ it_tools_traefik_network }}"
+  when: it_tools_traefik_enable
+
 - name: Destroy network
   containers.podman.podman_network:
     name: "{{ it_tools_name }}"

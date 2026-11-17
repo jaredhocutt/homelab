@@ -52,18 +52,21 @@ bar_assistant_meilisearch_container_secrets_defaults:
 bar_assistant_container_labels_defaults: >
   {{ bar_assistant_traefik_enable
   | ternary(lookup('jaredhocutt.homelab.traefik_labels', bar_assistant_name, bar_assistant_traefik_host, '8080',
+      network=bar_assistant_traefik_network,
       auth=bar_assistant_traefik_auth, noauth_paths=bar_assistant_traefik_noauth_paths), {}) }}
 
 bar_assistant_salt_rim_container_labels_defaults: >
   {{ bar_assistant_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', bar_assistant_name ~ '-salt-rim', bar_assistant_salt_rim_traefik_host, '8080'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', bar_assistant_name ~ '-salt-rim', bar_assistant_salt_rim_traefik_host, '8080',
+      network=bar_assistant_traefik_network), {}) }}
 
 bar_assistant_redis_container_labels_defaults: {}
 
 bar_assistant_meilisearch_container_labels_defaults: >-
   {{
     bar_assistant_traefik_enable |
-    ternary(lookup('jaredhocutt.homelab.traefik_labels', bar_assistant_name ~ '-meilisearch', bar_assistant_meilisearch_traefik_host, '7700'), {})
+    ternary(lookup('jaredhocutt.homelab.traefik_labels', bar_assistant_name ~ '-meilisearch', bar_assistant_meilisearch_traefik_host, '7700',
+      network=bar_assistant_traefik_network), {})
   }}
 
 ###############################################################################

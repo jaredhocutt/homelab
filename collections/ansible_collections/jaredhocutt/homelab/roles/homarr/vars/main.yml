@@ -28,6 +28,7 @@ homarr_container_secrets_defaults:
 homarr_container_labels_defaults: >
   {{ homarr_traefik_enable
   | ternary(lookup('jaredhocutt.homelab.traefik_labels', homarr_name, homarr_traefik_host, '7575',
+      network=homarr_traefik_network,
       auth=homarr_traefik_auth, noauth_paths=homarr_traefik_noauth_paths), {}) }}
 
 ###############################################################################

@@ -27,6 +27,14 @@
     state: quadlet
   become: true
 
+- name: Attach traefik to proxy network
+  ansible.builtin.include_role:
+    name: jaredhocutt.homelab.traefik
+    tasks_from: attach
+  vars:
+    traefik_attach_network: "{{ immich_traefik_network }}"
+  when: immich_traefik_enable
+
 - name: Create volumes
   containers.podman.podman_volume:
     name: "{{ item.name }}"
@@ -122,7 +130,7 @@
     image: "{{ immich_image }}:{{ immich_image_tag }}"
     network:
       - "{{ immich_name }}.network"
-      - "{{ immich_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
+      - "{{ immich_traefik_enable | ternary(immich_traefik_network ~ '.network', omit) }}"
     env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:

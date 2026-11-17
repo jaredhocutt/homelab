@@ -26,6 +26,7 @@ open_webui_container_secrets_defaults: []
 open_webui_container_labels_defaults: >
   {{ open_webui_traefik_enable
   | ternary(lookup('jaredhocutt.homelab.traefik_labels', open_webui_name, open_webui_traefik_host, '8080',
+      network=open_webui_traefik_network,
       auth=open_webui_traefik_auth, noauth_paths=open_webui_traefik_noauth_paths), {}) }}
 
 ###############################################################################

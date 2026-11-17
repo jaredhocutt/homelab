@@ -21,6 +21,14 @@
     state: quadlet
   become: true
 
+- name: Attach traefik to proxy network
+  ansible.builtin.include_role:
+    name: jaredhocutt.homelab.traefik
+    tasks_from: attach
+  vars:
+    traefik_attach_network: "{{ audiobookshelf_traefik_network }}"
+  when: audiobookshelf_traefik_enable
+
 - name: Create volumes
   containers.podman.podman_volume:
     name: "{{ item.name }}"
@@ -53,7 +61,7 @@
     image: "{{ audiobookshelf_image }}:{{ audiobookshelf_image_tag }}"
     network:
       - "{{ audiobookshelf_name }}.network"
-      - "{{ audiobookshelf_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
+      - "{{ audiobookshelf_traefik_enable | ternary(audiobookshelf_traefik_network ~ '.network', omit) }}"
     env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:

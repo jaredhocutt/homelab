@@ -10,6 +10,7 @@ wizarr_volume_data: "{{ wizarr_name }}-data"
 
 wizarr_traefik_enable: true
 wizarr_traefik_host: "{{ wizarr_name }}.{{ common_traefik_domain }}"
+wizarr_traefik_network: "{{ wizarr_name }}-proxy"
 wizarr_traefik_auth: false
 wizarr_traefik_noauth_paths: []
 wizarr_ports:

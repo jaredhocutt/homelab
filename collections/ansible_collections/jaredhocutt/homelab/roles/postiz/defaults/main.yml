@@ -26,6 +26,7 @@ postiz_temporal_elasticsearch_volume_data: "{{ postiz_name }}-temporal-elasticse
 
 postiz_traefik_enable: true
 postiz_traefik_host: "{{ postiz_name }}.{{ common_traefik_domain }}"
+postiz_traefik_network: "{{ postiz_name }}-proxy"
 postiz_traefik_auth: false
 postiz_traefik_noauth_paths: []
 postiz_ports:

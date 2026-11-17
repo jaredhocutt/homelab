@@ -50,6 +50,7 @@
   become: true
   loop:
     - "{{ traefik_name }}.container"
+    - "{{ traefik_name }}.container.d"
     - "{{ traefik_volume_certs }}.volume"
     - "{{ traefik_volume_dynamic }}.volume"
     - "{{ traefik_name }}.network"

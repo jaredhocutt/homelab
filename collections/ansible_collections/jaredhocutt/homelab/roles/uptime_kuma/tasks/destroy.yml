@@ -35,6 +35,14 @@
   loop:
     - "{{ uptime_kuma_volume_data }}"
 
+- name: Detach traefik from proxy network
+  ansible.builtin.include_role:
+    name: jaredhocutt.homelab.traefik
+    tasks_from: detach
+  vars:
+    traefik_attach_network: "{{ uptime_kuma_traefik_network }}"
+  when: uptime_kuma_traefik_enable
+
 - name: Destroy network
   containers.podman.podman_network:
     name: "{{ uptime_kuma_name }}"

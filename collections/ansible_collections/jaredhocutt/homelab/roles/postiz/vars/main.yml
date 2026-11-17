@@ -97,6 +97,7 @@ postiz_temporal_elasticsearch_container_secrets_defaults: []
 postiz_container_labels_defaults: >-
   {{ postiz_traefik_enable
   | ternary(lookup('jaredhocutt.homelab.traefik_labels', postiz_name, postiz_traefik_host, '5000',
+      network=postiz_traefik_network,
       auth=postiz_traefik_auth, noauth_paths=postiz_traefik_noauth_paths), {}) }}
 
 postiz_postgres_container_labels_defaults: {}

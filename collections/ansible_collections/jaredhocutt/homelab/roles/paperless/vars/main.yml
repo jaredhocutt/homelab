@@ -70,6 +70,7 @@ paperless_ai_container_secrets_defaults: []
 paperless_container_labels_defaults: >
   {{ paperless_traefik_enable
   | ternary(lookup('jaredhocutt.homelab.traefik_labels', paperless_name, paperless_traefik_host, '8000',
+      network=paperless_traefik_network,
       auth=paperless_traefik_auth, noauth_paths=paperless_traefik_noauth_paths), {}) }}
 
 paperless_postgres_container_labels_defaults: {}
@@ -82,7 +83,7 @@ paperless_tika_container_labels_defaults: {}
 
 paperless_ai_container_labels_defaults: >
   {{ paperless_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', paperless_name ~ '-ai', paperless_ai_traefik_host, '3000'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', paperless_name ~ '-ai', paperless_ai_traefik_host, '3000', network=paperless_traefik_network), {}) }}
 
 ###############################################################################
 # Quadlet Options

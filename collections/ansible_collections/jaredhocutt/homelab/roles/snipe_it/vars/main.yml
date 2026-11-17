@@ -65,6 +65,7 @@ snipe_it_mariadb_container_secrets_defaults:
 snipe_it_container_labels_defaults: >
   {{ snipe_it_traefik_enable
   | ternary(lookup('jaredhocutt.homelab.traefik_labels', snipe_it_name, snipe_it_traefik_host, '80',
+      network=snipe_it_traefik_network,
       auth=snipe_it_traefik_auth, noauth_paths=snipe_it_traefik_noauth_paths), {}) }}
 
 snipe_it_mariadb_container_labels_defaults: {}

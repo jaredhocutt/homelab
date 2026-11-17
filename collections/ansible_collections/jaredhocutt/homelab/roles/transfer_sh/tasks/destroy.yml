@@ -35,6 +35,14 @@
   loop:
     - "{{ transfer_sh_volume_transfers }}"
 
+- name: Detach traefik from proxy network
+  ansible.builtin.include_role:
+    name: jaredhocutt.homelab.traefik
+    tasks_from: detach
+  vars:
+    traefik_attach_network: "{{ transfer_sh_traefik_network }}"
+  when: transfer_sh_traefik_enable
+
 - name: Destroy network
   containers.podman.podman_network:
     name: "{{ transfer_sh_name }}"

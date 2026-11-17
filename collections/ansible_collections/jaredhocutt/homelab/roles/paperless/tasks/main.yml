@@ -31,6 +31,14 @@
     state: quadlet
   become: true
 
+- name: Attach traefik to proxy network
+  ansible.builtin.include_role:
+    name: jaredhocutt.homelab.traefik
+    tasks_from: attach
+  vars:
+    traefik_attach_network: "{{ paperless_traefik_network }}"
+  when: paperless_traefik_enable
+
 - name: Create volumes
   containers.podman.podman_volume:
     name: "{{ item.name }}"
@@ -152,7 +160,7 @@
     image: "{{ paperless_image }}:{{ paperless_image_tag }}"
     network:
       - "{{ paperless_name }}.network"
-      - "{{ paperless_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
+      - "{{ paperless_traefik_enable | ternary(paperless_traefik_network ~ '.network', omit) }}"
     env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     volumes:
@@ -181,7 +189,7 @@
     image: "{{ paperless_ai_image }}:{{ paperless_ai_image_tag }}"
     network:
       - "{{ paperless_name }}.network"
-      - "{{ paperless_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
+      - "{{ paperless_traefik_enable | ternary(paperless_traefik_network ~ '.network', omit) }}"
     env: "{{ lookup('jaredhocutt.homelab.container_config', 'env', container='ai') }}"
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets', container='ai') }}"
     volumes:

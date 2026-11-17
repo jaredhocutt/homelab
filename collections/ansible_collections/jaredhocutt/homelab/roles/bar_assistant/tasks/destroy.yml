@@ -45,6 +45,14 @@
     - "{{ bar_assistant_redis_volume_data }}"
     - "{{ bar_assistant_meilisearch_volume_data }}"
 
+- name: Detach traefik from proxy network
+  ansible.builtin.include_role:
+    name: jaredhocutt.homelab.traefik
+    tasks_from: detach
+  vars:
+    traefik_attach_network: "{{ bar_assistant_traefik_network }}"
+  when: bar_assistant_traefik_enable
+
 - name: Destroy network
   containers.podman.podman_network:
     name: "{{ bar_assistant_name }}"

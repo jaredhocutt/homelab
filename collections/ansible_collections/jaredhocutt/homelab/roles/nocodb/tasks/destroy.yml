@@ -39,6 +39,14 @@
     - "{{ nocodb_volume_data }}"
     - "{{ nocodb_postgres_volume_data }}"
 
+- name: Detach traefik from proxy network
+  ansible.builtin.include_role:
+    name: jaredhocutt.homelab.traefik
+    tasks_from: detach
+  vars:
+    traefik_attach_network: "{{ nocodb_traefik_network }}"
+  when: nocodb_traefik_enable
+
 - name: Destroy network
   containers.podman.podman_network:
     name: "{{ nocodb_name }}"

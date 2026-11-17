@@ -1,0 +1,51 @@
+---
+
+- name: Get traefik container info
+  containers.podman.podman_container_info:
+    name: "{{ traefik_name }}"
+  become: true
+  register: _traefik_detach_info
+
+- name: Disconnect traefik from proxy network {{ traefik_attach_network }}
+  ansible.builtin.command:
+    cmd: podman network disconnect {{ traefik_attach_network }} {{ traefik_name }}
+  become: true
+  changed_when: true
+  when:
+    - _traefik_detach_info.containers | length > 0
+    - traefik_attach_network in (_traefik_detach_info.containers[0].NetworkSettings.Networks | default({}))
+
+- name: Remove traefik quadlet drop-in for proxy network {{ traefik_attach_network }}
+  ansible.builtin.file:
+    path: /etc/containers/systemd/{{ traefik_name }}.container.d/network-{{ traefik_attach_network }}.conf
+    state: absent
+  become: true
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
+
+- name: Stop proxy network {{ traefik_attach_network }}
+  ansible.builtin.systemd:
+    name: "{{ traefik_attach_network }}-network.service"
+    state: stopped
+  become: true
+  failed_when: false
+
+- name: Destroy proxy network {{ traefik_attach_network }}
+  containers.podman.podman_network:
+    name: "{{ traefik_attach_network }}"
+    state: absent
+  become: true
+
+- name: Cleanup proxy network quadlet file
+  ansible.builtin.file:
+    path: /etc/containers/systemd/{{ traefik_attach_network }}.network
+    state: absent
+  become: true
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true

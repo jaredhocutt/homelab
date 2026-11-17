@@ -73,6 +73,7 @@ n8n_runners_container_secrets_defaults:
 n8n_container_labels_defaults: >
   {{ n8n_traefik_enable
   | ternary(lookup('jaredhocutt.homelab.traefik_labels', n8n_name, n8n_traefik_host, '5678',
+      network=n8n_traefik_network,
       auth=n8n_traefik_auth, noauth_paths=n8n_traefik_noauth_paths), {}) }}
 
 n8n_worker_container_labels_defaults: {}

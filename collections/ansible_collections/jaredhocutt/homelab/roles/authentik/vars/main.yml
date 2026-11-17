@@ -53,7 +53,7 @@ authentik_postgres_container_secrets_defaults:
 
 authentik_server_container_labels_defaults: >
   {{ authentik_traefik_enable
-  | ternary(lookup('jaredhocutt.homelab.traefik_labels', authentik_name, authentik_traefik_host, '9000'), {}) }}
+  | ternary(lookup('jaredhocutt.homelab.traefik_labels', authentik_name, authentik_traefik_host, '9000', network=authentik_traefik_network), {}) }}
 
 authentik_worker_container_labels_defaults: {}
 

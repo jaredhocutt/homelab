@@ -39,6 +39,14 @@
     - "{{ radarr_volume_download }}"
     - "{{ radarr_volume_media }}"
 
+- name: Detach traefik from proxy network
+  ansible.builtin.include_role:
+    name: jaredhocutt.homelab.traefik
+    tasks_from: detach
+  vars:
+    traefik_attach_network: "{{ radarr_traefik_network }}"
+  when: radarr_traefik_enable
+
 - name: Destroy network
   containers.podman.podman_network:
     name: "{{ radarr_name }}"

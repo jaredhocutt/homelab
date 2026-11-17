@@ -26,6 +26,7 @@ seerr_container_secrets_defaults: []
 seerr_container_labels_defaults: >
   {{ seerr_traefik_enable
   | ternary(lookup('jaredhocutt.homelab.traefik_labels', seerr_name, seerr_traefik_host, '5055',
+      network=seerr_traefik_network,
       auth=seerr_traefik_auth, noauth_paths=seerr_traefik_noauth_paths), {}) }}
 
 ###############################################################################

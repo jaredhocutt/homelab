@@ -29,6 +29,7 @@ transfer_sh_container_secrets_defaults: []
 transfer_sh_container_labels_defaults: >
   {{ transfer_sh_traefik_enable
   | ternary(lookup('jaredhocutt.homelab.traefik_labels', transfer_sh_name, transfer_sh_traefik_host, '8080',
+      network=transfer_sh_traefik_network,
       auth=transfer_sh_traefik_auth, noauth_paths=transfer_sh_traefik_noauth_paths), {}) }}
 
 ###############################################################################

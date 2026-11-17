@@ -8,6 +8,7 @@ blaze_image_tag: latest
 
 blaze_traefik_enable: true
 blaze_traefik_host: "{{ blaze_name }}.{{ common_traefik_domain }}"
+blaze_traefik_network: "{{ blaze_name }}-proxy"
 blaze_traefik_auth: false
 blaze_traefik_noauth_paths: []
 blaze_ports:

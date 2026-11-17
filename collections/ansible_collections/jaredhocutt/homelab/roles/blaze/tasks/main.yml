@@ -21,6 +21,14 @@
     state: quadlet
   become: true
 
+- name: Attach traefik to proxy network
+  ansible.builtin.include_role:
+    name: jaredhocutt.homelab.traefik
+    tasks_from: attach
+  vars:
+    traefik_attach_network: "{{ blaze_traefik_network }}"
+  when: blaze_traefik_enable
+
 - name: Create secrets
   containers.podman.podman_secret:
     name: "{{ item.key }}"
@@ -36,7 +44,7 @@
     image: "{{ blaze_image }}:{{ blaze_image_tag }}"
     network:
       - "{{ blaze_name }}.network"
-      - "{{ blaze_traefik_enable | ternary(common_traefik_network ~ '.network', omit) }}"
+      - "{{ blaze_traefik_enable | ternary(blaze_traefik_network ~ '.network', omit) }}"
     env: "{{ lookup('jaredhocutt.homelab.container_config', 'env') }}"
     secrets: "{{ lookup('jaredhocutt.homelab.container_config', 'secrets') }}"
     publish: "{{ blaze_traefik_enable | ternary(omit, blaze_ports) }}"

@@ -26,6 +26,37 @@
     state: quadlet
   become: true
 
+# App roles add their proxy networks through drop-ins (tasks/attach.yml). Each
+# drop-in makes traefik's unit require that network, so one left pointing at a
+# deleted network would stop traefik from starting at all.
+- name: Find proxy network drop-ins
+  ansible.builtin.find:
+    paths: /etc/containers/systemd/{{ traefik_name }}.container.d
+    patterns: "network-*.conf"
+  become: true
+  register: _traefik_dropins
+
+- name: Check proxy network drop-ins point at existing networks
+  ansible.builtin.stat:
+    path: /etc/containers/systemd/{{ item.path | basename | splitext | first | regex_replace('^network-', '') }}.network
+  become: true
+  loop: "{{ _traefik_dropins.files }}"
+  loop_control:
+    label: "{{ item.path | basename }}"
+  register: _traefik_dropin_networks
+
+- name: Assert proxy network drop-ins point at existing networks
+  ansible.builtin.assert:
+    that: item.stat.exists
+    fail_msg: >-
+      {{ item.item.path }} adds {{ item.item.path | basename | splitext | first | regex_replace('^network-', '') }}.network,
+      which doesn't exist, so traefik would fail to start. Run the owning role's
+      destroy.yml or delete the drop-in.
+    quiet: true
+  loop: "{{ _traefik_dropin_networks.results }}"
+  loop_control:
+    label: "{{ item.item.path | basename }}"
+
 - name: Create volumes
   containers.podman.podman_volume:
     name: "{{ item.name }}"

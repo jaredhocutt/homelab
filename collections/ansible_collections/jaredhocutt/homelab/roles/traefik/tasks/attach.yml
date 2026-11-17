@@ -1,0 +1,61 @@
+---
+
+- name: Create proxy network {{ traefik_attach_network }}
+  containers.podman.podman_network:
+    name: "{{ traefik_attach_network }}"
+    driver: bridge
+    disable_dns: false
+    internal: true
+    opt:
+      isolate: "true"
+    quadlet_file_mode: "0600"
+    state: quadlet
+  become: true
+  register: _traefik_attach_network_quadlet
+
+- name: Create traefik quadlet drop-in directory
+  ansible.builtin.file:
+    path: /etc/containers/systemd/{{ traefik_name }}.container.d
+    state: directory
+    mode: "0700"
+  become: true
+
+- name: Add traefik quadlet drop-in for proxy network {{ traefik_attach_network }}
+  ansible.builtin.copy:
+    dest: /etc/containers/systemd/{{ traefik_name }}.container.d/network-{{ traefik_attach_network }}.conf
+    content: |
+      [Container]
+      Network={{ traefik_attach_network }}.network
+    mode: "0600"
+  become: true
+  register: _traefik_attach_dropin
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
+  when: _traefik_attach_network_quadlet.changed or _traefik_attach_dropin.changed  # noqa: no-handler
+
+- name: Start proxy network {{ traefik_attach_network }}
+  ansible.builtin.systemd:
+    name: "{{ traefik_attach_network }}-network.service"
+    state: started
+  become: true
+
+- name: Get traefik container info
+  containers.podman.podman_container_info:
+    name: "{{ traefik_name }}"
+  become: true
+  register: _traefik_attach_info
+
+# Skipped when traefik isn't running (e.g. molecule scenarios without it); the
+# drop-in attaches the network the next time it starts.
+- name: Connect running traefik to proxy network {{ traefik_attach_network }}
+  ansible.builtin.command:
+    cmd: podman network connect {{ traefik_attach_network }} {{ traefik_name }}
+  become: true
+  changed_when: true
+  when:
+    - _traefik_attach_info.containers | length > 0
+    - _traefik_attach_info.containers[0].State.Running
+    - traefik_attach_network not in (_traefik_attach_info.containers[0].NetworkSettings.Networks | default({}))
